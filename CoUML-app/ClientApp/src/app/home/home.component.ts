@@ -208,3 +208,4 @@ export class HomeComponent implements AfterViewInit, OnInit{
 		}
 	}
 }
+
