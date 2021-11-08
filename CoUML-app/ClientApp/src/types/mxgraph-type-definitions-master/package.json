@@ -1,0 +1,33 @@
+{
+  "name": "mxgraph-type-definitions",
+  "version": "1.0.6",
+  "description": "this project is typescript definitions for mxGraph",
+  "main": "index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hungtcs/mxgraph-type-definitions.git"
+  },
+  "keywords": [
+    "mxgraph",
+    "types"
+  ],
+  "author": "鸿则 <hungtcs@163.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/hungtcs/mxgraph-type-definitions/issues"
+  },
+  "homepage": "https://github.com/hungtcs/mxgraph-type-definitions#readme",
+  "scripts": {
+    "test": "tsc --noEmit",
+    "eslint": "eslint \"**/*.d.ts\"",
+    "prettier": "prettier --write \"**/*.d.ts\"",
+    "prettier:check": "prettier --check \"**/*.d.ts\""
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.7.0",
+    "@typescript-eslint/parser": "^4.7.0",
+    "eslint": "^7.13.0",
+    "prettier": "^2.1.2",
+    "typescript": "^3.9.5"
+  }
+}
