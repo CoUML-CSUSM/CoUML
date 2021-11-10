@@ -1,14 +1,19 @@
 {
   "name": "couml_app",
   "version": "0.0.0",
+  // "scripts": {
+  //   "ng": "ng",
+  //   "start": "ng serve",
+  //   "build": "ng build",
+  //   "build:ssr": "ng run CoUML_app:server:dev",
+  //   "test": "ng test",
+  //   "lint": "ng lint",
+  //   "e2e": "ng e2e"
+  // },
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "build:ssr": "ng run CoUML_app:server:dev",
-    "test": "ng test",
-    "lint": "ng lint",
-    "e2e": "ng e2e"
+    "build": "webpack --mode=development --watch",
+    "release": "webpack --mode=production",
+    "publish": "npm run release && dotnet publish -c Release"
   },
   "private": true,
   "dependencies": {
