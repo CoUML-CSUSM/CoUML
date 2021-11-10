@@ -61,12 +61,15 @@ namespace CoUUML_app.Controllers.Hubs
 
 
     }
-    [Authorize]
     public class CoUmlHub : Hub<ICoUmlClient>
     {
-        private readonly static Connection
+        private readonly static ConnectionMap<string> _connections = new ConnectionMap<string>();
         public override Task OnConnect()
         {
+            string connectionId = Context.ConnectionId;
+            string name = Context.User.Identity.Name;
+            _connections.Add(connectionId, name);
+            
 
         }
     }
