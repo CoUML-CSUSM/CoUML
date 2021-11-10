@@ -1,17 +1,14 @@
 {
   "name": "couml_app",
   "version": "0.0.0",
-  // "scripts": {
-  //   "ng": "ng",
-  //   "start": "ng serve",
-  //   "build": "ng build",
-  //   "build:ssr": "ng run CoUML_app:server:dev",
-  //   "test": "ng test",
-  //   "lint": "ng lint",
-  //   "e2e": "ng e2e"
-  // },
   "scripts": {
-    "build": "webpack --mode=development --watch",
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "build:ssr": "ng run CoUML_app:server:dev",
+    "test": "ng test",
+    "lint": "ng lint",
+    "e2e": "ng e2e",
     "release": "webpack --mode=production",
     "publish": "npm run release && dotnet publish -c Release"
   },
@@ -37,7 +34,11 @@
     "rxjs": "^6.6.3",
     "ts-node": "~8.4.1",
     "tslint": "~5.20.0",
-    "zone.js": "0.9.1"
+    "zone.js": "0.9.1",
+    "@microsoft/signalr": "^6.0.0",
+    "@types/signalr": "^2.2.37",
+    "primeng": "^11.0.0", 
+    "primeicons": "^4.1.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.803.29",

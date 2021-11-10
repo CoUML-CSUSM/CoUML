@@ -13,7 +13,7 @@ https://docs.microsoft.com/en-us/aspnet/signalr/overview/guide-to-the-api/workin
 https://docs.microsoft.com/en-us/aspnet/signalr/overview/guide-to-the-api/mapping-users-to-connections
 
 */
-namespace CoUUML_app.Controllers.Hubs
+namespace CoUML_app.Controllers.Hubs
 {
     public interface ICoUmlClient{
         Task testInterfaceMethod(string message);
@@ -35,8 +35,7 @@ namespace CoUUML_app.Controllers.Hubs
         {
             lock(_connections)
             {
-                T temValueHolder;
-                if(!_connections.TryGetValue(connectionId, out temValueHolder))
+                if(!IsConnected(connectionId))
                     _connections.Add(connectionId, value);
             }
         }
@@ -46,14 +45,13 @@ namespace CoUUML_app.Controllers.Hubs
             bool isItemRemoved = false;
             lock(_connections)
             {
-                T temValueHolder;
-                if(_connections.TryGetValue(connectionId, out temValueHolder))
+                if(IsConnected(connectionId))
                     isItemRemoved = _connections.Remove(connectionId);
             }
             return isItemRemoved;
         }
 
-        public bool Has(T connectionId)
+        public bool IsConnected(T connectionId)
         {
             T temValueHolder;
             return _connections.TryGetValue(connectionId, out temValueHolder);
@@ -64,14 +62,32 @@ namespace CoUUML_app.Controllers.Hubs
     public class CoUmlHub : Hub<ICoUmlClient>
     {
         private readonly static ConnectionMap<string> _connections = new ConnectionMap<string>();
-        public override Task OnConnect()
+        
+        /// when a new user attemps to connect their connection id gets logged in the connection repo
+        public override Task OnConnectedAsync()
         {
             string connectionId = Context.ConnectionId;
             string name = Context.User.Identity.Name;
             _connections.Add(connectionId, name);
-            
 
+            TestCall(connectionId);
+
+            return base.OnConnectedAsync();
         }
+
+        /// remove connection from repo apon disconnection
+        public override Task OnDisconnectedAsync(Exception exception)
+        {
+            string connectionId = Context.ConnectionId;
+            _connections.Remove(connectionId);
+            return base.OnDisconnectedAsync(exception);
+        }
+
+        public void TestCall(string connectionid)
+        {
+            Clients.Client(connectionid).testInterfaceMethod("this is the test message :D");
+        }
+
     }
 
     [Route("[controller]")]
@@ -85,9 +101,9 @@ namespace CoUUML_app.Controllers.Hubs
             this._hub = hub;
         }
 
-        public async Task clientAdded()
-        {
-            this._hub.Clients.All.testInterfaceMethod("this is the test message :D");
-        }
+        // public async Task clientAdded()
+        // {
+        //     // this._hub.Clients.All.testInterfaceMethod("this is the test message :D");
+        // }
     }
 }

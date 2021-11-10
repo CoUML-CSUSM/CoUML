@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-// import mx from './mxgraph';
-// import { mxGraph, mxGraphModel } from 'mxgraph';
+import { CoUmlHubService } from '../service/couml-hub.service';
+
 
 /**
  * https://github.com/typed-mxgraph/typed-mxgraph
@@ -19,21 +19,13 @@ export class HomeComponent implements AfterViewInit, OnInit{
 
 	@ViewChild('container2', { read: ElementRef, static: true })
 	public container2: ElementRef<HTMLElement>;
-	// constructor() {
-	// 	if(mx.mxClient.isBrowserSupported()) {
-	// 		console.log('Yes! Yes!');
-	// 	}
+	
+	constructor(public coUmlConnection: CoUmlHubService) {}
 
-	// 	var graph: mxGraph = new mx.mxGraph(this.container);
-	// 	const model: mxGraphModel = graph.getModel();
-	// 	model.beginUpdate();
-	// 	try {
-	// 		graph.insertVertex(graph.getDefaultParent(), '', 'TEST', 0, 0, 100, 100);
-	// 	} finally {
-	// 		model.endUpdate();
-	// 	}
-	// }
 
+	public connect(){
+		this.coUmlConnection.startConnection();
+	}
 	public ngAfterViewInit() {
 		this.graph2 = new mxGraph(this.container2.nativeElement);
 		this.graph2.getModel().beginUpdate();
