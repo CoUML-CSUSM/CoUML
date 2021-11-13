@@ -12,6 +12,7 @@ import { CounterComponent } from './counter/counter.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
 
 import { CoUmlHubService } from './service/couml-hub.service';
+import {ButtonModule} from 'primeng/button';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { CoUmlHubService } from './service/couml-hub.service';
     NavMenuComponent,
     HomeComponent,
     CounterComponent,
-    FetchDataComponent
+    FetchDataComponent,
+    ButtonModule
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

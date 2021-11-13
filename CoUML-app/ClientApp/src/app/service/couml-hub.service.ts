@@ -10,6 +10,7 @@ export class CoUmlHubService{
 
 	public startConnection()
 	{
+		console.log(`CoUmlHubService::startConnection()`);
 		this.coUmlHubConnection = new signalR.HubConnectionBuilder()
 				.withUrl(this._url)
 				.build();
