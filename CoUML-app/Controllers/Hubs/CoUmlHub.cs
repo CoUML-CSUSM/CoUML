@@ -137,21 +137,4 @@ namespace CoUML_app.Controllers.Hubs
         }
 
     }
-
-    [Route("[controller]")]
-    [ApiController]
-    public class CoUmlController: ControllerBase
-    {
-        private IHubContext<CoUmlHub> _hub;
-
-        public CoUmlController(IHubContext<CoUmlHub> hub)
-        {
-            this._hub = hub;
-        }
-
-        // public async Task clientAdded()
-        // {
-        //     // this._hub.Clients.All.testInterfaceMethod("this is the test message :D");
-        // }
-    }
 }
