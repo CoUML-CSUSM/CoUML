@@ -10,10 +10,14 @@ import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
 import { CounterComponent } from './counter/counter.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
+
+import { EditorComponent } from './editor/editor.component';
+
 import { SidebarComponent } from './sidebar/sidebar.component';
 
 import { CoUmlHubService } from './service/couml-hub.service';
 import { ButtonModule } from 'primeng/button';
+
 
 @NgModule({
   declarations: [
@@ -22,7 +26,11 @@ import { ButtonModule } from 'primeng/button';
     HomeComponent,
     CounterComponent,
     FetchDataComponent,
+
+    EditorComponent,
+
     SidebarComponent
+
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
