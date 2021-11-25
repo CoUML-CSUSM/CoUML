@@ -1,28 +1,27 @@
-/*
-using RootObject;
-using RelationshipCollection;
-using User;
-using OperationCollection;
-using AttributeCollection;
-*/
+using CoUML_app.Models;
 
+namespace CoUML_app.Models
+{
+	abstract class Component : DiagramElement{
+		string compName;
+		ICollection<Relationship> relations;
+	}
 
-abstract class Component : RootObject{
-    User editor;
-    string compName;
-    RelationshipCollection relations;
+	class Enumeration : Component{
+		ICollection<string> Enums;
+	}
+	class Interface : Component{
+		ICollection<Operation> Operations;
+	}
+
+	class AbstractClass : Component{
+		ICollection<Operation>  operations;
+		ICollection<Attribute>  attributes;
+	}
+
+	class Class : Component{
+		ICollection<Operation>  operations;
+		ICollection<Attribute> attributes;
+	}
 }
 
-class Interface : Component{
-    OperationCollection operations;
-}
-
-class AbstractClass : Component{
-    OperationCollection operations;
-    AttributeCollection attributes;
-}
-
-class Class : Component{
-    OperationCollection operations;
-    AttributeCollection attributes;
-}

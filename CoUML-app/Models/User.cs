@@ -1,4 +1,4 @@
-namespace CoUML_app.Models.User
+namespace CoUML_app.Models
 {
 	public interface IUser{
 		public string Id{get;}

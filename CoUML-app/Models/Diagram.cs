@@ -1,17 +1,19 @@
-using CoUML_app.Models.User;
-using CoUML_app.Models.Collection;
+using CoUML_app.Models;
 
 
-namespace CoUML_app.Models.Diagram
+namespace CoUML_app.Models
 {
 
 	public class Diagram
 	{
-		public ICollection<DiagramElement> elements { get; set; }= new RelationalCollection();
+		public ICollection<DiagramElement> elements { get; set; } = new RelationalCollection();
 	}
 
 	public abstract class DiagramElement
 	{
-		public IUser user { get; set; } = new NullUser();
+		public IUser User { get; set; } = new NullUser();
+		public string Id { get; }
+
+		public IDimension Dimension { get; set; } = new Dimension();
 	}
 }

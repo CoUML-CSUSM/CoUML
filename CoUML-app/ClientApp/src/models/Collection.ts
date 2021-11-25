@@ -86,13 +86,13 @@ export class GeneralCollection<T> implements ICollection<T>{
  */
 export class RelationalCollection implements ICollection<DiagramElement>{
 	
-	items: Map<string, DiagramElement> = new Map<string, DiagramElement>();
+	private items: Map<string, DiagramElement> = new Map<string, DiagramElement>();
 
 	constructor(collection?: DiagramElement[])
 	{
 		if(collection)
 			this.items = new Map(
-					collection.map(item => [item.signature, item])
+					collection.map(item => [item.id, item])
 				);
 	}
 
@@ -106,7 +106,7 @@ export class RelationalCollection implements ICollection<DiagramElement>{
 	}
 
 	insert(item: DiagramElement): void {
-		this.items.set(item.signature, item);
+		this.items.set(item.id, item);
 	}
 
 	remove(signature: string): DiagramElement | null 
@@ -140,7 +140,7 @@ export class RelationalCollection implements ICollection<DiagramElement>{
 	}
 
 	hasNext():boolean{
-		return this._collection.items.length > this._position+1;
+		return  this._position < this._collection.size;
 	}
 	getNext():T{
 		if(this.hasNext){
@@ -148,7 +148,7 @@ export class RelationalCollection implements ICollection<DiagramElement>{
 		}
 	}
 	hasPrevious():boolean{
-		return this._position-1 > 0;
+		return this._position > 0;
 	}
 	getPrevious():T{
 		if(this.hasPrevious){

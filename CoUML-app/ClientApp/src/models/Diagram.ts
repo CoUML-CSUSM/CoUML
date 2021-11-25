@@ -8,7 +8,7 @@ export class Diagram
 }
 export abstract class DiagramElement{
 	editor: User.IUser = new User.NullUser();
-	signature: string = "";
-	dimension: Dimension.IDimension = new Dimension.NullDimension();
+	id: string = "";
+	dimension: Dimension.IDimension = new Dimension.Dimension();
 }
 
