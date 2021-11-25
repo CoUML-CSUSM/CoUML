@@ -19,7 +19,7 @@ namespace CoUML_app.Controllers.Hubs
         Task testInterfaceMethod(string message);
     }
 
-/// data structure to store active users
+    /// data structure to store active users
     public class ConnectionMap<T>
     {
         /// <summary>
