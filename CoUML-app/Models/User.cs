@@ -8,7 +8,7 @@ namespace CoUML_app.Models
 	{
 		private string _id;
 
-		User(string id)
+		public User(string id)
 		{
 			this._id = id;
 		}

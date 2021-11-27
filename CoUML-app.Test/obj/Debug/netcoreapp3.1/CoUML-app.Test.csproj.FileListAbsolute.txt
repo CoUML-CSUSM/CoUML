@@ -1,0 +1,5 @@
+/Users/smurph/Documents/CoUML/CoUML/CoUML-app.Test/obj/Debug/netcoreapp3.1/CoUML-app.Test.csproj.AssemblyReference.cache
+/Users/smurph/Documents/CoUML/CoUML/CoUML-app.Test/obj/Debug/netcoreapp3.1/CoUML-app.Test.GeneratedMSBuildEditorConfig.editorconfig
+/Users/smurph/Documents/CoUML/CoUML/CoUML-app.Test/obj/Debug/netcoreapp3.1/CoUML-app.Test.AssemblyInfoInputs.cache
+/Users/smurph/Documents/CoUML/CoUML/CoUML-app.Test/obj/Debug/netcoreapp3.1/CoUML-app.Test.AssemblyInfo.cs
+/Users/smurph/Documents/CoUML/CoUML/CoUML-app.Test/obj/Debug/netcoreapp3.1/CoUML-app.Test.csproj.CoreCompileInputs.cache
