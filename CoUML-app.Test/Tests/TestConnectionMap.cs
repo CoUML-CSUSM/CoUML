@@ -39,5 +39,8 @@ From Directory:
 
 run dotnet test ../CoUML-app.Test/CoUML-app.Test.csproj  
 ../CoUML-app.Test/CoUML-app.Test.csproj 
+ 
+ links:
+https://www.automatetheplanet.com/mstest-cheat-sheet/
 
 */
