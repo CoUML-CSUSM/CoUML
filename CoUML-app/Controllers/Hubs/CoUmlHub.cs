@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
+using CoUML_app.Models;
 
 /**
 https://docs.microsoft.com/en-us/aspnet/signalr/overview/guide-to-the-api/working-with-groups
@@ -20,14 +21,14 @@ namespace CoUML_app.Controllers.Hubs
     }
 
     /// data structure to store active users
-    public class ConnectionMap<T>
+    public class ConnectionMap<CID, CON>
     {
         /// <summary>
         /// the repo of active connections
         /// </summary>
         /// <typeparam name="T">connectionId: string</typeparam>
         /// <typeparam name="T">value: string</typeparam>
-        private readonly Dictionary<T, T> _connections = new Dictionary<T, T>();
+        private readonly Dictionary<CID, CON> _connections = new Dictionary<CID, CON>();
 
         /// <summary>
         /// get the count of client connections in the repo
@@ -51,7 +52,7 @@ namespace CoUML_app.Controllers.Hubs
         /// <param name="value">
         ///     \! not currently used - a value to associate with the connectionId
         /// </param>
-        public void Add(T connectionId, T value)
+        public void Add(CID connectionId, CON value)
         {
             lock(_connections)
             {
@@ -65,7 +66,7 @@ namespace CoUML_app.Controllers.Hubs
         /// </summary>
         /// <param name="connectionId">the id of the connection</param>
         /// <returns>true if sucsessfully removed</returns>
-        public bool Remove(T connectionId)
+        public bool Remove(CID connectionId)
         {
             bool isItemRemoved = false;
             lock(_connections)
@@ -81,9 +82,9 @@ namespace CoUML_app.Controllers.Hubs
         /// </summary>
         /// <param name="connectionId">the connectionId of the client connection</param>
         /// <returns>true: connectionId is in repo</returns>
-        public bool IsConnected(T connectionId)
+        public bool IsConnected(CID connectionId)
         {
-            T temValueHolder;
+            CON temValueHolder;
             return _connections.TryGetValue(connectionId, out temValueHolder);
         }
 
@@ -96,7 +97,7 @@ namespace CoUML_app.Controllers.Hubs
         /// </summary>
         /// <typeparam name="string"></typeparam>
         /// <returns></returns>
-        private readonly static ConnectionMap<string> _connections = new ConnectionMap<string>();
+        private readonly static ConnectionMap<string, IUser> _connections = new ConnectionMap<string, IUser>();
         
         
         /// <summary>
@@ -107,7 +108,7 @@ namespace CoUML_app.Controllers.Hubs
         public override Task OnConnectedAsync()
         {
             string connectionId = Context.ConnectionId;
-            string name = Context.User.Identity.Name;
+            IUser name = new User(connectionId);
             _connections.Add(connectionId, name);
 
             TestCall(connectionId);
