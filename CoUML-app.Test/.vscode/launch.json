@@ -6,26 +6,9 @@
 	"configurations": [
 		{
 			"command": "dotnet test CoUML-app.Test.csproj --configuration Release",
-			"name": "dotnet test",
+			"name": "[Unit Test] .NET CoUML-app.Test ",
 			"request": "launch",
 			"type": "node-terminal"
-		},
-		{
-			"name": ".NET Core Launch (console)",
-			"type": "coreclr",
-			"request": "launch",
-			"preLaunchTask": "build",
-			"program": "${workspaceFolder}/bin/Debug/net5.0/CoUML-app.Test.dll",
-			"args": [],
-			"cwd": "${workspaceFolder}",
-			"stopAtEntry": false,
-			"console": "internalConsole"
-		},
-		{
-			"name": ".NET Core Attach",
-			"type": "coreclr",
-			"request": "attach",
-			"processId": "${command:pickProcess}"
 		}
 	]
 }
