@@ -134,7 +134,7 @@ namespace CoUML_app.Controllers.Hubs
         /// <param name="connectionid">connectionId of client being called</param>
         public void TestCall(string connectionid)
         {
-            Clients.Client(connectionid).testInterfaceMethod("this is the test message :D");
+            Clients.Client(connectionid).testInterfaceMethod(connectionid + ": this is the test message :D");
         }
 
     }
