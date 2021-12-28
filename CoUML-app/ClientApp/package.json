@@ -39,7 +39,8 @@
     "@microsoft/signalr": "^6.0.0",
     "@types/signalr": "^2.2.37",
     "primeicons": "^5.0.0",
-    "primeng": "^12.0.0"
+    "primeng": "^12.0.0",
+    "automerge": "1.0.1-preview.6"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^12.0.0",

@@ -2,20 +2,20 @@ namespace CoUML_app.Models
 {
 
 	public class Relationship : DiagramElement{
-		RelationshipType type;
-		Component fromComponent;
-		Component toComponent;
-		ICollection<Attribute> attributes;
+		public RelationshipType type {get; set;}
+		public Component fromComponent {get; set;}
+		public Component toComponent {get; set;}
+		public ICollection<Attribute> attributes;
 	}
 
 
 	public struct Attribute{
-		VisabilityType visability {get; set;}
-		string name{get; set;}
-		Datatype type{get; set;}
-		Multiplicity multiplicity{get; set;}
-		string defaultName {get; set;}
-		string propertyString {get; set;}
+		public VisabilityType visability {get; set;}
+		public string name{get; set;}
+		public DataType type{get; set;}
+		public Multiplicity multiplicity{get; set;}
+		public string defaultValue {get; set;}
+		public string propertyString {get; set;}
 	}
 
 	public struct Multiplicity
@@ -26,11 +26,11 @@ namespace CoUML_app.Models
 	}
 
 	public struct Operation{
-		VisabilityType visability {get; set;}
-		string name{get; set;}
-		ICollection<Attribute> parameters{get; set;}
-		Datatype returnType{get; set;}
-		string propertyString {get; set;}
+		public VisabilityType visability {get; set;}
+		public string name{get; set;}
+		public ICollection<Attribute> parameters{get; set;}
+		public DataType returnType{get; set;}
+		public string propertyString {get; set;}
 	}
 
 

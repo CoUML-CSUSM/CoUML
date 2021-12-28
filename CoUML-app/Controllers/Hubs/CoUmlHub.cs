@@ -1,21 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.SignalR;
-using System.Threading.Tasks;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Microsoft.AspNetCore.SignalR;
+    using System.Threading.Tasks;
 
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
 
-using CoUML_app.Models;
+    using CoUML_app.Models;
 
-/**
-https://docs.microsoft.com/en-us/aspnet/signalr/overview/guide-to-the-api/working-with-groups
-https://docs.microsoft.com/en-us/aspnet/signalr/overview/guide-to-the-api/mapping-users-to-connections
+    /**
+    https://docs.microsoft.com/en-us/aspnet/signalr/overview/guide-to-the-api/working-with-groups
+    https://docs.microsoft.com/en-us/aspnet/signalr/overview/guide-to-the-api/mapping-users-to-connections
 
-*/
-namespace CoUML_app.Controllers.Hubs
-{
+    */
+    namespace CoUML_app.Controllers.Hubs
+    {
     public interface ICoUmlClient{
         Task testInterfaceMethod(string message);
     }
@@ -137,5 +137,52 @@ namespace CoUML_app.Controllers.Hubs
             Clients.Client(connectionid).testInterfaceMethod(connectionid + ": this is the test message :D");
         }
 
+        public Diagram GetDiagram(string projectDiagramName)
+        {
+            if( projectDiagramName != "test")
+            {
+                //TODO: look up real diagram and return
+            }
+
+            return DevUtility.DiagramDefualt();
+                
+        }
+
     }
-}
+
+    static class DevUtility{
+        public static Diagram DiagramDefualt()
+        {
+            Diagram d = new Diagram();
+
+
+            // interface
+            Interface i = new Interface("IShape");
+            Operation io = new Operation();
+                io.visability = VisabilityType.Public;
+                io.name = "draw";
+                io.returnType = new DataType("void");
+            i.Operations.Insert(io);
+
+            // class
+            Class c  =  new Class("Hexigon");
+            Models.Attribute a = new Models.Attribute(); // include "Models." as part of the name because there is also a System.Attribute class. 
+            a.visability = VisabilityType.Private;
+            a.type = new DataType("double");
+            c.attributes.Insert(a);
+
+            // c impliments i
+            Relationship r = new Relationship();
+            r.type = RelationshipType.Realization;
+            r.fromComponent = c;
+            r.toComponent = i;
+
+            d.elements.Insert(i);
+            d.elements.Insert(c);
+            d.elements.Insert(r);            
+
+            return d;
+        }
+
+    }
+    }

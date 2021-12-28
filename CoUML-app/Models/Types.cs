@@ -9,17 +9,33 @@ namespace CoUML_app.Models
 		LocalScope=5//
 	}
 
-	public struct Datatype{
-		public string DataType { get; set; }
+	public struct DataType{
+		public string dataType { get; set; }
+		public DataType( string dt)
+		{
+			dataType = dt;
+		}
 	}
 
 
-	enum RelationshipType{
+	public enum RelationshipType{
+		/// F uses a T  [F] - - - > [T]
 		Dependency,
+
+		/// F owns a T 	[F]---------[T]
 		Association,
+
+		/// F has a T 	[F]< >-------[T]
 		Aggregation,
+
+		/// T is a part of F	[F]<#>-----[T]
 		Composistion,
-		Generalization
+
+		/// F extends T 	[F]-------|>[T]
+		Generalization,
+
+		/// F impliments T 	[F]- - - |>[T]
+		Realization
 	}
 
 
