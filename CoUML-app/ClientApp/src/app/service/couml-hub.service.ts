@@ -41,14 +41,16 @@ export class CoUmlHubService{
 
 	public commit(changes: Automerge.BinaryChange[])
 	{
+		this.log.log(CoUmlHubService.name, "commit")
 		this.coUmlHubConnection.invoke("Push", changes);
 	}
-	
+
 }
 
 export class ConsoleLogger{
-	public log(className: string, functionName: string, message?:string){
+	public log(className: string, functionName: string, message?){
 		let format = "color: HotPink; font-size:1.25em;"
-		console.log("%c%s::%s(...)\n\t%s",format, className, functionName, message?message:'');
+		console.log("%c%s::%s(...)\n\t%s",format, className, functionName);
+		console.log(message, 2, undefined);
 	}
 }

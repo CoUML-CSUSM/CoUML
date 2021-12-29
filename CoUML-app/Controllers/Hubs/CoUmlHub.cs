@@ -1,5 +1,6 @@
     using System;
     using System.Collections.Generic;
+    using System.Collections.Specialized;
     using System.Linq;
     using Microsoft.AspNetCore.SignalR;
     using System.Threading.Tasks;
@@ -137,6 +138,12 @@
             Clients.Client(connectionid).testInterfaceMethod(connectionid + ": this is the test message :D");
         }
 
+
+        /// <summary>
+        /// find an existing diagram in memory and return it to the requesting client
+        /// </summary>
+        /// <param name="projectDiagramName">somthing to identify the diagram file by</param>
+        /// <returns>the diagram requested</returns>
         public Diagram GetDiagram(string projectDiagramName)
         {
             if( projectDiagramName != "test")
@@ -146,6 +153,11 @@
 
             return DevUtility.DiagramDefualt();
                 
+        }
+
+        public void Push(sbyte[] changes)
+        {
+            // TODO: changes get pushed from client to server to be logged and sent backout to other clients
         }
 
     }
