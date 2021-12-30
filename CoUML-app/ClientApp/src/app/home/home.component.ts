@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { CoUmlHubService } from '../service/couml-hub.service';
 

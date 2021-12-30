@@ -5,17 +5,17 @@ import * as Automerge from 'automerge';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 
 
-@Injectable({
-	providedIn: "root"
-})
+@Injectable()
 export class CoUmlHubService{
 	private _coUmlHubConnection: signalR.HubConnection;
 	private _url = 'https://localhost:5001/couml';
 
+	public log: ConsoleLogger;
 	private _projectDeveloper: ProjectDeveloper = null;
 
-	constructor(public log: ConsoleLogger)
+	constructor()
 	{
+		this.log = new ConsoleLogger();
 		this._coUmlHubConnection = new signalR.HubConnectionBuilder()
 				.withUrl(this._url)
 				.build();

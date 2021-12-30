@@ -9,6 +9,7 @@ import { ProjectDeveloper } from '../controller/project-developer.controller';
 @Component({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
+  providers: [ProjectDeveloper]
 })
 export class EditorComponent implements AfterViewInit, OnInit{
 
