@@ -16,7 +16,11 @@ import { EditorComponent } from './editor/editor.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 
 import { CoUmlHubService } from './service/couml-hub.service';
+import { ProjectDeveloper } from './controller/project-developer.controller';
+
+/*PrimeNG Imported modules */
 import { ButtonModule } from 'primeng/button';
+import {InputTextModule} from 'primeng/inputtext';
 
 
 @NgModule({
@@ -42,9 +46,11 @@ import { ButtonModule } from 'primeng/button';
       { path: 'fetch-data', component: FetchDataComponent },
     ]),
     
-    ButtonModule
+    ButtonModule,
+    InputTextModule
   ],
   providers: [
+    ProjectDeveloper,
     CoUmlHubService
   ],
   bootstrap: [AppComponent]

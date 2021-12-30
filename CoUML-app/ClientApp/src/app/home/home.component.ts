@@ -18,10 +18,6 @@ export class HomeComponent {
 
 	constructor(public coUmlConnection: CoUmlHubService) {}
 
-	public connectPButton(){
-		console.log(`HomeComponent::connectPButton(e)`);
-		this.coUmlConnection.startConnection();
-	}
 	
 }
 

@@ -2,48 +2,72 @@ import { Injectable } from '@angular/core';
 import * as signalR from "@microsoft/signalR";
 import { Diagram } from 'src/models/Diagram';
 import * as Automerge from 'automerge';
+import { ProjectDeveloper } from '../controller/project-developer.controller';
 
 
 @Injectable({
 	providedIn: "root"
 })
 export class CoUmlHubService{
-	private coUmlHubConnection: signalR.HubConnection;
+	private _coUmlHubConnection: signalR.HubConnection;
 	private _url = 'https://localhost:5001/couml';
+
+	private _projectDeveloper: ProjectDeveloper = null;
 
 	constructor(public log: ConsoleLogger)
 	{
-		this.coUmlHubConnection = new signalR.HubConnectionBuilder()
+		this._coUmlHubConnection = new signalR.HubConnectionBuilder()
 				.withUrl(this._url)
 				.build();
+		this.startConnection();
+	}
+
+	public subscribe(projectDeveloper: ProjectDeveloper): void
+	{
+		if(!this._projectDeveloper)
+			this._projectDeveloper = projectDeveloper;
 	}
 
 	public startConnection()
 	{
 		console.log(`CoUmlHubService::startConnection()`);
 
-		this.coUmlHubConnection
+		this._coUmlHubConnection
 				.start()
 				.then(()=> this.log.log(CoUmlHubService.name,"startConnection", `Connections started with URL: ${this._url}`))
 				.catch((err) => this.log.log(CoUmlHubService.name,"startConnection",'Error while starting connection: ' + err));
 
-		this.coUmlHubConnection.on("testInterfaceMethod", (responce)=>{
+		// listen for *test*
+		this._coUmlHubConnection.on("testInterfaceMethod", (responce)=>{
 			console.log(`testing responce: ${responce}`);
+		});
+
+		// listen for changes
+		this._coUmlHubConnection.on("Dispatch", (changes)=>{
+			this.dispatch(changes);
 		});
 	}
 
-	public openDiagram(): Promise<Diagram>
+	public fetch(dId: string ): Promise<Diagram>
 	{
-		//function prototype::	public Daigram GetDiagram( string projectDiagramName){...}
-		let diagram: Diagram;
-		return this.coUmlHubConnection.invoke<Diagram>('GetDiagram','test')
+		return this._coUmlHubConnection.invoke<Diagram>('Fetch','test'); // test diagram
+		// return this._coUmlHubConnection.invoke<Diagram>('Fetch',dId); 
 	}
 
 	public commit(changes: Automerge.BinaryChange[])
 	{
 		this.log.log(CoUmlHubService.name, "commit")
-		this.coUmlHubConnection.invoke("Push", changes);
+		this._coUmlHubConnection.invoke("Push", changes);
 	}
+
+	public dispatch(changes: Automerge.BinaryChange[])
+	{
+		if(this._projectDeveloper)
+			this._projectDeveloper.applyChange(changes);
+	}
+
+
+
 
 }
 

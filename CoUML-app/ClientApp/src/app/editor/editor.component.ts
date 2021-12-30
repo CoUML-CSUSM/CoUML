@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ProjectDeveloper } from '../controller/project-developer.controller';
 // import mx from './mxgraph';
 // import { mxGraph, mxGraphModel } from 'mxgraph';
 
@@ -13,16 +14,18 @@ export class EditorComponent implements AfterViewInit, OnInit{
 
 	private graph: mxGraph;
 	private graph2: mxGraph;
+	diagram_description: string;
+	diagramId: string;
 	
 	@ViewChild('container', { read: ElementRef, static: true })
 	public container: ElementRef<HTMLElement>;
 
 	@ViewChild('container2', { read: ElementRef, static: true })
 	public container2: ElementRef<HTMLElement>;
-	// constructor() {
-	// 	if(mx.mxClient.isBrowserSupported()) {
-	// 		console.log('Yes! Yes!');
-	// 	}
+	constructor(private _projectDeveloper: ProjectDeveloper) {
+		// if(mx.mxClient.isBrowserSupported()) {
+		// 	console.log('Yes! Yes!');
+		// }
 
 	// 	var graph: mxGraph = new mx.mxGraph(this.container);
 	// 	const model: mxGraphModel = graph.getModel();
@@ -32,7 +35,7 @@ export class EditorComponent implements AfterViewInit, OnInit{
 	// 	} finally {
 	// 		model.endUpdate();
 	// 	}
-	// }
+	}
 
 	public ngAfterViewInit() {
 		this.graph2 = new mxGraph(this.container2.nativeElement);
@@ -222,6 +225,14 @@ export class EditorComponent implements AfterViewInit, OnInit{
 				this.graph.getModel().endUpdate();
 			}
 		}
+	}
+
+	//***************************************************/
+
+	public open()
+	{
+		this._projectDeveloper.open(this.diagramId);
+		this.diagram_description = this._projectDeveloper.describe();
 	}
 }
 

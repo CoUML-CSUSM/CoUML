@@ -19,17 +19,18 @@
     {
     public interface ICoUmlClient{
         Task testInterfaceMethod(string message);
+        Task Dispatch(sbyte[] changes);
     }
 
     /// data structure to store active users
-    public class ConnectionMap<CID, CON>
+    public class ConnectionMap<CID, User>
     {
         /// <summary>
         /// the repo of active connections
         /// </summary>
-        /// <typeparam name="T">connectionId: string</typeparam>
-        /// <typeparam name="T">value: string</typeparam>
-        private readonly Dictionary<CID, CON> _connections = new Dictionary<CID, CON>();
+        /// <typeparam name="CID">connectionId: string</typeparam>
+        /// <typeparam name="DID">value: string</typeparam>
+        private readonly Dictionary<CID, User> _connections = new Dictionary<CID, User>();
 
         /// <summary>
         /// get the count of client connections in the repo
@@ -50,15 +51,16 @@
         ///     the client id retrieved from the hub context
         ///     > Context.ConnectionId
         /// </param>
-        /// <param name="value">
+        /// <param name="user">
         ///     \! not currently used - a value to associate with the connectionId
         /// </param>
-        public void Add(CID connectionId, CON value)
+        public void Add(CID connectionId, User user)
         {
             lock(_connections)
             {
-                if(!IsConnected(connectionId))
-                    _connections.Add(connectionId, value);
+                if(!_connections.TryAdd(connectionId, user)){
+                    //TODO: error because tryadd failed
+                }
             }
         }
 
@@ -85,8 +87,16 @@
         /// <returns>true: connectionId is in repo</returns>
         public bool IsConnected(CID connectionId)
         {
-            CON temValueHolder;
+            User temValueHolder;
             return _connections.TryGetValue(connectionId, out temValueHolder);
+        }
+
+        public User GetUser(CID connectionId)
+        {
+            User user;
+            _connections.TryGetValue(connectionId, out user);
+            return user;
+
         }
 
 
@@ -125,6 +135,8 @@
         public override Task OnDisconnectedAsync(Exception exception)
         {
             string connectionId = Context.ConnectionId;
+            
+            // Groups.RemoveFromGroupAsync(connectionId)
             _connections.Remove(connectionId);
             return base.OnDisconnectedAsync(exception);
         }
@@ -142,11 +154,14 @@
         /// <summary>
         /// find an existing diagram in memory and return it to the requesting client
         /// </summary>
-        /// <param name="projectDiagramName">somthing to identify the diagram file by</param>
+        /// <param name="dId">somthing to identify the diagram file by</param>
         /// <returns>the diagram requested</returns>
-        public Diagram GetDiagram(string projectDiagramName)
+        public Diagram Fetch(string dId)
         {
-            if( projectDiagramName != "test")
+            //attacha as a listener to this diagram
+            Groups.AddToGroupAsync(Context.ConnectionId,dId);
+            
+            if( dId != "test")
             {
                 //TODO: look up real diagram and return
             }
@@ -155,9 +170,14 @@
                 
         }
 
-        public void Push(sbyte[] changes)
+        public void Push(string dId, sbyte[] changes)
         {
             // TODO: changes get pushed from client to server to be logged and sent backout to other clients
+        }
+
+        public void Dispatch(string dId, sbyte[] changes)
+        {
+            Clients.Group(dId).Dispatch(changes);
         }
 
     }

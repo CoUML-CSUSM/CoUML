@@ -1,25 +1,35 @@
+import { Injectable } from '@angular/core';
 import { Diagram } from "src/models/Diagram";
 import { CoUmlHubService } from "../service/couml-hub.service";
 import * as Automerge from 'automerge';
 
+@Injectable()
 export class ProjectDeveloper{
 
 	projectDiagram: Automerge.FreezeObject<Diagram>;
 	recentPatch: Automerge.Patch;
 	
-	constructor( private s_CoUmlHub: CoUmlHubService)
+	constructor(private _CoUmlHub: CoUmlHubService)	{}
+
+	public open( id: string)
 	{
-		this.s_CoUmlHub.openDiagram() //get diagram from server
+		this._CoUmlHub.fetch( id ) //get diagram from server
 			.then( (diagram) => {
+				this._CoUmlHub.subscribe(this);
 				this.projectDiagram = Automerge.from(diagram);
 				this.describe();
 			} ); // create AMDiagram from diagram 
 	}
 
+	public close ()
+	{
+		//TODO: close the project and remove yourself from the group
+	}
+
 	public makeChange(diagram: Automerge.FreezeObject<Diagram>)
 	{
 		let changes = Automerge.getChanges(this.projectDiagram, diagram);
-		this.s_CoUmlHub.commit(changes);
+		this._CoUmlHub.commit(changes);
 
 		this.describe();
 	}
@@ -27,23 +37,25 @@ export class ProjectDeveloper{
 	public applyChange(diagram: Automerge.BinaryChange[])
 	{
 		[this.projectDiagram, this.recentPatch] = Automerge.applyChanges(this.projectDiagram, diagram);
-		/* log */ this.s_CoUmlHub.log.log(ProjectDeveloper.name, "applyChanges", JSON.stringify(this.recentPatch) );
+
+		/* log */ this._CoUmlHub.log.log(ProjectDeveloper.name, "applyChanges", JSON.stringify(this.recentPatch) );
 
 		this.describe();
 
 		//TODO: render on screen
 	}
 
-	public describe()
+	public describe():string
 	{
 		console.log(`ProjectDeveloper::projectDiagram ->`);
-		console.log(this.projectDiagram, 2, undefined);
+		console.log(this.projectDiagram);
+		return JSON.stringify(this.projectDiagram,undefined,2);
 	}
 
 }
 
 /** * * * * * * * * * * * * * * * * * * * * * * *
- * example code from github
+ * example code from github https://github.com/automerge/automerge
  ** * * * * * * * * * * * * * * * * * * * * * * *
 
  // On one node
