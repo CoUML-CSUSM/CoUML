@@ -1,7 +1,7 @@
 namespace CoUML_app.Models
 {
 	public interface IUser{
-		public string Id{get;}
+		public string id{get;}
 	}
 
 	public class User: IUser
@@ -14,7 +14,7 @@ namespace CoUML_app.Models
 			this._id = id;
 		}
 
-		public string Id{
+		public string id{
 			get
 			{
 				return this._id;
@@ -36,7 +36,7 @@ namespace CoUML_app.Models
 
 	public class NullUser: IUser
 	{
-		public string Id
+		public string id
 		{
 			get
 			{

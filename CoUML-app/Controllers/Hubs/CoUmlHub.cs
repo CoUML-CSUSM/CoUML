@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 
 using CoUML_app.Models;
 
+
 /**
 https://docs.microsoft.com/en-us/aspnet/signalr/overview/guide-to-the-api/working-with-groups
 https://docs.microsoft.com/en-us/aspnet/signalr/overview/guide-to-the-api/mapping-users-to-connections
@@ -18,6 +19,9 @@ https://docs.microsoft.com/en-us/aspnet/signalr/overview/guide-to-the-api/mappin
 */
 namespace CoUML_app.Controllers.Hubs
 {
+    ///<summary> 
+    /// functions that can be run on the client from the server
+    /// </summary>
     public interface ICoUmlClient{
         Task testInterfaceMethod(string message);
         Task Dispatch(sbyte[] changes);
@@ -110,11 +114,10 @@ namespace CoUML_app.Controllers.Hubs
         /// <typeparam name="string"></typeparam>
         /// <returns></returns>
         private readonly static ConnectionMap<string, IUser> _connections = new ConnectionMap<string, IUser>();
-        private Diagram testDiagram;
-        public CoUmlHub()
-        {
-            testDiagram = DevUtility.DiagramDefualt();
-        }
+        private static Diagram testDiagram = DevUtility.DiagramDefualt(); // test code here
+        // public CoUmlHub()
+        // {
+        // }
         
         
         /// <summary>
@@ -150,10 +153,10 @@ namespace CoUML_app.Controllers.Hubs
         /// <summary>
         /// test server to client communication
         /// </summary>
-        /// <param name="connectionid">connectionId of client being called</param>
-        public void TestCall(string connectionid)
+        /// <param name="connectionId">connectionId of client being called</param>
+        public void TestCall(string connectionId)
         {
-            Clients.Client(connectionid).testInterfaceMethod(connectionid + ": this is the test message :D");
+            Clients.Client(connectionId).testInterfaceMethod(connectionId + ": this is the test message :D");
         }
 
 
@@ -167,16 +170,16 @@ namespace CoUML_app.Controllers.Hubs
             //attacha as a listener to this diagram
             Groups.AddToGroupAsync(Context.ConnectionId,dId);
 
-            Diagram fechedDiagram = testDiagram; // test code with sample diagram
+            // Diagram fechedDiagram = testDiagram; // test code with sample diagram
             
             if( dId != "test")
             {
                 //TODO: look up real diagram and return
             }
 
-            return JsonConvert.SerializeObject(fechedDiagram, Formatting.Indented, new JsonSerializerSettings
+            return JsonConvert.SerializeObject(testDiagram, Formatting.Indented, new JsonSerializerSettings
                     {
-                        TypeNameHandling = TypeNameHandling.None
+                        TypeNameHandling = TypeNameHandling.Auto
                     });
                 
         }
@@ -193,6 +196,11 @@ namespace CoUML_app.Controllers.Hubs
         public void Dispatch(string dId, sbyte[] changes)
         {
             Clients.Group(dId).Dispatch(changes);
+        }
+
+        public void TriggerBreakPoint()
+        {
+            ;
         }
 
     }
@@ -214,12 +222,12 @@ namespace CoUML_app.Controllers.Hubs
             i.operations.Insert(io);
 
             // class
-            Class c  =  new Class("Hexigon");
+            Class c  =  new Class("Hexagon");
             Models.Attribute a = new Models.Attribute
             {
                 name = "diagonal",
                 visibility = VisibilityType.Private,
-                type = new DataType{ dataType = "doiuble" }
+                type = new DataType{ dataType = "double" }
             };
             c.attributes.Insert(a);
 

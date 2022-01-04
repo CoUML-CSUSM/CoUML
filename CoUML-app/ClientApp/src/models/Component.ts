@@ -1,3 +1,4 @@
+import { UUID } from "automerge";
 import { GeneralCollection, ICollection, RelationalCollection } from "./Collection";
 import { DiagramElement } from "./Diagram";
 import { Operation, Attribute} from "./Subcomponent";
@@ -14,7 +15,7 @@ export abstract class Component extends DiagramElement
 {
     name:string;
     relations:ICollection<DiagramElement> = new RelationalCollection([]);
-    constructor( name: string)
+    constructor(name: string)
     {
         super();
         this.name = name;

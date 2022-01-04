@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as signalR from "@microsoft/signalR";
-import { Diagram as string } from 'src/models/Diagram';
+import { Diagram } from 'src/models/Diagram';
 import * as Automerge from 'automerge';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 
@@ -38,8 +38,8 @@ export class CoUmlHubService{
 				.catch((err) => this.log.log(CoUmlHubService.name,"startConnection",'Error while starting connection: ' + err));
 
 		// listen for *test*
-		this._coUmlHubConnection.on("testInterfaceMethod", (responce)=>{
-			console.log(`testing responce: ${responce}`);
+		this._coUmlHubConnection.on("testInterfaceMethod", (response: string)=>{
+			console.log(`testing responce: ${response}`);
 		});
 
 		// listen for changes
@@ -48,8 +48,14 @@ export class CoUmlHubService{
 		});
 	}
 
+	/**
+	 * 
+	 * @param dId get Diagram from server
+	 * @returns 
+	 */
 	public fetch(dId: string ): Promise<string>
 	{
+		// calling function : public string Fetch(string dId)
 		return this._coUmlHubConnection.invoke<string>('Fetch','test'); // test diagram
 		// return this._coUmlHubConnection.invoke<Diagram>('Fetch',dId); 
 	}
@@ -67,6 +73,10 @@ export class CoUmlHubService{
 	}
 
 
+	public triggerBreakPoint()
+	{
+		this._coUmlHubConnection.invoke("TriggerBreakPoint");
+	}
 
 
 }
@@ -78,3 +88,11 @@ export class ConsoleLogger{
 		console.log(message, 2, undefined);
 	}
 }
+
+
+/*
+
+for (int i = 0; i< n;i++){...}
+
+forEach( (i:int) => {...} );
+*/

@@ -4,7 +4,7 @@ namespace CoUML_app.Models
 	{
 		public int x { get; set; }
 		public int y { get; set; }
-		public int w { get; set; }
+		public int width { get; set; }
 		public int height { get; set; }
 	}
 	public class Dimension: IDimension
@@ -14,11 +14,11 @@ namespace CoUML_app.Models
 			this.x = x;
 			this.y = y;
 			this.height = h;
-			this.w = w;
+			this.width = w;
 		}
 		public int x { get; set; }
 		public int y { get; set; }
-		public int w { get; set; }
+		public int width { get; set; }
 		public int height { get; set; }
 	}
 

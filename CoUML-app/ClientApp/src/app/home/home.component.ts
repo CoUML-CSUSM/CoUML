@@ -18,6 +18,11 @@ export class HomeComponent {
 
 	constructor(public coUmlConnection: CoUmlHubService) {}
 
+  break()
+  {
+    this.coUmlConnection.triggerBreakPoint();
+  }
+
 	
 }
 

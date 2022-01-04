@@ -6,15 +6,13 @@ import { Class, Diagram, Attribute, Interface, Operation, Relationship, Relation
 @Injectable()
 export class ProjectDeveloper{
 
-	projectDiagram: Automerge.FreezeObject<Diagram>;
+	am_diagram: Automerge.FreezeObject<Diagram>;
+	projectDiagram: Diagram;
 	recentPatch: Automerge.Patch;
 
 	constructor(private _CoUmlHub: CoUmlHubService)	{}
 
-	interface
-
-
-	public openSample()
+		public openSample()
 	{
 		let d = new Diagram();
 		let i: Interface= new Interface("IShape");
@@ -42,7 +40,7 @@ export class ProjectDeveloper{
 		d.elements.insert(r);
 
 
-		this.projectDiagram = Automerge.from(d);
+		this.am_diagram = Automerge.from(d);
 		// console.log(`sample\n${d}`);
 		// console.log(`sample\n${JSON.stringify(d, undefined, 2)}`);
 		// console.log(`Automerge Diagram created with sample\n${this.projectDiagram}`);
@@ -55,11 +53,10 @@ export class ProjectDeveloper{
 		this._CoUmlHub.fetch( id ) //get diagram from server
 			.then( (d) => {
 				this._CoUmlHub.subscribe(this);
-				let diagram: Diagram = JSON.parse(d);
-				this.projectDiagram = Automerge.from(diagram);
-				console.log(`Diagram Recieved\n${diagram}`);
-				console.log(`Automerge Diagram created\n${this.projectDiagram}`);
-				console.log(`sample Diagram described\n${this.describe()}`);
+				this.projectDiagram = JSON.parse(d);
+				this.am_diagram = Automerge.from(this.projectDiagram);
+				console.log(`Diagram \n${JSON.stringify(this.projectDiagram, undefined, 2)}`);
+				console.log(`Automerge Diagram\n${this.describe()}`);
 			} ); // create AMDiagram from diagram 
 	}
 
@@ -68,9 +65,10 @@ export class ProjectDeveloper{
 		//TODO: close the project and remove yourself from the group
 	}
 
-	public makeChange(diagram: Automerge.FreezeObject<Diagram>)
+	public makeChange(diagram: Diagram)
+	// public makeChange(diagram: Automerge.FreezeObject<Diagram>)
 	{
-		let changes = Automerge.getChanges(this.projectDiagram, diagram);
+		let changes = Automerge.getChanges(this.am_diagram, diagram);
 		this._CoUmlHub.commit(changes);
 
 		this.describe();
@@ -78,7 +76,7 @@ export class ProjectDeveloper{
 
 	public applyChange(diagram: Automerge.BinaryChange[])
 	{
-		[this.projectDiagram, this.recentPatch] = Automerge.applyChanges(this.projectDiagram, diagram);
+		[this.am_diagram, this.recentPatch] = Automerge.applyChanges(this.am_diagram, diagram);
 
 		/* log */ this._CoUmlHub.log.log(ProjectDeveloper.name, "applyChanges", JSON.stringify(this.recentPatch) );
 
@@ -89,7 +87,7 @@ export class ProjectDeveloper{
 
 	public describe():string
 	{
-		return JSON.stringify(this.projectDiagram, undefined, 2);
+		return JSON.stringify(this.am_diagram, undefined, 2);
 	}
 }
 

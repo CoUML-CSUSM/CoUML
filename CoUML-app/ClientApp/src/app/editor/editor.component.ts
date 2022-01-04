@@ -234,7 +234,6 @@ export class EditorComponent implements AfterViewInit, OnInit{
 	public open()
 	{
 		this._projectDeveloper.open(this.diagramId);
-		this.diagram_description = this._projectDeveloper.describe();
 	}
 
 	// public sample()
@@ -245,7 +244,7 @@ export class EditorComponent implements AfterViewInit, OnInit{
 
 	public sample()
 	{	
-		let d = this._projectDeveloper.projectDiagram as Diagram;
+		let d = this._projectDeveloper.projectDiagram;
 
 		// class
 		let c: Class  =  new Class("Triangle");
