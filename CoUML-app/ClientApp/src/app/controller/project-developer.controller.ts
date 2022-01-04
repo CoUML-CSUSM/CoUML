@@ -1,23 +1,65 @@
 import { Injectable } from '@angular/core';
-import { Diagram } from "src/models/Diagram";
 import { CoUmlHubService } from "../service/couml-hub.service";
 import * as Automerge from 'automerge';
+import { Class, Diagram, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType as VisibilityType } from 'src/models/DiagramModel';
 
 @Injectable()
 export class ProjectDeveloper{
 
 	projectDiagram: Automerge.FreezeObject<Diagram>;
 	recentPatch: Automerge.Patch;
-	
+
 	constructor(private _CoUmlHub: CoUmlHubService)	{}
+
+	interface
+
+
+	public openSample()
+	{
+		let d = new Diagram();
+		let i: Interface= new Interface("IShape");
+		let  io: Operation = new Operation();
+			io.visibility = VisibilityType.Public;
+			io.name = "draw";
+			io.returnType = {dataType: "void"};
+		i.operations.insert(io);
+
+		// class
+		let c: Class  =  new Class("Hexigon");
+		let a: Attribute = new Attribute();
+		a.visibility = VisibilityType.Private;
+		a.type = {dataType: "double"};
+		c.attributes.insert(a);
+
+		// c impliments i
+		let r: Relationship = new Relationship();
+		r.type = RelationshipType.Realization;
+		r.from = c;
+		r.to = i;
+
+		d.elements.insert(i);
+		d.elements.insert(c);
+		d.elements.insert(r);
+
+
+		this.projectDiagram = Automerge.from(d);
+		console.log(`sample\n${d}`);
+		console.log(`sample\n${JSON.stringify(d, undefined, 2)}`);
+		console.log(`Automerge Diagram created with sample\n${this.projectDiagram}`);
+		console.log(`sample Diagram described\n${this.describe()}`);
+	}
 
 	public open( id: string)
 	{
+		
 		this._CoUmlHub.fetch( id ) //get diagram from server
-			.then( (diagram) => {
+			.then( (d) => {
 				this._CoUmlHub.subscribe(this);
+				let diagram: Diagram = JSON.parse(d);
 				this.projectDiagram = Automerge.from(diagram);
-				this.describe();
+				console.log(`Diagram Recieved\n${diagram}`);
+				console.log(`Automerge Diagram created\n${this.projectDiagram}`);
+				console.log(`sample Diagram described\n${this.describe()}`);
 			} ); // create AMDiagram from diagram 
 	}
 
@@ -47,11 +89,8 @@ export class ProjectDeveloper{
 
 	public describe():string
 	{
-		console.log(`ProjectDeveloper::projectDiagram ->`);
-		console.log(this.projectDiagram);
-		return JSON.stringify(this.projectDiagram,undefined,2);
+		return JSON.stringify(this.projectDiagram, undefined, 2);
 	}
-
 }
 
 /** * * * * * * * * * * * * * * * * * * * * * * *

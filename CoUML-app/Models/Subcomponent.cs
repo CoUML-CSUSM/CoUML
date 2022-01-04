@@ -1,16 +1,19 @@
+using  System;
 namespace CoUML_app.Models
 {
 
 	public class Relationship : DiagramElement{
 		public RelationshipType type {get; set;}
-		public Component fromComponent {get; set;}
-		public Component toComponent {get; set;}
-		public ICollection<Attribute> attributes;
+		public Guid fromComponent {get; set;}
+		public Component from{set{fromComponent = value.Id;}}
+		public Guid toComponent {get; set;}
+		public Component to{set{toComponent = value.Id;}}
+		public ICollection<Attribute> attributes = new GeneralCollection<Attribute>();
 	}
 
 
 	public struct Attribute{
-		public VisabilityType visability {get; set;}
+		public VisibilityType visibility {get; set;}
 		public string name{get; set;}
 		public DataType type{get; set;}
 		public Multiplicity multiplicity{get; set;}
@@ -26,7 +29,7 @@ namespace CoUML_app.Models
 	}
 
 	public struct Operation{
-		public VisabilityType visability {get; set;}
+		public VisibilityType visibility {get; set;}
 		public string name{get; set;}
 		public ICollection<Attribute> parameters{get; set;}
 		public DataType returnType{get; set;}

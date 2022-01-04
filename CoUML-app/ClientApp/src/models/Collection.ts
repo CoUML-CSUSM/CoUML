@@ -87,13 +87,16 @@ export class GeneralCollection<T> implements ICollection<T>{
 export class RelationalCollection implements ICollection<DiagramElement>{
 	
 	private items: Map<string, DiagramElement> = new Map<string, DiagramElement>();
+	toJSON(): any {
+		return {
+			items: Object.fromEntries(this.items),
+		}
+	 }
 
-	constructor(collection?: DiagramElement[])
+	constructor(collection: DiagramElement[])
 	{
-		if(collection)
-			this.items = new Map(
-					collection.map(item => [item.id, item])
-				);
+		for(let elem of collection)
+			this.insert(elem)
 	}
 
 	iterator(): ICollectionIterator<DiagramElement> 
@@ -124,6 +127,7 @@ export class RelationalCollection implements ICollection<DiagramElement>{
 	{
 		return this.items.size
 	}
+
 }
 
 /**

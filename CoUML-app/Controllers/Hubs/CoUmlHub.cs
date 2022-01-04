@@ -1,22 +1,23 @@
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.Specialized;
-    using System.Linq;
-    using Microsoft.AspNetCore.SignalR;
-    using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
+using Microsoft.AspNetCore.SignalR;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
-    using CoUML_app.Models;
+using CoUML_app.Models;
 
-    /**
-    https://docs.microsoft.com/en-us/aspnet/signalr/overview/guide-to-the-api/working-with-groups
-    https://docs.microsoft.com/en-us/aspnet/signalr/overview/guide-to-the-api/mapping-users-to-connections
+/**
+https://docs.microsoft.com/en-us/aspnet/signalr/overview/guide-to-the-api/working-with-groups
+https://docs.microsoft.com/en-us/aspnet/signalr/overview/guide-to-the-api/mapping-users-to-connections
 
-    */
-    namespace CoUML_app.Controllers.Hubs
-    {
+*/
+namespace CoUML_app.Controllers.Hubs
+{
     public interface ICoUmlClient{
         Task testInterfaceMethod(string message);
         Task Dispatch(sbyte[] changes);
@@ -156,7 +157,7 @@
         /// </summary>
         /// <param name="dId">somthing to identify the diagram file by</param>
         /// <returns>the diagram requested</returns>
-        public Diagram Fetch(string dId)
+        public string Fetch(string dId)
         {
             //attacha as a listener to this diagram
             Groups.AddToGroupAsync(Context.ConnectionId,dId);
@@ -166,7 +167,11 @@
                 //TODO: look up real diagram and return
             }
 
-            return DevUtility.DiagramDefualt();
+            string jsonTypeNameAll = JsonConvert.SerializeObject(DevUtility.DiagramDefualt(), Formatting.Indented, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.None
+            });
+            return jsonTypeNameAll;
                 
         }
 
@@ -191,7 +196,7 @@
             // interface
             Interface i = new Interface("IShape");
             Operation io = new Operation();
-                io.visability = VisabilityType.Public;
+                io.visibility = VisibilityType.Public;
                 io.name = "draw";
                 io.returnType = new DataType("void");
             i.Operations.Insert(io);
@@ -199,22 +204,21 @@
             // class
             Class c  =  new Class("Hexigon");
             Models.Attribute a = new Models.Attribute(); // include "Models." as part of the name because there is also a System.Attribute class. 
-            a.visability = VisabilityType.Private;
+            a.visibility = VisibilityType.Private;
             a.type = new DataType("double");
-            c.attributes.Insert(a);
+            c.Attributes.Insert(a);
 
             // c impliments i
             Relationship r = new Relationship();
             r.type = RelationshipType.Realization;
-            r.fromComponent = c;
-            r.toComponent = i;
+            r.from = c;
+            r.to = i;
 
-            d.elements.Insert(i);
-            d.elements.Insert(c);
-            d.elements.Insert(r);            
+            d.Elements.Insert(i);
+            d.Elements.Insert(c);
+            d.Elements.Insert(r);            
 
             return d;
         }
-
     }
-    }
+}

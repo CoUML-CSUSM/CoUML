@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as signalR from "@microsoft/signalR";
-import { Diagram } from 'src/models/Diagram';
+import { Diagram as string } from 'src/models/Diagram';
 import * as Automerge from 'automerge';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 
@@ -48,9 +48,9 @@ export class CoUmlHubService{
 		});
 	}
 
-	public fetch(dId: string ): Promise<Diagram>
+	public fetch(dId: string ): Promise<string>
 	{
-		return this._coUmlHubConnection.invoke<Diagram>('Fetch','test'); // test diagram
+		return this._coUmlHubConnection.invoke<string>('Fetch','test'); // test diagram
 		// return this._coUmlHubConnection.invoke<Diagram>('Fetch',dId); 
 	}
 

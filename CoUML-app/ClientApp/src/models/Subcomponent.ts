@@ -1,6 +1,6 @@
 import { DiagramElement } from "./Diagram";
 import { Component } from "./Component";
-import { VisabilityType, DataType, RelationshipType } from "./Types";
+import { VisibilityType, DataType, RelationshipType } from "./Types";
 import { ICollection } from "./Collection";
 /**
  * describ a relationship between a set of diagram elements
@@ -19,9 +19,16 @@ import { ICollection } from "./Collection";
  */
 export class Relationship extends DiagramElement {
 	type: RelationshipType;
-	fromComponent: Component;
-	toComponent: Component;
+	fromComponent: string;
+	toComponent: string;
 	atributes: ICollection<Attribute>;
+
+	set from( component: Component){
+		this.fromComponent = component.id
+	}
+	set to( component: Component){
+		this.toComponent = component.id
+	}
 }
 
 /**
@@ -48,7 +55,7 @@ export class Multiplicity
  *      private DataType myAttribute = new DefaultObject<DataType>();
  */
 export class Attribute{
-	visibility: VisabilityType;
+	visibility: VisibilityType;
 	name: string;
 	type: DataType;             //not sure if we want enums we can make an abstract rn
 	multiplicity: Multiplicity; //diagram says int[10..-1]=null idk. no car in ts. make * -1
@@ -65,7 +72,7 @@ export class Attribute{
  *      public DataType foo( DataType p, DataType q){}
  */
  export class Operation{
-	visability: VisabilityType;
+	visibility: VisibilityType;
 	name: string;
 	parameters: ICollection<Attribute>;
 	returnType: DataType;

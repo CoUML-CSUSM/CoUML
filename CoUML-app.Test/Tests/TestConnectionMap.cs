@@ -2,7 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using CoUML_app.Controllers.Hubs;
 
-namespace Test.ConnectionMap
+namespace CoUML_app.Test.Test.ConnectionMap
 {
 	[TestClass]
 	public class TestConnectionMap

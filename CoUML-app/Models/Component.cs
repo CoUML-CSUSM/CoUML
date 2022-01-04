@@ -3,12 +3,12 @@ using CoUML_app.Models;
 namespace CoUML_app.Models
 {
 	public abstract class Component : DiagramElement{
-		protected string compName;
-		ICollection<Relationship> relations;
+		protected string compName { get;set; }
+		ICollection<DiagramElement> Relations = new RelationalCollection();
 	}
 
 	public class Enumeration : Component{
-		public ICollection<string> Enums;
+		public ICollection<string> Enums { get;set; } = new GeneralCollection<string>();
 
 		public Enumeration(string name)
 		{
@@ -16,7 +16,7 @@ namespace CoUML_app.Models
 		}
 	}
 	public class Interface : Component{
-		public ICollection<Operation> Operations;
+		public ICollection<Operation> Operations { get;set; } = new GeneralCollection<Operation>();
 		public Interface(string name)
 		{
 			this.compName = name;
@@ -24,8 +24,8 @@ namespace CoUML_app.Models
 	}
 
 	public class AbstractClass : Component{
-		public ICollection<Operation>  operations;
-		public ICollection<Attribute>  attributes;
+		public ICollection<Operation>  Operations { get;set; } = new GeneralCollection<Operation>();
+		public ICollection<Attribute>  Attributes { get;set; } = new GeneralCollection<Attribute>();
 		
 		public AbstractClass(string name)
 		{
@@ -34,8 +34,8 @@ namespace CoUML_app.Models
 	}
 
 	public class Class : Component{
-		public ICollection<Operation>  operations;
-		public ICollection<Attribute> attributes;
+		public ICollection<Operation> Operations { get;set; } = new GeneralCollection<Operation>();
+		public ICollection<Attribute> Attributes { get;set; } = new GeneralCollection<Attribute>();
 
 		public Class(string name)
 		{

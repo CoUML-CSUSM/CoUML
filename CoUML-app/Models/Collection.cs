@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Converters;
 
 namespace CoUML_app.Models
 {
@@ -19,10 +22,17 @@ namespace CoUML_app.Models
 		public T Remove(string key);
 		public T Remove(int key);
 		public int Size { get;}
+		public List<T> Items{ get; }
+		
 	}
 	public class GeneralCollection<T> : ICollection<T>
 	{
 		private List<T> _items;
+		public List<T> Items{
+			get{
+				return this._items;
+			}
+		}
 
 		/// <summary>
 		/// constructor
@@ -127,7 +137,12 @@ namespace CoUML_app.Models
 
 	public class RelationalCollection: ICollection<DiagramElement>
 	{
-		private Dictionary<string, DiagramElement> _items;
+		private Dictionary<Guid, DiagramElement> _items;
+		public List<DiagramElement> Items{
+			get{
+				return new List<DiagramElement>(this._items.Values);
+			}
+		}
 
 		/// <summary>
 		/// constructor
@@ -135,7 +150,7 @@ namespace CoUML_app.Models
 		/// <param name="collection"> set of diagram Elements</param>
 		public RelationalCollection( DiagramElement[] collection)
 		{
-			this._items = new Dictionary<string, DiagramElement>();
+			this._items = new Dictionary<Guid, DiagramElement>();
 			foreach (DiagramElement item in collection)
 			{
 				this._items.Add(item.Id, item);
@@ -147,7 +162,7 @@ namespace CoUML_app.Models
 		/// </summary>
 		public RelationalCollection()
 		{
-			this._items = new Dictionary<string, DiagramElement>();
+			this._items = new Dictionary<Guid, DiagramElement>();
 		}
 
 		public ICollectionIterator<DiagramElement> Iterator()
@@ -167,8 +182,9 @@ namespace CoUML_app.Models
 		public DiagramElement Remove(string id)
 		{
 			DiagramElement item = default(DiagramElement);
-			if(this._items.TryGetValue(id, out item))
-				this._items.Remove(id);
+			Guid guid = new Guid(id);
+			if(this._items.TryGetValue(guid, out item))
+				this._items.Remove(guid);
 			return item;
 		}
 
@@ -178,7 +194,7 @@ namespace CoUML_app.Models
 			if(index >= 0 && index < Size )
 			{
 				item = (new List<DiagramElement>(this._items.Values)).ToArray()[index];
-				this._items.Remove(item.Id);
+				this._items.Remove(((DiagramElement)item).Id);
 			}
 			return item;
 		}

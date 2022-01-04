@@ -1,4 +1,4 @@
-import { ICollection } from "./Collection";
+import { GeneralCollection, ICollection, RelationalCollection } from "./Collection";
 import { DiagramElement } from "./Diagram";
 import { Operation, Attribute} from "./Subcomponent";
 import { Relationship } from "./Subcomponent";
@@ -13,7 +13,12 @@ import { Relationship } from "./Subcomponent";
 export abstract class Component extends DiagramElement
 {
     compName:string;
-    relations:ICollection<Relationship>;
+    relations:ICollection<DiagramElement> = new RelationalCollection([]);
+    constructor( name: string)
+    {
+        super();
+        this.compName = name;
+    }
 }
 
 /**
@@ -21,7 +26,7 @@ export abstract class Component extends DiagramElement
  */
 export class Enumeration extends Component
 {
-    enums: ICollection<string>;
+    enums: ICollection<string> = new GeneralCollection<string>([]);
 }
 
 /**
@@ -29,7 +34,7 @@ export class Enumeration extends Component
  */
 export class Interface extends Component
 {
-    operations: ICollection<Operation>;
+    operations: ICollection<Operation> = new GeneralCollection<Operation>([]);
 }
 
 /**
@@ -37,8 +42,8 @@ export class Interface extends Component
  */
 export class AbstractClass extends Component
 {
-    operations:ICollection<Operation>;
-    atributes:ICollection<Attribute>;
+    operations:ICollection<Operation> = new GeneralCollection<Operation>([]);
+    attributes:ICollection<Attribute> = new GeneralCollection<Attribute>([]);
 }
 
 /**
@@ -46,6 +51,6 @@ export class AbstractClass extends Component
  */
 export class Class extends Component
 {
-    operations:ICollection<Operation>;
-    atributes:ICollection<Attribute>;
+    operations:ICollection<Operation> = new GeneralCollection<Operation>([]);
+    attributes:ICollection<Attribute> = new GeneralCollection<Attribute>([]);
 }

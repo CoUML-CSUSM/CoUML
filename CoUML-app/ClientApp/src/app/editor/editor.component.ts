@@ -235,5 +235,11 @@ export class EditorComponent implements AfterViewInit, OnInit{
 		this._projectDeveloper.open(this.diagramId);
 		this.diagram_description = this._projectDeveloper.describe();
 	}
+
+	public sample()
+	{
+		this._projectDeveloper.openSample();
+		this.diagram_description = this._projectDeveloper.describe();
+	}
 }
 
