@@ -1,3 +1,5 @@
+import { find } from "tslint/lib/utils";
+import { Component } from "./Component";
 import { DiagramElement } from "./Diagram";
 
 //interface for collections to create iterators
@@ -121,6 +123,23 @@ export class RelationalCollection implements ICollection<DiagramElement>{
 			this.items.delete(relation);
 		}
 		return relation;
+	}
+	
+	get(key: string)
+	{
+		if(this.items.has(key))
+			return this.items.get(key);
+		return this.find(key);
+	}
+	
+	private find(key: string)
+	{
+		this.items.forEach((de: DiagramElement, id: string)=>{
+			if(de instanceof Component){
+				if(key == (de as Component).compName)
+					return de;
+			}
+		});
 	}
 
 	get size(): number 

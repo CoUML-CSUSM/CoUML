@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Class, Diagram, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType as VisibilityType } from 'src/models/DiagramModel';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 // import mx from './mxgraph';
 // import { mxGraph, mxGraphModel } from 'mxgraph';
@@ -236,10 +237,32 @@ export class EditorComponent implements AfterViewInit, OnInit{
 		this.diagram_description = this._projectDeveloper.describe();
 	}
 
+	// public sample()
+	// {
+	// 	this._projectDeveloper.openSample();
+	// 	this.diagram_description = this._projectDeveloper.describe();
+	// }
+
 	public sample()
-	{
-		this._projectDeveloper.openSample();
-		this.diagram_description = this._projectDeveloper.describe();
+	{	
+		let d = this._projectDeveloper.projectDiagram;
+
+		// class
+		let c: Class  =  new Class("Hexigon");
+		let a: Attribute = new Attribute();
+		a.visibility = VisibilityType.Private;
+		a.type = {dataType: "double"};
+		c.attributes.insert(a);
+
+		// c impliments i
+		let r: Relationship = new Relationship();
+		r.type = RelationshipType.Realization;
+		r.from = c;
+		r.to = d.elements.get("IShape");
+
+		d.elements.insert()
+
+		this._projectDeveloper.makeChange(d)
 	}
 }
 

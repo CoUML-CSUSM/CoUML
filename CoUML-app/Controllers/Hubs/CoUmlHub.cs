@@ -110,6 +110,11 @@ namespace CoUML_app.Controllers.Hubs
         /// <typeparam name="string"></typeparam>
         /// <returns></returns>
         private readonly static ConnectionMap<string, IUser> _connections = new ConnectionMap<string, IUser>();
+        private Diagram testDiagram;
+        CoUmlHub()
+        {
+            testDiagram = DevUtility.DiagramDefualt();
+        }
         
         
         /// <summary>
@@ -161,23 +166,28 @@ namespace CoUML_app.Controllers.Hubs
         {
             //attacha as a listener to this diagram
             Groups.AddToGroupAsync(Context.ConnectionId,dId);
+
+            Diagram fechedDiagram = testDiagram; // test code with sample diagram
             
             if( dId != "test")
             {
                 //TODO: look up real diagram and return
             }
 
-            string jsonTypeNameAll = JsonConvert.SerializeObject(DevUtility.DiagramDefualt(), Formatting.Indented, new JsonSerializerSettings
-            {
-                TypeNameHandling = TypeNameHandling.None
-            });
-            return jsonTypeNameAll;
+            return JsonConvert.SerializeObject(fechedDiagram, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.None
+                    });
                 
         }
 
         public void Push(string dId, sbyte[] changes)
         {
             // TODO: changes get pushed from client to server to be logged and sent backout to other clients
+
+            //push changes out to other clients
+            Dispatch(dId, changes);
+
         }
 
         public void Dispatch(string dId, sbyte[] changes)

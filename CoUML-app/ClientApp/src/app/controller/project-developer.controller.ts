@@ -43,10 +43,10 @@ export class ProjectDeveloper{
 
 
 		this.projectDiagram = Automerge.from(d);
-		console.log(`sample\n${d}`);
-		console.log(`sample\n${JSON.stringify(d, undefined, 2)}`);
-		console.log(`Automerge Diagram created with sample\n${this.projectDiagram}`);
-		console.log(`sample Diagram described\n${this.describe()}`);
+		// console.log(`sample\n${d}`);
+		// console.log(`sample\n${JSON.stringify(d, undefined, 2)}`);
+		// console.log(`Automerge Diagram created with sample\n${this.projectDiagram}`);
+		console.log(`Diagram:\n${this.describe()}`);
 	}
 
 	public open( id: string)
