@@ -59,7 +59,7 @@ export class Attribute{
 	name: string;
 	type: DataType;             //not sure if we want enums we can make an abstract rn
 	multiplicity: Multiplicity; //diagram says int[10..-1]=null idk. no car in ts. make * -1
-	default: string = null;      //says =null
+	defaultValue: string = null;      //says =null
 	propertyString: string = null;//says =null
 }
 

@@ -16,6 +16,7 @@ export interface ICollection<T>
 	iterator(): ICollectionIterator<T>;
 	insert(item: T): void;
 	remove(key: any): T | null;
+	get(key: string): T | null;
 	size: number;
 }
 
@@ -81,6 +82,19 @@ export class GeneralCollection<T> implements ICollection<T>{
 	{
 		return i >= 0 && i < this.size; 
 	}
+
+	get(key: string): null | T
+	{
+		// (callbackfn: (value: T, index: number, array: T[]) => void, thisArg?: any)
+		this.items.forEach((de: T)=>{
+			if(de instanceof Component){
+				if(key == (de as Component).name)
+					return de;
+			}
+		});
+		return null;
+	}
+
 }
 
 /**
@@ -125,21 +139,22 @@ export class RelationalCollection implements ICollection<DiagramElement>{
 		return relation;
 	}
 	
-	get(key: string)
+	get(key: string): null | DiagramElement
 	{
 		if(this.items.has(key))
 			return this.items.get(key);
 		return this.find(key);
 	}
-	
-	private find(key: string)
+
+	private find(key: string): null | DiagramElement
 	{
 		this.items.forEach((de: DiagramElement, id: string)=>{
 			if(de instanceof Component){
-				if(key == (de as Component).compName)
+				if(key == (de as Component).name)
 					return de;
 			}
 		});
+		return null;
 	}
 
 	get size(): number 

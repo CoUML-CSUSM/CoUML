@@ -3,8 +3,8 @@ using CoUML_app.Models;
 namespace CoUML_app.Models
 {
 	public abstract class Component : DiagramElement{
-		protected string compName { get;set; }
-		ICollection<DiagramElement> Relations = new RelationalCollection();
+		public string name { get;set; }
+		ICollection<DiagramElement> relations = new RelationalCollection();
 	}
 
 	public class Enumeration : Component{
@@ -12,34 +12,34 @@ namespace CoUML_app.Models
 
 		public Enumeration(string name)
 		{
-			this.compName = name;
+			this.name = name;
 		}
 	}
 	public class Interface : Component{
-		public ICollection<Operation> Operations { get;set; } = new GeneralCollection<Operation>();
+		public ICollection<Operation> operations { get;set; } = new GeneralCollection<Operation>();
 		public Interface(string name)
 		{
-			this.compName = name;
+			this.name = name;
 		}
 	}
 
 	public class AbstractClass : Component{
-		public ICollection<Operation>  Operations { get;set; } = new GeneralCollection<Operation>();
-		public ICollection<Attribute>  Attributes { get;set; } = new GeneralCollection<Attribute>();
+		public ICollection<Operation>  operations { get;set; } = new GeneralCollection<Operation>();
+		public ICollection<Attribute>  attributes { get;set; } = new GeneralCollection<Attribute>();
 		
 		public AbstractClass(string name)
 		{
-			this.compName = name;
+			this.name = name;
 		}
 	}
 
 	public class Class : Component{
-		public ICollection<Operation> Operations { get;set; } = new GeneralCollection<Operation>();
-		public ICollection<Attribute> Attributes { get;set; } = new GeneralCollection<Attribute>();
+		public ICollection<Operation> operations { get;set; } = new GeneralCollection<Operation>();
+		public ICollection<Attribute> attributes { get;set; } = new GeneralCollection<Attribute>();
 
 		public Class(string name)
 		{
-			this.compName = name;
+			this.name = name;
 		}
 	}
 }

@@ -11,10 +11,6 @@ namespace CoUML_app.Models
 
 	public struct DataType{
 		public string dataType { get; set; }
-		public DataType( string dt)
-		{
-			dataType = dt;
-		}
 	}
 
 

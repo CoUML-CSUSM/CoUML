@@ -111,7 +111,7 @@ namespace CoUML_app.Controllers.Hubs
         /// <returns></returns>
         private readonly static ConnectionMap<string, IUser> _connections = new ConnectionMap<string, IUser>();
         private Diagram testDiagram;
-        CoUmlHub()
+        public CoUmlHub()
         {
             testDiagram = DevUtility.DiagramDefualt();
         }
@@ -205,28 +205,36 @@ namespace CoUML_app.Controllers.Hubs
 
             // interface
             Interface i = new Interface("IShape");
-            Operation io = new Operation();
-                io.visibility = VisibilityType.Public;
-                io.name = "draw";
-                io.returnType = new DataType("void");
-            i.Operations.Insert(io);
+            Operation io = new Operation
+            {   
+                name = "draw",
+                visibility = VisibilityType.Public,
+                returnType = new DataType{ dataType = "void"}
+            };
+            i.operations.Insert(io);
 
             // class
             Class c  =  new Class("Hexigon");
-            Models.Attribute a = new Models.Attribute(); // include "Models." as part of the name because there is also a System.Attribute class. 
-            a.visibility = VisibilityType.Private;
-            a.type = new DataType("double");
-            c.Attributes.Insert(a);
+            Models.Attribute a = new Models.Attribute
+            {
+                name = "diagonal",
+                visibility = VisibilityType.Private,
+                type = new DataType{ dataType = "doiuble" }
+            };
+            c.attributes.Insert(a);
 
             // c impliments i
-            Relationship r = new Relationship();
-            r.type = RelationshipType.Realization;
-            r.from = c;
-            r.to = i;
+            Relationship r = new Relationship
+            {
+                type = RelationshipType.Realization,
+                fromComponent = c,
+                toComponent = i,
+            };
+            
 
-            d.Elements.Insert(i);
-            d.Elements.Insert(c);
-            d.Elements.Insert(r);            
+            d.elements.Insert(i);
+            d.elements.Insert(c);
+            d.elements.Insert(r);            
 
             return d;
         }

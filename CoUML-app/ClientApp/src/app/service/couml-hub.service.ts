@@ -57,7 +57,7 @@ export class CoUmlHubService{
 	public commit(changes: Automerge.BinaryChange[])
 	{
 		this.log.log(CoUmlHubService.name, "commit")
-		this._coUmlHubConnection.invoke("Push", changes);
+		this._coUmlHubConnection.invoke("Push", 'test', changes);
 	}
 
 	public dispatch(changes: Automerge.BinaryChange[])

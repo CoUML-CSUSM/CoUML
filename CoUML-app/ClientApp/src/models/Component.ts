@@ -12,12 +12,12 @@ import { Relationship } from "./Subcomponent";
  */
 export abstract class Component extends DiagramElement
 {
-    compName:string;
+    name:string;
     relations:ICollection<DiagramElement> = new RelationalCollection([]);
     constructor( name: string)
     {
         super();
-        this.compName = name;
+        this.name = name;
     }
 }
 

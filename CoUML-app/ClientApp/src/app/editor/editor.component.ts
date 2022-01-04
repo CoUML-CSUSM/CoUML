@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Class, Diagram, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType as VisibilityType } from 'src/models/DiagramModel';
+import { AfterViewInit, Component as AngularComponent, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Class, Diagram, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType as VisibilityType } from 'src/models/DiagramModel';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 // import mx from './mxgraph';
 // import { mxGraph, mxGraphModel } from 'mxgraph';
@@ -7,7 +7,7 @@ import { ProjectDeveloper } from '../controller/project-developer.controller';
 /**
  * https://github.com/typed-mxgraph/typed-mxgraph
  */
-@Component({
+@AngularComponent({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
   providers: [ProjectDeveloper]
@@ -245,10 +245,10 @@ export class EditorComponent implements AfterViewInit, OnInit{
 
 	public sample()
 	{	
-		let d = this._projectDeveloper.projectDiagram;
+		let d = this._projectDeveloper.projectDiagram as Diagram;
 
 		// class
-		let c: Class  =  new Class("Hexigon");
+		let c: Class  =  new Class("Triangle");
 		let a: Attribute = new Attribute();
 		a.visibility = VisibilityType.Private;
 		a.type = {dataType: "double"};
@@ -258,9 +258,9 @@ export class EditorComponent implements AfterViewInit, OnInit{
 		let r: Relationship = new Relationship();
 		r.type = RelationshipType.Realization;
 		r.from = c;
-		r.to = d.elements.get("IShape");
+		r.to = d.elements.get("IShape") as Component;
 
-		d.elements.insert()
+		d.elements.insert(r)
 
 		this._projectDeveloper.makeChange(d)
 	}

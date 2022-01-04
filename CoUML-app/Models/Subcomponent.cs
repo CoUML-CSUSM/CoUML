@@ -4,10 +4,10 @@ namespace CoUML_app.Models
 
 	public class Relationship : DiagramElement{
 		public RelationshipType type {get; set;}
-		public Guid fromComponent {get; set;}
-		public Component from{set{fromComponent = value.Id;}}
-		public Guid toComponent {get; set;}
-		public Component to{set{toComponent = value.Id;}}
+		public Guid from {get; set;}
+		public Component fromComponent{set{from = value.id;}}
+		public Guid to {get; set;}
+		public Component toComponent{set{to = value.id;}}
 		public ICollection<Attribute> attributes = new GeneralCollection<Attribute>();
 	}
 
