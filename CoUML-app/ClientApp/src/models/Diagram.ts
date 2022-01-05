@@ -1,5 +1,7 @@
+import { DataType } from 'automerge';
 import {v4 as uuidv4} from 'uuid';
 import { Interface, Enumeration, AbstractClass, Class, Component, Relationship, GeneralCollection, ICollection, RelationalCollection, Dimension, Operation, User, IUser, NullUser  } from './DiagramModel';
+import { Attribute } from './Subcomponent';
 
 export class Diagram
 {
@@ -11,88 +13,6 @@ export abstract class DiagramElement{
 	dimension: Dimension = new Dimension();
 }
 
-export class DiagramBuilder
-{
-	buildDiagram(diagram_DTO: string)
-	{
-		let d = JSON.parse(diagram_DTO) as Diagram;
-		let diagram = new Diagram();
-		for(let e in d.elements)
-		{
-			let elem:DiagramElement = JSON.parse(e);
-			let diagramElementType = this.getType(elem);
-			if(diagramElementType.length == 1 )
-			{
-				//is a compnent or sub component
-				let element: DiagramElement;
-				switch(diagramElementType[0])
-				{
-					case Interface.name:
-						element = this.buildInterface(elem as Interface);
-						break;
-					case Enumeration.name:
-						break;
-					case AbstractClass.name:
-						break;
-					case Class.name:
-						break;
-					case Relationship.name:
-						break;
-				}
-
-				diagram.elements.insert(element);
-			}else if(diagramElementType.length > 1)
-			{
-
-			}
-		}
-
-	}
-
-	buildInterface(interfaceX: Interface): Interface
-	{
-		let _interface: Interface = new Interface(interfaceX.name);
-		_interface.dimension = this.buildDimension(interfaceX.dimension);
-		_interface.editor = this.buildUser(interfaceX.editor);
-		_interface.id = interfaceX.id;
-		_interface.operations = this.buildOperations(interfaceX.operations as GeneralCollection<Operation>);
-		_interface.relations = this.buildComponentRelations(interfaceX.relations as GeneralCollection<string>);
-		return _interface;
-	}
-
-
-	buildComponentRelations(relationsX: GeneralCollection<string>): ICollection<string> {
-		return new GeneralCollection<string>(relationsX.items);
-	}
-
-
-	buildOperations(operationsX: GeneralCollection<Operation>): ICollection<Operation> {
-		return new GeneralCollection<Operation>(operationsX.items);
-	}
-
-
-	buildUser(editorX: User): IUser {
-			return this.getType(editorX)[0] == User.name ? new User(editorX.id): new NullUser();
-	}
-
-	buildDimension(x: Dimension): Dimension
-	{
-		return {
-			x: x.x,
-			y: x.y,
-			width: x.width,
-			height: x.height
-		}
-	}
-	
-
-
-	getType(e)
-	{
-		let rx = /\w+\.\w+\.(\w+)/g;
-		return rx.exec(e.$type);
-	}
-} 
 /*
 {
   "elements": {

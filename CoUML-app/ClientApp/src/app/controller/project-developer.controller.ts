@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CoUmlHubService } from "../service/couml-hub.service";
 import * as Automerge from 'automerge';
-import { Class, Diagram, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType as VisibilityType } from 'src/models/DiagramModel';
+import { Class, Diagram, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, DiagramBuilder } from 'src/models/DiagramModel';
 
 @Injectable()
 export class ProjectDeveloper{
@@ -12,40 +12,6 @@ export class ProjectDeveloper{
 
 	constructor(private _CoUmlHub: CoUmlHubService)	{}
 
-		public openSample()
-	{
-		let d = new Diagram();
-		let i: Interface= new Interface("IShape");
-		let  io: Operation = new Operation();
-			io.visibility = VisibilityType.Public;
-			io.name = "draw";
-			io.returnType = {dataType: "void"};
-		i.operations.insert(io);
-
-		// class
-		let c: Class  =  new Class("Hexigon");
-		let a: Attribute = new Attribute();
-		a.visibility = VisibilityType.Private;
-		a.type = {dataType: "double"};
-		c.attributes.insert(a);
-
-		// c impliments i
-		let r: Relationship = new Relationship();
-		r.type = RelationshipType.Realization;
-		r.from = c;
-		r.to = i;
-
-		d.elements.insert(i);
-		d.elements.insert(c);
-		d.elements.insert(r);
-
-
-		this.am_diagram = Automerge.from(d);
-		// console.log(`sample\n${d}`);
-		// console.log(`sample\n${JSON.stringify(d, undefined, 2)}`);
-		// console.log(`Automerge Diagram created with sample\n${this.projectDiagram}`);
-		console.log(`Diagram:\n${this.describe()}`);
-	}
 
 	public open( id: string)
 	{
@@ -53,7 +19,8 @@ export class ProjectDeveloper{
 		this._CoUmlHub.fetch( id ) //get diagram from server
 			.then( (d) => {
 				this._CoUmlHub.subscribe(this);
-				this.projectDiagram = JSON.parse(d);
+				console.log(d);
+				this.projectDiagram = new DiagramBuilder().buildDiagram (d);
 				this.am_diagram = Automerge.from(this.projectDiagram);
 				console.log(`Diagram \n${JSON.stringify(this.projectDiagram, undefined, 2)}`);
 				console.log(`Automerge Diagram\n${this.describe()}`);

@@ -19,15 +19,17 @@ import { ICollection } from "./Collection";
  */
 export class Relationship extends DiagramElement {
 	type: RelationshipType;
-	fromComponent: string;
-	toComponent: string;
+	from: string;
+	to: string;
 	atributes: ICollection<Attribute>;
 
-	set from( component: Component){
-		this.fromComponent = component.id
+	fromCompnent( component: Component){
+		this.from = component.id
 	}
-	set to( component: Component){
-		this.toComponent = component.id
+	toComponent( component: Component){
+		console.log("toComponent()");
+		console.log(component);
+		this.to = component.id
 	}
 }
 

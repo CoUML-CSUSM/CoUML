@@ -256,8 +256,8 @@ export class EditorComponent implements AfterViewInit, OnInit{
 		// c impliments i
 		let r: Relationship = new Relationship();
 		r.type = RelationshipType.Realization;
-		r.from = c;
-		r.to = d.elements.get("IShape") as Component;
+		r.fromCompnent(c);
+		r.toComponent(d.elements.get("IShape") as Component);
 
 		d.elements.insert(r)
 
