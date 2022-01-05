@@ -22,7 +22,7 @@ export class ProjectDeveloper{
 				console.log(d);
 				this.projectDiagram = new DiagramBuilder().buildDiagram (d);
 				this.am_diagram = Automerge.from(this.projectDiagram);
-				console.log(`Diagram \n${JSON.stringify(this.projectDiagram, undefined, 2)}`);
+				console.log(this.projectDiagram);
 				console.log(`Automerge Diagram\n${this.describe()}`);
 			} ); // create AMDiagram from diagram 
 	}

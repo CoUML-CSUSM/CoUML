@@ -25,8 +25,8 @@ export class DiagramBuilder
 		for(let i = 0; i<d.elements.size; i++)
 		{
 
-			console.log("processing element");
-			console.log(d.elements.items[i]);
+			// console.log("processing element");
+			// console.log(d.elements.items[i]);
 
 			__diagram.elements.insert(d.elements.items[i]);
 			// let e = JSON.parse(d.elements.items[i]);
@@ -60,11 +60,11 @@ export class DiagramBuilder
 			// }
 
 		}
-		console.log("Final Diagram");
-		console.log(__diagram);
+		// console.log("Final Diagram");
+		// console.log(__diagram);
 		return __diagram;
 	}
-	
+
 	buildRelationship(x: Relationship): DiagramElement {
 		let __relationship = new Relationship();
 		__relationship.id = x.id;
