@@ -35,7 +35,9 @@ export class ProjectDeveloper{
 	public makeChange(diagram: Diagram)
 	// public makeChange(diagram: Automerge.FreezeObject<Diagram>)
 	{
-		let changes = Automerge.getChanges(this.am_diagram, diagram);
+		let newDiagram = Automerge.from(diagram);
+		let changes = Automerge.getChanges(this.am_diagram, newDiagram);
+		this.am_diagram = newDiagram;
 		this._CoUmlHub.commit(changes);
 
 		this.describe();
