@@ -4,7 +4,7 @@ namespace CoUML_app.Models
 {
 	public abstract class Component : DiagramElement{
 		public string name { get;set; }
-		ICollection<DiagramElement> relations = new RelationalCollection();
+		ICollection<string> relations {get; set;} = new GeneralCollection<string>();
 	}
 
 	public class Enumeration : Component{

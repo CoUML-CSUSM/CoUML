@@ -1,13 +1,12 @@
-import * as User from './User';
 import {v4 as uuidv4} from 'uuid';
-import { Interface, Enumeration, AbstractClass, Class, Component, Relationship, GeneralCollection, ICollection, RelationalCollection, Dimension, Operation  } from './DiagramModel';
+import { Interface, Enumeration, AbstractClass, Class, Component, Relationship, GeneralCollection, ICollection, RelationalCollection, Dimension, Operation, User, IUser, NullUser  } from './DiagramModel';
 
 export class Diagram
 {
 	public elements: ICollection<DiagramElement> = new RelationalCollection([]);
 }
 export abstract class DiagramElement{
-	editor: User.IUser = new User.NullUser();
+	editor: IUser = new NullUser();
 	id: string = uuidv4();
 	dimension: Dimension = new Dimension();
 }
@@ -50,25 +49,30 @@ export class DiagramBuilder
 
 	}
 
-	buildInterface(x: Interface): Interface
+	buildInterface(interfaceX: Interface): Interface
 	{
-		let _interface: Interface = new Interface(x.name);
-		_interface.dimension = this.buildDimension(x.dimension);
-		_interface.editor = this.buildUser(x.editor);
-		_interface.id = x.id;
-		_interface.operations = this.buildOperations(x.operations);
-		_interface.relations = this.buildRelations(x.relations);
-
+		let _interface: Interface = new Interface(interfaceX.name);
+		_interface.dimension = this.buildDimension(interfaceX.dimension);
+		_interface.editor = this.buildUser(interfaceX.editor);
+		_interface.id = interfaceX.id;
+		_interface.operations = this.buildOperations(interfaceX.operations as GeneralCollection<Operation>);
+		_interface.relations = this.buildComponentRelations(interfaceX.relations as GeneralCollection<string>);
 		return _interface;
 	}
-	buildRelations(relations: ICollection<DiagramElement>): ICollection<DiagramElement> {
-		throw new Error('Method not implemented.');
+
+
+	buildComponentRelations(relationsX: GeneralCollection<string>): ICollection<string> {
+		return new GeneralCollection<string>(relationsX.items);
 	}
-	buildOperations(operations: ICollection<Operation>): ICollection<Operation> {
-		throw new Error('Method not implemented.');
+
+
+	buildOperations(operationsX: GeneralCollection<Operation>): ICollection<Operation> {
+		return new GeneralCollection<Operation>(operationsX.items);
 	}
-	buildUser(editor: User.IUser): User.IUser {
-		throw new Error('Method not implemented.');
+
+
+	buildUser(editorX: User): IUser {
+			return this.getType(editorX)[0] == User.name ? new User(editorX.id): new NullUser();
 	}
 
 	buildDimension(x: Dimension): Dimension

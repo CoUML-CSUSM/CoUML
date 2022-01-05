@@ -14,7 +14,7 @@ import { Relationship } from "./Subcomponent";
 export abstract class Component extends DiagramElement
 {
     name:string;
-    relations:ICollection<DiagramElement> = new RelationalCollection([]);
+    relations:ICollection<string> = new GeneralCollection<string>([]);
     constructor(name: string)
     {
         super();

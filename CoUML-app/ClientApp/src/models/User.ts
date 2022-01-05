@@ -10,5 +10,5 @@ export class User implements IUser {
 	}
 }
 export class NullUser implements IUser {
-	readonly id: string = "N/A"
+	readonly id: string = "N/A";
 }
