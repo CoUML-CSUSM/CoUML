@@ -27,9 +27,7 @@ export class Relationship extends DiagramElement {
 		this.from = component.id
 	}
 	toComponent( component: Component){
-		console.log("toComponent()");
-		console.log(component);
-		this.to = component.id
+		this.to = component?.id
 	}
 }
 
