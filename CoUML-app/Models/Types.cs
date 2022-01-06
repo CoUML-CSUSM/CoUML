@@ -1,25 +1,37 @@
 namespace CoUML_app.Models
 {
 
-	public enum VisabilityType{//enums cant be strings in c#
-		Private=1,//-
-		Public=2,//+
-		Protected=3,//#
-		Package=4,//~
-		LocalScope=5//
+	public enum VisibilityType{//enums cant be strings in c#
+		Private= '-',
+		Public = '+',
+		Protected = '#',
+		Package = '~',
+		LocalScope
 	}
 
-	public struct Datatype{
-		public string DataType { get; set; }
+	public struct DataType{
+		public string dataType { get; set; }
 	}
 
 
-	enum RelationshipType{
+	public enum RelationshipType{
+		/// F uses a T  [F] - - - > [T]
 		Dependency,
+
+		/// F owns a T 	[F]---------[T]
 		Association,
+
+		/// F has a T 	[F]< >-------[T]
 		Aggregation,
+
+		/// T is a part of F	[F]<#>-----[T]
 		Composistion,
-		Generalization
+
+		/// F extends T 	[F]-------|>[T]
+		Generalization,
+
+		/// F impliments T 	[F]- - - |>[T]
+		Realization
 	}
 
 

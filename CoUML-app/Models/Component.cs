@@ -2,26 +2,45 @@ using CoUML_app.Models;
 
 namespace CoUML_app.Models
 {
-	abstract class Component : DiagramElement{
-		string compName;
-		ICollection<Relationship> relations;
+	public abstract class Component : DiagramElement{
+		public string name { get;set; }
+		ICollection<string> relations {get; set;} = new GeneralCollection<string>();
 	}
 
-	class Enumeration : Component{
-		ICollection<string> Enums;
+	public class Enumeration : Component{
+		public ICollection<string> Enums { get;set; } = new GeneralCollection<string>();
+
+		public Enumeration(string name)
+		{
+			this.name = name;
+		}
 	}
-	class Interface : Component{
-		ICollection<Operation> Operations;
+	public class Interface : Component{
+		public ICollection<Operation> operations { get;set; } = new GeneralCollection<Operation>();
+		public Interface(string name)
+		{
+			this.name = name;
+		}
 	}
 
-	class AbstractClass : Component{
-		ICollection<Operation>  operations;
-		ICollection<Attribute>  attributes;
+	public class AbstractClass : Component{
+		public ICollection<Operation>  operations { get;set; } = new GeneralCollection<Operation>();
+		public ICollection<Attribute>  attributes { get;set; } = new GeneralCollection<Attribute>();
+		
+		public AbstractClass(string name)
+		{
+			this.name = name;
+		}
 	}
 
-	class Class : Component{
-		ICollection<Operation>  operations;
-		ICollection<Attribute> attributes;
+	public class Class : Component{
+		public ICollection<Operation> operations { get;set; } = new GeneralCollection<Operation>();
+		public ICollection<Attribute> attributes { get;set; } = new GeneralCollection<Attribute>();
+
+		public Class(string name)
+		{
+			this.name = name;
+		}
 	}
 }
 

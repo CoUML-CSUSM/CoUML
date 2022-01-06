@@ -1,3 +1,4 @@
+using  System;
 using CoUML_app.Models;
 
 
@@ -6,14 +7,13 @@ namespace CoUML_app.Models
 
 	public class Diagram
 	{
-		public ICollection<DiagramElement> elements { get; set; } = new RelationalCollection();
+		public ICollection<DiagramElement> elements {get;} = new RelationalCollection();
 	}
 
 	public abstract class DiagramElement
 	{
-		public IUser User { get; set; } = new NullUser();
-		public string Id { get; }
-
-		public IDimension Dimension { get; set; } = new Dimension();
+		public IUser user { get; set; } = new NullUser();
+		public Guid id { get; } = Guid.NewGuid();
+		public IDimension dimension { get; set; } = new Dimension();
 	}
 }

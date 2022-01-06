@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Converters;
 
 namespace CoUML_app.Models
 {
@@ -18,11 +21,18 @@ namespace CoUML_app.Models
 		public void Insert(T item);
 		public T Remove(string key);
 		public T Remove(int key);
-		public int Size { get;}
+		public int size { get;}
+		public List<T> items{ get; }
+		
 	}
 	public class GeneralCollection<T> : ICollection<T>
 	{
 		private List<T> _items;
+		public List<T> items{
+			get{
+				return this._items;
+			}
+		}
 
 		/// <summary>
 		/// constructor
@@ -98,7 +108,7 @@ namespace CoUML_app.Models
 		/// Size of the collecion
 		/// </summary>
 		/// <value>size</value>
-		public int Size
+		public int size
 		{
 			get
 			{
@@ -114,7 +124,7 @@ namespace CoUML_app.Models
 		/// <returns>true if valid</returns>
 		private bool ValidIndex(int i)
 		{
-			return i>=0 && i < Size;
+			return i>=0 && i < size;
 		}
 
 		public T this[int i]
@@ -127,7 +137,12 @@ namespace CoUML_app.Models
 
 	public class RelationalCollection: ICollection<DiagramElement>
 	{
-		private Dictionary<string, DiagramElement> _items;
+		private Dictionary<Guid, DiagramElement> _items;
+		public List<DiagramElement> items{
+			get{
+				return new List<DiagramElement>(this._items.Values);
+			}
+		}
 
 		/// <summary>
 		/// constructor
@@ -135,10 +150,10 @@ namespace CoUML_app.Models
 		/// <param name="collection"> set of diagram Elements</param>
 		public RelationalCollection( DiagramElement[] collection)
 		{
-			this._items = new Dictionary<string, DiagramElement>();
+			this._items = new Dictionary<Guid, DiagramElement>();
 			foreach (DiagramElement item in collection)
 			{
-				this._items.Add(item.Id, item);
+				this._items.Add(item.id, item);
 			}
 		}
 
@@ -147,7 +162,7 @@ namespace CoUML_app.Models
 		/// </summary>
 		public RelationalCollection()
 		{
-			this._items = new Dictionary<string, DiagramElement>();
+			this._items = new Dictionary<Guid, DiagramElement>();
 		}
 
 		public ICollectionIterator<DiagramElement> Iterator()
@@ -161,30 +176,31 @@ namespace CoUML_app.Models
 		
 		public void Insert( DiagramElement item)
 		{
-			this._items.Add( item.Id, item);
+			this._items.Add( item.id, item);
 		}
 
 		public DiagramElement Remove(string id)
 		{
 			DiagramElement item = default(DiagramElement);
-			if(this._items.TryGetValue(id, out item))
-				this._items.Remove(id);
+			Guid guid = new Guid(id);
+			if(this._items.TryGetValue(guid, out item))
+				this._items.Remove(guid);
 			return item;
 		}
 
 		public DiagramElement Remove(int index)
 		{
 			DiagramElement item = default(DiagramElement);
-			if(index >= 0 && index < Size )
+			if(index >= 0 && index < size )
 			{
 				item = (new List<DiagramElement>(this._items.Values)).ToArray()[index];
-				this._items.Remove(item.Id);
+				this._items.Remove(((DiagramElement)item).id);
 			}
 			return item;
 		}
 
 
-		public int Size
+		public int size
 		{
 			get
 			{
@@ -206,13 +222,13 @@ namespace CoUML_app.Models
 
 		public bool HasNext()
 		{
-			return _position < _collection.Size;
+			return _position < _collection.size;
 		}
 		public T GetNext()
 		{
 			if(HasNext())
 				return this._collection[_position++];
-			throw new CollectionException("{size, position} = {" + this._collection.Size + ", " + this._position + "}");
+			throw new CollectionException("{size, position} = {" + this._collection.size + ", " + this._position + "}");
 		}
 		public bool HasPrevious()
 		{
@@ -222,7 +238,7 @@ namespace CoUML_app.Models
 		{
 			if( HasPrevious())
 				return this._collection[_position--];
-			throw new CollectionException("{size, position} = {" + this._collection.Size + ", " + this._position + "}");
+			throw new CollectionException("{size, position} = {" + this._collection.size + ", " + this._position + "}");
 		}
 	}
 

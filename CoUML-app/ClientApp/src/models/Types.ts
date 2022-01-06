@@ -1,9 +1,9 @@
-export enum VisabilityType{
-    Private	=	"-",
-    Public	=	"+",
-    Protected =	"#",
-    Package	=	"~",
-    LocalScope = ""
+export enum VisibilityType{
+    Private	=	'-',
+    Public	=	'+',
+    Protected =	'#',
+    Package	=	'~',
+    LocalScope = ''
 }
 
 export interface DataType
@@ -17,5 +17,6 @@ export enum RelationshipType
     Association,
     Aggregation,
     Composistion,
-    Generalization
+    Generalization,
+    Realization
 }

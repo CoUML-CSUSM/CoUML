@@ -1,14 +1,14 @@
-import * as User from './User';
-import * as Dimension from './Dimension';
-import { ICollection, RelationalCollection } from './Collection';
+import { DataType } from 'automerge';
+import {v4 as uuidv4} from 'uuid';
+import { Interface, Enumeration, AbstractClass, Class, Component, Relationship, GeneralCollection, ICollection, RelationalCollection, Dimension, Operation, User, IUser, NullUser  } from './DiagramModel';
+import { Attribute } from './Subcomponent';
 
 export class Diagram
 {
-	public elements: ICollection<DiagramElement> = new RelationalCollection();
+	public elements: ICollection<DiagramElement> = new RelationalCollection([]);
 }
 export abstract class DiagramElement{
-	editor: User.IUser = new User.NullUser();
-	id: string = "";
-	dimension: Dimension.IDimension = new Dimension.Dimension();
+	editor: IUser = new NullUser();
+	id: string = uuidv4();
+	dimension: Dimension = new Dimension();
 }
-

@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "CoUML-app.Test"
+		},
+		{
+			"path": "../csharp"
 		}
 	],
 	"settings": {

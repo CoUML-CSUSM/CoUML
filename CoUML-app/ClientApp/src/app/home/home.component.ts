@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { CoUmlHubService } from '../service/couml-hub.service';
 
@@ -18,10 +18,11 @@ export class HomeComponent {
 
 	constructor(public coUmlConnection: CoUmlHubService) {}
 
-	public connectPButton(){
-		console.log(`HomeComponent::connectPButton(e)`);
-		this.coUmlConnection.startConnection();
-	}
+  break()
+  {
+    this.coUmlConnection.triggerBreakPoint();
+  }
+
 	
 }
 

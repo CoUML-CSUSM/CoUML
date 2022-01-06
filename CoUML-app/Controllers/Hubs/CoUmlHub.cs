@@ -1,13 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 using CoUML_app.Models;
+
 
 /**
 https://docs.microsoft.com/en-us/aspnet/signalr/overview/guide-to-the-api/working-with-groups
@@ -16,19 +19,23 @@ https://docs.microsoft.com/en-us/aspnet/signalr/overview/guide-to-the-api/mappin
 */
 namespace CoUML_app.Controllers.Hubs
 {
+    ///<summary> 
+    /// functions that can be run on the client from the server
+    /// </summary>
     public interface ICoUmlClient{
         Task testInterfaceMethod(string message);
+        Task Dispatch(sbyte[] changes);
     }
 
     /// data structure to store active users
-    public class ConnectionMap<CID, CON>
+    public class ConnectionMap<CID, User>
     {
         /// <summary>
         /// the repo of active connections
         /// </summary>
-        /// <typeparam name="T">connectionId: string</typeparam>
-        /// <typeparam name="T">value: string</typeparam>
-        private readonly Dictionary<CID, CON> _connections = new Dictionary<CID, CON>();
+        /// <typeparam name="CID">connectionId: string</typeparam>
+        /// <typeparam name="DID">value: string</typeparam>
+        private readonly Dictionary<CID, User> _connections = new Dictionary<CID, User>();
 
         /// <summary>
         /// get the count of client connections in the repo
@@ -49,15 +56,16 @@ namespace CoUML_app.Controllers.Hubs
         ///     the client id retrieved from the hub context
         ///     > Context.ConnectionId
         /// </param>
-        /// <param name="value">
+        /// <param name="user">
         ///     \! not currently used - a value to associate with the connectionId
         /// </param>
-        public void Add(CID connectionId, CON value)
+        public void Add(CID connectionId, User user)
         {
             lock(_connections)
             {
-                if(!IsConnected(connectionId))
-                    _connections.Add(connectionId, value);
+                if(!_connections.TryAdd(connectionId, user)){
+                    //TODO: error because tryadd failed
+                }
             }
         }
 
@@ -84,8 +92,16 @@ namespace CoUML_app.Controllers.Hubs
         /// <returns>true: connectionId is in repo</returns>
         public bool IsConnected(CID connectionId)
         {
-            CON temValueHolder;
+            User temValueHolder;
             return _connections.TryGetValue(connectionId, out temValueHolder);
+        }
+
+        public User GetUser(CID connectionId)
+        {
+            User user;
+            _connections.TryGetValue(connectionId, out user);
+            return user;
+
         }
 
 
@@ -98,6 +114,10 @@ namespace CoUML_app.Controllers.Hubs
         /// <typeparam name="string"></typeparam>
         /// <returns></returns>
         private readonly static ConnectionMap<string, IUser> _connections = new ConnectionMap<string, IUser>();
+        private static Diagram testDiagram = DevUtility.DiagramDefualt(); // test code here
+        // public CoUmlHub()
+        // {
+        // }
         
         
         /// <summary>
@@ -124,6 +144,8 @@ namespace CoUML_app.Controllers.Hubs
         public override Task OnDisconnectedAsync(Exception exception)
         {
             string connectionId = Context.ConnectionId;
+            
+            // Groups.RemoveFromGroupAsync(connectionId)
             _connections.Remove(connectionId);
             return base.OnDisconnectedAsync(exception);
         }
@@ -131,11 +153,98 @@ namespace CoUML_app.Controllers.Hubs
         /// <summary>
         /// test server to client communication
         /// </summary>
-        /// <param name="connectionid">connectionId of client being called</param>
-        public void TestCall(string connectionid)
+        /// <param name="connectionId">connectionId of client being called</param>
+        public void TestCall(string connectionId)
         {
-            Clients.Client(connectionid).testInterfaceMethod(connectionid + ": this is the test message :D");
+            Clients.Client(connectionId).testInterfaceMethod(connectionId + ": this is the test message :D");
         }
 
+
+        /// <summary>
+        /// find an existing diagram in memory and return it to the requesting client
+        /// </summary>
+        /// <param name="dId">somthing to identify the diagram file by</param>
+        /// <returns>the diagram requested</returns>
+        public string Fetch(string dId)
+        {
+            //attacha as a listener to this diagram
+            Groups.AddToGroupAsync(Context.ConnectionId,dId);
+
+            // Diagram fechedDiagram = testDiagram; // test code with sample diagram
+            
+            if( dId != "test")
+            {
+                //TODO: look up real diagram and return
+            }
+
+            return JsonConvert.SerializeObject(testDiagram, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.Auto
+                    });
+                
+        }
+
+        public void Push(string dId, sbyte[] changes)
+        {
+            // TODO: changes get pushed from client to server to be logged and sent backout to other clients
+
+            //push changes out to other clients
+            Dispatch(dId, changes);
+
+        }
+
+        public void Dispatch(string dId, sbyte[] changes)
+        {
+            Clients.Group(dId).Dispatch(changes);
+        }
+
+        public void TriggerBreakPoint()
+        {
+            ;
+        }
+
+    }
+
+    static class DevUtility{
+        public static Diagram DiagramDefualt()
+        {
+            Diagram d = new Diagram();
+
+
+            // interface
+            Interface i = new Interface("IShape");
+            Operation io = new Operation
+            {   
+                name = "draw",
+                visibility = VisibilityType.Public,
+                returnType = new DataType{ dataType = "void"}
+            };
+            i.operations.Insert(io);
+
+            // class
+            Class c  =  new Class("Hexagon");
+            Models.Attribute a = new Models.Attribute
+            {
+                name = "diagonal",
+                visibility = VisibilityType.Private,
+                type = new DataType{ dataType = "double" }
+            };
+            c.attributes.Insert(a);
+
+            // c impliments i
+            Relationship r = new Relationship
+            {
+                type = RelationshipType.Realization,
+                fromComponent = c,
+                toComponent = i,
+            };
+            
+
+            d.elements.Insert(i);
+            d.elements.Insert(c);
+            d.elements.Insert(r);            
+
+            return d;
+        }
     }
 }
