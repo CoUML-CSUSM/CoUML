@@ -1,0 +1,1 @@
+{"ast":null,"code":"export class Dimension {\n  constructor(x = 100, y = 100, h = 60, w = 40) {\n    this.x = x;\n    this.y = y;\n    this.height = h;\n    this.width = w;\n  }\n\n}","map":null,"metadata":{},"sourceType":"module"}
