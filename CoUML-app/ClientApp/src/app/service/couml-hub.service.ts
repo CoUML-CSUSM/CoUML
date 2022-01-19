@@ -9,7 +9,7 @@ import { ProjectDeveloper } from '../controller/project-developer.controller';
 @Injectable()
 export class CoUmlHubService{
 	private _coUmlHubConnection: HubConnection;
-	private _url = 'http://localhost:5000/couml';
+	private _url = 'https://localhost:5001/couml';
 
 	public log: ConsoleLogger;
 	private _projectDeveloper: ProjectDeveloper = null;
