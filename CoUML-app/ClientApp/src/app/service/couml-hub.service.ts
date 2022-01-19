@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
-import * as signalR from "@microsoft/signalR";
-import { Diagram } from 'src/models/Diagram';
+// import * as signalR from "@microsoft/signalR";
+import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+// import { Diagram } from 'src/models/DiagramModel';
 import * as Automerge from 'automerge';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 
 
 @Injectable()
 export class CoUmlHubService{
-	private _coUmlHubConnection: signalR.HubConnection;
+	private _coUmlHubConnection: HubConnection;
 	private _url = 'https://localhost:5001/couml';
 
 	public log: ConsoleLogger;
@@ -16,7 +17,7 @@ export class CoUmlHubService{
 	constructor()
 	{
 		this.log = new ConsoleLogger();
-		this._coUmlHubConnection = new signalR.HubConnectionBuilder()
+		this._coUmlHubConnection = new HubConnectionBuilder()
 				.withUrl(this._url)
 				.build();
 		this.startConnection();
