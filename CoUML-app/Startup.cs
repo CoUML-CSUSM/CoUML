@@ -30,10 +30,11 @@ namespace CoUML_app
             services.AddCors(options =>{
                 options.AddPolicy(
                     "CoresPolicy", builder => builder
-                    .WithOrigins("https://localhost:4200")
+                    .WithOrigins("https://localhost:4200", "https://localhost:5001")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials()
+                    .AllowAnyOrigin()
                 );
             });
             services.AddControllers();
