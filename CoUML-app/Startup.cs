@@ -30,11 +30,11 @@ namespace CoUML_app
             services.AddCors(options =>{
                 options.AddPolicy(
                     "CoresPolicy", builder => builder
-                    .WithOrigins("http://localhost:4200", "https://localhost:5001")
+                    .WithOrigins("https://localhost:4200", "https://localhost:5001")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
-                    // .AllowCredentials()
-                    // .AllowAnyOrigin()
+                    .SetIsOriginAllowed(origin => true)
+                    .AllowCredentials()
                 );
             });
             services.AddControllers();
@@ -55,7 +55,7 @@ namespace CoUML_app
                 app.UseHsts();
             }
 
-            // app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
             app.UseRouting();
             app.UseCors("CorsPolicy");
             app.UseAuthorization();
