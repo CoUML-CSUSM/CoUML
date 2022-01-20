@@ -14,13 +14,19 @@ export class CoUmlHubService{
 	public log: ConsoleLogger;
 	private _projectDeveloper: ProjectDeveloper = null;
 
-	constructor()
+	constructor(){}
+
+	try(ip: string)
 	{
+		this. _url = "https://"+ip+":5001/couml";
 		this.log = new ConsoleLogger();
 		this._coUmlHubConnection = new HubConnectionBuilder()
 				.withUrl(this._url)
 				.build();
 		this.startConnection();
+
+		setTimeout(()=>{this._coUmlHubConnection.stop();},3500);
+		
 	}
 
 	public subscribe(projectDeveloper: ProjectDeveloper): void

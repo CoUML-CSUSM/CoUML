@@ -16,6 +16,8 @@ import { CoUmlHubService } from '../service/couml-hub.service';
 export class HomeComponent {
 
 
+  ip: string;
+
 	constructor(public coUmlConnection: CoUmlHubService) {}
 
   break()
@@ -23,6 +25,10 @@ export class HomeComponent {
     this.coUmlConnection.triggerBreakPoint();
   }
 
+  try()
+  {
+    this.coUmlConnection.try(this.ip);
+  }
 	
 }
 
