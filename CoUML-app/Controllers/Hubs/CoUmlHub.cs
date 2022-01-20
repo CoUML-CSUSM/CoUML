@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -108,7 +107,6 @@ namespace CoUML_app.Controllers.Hubs
 
     }
 
-    [EnableCors ("CoresPolicy")]
     public class CoUmlHub : Hub<ICoUmlClient>
     {
         /// <summary>

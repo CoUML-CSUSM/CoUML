@@ -8,6 +8,7 @@ import { environment } from '../../environments/environment';
 @Injectable()
 export class CoUmlHubService{
 	private _coUmlHubConnection: HubConnection;
+	
 	private _url = environment.apiUrl + "/couml";
 
 	public log: ConsoleLogger;
@@ -20,20 +21,6 @@ export class CoUmlHubService{
 				.build();
 		this.startConnection();
 	}
-
-	// try(ip: string)
-	// {
-	// 	this._coUmlHubConnection.stop();
-	// 	this. _url = "https://"+ip+"/couml";
-		
-	// 	this._coUmlHubConnection = new HubConnectionBuilder()
-	// 			.withUrl(this._url)
-	// 			.build();
-	// 	this.startConnection();
-
-	// 	setTimeout(()=>{this._coUmlHubConnection.stop();},3500);
-		
-	// }
 
 	public subscribe(projectDeveloper: ProjectDeveloper): void
 	{
