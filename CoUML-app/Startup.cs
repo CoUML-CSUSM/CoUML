@@ -33,6 +33,7 @@ namespace CoUML_app
                     .WithOrigins("http://localhost:4200")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
+                    .SetIsOriginAllowedToAllowWildcardSubdomains()
                     .SetIsOriginAllowed(origin => true)
                     .AllowCredentials()
                 );
