@@ -35,7 +35,7 @@ namespace CoUML_app
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .SetIsOriginAllowed(origin => true)
-                    .AllowCredentials()
+                    // .AllowCredentials()
                 );
             });
             services.AddControllers();
