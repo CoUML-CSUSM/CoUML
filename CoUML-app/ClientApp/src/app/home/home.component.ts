@@ -17,7 +17,6 @@ export class HomeComponent {
 
 
   ip: string;
-  check: boolean
 
 	constructor(public coUmlConnection: CoUmlHubService) {}
 
@@ -28,7 +27,7 @@ export class HomeComponent {
 
   try()
   {
-    this.coUmlConnection.try(this.ip, this.check);
+    this.coUmlConnection.try(this.ip);
   }
 	
 }

@@ -8,18 +8,25 @@ import { environment } from '../../environments/environment';
 @Injectable()
 export class CoUmlHubService{
 	private _coUmlHubConnection: HubConnection;
-	// private _url = 'https://184.169.220.208:5001/couml';
+	// private _url = 'https://184.169.220.208/couml';
 	private _url = environment.apiUrl + "/couml";
 
 	public log: ConsoleLogger;
 	private _projectDeveloper: ProjectDeveloper = null;
 
-	constructor(){}
-
-	try(ip: string, secure: boolean)
-	{
-		this. _url = (secure? "https://": "http://")+ip+"/couml";
+	constructor(){
 		this.log = new ConsoleLogger();
+		this._coUmlHubConnection = new HubConnectionBuilder()
+				.withUrl(this._url)
+				.build();
+		this.startConnection();
+	}
+
+	try(ip: string)
+	{
+		this._coUmlHubConnection.stop();
+		this. _url = "https://"+ip+"/couml";
+		
 		this._coUmlHubConnection = new HubConnectionBuilder()
 				.withUrl(this._url)
 				.build();
