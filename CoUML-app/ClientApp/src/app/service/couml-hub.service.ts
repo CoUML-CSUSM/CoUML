@@ -16,9 +16,9 @@ export class CoUmlHubService{
 
 	constructor(){}
 
-	try(ip: string)
+	try(ip: string, secure: boolean)
 	{
-		this. _url = "https://"+ip+":5001/couml";
+		this. _url = (secure? "https://": "http://")+ip+"/couml";
 		this.log = new ConsoleLogger();
 		this._coUmlHubConnection = new HubConnectionBuilder()
 				.withUrl(this._url)

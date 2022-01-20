@@ -20,6 +20,7 @@ import { CoUmlHubService } from './service/couml-hub.service';
 /*PrimeNG Imported modules */
 import { ButtonModule } from 'primeng/button';
 import {InputTextModule} from 'primeng/inputtext';
+import {CheckboxModule} from 'primeng/checkbox';
 
 
 @NgModule({
@@ -44,9 +45,12 @@ import {InputTextModule} from 'primeng/inputtext';
       { path: 'counter', component: CounterComponent },
       { path: 'fetch-data', component: FetchDataComponent },
     ]),
-    
+
+
+    /* primeng */
     ButtonModule,
-    InputTextModule
+    InputTextModule,
+    CheckboxModule
   ],
   providers: [
 

@@ -4,7 +4,11 @@ import { ModuleMapLoaderModule } from '@nguniversal/module-map-ngfactory-loader'
 import { AppComponent } from './app.component';
 import { AppModule } from './app.module';
 import { CoUmlHubService } from './service/couml-hub.service';
+
+
 import {ButtonModule} from 'primeng/button';
+import {InputTextModule} from 'primeng/inputtext';
+import {CheckboxModule} from 'primeng/checkbox';
 
 @NgModule({
     imports: [
@@ -16,7 +20,9 @@ import {ButtonModule} from 'primeng/button';
         /**
          * PrimeNG imported components
          */
-        ButtonModule
+        ButtonModule,
+        InputTextModule,
+        CheckboxModule
 
     ],
     declarations: [
