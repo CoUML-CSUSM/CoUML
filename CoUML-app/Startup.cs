@@ -36,7 +36,7 @@ namespace CoUML_app
                     .AllowAnyHeader()
                     .SetIsOriginAllowedToAllowWildcardSubdomains()
                     .SetIsOriginAllowed(origin => true)
-                    .AllowCredentials()
+                    // .AllowCredentials()
                 );
             });
             services.AddControllers();
