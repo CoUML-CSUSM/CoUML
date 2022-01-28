@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
-import * as Automerge from 'automerge';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 import { environment } from '../../environments/environment';
 
@@ -61,13 +60,13 @@ export class CoUmlHubService{
 		// return new Promise<string>(()=>"test");
 	}
 
-	public commit(changes: Automerge.BinaryChange[])
+	public commit(changes: Change[])
 	{
 		this.log.log(CoUmlHubService.name, "commit")
 		this._coUmlHubConnection.invoke("Push", 'test', changes);
 	}
 
-	public dispatch(changes: Automerge.BinaryChange[])
+	public dispatch(changes: Change[])
 	{
 		if(this._projectDeveloper)
 			this._projectDeveloper.applyChange(changes);
