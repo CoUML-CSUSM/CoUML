@@ -10,15 +10,15 @@ export class ProjectDeveloper{
 	projectDiagram: Diagram;
 	recentPatch: Automerge.Patch;
 
-	constructor(private _CoUmlHub: CoUmlHubService)	{}
+	constructor(private _coUmlHub: CoUmlHubService)	{}
 
 
 	public open( id: string)
 	{
 		
-		this._CoUmlHub.fetch( id ) //get diagram from server
+		this._coUmlHub.fetch( id ) //get diagram from server
 			.then( (d) => {
-				this._CoUmlHub.subscribe(this);
+				this._coUmlHub.subscribe(this);
 				console.log(d);
 				this.projectDiagram = new DiagramBuilder().buildDiagram (d);
 				this.am_diagram = Automerge.from(this.projectDiagram);
@@ -37,7 +37,7 @@ export class ProjectDeveloper{
 		let newDiagram = Automerge.from(diagram);
 		let changes = Automerge.getChanges(this.am_diagram, newDiagram);
 		this.am_diagram = newDiagram;
-		this._CoUmlHub.commit(changes);
+		this._coUmlHub.commit(changes);
 
 		this.describe();
 	}
@@ -46,7 +46,7 @@ export class ProjectDeveloper{
 	{
 		[this.am_diagram, this.recentPatch] = Automerge.applyChanges(this.am_diagram, diagram);
 
-		/* log */ this._CoUmlHub.log.log(ProjectDeveloper.name, "applyChanges", JSON.stringify(this.recentPatch) );
+		/* log */ this._coUmlHub.log.log(ProjectDeveloper.name, "applyChanges", JSON.stringify(this.recentPatch) );
 
 		this.describe();
 
