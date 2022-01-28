@@ -106,6 +106,7 @@ namespace CoUML_app.Controllers.Hubs
 
 
     }
+
     public class CoUmlHub : Hub<ICoUmlClient>
     {
         /// <summary>

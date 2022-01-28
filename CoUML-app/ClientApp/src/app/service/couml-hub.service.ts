@@ -1,22 +1,22 @@
 import { Injectable } from '@angular/core';
-import * as signalR from "@microsoft/signalR";
-import { Diagram } from 'src/models/Diagram';
+import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import * as Automerge from 'automerge';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
+import { environment } from '../../environments/environment';
 
 
 @Injectable()
 export class CoUmlHubService{
-	private _coUmlHubConnection: signalR.HubConnection;
-	private _url = 'https://localhost:5001/couml';
+	private _coUmlHubConnection: HubConnection;
+	
+	private _url = environment.apiUrl + "/couml";
 
 	public log: ConsoleLogger;
 	private _projectDeveloper: ProjectDeveloper = null;
 
-	constructor()
-	{
+	constructor(){
 		this.log = new ConsoleLogger();
-		this._coUmlHubConnection = new signalR.HubConnectionBuilder()
+		this._coUmlHubConnection = new HubConnectionBuilder()
 				.withUrl(this._url)
 				.build();
 		this.startConnection();
@@ -58,6 +58,7 @@ export class CoUmlHubService{
 		// calling function : public string Fetch(string dId)
 		return this._coUmlHubConnection.invoke<string>('Fetch','test'); // test diagram
 		// return this._coUmlHubConnection.invoke<Diagram>('Fetch',dId); 
+		// return new Promise<string>(()=>"test");
 	}
 
 	public commit(changes: Automerge.BinaryChange[])
