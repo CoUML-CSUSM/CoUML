@@ -12,13 +12,22 @@ namespace CoUML_app.Models
 	}
 
 
-	public struct Attribute{
+	public abstract class ComponentProperty{
+		public Guid id { get; } = Guid.NewGuid();
 		public VisibilityType visibility {get; set;}
 		public string name{get; set;}
+		public string propertyString {get; set;}
+	}
+
+	public class Attribute: ComponentProperty{
 		public DataType type{get; set;}
 		public Multiplicity multiplicity{get; set;}
 		public string defaultValue {get; set;}
-		public string propertyString {get; set;}
+	}
+
+	public class Operation: ComponentProperty{
+		public ICollection<Attribute> parameters{get; set;}
+		public DataType returnType{get; set;}
 	}
 
 	public struct Multiplicity
@@ -26,14 +35,6 @@ namespace CoUML_app.Models
 		public int min {get; set;}
 		public int max {get; set;}
 
-	}
-
-	public struct Operation{
-		public VisibilityType visibility {get; set;}
-		public string name{get; set;}
-		public ICollection<Attribute> parameters{get; set;}
-		public DataType returnType{get; set;}
-		public string propertyString {get; set;}
 	}
 
 
