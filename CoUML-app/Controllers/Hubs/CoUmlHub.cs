@@ -239,11 +239,12 @@ namespace CoUML_app.Controllers.Hubs
                 fromComponent = c,
                 toComponent = i,
             };
-            
+            c.relations.Insert(r.id);
+            i.relations.Insert(r.id);
 
             d.elements.Insert(i);
             d.elements.Insert(c);
-            d.elements.Insert(r);            
+            d.elements.Insert(r);          
 
             return d;
         }

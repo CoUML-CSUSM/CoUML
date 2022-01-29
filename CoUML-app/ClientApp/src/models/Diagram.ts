@@ -1,7 +1,5 @@
-import { DataType } from 'automerge';
-import {v4 as uuidv4} from 'uuid';
-import { Interface, Enumeration, AbstractClass, Class, Component, Relationship, GeneralCollection, ICollection, RelationalCollection, Dimension, Operation, User, IUser, NullUser  } from './DiagramModel';
-import { Attribute } from './Subcomponent';
+import {v4 as Uuid} from 'uuid';
+import { ICollection, RelationalCollection, Dimension, IUser, NullUser  } from './DiagramModel';
 
 export class Diagram
 {
@@ -9,6 +7,6 @@ export class Diagram
 }
 export abstract class DiagramElement{
 	editor: IUser = new NullUser();
-	id: string = uuidv4();
+	id: string = Uuid();
 	dimension: Dimension = new Dimension();
 }

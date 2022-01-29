@@ -2,6 +2,7 @@ import { DiagramElement } from "./Diagram";
 import { Component } from "./Component";
 import { VisibilityType, DataType, RelationshipType } from "./Types";
 import { ICollection } from "./Collection";
+import {v4 as Uuid} from 'uuid';
 /**
  * describ a relationship between a set of diagram elements
  * Examples: 
@@ -31,6 +32,40 @@ export class Relationship extends DiagramElement {
 	}
 }
 
+export abstract class ComponentProperty{
+	id: string = Uuid();
+	visibility: VisibilityType;
+	name: string;
+	isStatic: boolean;
+	propertyString: string = null; //says =null
+}
+
+/**
+ * describs an attibute of a diagram element
+ * diagram:
+ *      [ - myAttribute: DataType = DefaultObject ]
+ * implimentation: 
+ *      private DataType myAttribute = new DefaultObject<DataType>();
+ */
+export class Attribute extends ComponentProperty{
+	type: DataType;             //not sure if we want enums we can make an abstract rn
+	multiplicity: Multiplicity; //diagram says int[10..-1]=null idk. no car in ts. make * -1
+	defaultValue: string = null;      //says =null
+}
+
+
+/**
+ * describs an operation from a diagram element
+ * diagram:
+ *      [ + foo(p: DataType, q: DataType): DataType ]
+ * implimentation: 
+ *      public DataType foo( DataType p, DataType q){}
+ */
+ export class Operation extends ComponentProperty{
+	parameters: ICollection<Attribute>;
+	returnType: DataType;
+}
+
 /**
  * The multiplicity of an atribute
  * types of representation and values:
@@ -47,35 +82,3 @@ export class Multiplicity
 	max: number = null;
 }
 
-/**
- * describs an attibute of a diagram element
- * diagram:
- *      [ - myAttribute: DataType = DefaultObject ]
- * implimentation: 
- *      private DataType myAttribute = new DefaultObject<DataType>();
- */
-export class Attribute{
-	visibility: VisibilityType;
-	name: string;
-	type: DataType;             //not sure if we want enums we can make an abstract rn
-	multiplicity: Multiplicity; //diagram says int[10..-1]=null idk. no car in ts. make * -1
-	defaultValue: string = null;      //says =null
-	propertyString: string = null;//says =null
-}
-
-
-/**
- * describs an operation from a diagram element
- * diagram:
- *      [ + foo(p: DataType, q: DataType): DataType ]
- * implimentation: 
- *      public DataType foo( DataType p, DataType q){}
- */
- export class Operation{
-	visibility: VisibilityType;
-	name: string;
-	parameters: ICollection<Attribute>;
-	returnType: DataType;
-	isStatic: boolean;
-	propertyString: string = null; //=null
-}

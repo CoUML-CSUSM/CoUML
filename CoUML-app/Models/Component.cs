@@ -1,10 +1,11 @@
+using System;
 using CoUML_app.Models;
 
 namespace CoUML_app.Models
 {
 	public abstract class Component : DiagramElement{
 		public string name { get;set; }
-		ICollection<string> relations {get; set;} = new GeneralCollection<string>();
+		public ICollection<Guid> relations {get; set;} = new GeneralCollection<Guid>();
 	}
 
 	public class Enumeration : Component{

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CoUmlHubService } from "../service/couml-hub.service";
-import { Class, Diagram, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, DiagramBuilder } from 'src/models/DiagramModel';
+import { Diagram, DiagramBuilder } from 'src/models/DiagramModel';
 import { Binary } from '@angular/compiler';
 
 @Injectable()
@@ -8,19 +8,18 @@ export class ProjectDeveloper{
 
 	projectDiagram: Diagram;
 
-	constructor(private _CoUmlHub: CoUmlHubService)	{}
+	constructor(private _coUmlHub: CoUmlHubService)	{}
 
 
 	public open( id: string)
 	{
 		
-		this._CoUmlHub.fetch( id ) //get diagram from server
+		this._coUmlHub.fetch( id ) //get diagram from server
 			.then( (d) => {
-				this._CoUmlHub.subscribe(this);
+				this._coUmlHub.subscribe(this);
 				console.log(d);
 				this.projectDiagram = new DiagramBuilder().buildDiagram (d);
 				console.log(this.projectDiagram);
-				console.log(`Automerge Diagram\n${this.describe()}`);
 			} ); // create AMDiagram from diagram 
 	}
 
@@ -31,25 +30,17 @@ export class ProjectDeveloper{
 
 	public makeChange(diagram: Diagram)
 	{
-		changes : Binary[];
-		this._CoUmlHub.commit(changes);
+		// this._CoUmlHub.commit(changes);
 
-		this.describe();
 	}
 
 	public applyChange(diagram)
 	{
 
+		// /* log */ this._coUmlHub.log.log(ProjectDeveloper.name, "applyChanges", JSON.stringify(this.recentPatch) );
 
-		this.describe();
-
-		//TODO: render on screen
 	}
 
-	public describe():string
-	{
-		return JSON.stringify(this.diagram, undefined, 2);
-	}
 }
 
 /** * * * * * * * * * * * * * * * * * * * * * * *
