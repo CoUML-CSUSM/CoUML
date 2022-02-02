@@ -1,5 +1,5 @@
 import { AfterViewInit, Component as AngularComponent, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Class, Diagram, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType as VisibilityType } from 'src/models/DiagramModel';
+import { Class, Diagram, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType as VisibilityType, ChangeRecord, ActionType, PropertyType } from 'src/models/DiagramModel';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 // import mx from './mxgraph';
 // import { mxGraph, mxGraphModel } from 'mxgraph';
@@ -236,15 +236,9 @@ export class EditorComponent implements AfterViewInit, OnInit{
 		this._projectDeveloper.open(this.diagramId);
 	}
 
-	// public sample()
-	// {
-	// 	this._projectDeveloper.openSample();
-	// 	this.diagram_description = this._projectDeveloper.describe();
-	// }
-
-	public sample()
+	public makeTestChange()
 	{	
-		let d = this._projectDeveloper.projectDiagram;
+		let changes: ChangeRecord[] = [];
 
 		// class
 		let c: Class  =  new Class("Triangle");
@@ -257,11 +251,36 @@ export class EditorComponent implements AfterViewInit, OnInit{
 		let r: Relationship = new Relationship();
 		r.type = RelationshipType.Realization;
 		r.fromCompnent(c);
-		r.toComponent(d.elements.get("IShape") as Component);
+		let parent = this._projectDeveloper._projectDiagram.elements.get("IShape") as Component
+		r.toComponent(parent);
 
-		d.elements.insert(r)
+		// make relation
+		c.relations.insert(r.id)
 
-		this._projectDeveloper.makeChange(d)
+		changes.push({
+			id: null,
+			componentPropertyId: null,
+			affectedProperty: PropertyType.Elements,
+			action: ActionType.Insert,
+			value: c
+		},
+		{
+			id: null,
+			componentPropertyId: null,
+			affectedProperty: PropertyType.Elements,
+			action: ActionType.Insert,
+			value: r
+		},
+		{
+			id: parent.id,
+			componentPropertyId: null,
+			affectedProperty: PropertyType.Relations,
+			action: ActionType.Insert,
+			value: r.id
+		},
+		);
+
+		this._projectDeveloper.makeChange(changes)
 	}
 }
 

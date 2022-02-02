@@ -12,7 +12,7 @@ export * from './Subcomponent';
 export * from './Types';
 export * from './User';
 export * from './Dimension';
-
+export * from './ChangeRecord'
 
 export class DiagramBuilder
 {
@@ -21,47 +21,10 @@ export class DiagramBuilder
 		let d = JSON.parse(diagram_DTO);
 
 		let __diagram = new Diagram();
-		// console.log("d.elements.items[0]\n" + JSON.stringify(d.elements.items[0], undefined, 2));
 		for(let i = 0; i<d.elements.size; i++)
 		{
-
-			// console.log("processing element");
-			// console.log(d.elements.items[i]);
-
 			__diagram.elements.insert(d.elements.items[i]);
-			// let e = JSON.parse(d.elements.items[i]);
-
-			// console.log(`parsed elem...`);
-
-			// let diagramElementType = this.getType(e);
-			// if(diagramElementType)
-			// {
-			// 	//is a compnent or sub component
-			// 	let element: DiagramElement;
-			// 	switch(diagramElementType)
-			// 	{
-			// 		case Interface.name:
-			// 			element = this.buildInterface(e as Interface);
-			// 			break;
-			// 		case Enumeration.name:
-			// 			element  = this.buildEnumeration(e as Enumeration);
-			// 			break;
-			// 		case AbstractClass.name:
-			// 			element = this.buildAbstractClass(e as AbstractClass);
-			// 			break;
-			// 		case Class.name:
-			// 			element = this.buildClass(e as Class);
-			// 			break;
-			// 		case Relationship.name:
-			// 			element = this.buildRelationship(e as Relationship);
-			// 			break;
-			// 	}
-			// 	__diagram.elements.insert(element);
-			// }
-
 		}
-		// console.log("Final Diagram");
-		// console.log(__diagram);
 		return __diagram;
 	}
 
@@ -72,7 +35,7 @@ export class DiagramBuilder
 		__relationship.dimension = this.buildDimension(x.dimension);
 		__relationship.from = x.from;
 		__relationship.to = x.to;
-		__relationship.atributes = this.buildAttributeCollection(x.atributes as GeneralCollection<Attribute>)
+		__relationship.attributes = this.buildAttributeCollection(x.attributes as GeneralCollection<Attribute>)
 		return __relationship;
 	}
 	

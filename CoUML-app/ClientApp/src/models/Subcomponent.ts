@@ -1,4 +1,4 @@
-import { DiagramElement } from "./Diagram";
+import { DiagramElement, IGettable } from "./Diagram";
 import { Component } from "./Component";
 import { VisibilityType, DataType, RelationshipType } from "./Types";
 import { ICollection } from "./Collection";
@@ -22,13 +22,18 @@ export class Relationship extends DiagramElement {
 	type: RelationshipType;
 	from: string;
 	to: string;
-	atributes: ICollection<Attribute>;
+	attributes: ICollection<Attribute>;
 
 	fromCompnent( component: Component){
 		this.from = component.id
 	}
 	toComponent( component: Component){
 		this.to = component?.id
+	}
+
+	get(id: string)
+	{
+		return this.attributes.get(id);
 	}
 }
 
@@ -38,6 +43,7 @@ export abstract class ComponentProperty{
 	name: string;
 	isStatic: boolean;
 	propertyString: string = null; //says =null
+	type: DataType;             //not sure if we want enums we can make an abstract rn
 }
 
 /**
@@ -48,7 +54,6 @@ export abstract class ComponentProperty{
  *      private DataType myAttribute = new DefaultObject<DataType>();
  */
 export class Attribute extends ComponentProperty{
-	type: DataType;             //not sure if we want enums we can make an abstract rn
 	multiplicity: Multiplicity; //diagram says int[10..-1]=null idk. no car in ts. make * -1
 	defaultValue: string = null;      //says =null
 }
@@ -61,13 +66,15 @@ export class Attribute extends ComponentProperty{
  * implimentation: 
  *      public DataType foo( DataType p, DataType q){}
  */
- export class Operation extends ComponentProperty{
+ export class Operation extends ComponentProperty implements IGettable{
 	parameters: ICollection<Attribute>;
-	returnType: DataType;
+	get(id: string) {
+		return this.parameters.get(id);
+	}
 }
 
 /**
- * The multiplicity of an atribute
+ * The multiplicity of an attribute
  * types of representation and values:
  *  diagram     implimentation
  *  1           {   1, null  }  exact values: the inital value is min and max is null

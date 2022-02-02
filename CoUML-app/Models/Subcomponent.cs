@@ -17,17 +17,16 @@ namespace CoUML_app.Models
 		public VisibilityType visibility {get; set;}
 		public string name{get; set;}
 		public string propertyString {get; set;}
+		public DataType type{get; set;}
 	}
 
 	public class Attribute: ComponentProperty{
-		public DataType type{get; set;}
 		public Multiplicity multiplicity{get; set;}
 		public string defaultValue {get; set;}
 	}
 
 	public class Operation: ComponentProperty{
 		public ICollection<Attribute> parameters{get; set;}
-		public DataType returnType{get; set;}
 	}
 
 	public struct Multiplicity

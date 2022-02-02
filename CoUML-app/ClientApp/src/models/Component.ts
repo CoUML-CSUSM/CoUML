@@ -1,7 +1,7 @@
 import { UUID } from "automerge";
 import { GeneralCollection, ICollection, RelationalCollection } from "./Collection";
 import { DiagramElement } from "./Diagram";
-import { Operation, Attribute} from "./Subcomponent";
+import { Operation, Attribute, ComponentProperty} from "./Subcomponent";
 import { Relationship } from "./Subcomponent";
 
 /**
@@ -28,6 +28,10 @@ export abstract class Component extends DiagramElement
 export class Enumeration extends Component
 {
     enums: ICollection<string> = new GeneralCollection<string>([]);
+    get(id: string)
+    {
+        return this.enums.get(id)
+    }
 }
 
 /**
@@ -36,6 +40,10 @@ export class Enumeration extends Component
 export class Interface extends Component
 {
     operations: ICollection<Operation> = new GeneralCollection<Operation>([]);
+    get(id: string)
+    {
+        return this.operations.get(id)
+    }
 }
 
 /**
@@ -45,6 +53,13 @@ export class AbstractClass extends Component
 {
     operations:ICollection<Operation> = new GeneralCollection<Operation>([]);
     attributes:ICollection<Attribute> = new GeneralCollection<Attribute>([]);
+    get(id: string)
+    {
+        let property: ComponentProperty = this.operations.get(id);
+        if(!property)
+            property = this.attributes.get(id)
+        return property;
+    }
 }
 
 /**
@@ -54,4 +69,11 @@ export class Class extends Component
 {
     operations:ICollection<Operation> = new GeneralCollection<Operation>([]);
     attributes:ICollection<Attribute> = new GeneralCollection<Attribute>([]);
+    get(id: string)
+    {
+        let property: ComponentProperty = this.operations.get(id);
+        if(!property)
+            property = this.attributes.get(id)
+        return property;
+    }
 }

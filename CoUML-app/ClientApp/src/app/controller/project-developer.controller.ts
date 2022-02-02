@@ -1,25 +1,25 @@
 import { Injectable } from '@angular/core';
 import { CoUmlHubService } from "../service/couml-hub.service";
-import { Diagram, DiagramBuilder } from 'src/models/DiagramModel';
+import { Diagram, DiagramBuilder, ChangeRecord, ActionType, PropertyType, Class, AbstractClass, Interface, Enumeration, IGettable } from 'src/models/DiagramModel';
 import { Binary } from '@angular/compiler';
 
 @Injectable()
 export class ProjectDeveloper{
 
-	projectDiagram: Diagram;
+	_projectDiagram: Diagram;
 
 	constructor(private _coUmlHub: CoUmlHubService)	{}
 
 
-	public open( id: string)
+	public open( id: string )
 	{
 		
 		this._coUmlHub.fetch( id ) //get diagram from server
 			.then( (d) => {
 				this._coUmlHub.subscribe(this);
 				console.log(d);
-				this.projectDiagram = new DiagramBuilder().buildDiagram (d);
-				console.log(this.projectDiagram);
+				this._projectDiagram = new DiagramBuilder().buildDiagram (d);
+				console.log(this._projectDiagram);
 			} ); // create AMDiagram from diagram 
 	}
 
@@ -28,38 +28,46 @@ export class ProjectDeveloper{
 		//TODO: close the project and remove yourself from the group
 	}
 
-	public makeChange(diagram: Diagram)
+	public makeChange(changes: ChangeRecord[])
 	{
 		// this._CoUmlHub.commit(changes);
 
 	}
 
-	public applyChange(diagram)
+	
+	public applyChanges(changes: ChangeRecord[])
 	{
-
-		// /* log */ this._coUmlHub.log.log(ProjectDeveloper.name, "applyChanges", JSON.stringify(this.recentPatch) );
-
+		for(let change of changes)
+		{
+			this.applyChange(change);
+		}
 	}
 
+	applyChange(change: ChangeRecord)
+	{
+		let action = ActionType[change.action].toLowerCase();
+		let affectedProperty = PropertyType[change.affectedProperty].toLowerCase();
+		let operation = "";
+
+		let affectedComponent = this._projectDiagram.elements as IGettable;
+		for(let i of change.id)
+		{
+			affectedComponent = affectedComponent.get(i) as IGettable;
+		}
+
+		switch(change.action){
+			case ActionType.Insert:
+			case ActionType.Remove:
+				operation = `${affectedProperty}.${action}(change.value)`;
+				break;
+
+			case ActionType.Lock:
+			case ActionType.Release:
+			case ActionType.Change:
+				operation = `${affectedProperty} = change.value`;
+				break;
+		}
+
+		eval(`affectedComponent.${operation}`);
+	}
 }
-
-/** * * * * * * * * * * * * * * * * * * * * * * *
- * example code from github https://github.com/automerge/automerge
- ** * * * * * * * * * * * * * * * * * * * * * * *
-
- // On one node
-let newDoc = Automerge.change(currentDoc, doc => {
-  // make arbitrary change to the document
-})
-let changes = Automerge.getChanges(currentDoc, newDoc)
-
-// broadcast changes as a byte array
-network.broadcast(changes)
-
-// On another node, receive the byte array
-let changes = network.receive()
-let [newDoc, patch] = Automerge.applyChanges(currentDoc, changes)
-// `patch` is a description of the changes that were applied (a kind of diff)
-
-
- */

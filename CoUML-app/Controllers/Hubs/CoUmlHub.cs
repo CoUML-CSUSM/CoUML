@@ -218,7 +218,7 @@ namespace CoUML_app.Controllers.Hubs
             {   
                 name = "draw",
                 visibility = VisibilityType.Public,
-                returnType = new DataType{ dataType = "void"}
+                type = new DataType{ dataType = "void"}
             };
             i.operations.Insert(io);
 

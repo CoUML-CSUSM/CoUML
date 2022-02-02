@@ -1,5 +1,5 @@
 import { Class, Component, Interface } from "./Component";
-import { DiagramElement } from "./Diagram";
+import { DiagramElement, IGettable } from "./Diagram";
 
 //interface for collections to create iterators
 export interface ICollectionIterator<T>
@@ -10,7 +10,7 @@ export interface ICollectionIterator<T>
 	getPrevious():T;
 }
 
-export interface ICollection<T>
+export interface ICollection<T> extends IGettable
 {
 	iterator(): ICollectionIterator<T>;
 	insert(item: T): void;
