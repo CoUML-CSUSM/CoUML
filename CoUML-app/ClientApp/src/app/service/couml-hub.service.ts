@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 import { environment } from '../../environments/environment';
+import { ChangeRecord } from 'src/models/ChangeRecord';
 
 
 @Injectable()
@@ -57,19 +58,18 @@ export class CoUmlHubService{
 		// calling function : public string Fetch(string dId)
 		return this._coUmlHubConnection.invoke<string>('Fetch','test'); // test diagram
 		// return this._coUmlHubConnection.invoke<Diagram>('Fetch',dId); 
-		// return new Promise<string>(()=>"test");
 	}
 
-	public commit(changes: Change[])
+	public commit(changes: ChangeRecord[])
 	{
 		this.log.log(CoUmlHubService.name, "commit")
 		this._coUmlHubConnection.invoke("Push", 'test', changes);
 	}
 
-	public dispatch(changes: Change[])
+	public dispatch(changes: ChangeRecord[])
 	{
 		if(this._projectDeveloper)
-			this._projectDeveloper.applyChange(changes);
+			this._projectDeveloper.applyChanges(changes);
 	}
 
 
@@ -77,6 +77,11 @@ export class CoUmlHubService{
 	{
 		this._coUmlHubConnection.invoke("TriggerBreakPoint");
 	}
+
+
+
+
+	sample: string = '';
 
 
 }

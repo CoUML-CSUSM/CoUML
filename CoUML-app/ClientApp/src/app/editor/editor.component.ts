@@ -259,21 +259,18 @@ export class EditorComponent implements AfterViewInit, OnInit{
 
 		changes.push({
 			id: null,
-			componentPropertyId: null,
 			affectedProperty: PropertyType.Elements,
 			action: ActionType.Insert,
 			value: c
 		},
 		{
 			id: null,
-			componentPropertyId: null,
 			affectedProperty: PropertyType.Elements,
 			action: ActionType.Insert,
 			value: r
 		},
 		{
-			id: parent.id,
-			componentPropertyId: null,
+			id: [parent.id],
 			affectedProperty: PropertyType.Relations,
 			action: ActionType.Insert,
 			value: r.id

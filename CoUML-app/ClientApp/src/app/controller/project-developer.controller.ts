@@ -43,7 +43,7 @@ export class ProjectDeveloper{
 		}
 	}
 
-	applyChange(change: ChangeRecord)
+	private applyChange(change: ChangeRecord)
 	{
 		let action = ActionType[change.action].toLowerCase();
 		let affectedProperty = PropertyType[change.affectedProperty].toLowerCase();

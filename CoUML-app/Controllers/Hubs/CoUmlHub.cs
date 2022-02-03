@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 
 using CoUML_app.Models;
@@ -178,10 +180,11 @@ namespace CoUML_app.Controllers.Hubs
                 //TODO: look up real diagram and return
             }
 
-            return JsonConvert.SerializeObject(testDiagram, Formatting.Indented, new JsonSerializerSettings
-                    {
-                        TypeNameHandling = TypeNameHandling.Auto
-                    });
+            // return JsonConvert.SerializeObject(testDiagram, Formatting.Indented, new JsonSerializerSettings
+            //         {
+            //             TypeNameHandling = TypeNameHandling.Auto
+            //         });
+            return this.OpenSampleFile();
                 
         }
 
@@ -203,6 +206,20 @@ namespace CoUML_app.Controllers.Hubs
         {
             ;
         }
+
+        private IHostingEnvironment Environment;// TODO Error!!!!!! null
+        public string OpenSampleFile()
+        {
+            string fileName = "sample.txt";
+            if (string.IsNullOrWhiteSpace(this.Environment.WebRootPath)){
+                this.Environment.WebRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            }
+ 
+            string path = Directory.GetFiles(Path.Combine(this.Environment.WebRootPath, "Samples/"))[0] + fileName;
+
+            return File.ReadAllText(path);
+        }
+
 
     }
 
@@ -248,5 +265,7 @@ namespace CoUML_app.Controllers.Hubs
 
             return d;
         }
+
+
     }
 }

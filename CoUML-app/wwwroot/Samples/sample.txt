@@ -1,0 +1,102 @@
+{
+  "elements": {
+    "$type": "CoUML_app.Models.RelationalCollection, CoUML-app",
+    "items": [
+      {
+        "$type": "CoUML_app.Models.Interface, CoUML-app",
+        "operations": {
+          "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.Operation, CoUML-app]], CoUML-app",
+          "items": [
+            {
+              "visibility": 43,
+              "name": "draw",
+              "parameters": null,
+              "returnType": {
+                "dataType": "void"
+              },
+              "propertyString": null
+            }
+          ],
+          "size": 1
+        },
+        "name": "IShape",
+        "user": {
+          "$type": "CoUML_app.Models.NullUser, CoUML-app",
+          "id": "N/A"
+        },
+        "id": "59c442fc-14ae-404b-906c-4978461db042",
+        "dimension": {
+          "$type": "CoUML_app.Models.Dimension, CoUML-app",
+          "x": 100,
+          "y": 100,
+          "width": 40,
+          "height": 60
+        }
+      },
+      {
+        "$type": "CoUML_app.Models.Class, CoUML-app",
+        "operations": {
+          "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.Operation, CoUML-app]], CoUML-app",
+          "items": [],
+          "size": 0
+        },
+        "attributes": {
+          "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.Attribute, CoUML-app]], CoUML-app",
+          "items": [
+            {
+              "visibility": 45,
+              "name": "diagonal",
+              "type": {
+                "dataType": "double"
+              },
+              "multiplicity": {
+                "min": 0,
+                "max": 0
+              },
+              "defaultValue": null,
+              "propertyString": null
+            }
+          ],
+          "size": 1
+        },
+        "name": "Hexagon",
+        "user": {
+          "$type": "CoUML_app.Models.NullUser, CoUML-app",
+          "id": "N/A"
+        },
+        "id": "8005b4da-a558-47f6-bd7d-9a0444318fd4",
+        "dimension": {
+          "$type": "CoUML_app.Models.Dimension, CoUML-app",
+          "x": 100,
+          "y": 100,
+          "width": 40,
+          "height": 60
+        }
+      },
+      {
+        "$type": "CoUML_app.Models.Relationship, CoUML-app",
+        "attributes": {
+          "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.Attribute, CoUML-app]], CoUML-app",
+          "items": [],
+          "size": 0
+        },
+        "type": 5,
+        "from": "8005b4da-a558-47f6-bd7d-9a0444318fd4",
+        "to": "59c442fc-14ae-404b-906c-4978461db042",
+        "user": {
+          "$type": "CoUML_app.Models.NullUser, CoUML-app",
+          "id": "N/A"
+        },
+        "id": "9a22cb76-08cb-40c5-8364-b0b2c1d4352a",
+        "dimension": {
+          "$type": "CoUML_app.Models.Dimension, CoUML-app",
+          "x": 100,
+          "y": 100,
+          "width": 40,
+          "height": 60
+        }
+      }
+    ],
+    "size": 3
+  }
+}
