@@ -1,8 +1,6 @@
-import { UUID } from "automerge";
-import { GeneralCollection, ICollection, RelationalCollection } from "./Collection";
-import { DiagramElement } from "./Diagram";
-import { Operation, Attribute, ComponentProperty} from "./Subcomponent";
-import { Relationship } from "./Subcomponent";
+import { GeneralCollection } from "./Collection";
+import { DiagramElement, Operation, Attribute, ComponentProperty,  ICollection } from "./DiagramModel";
+
 
 /**
  * Abstraction of Component 
@@ -13,12 +11,14 @@ import { Relationship } from "./Subcomponent";
  */
 export abstract class Component extends DiagramElement
 {
-    name:string;
-    relations:ICollection<string> = new GeneralCollection<string>([]);
+    public name:string;
+    public relations:ICollection<string>;
+
     constructor(name: string)
     {
         super();
         this.name = name;
+        this.relations = new GeneralCollection<string> ([]);
     }
 }
 
@@ -27,11 +27,14 @@ export abstract class Component extends DiagramElement
  */
 export class Enumeration extends Component
 {
-    enums: ICollection<string> = new GeneralCollection<string>([]);
-    get(id: string)
+    public enums: ICollection<string>;
+
+    public constructor(name: string)
     {
-        return this.enums.get(id)
+        super(name);
+        this.enums  = new GeneralCollection<string> ([]);
     }
+
 }
 
 /**
@@ -39,10 +42,12 @@ export class Enumeration extends Component
  */
 export class Interface extends Component
 {
-    operations: ICollection<Operation> = new GeneralCollection<Operation>([]);
-    get(id: string)
+    public operations: ICollection<Operation>;
+
+    public constructor(name: string)
     {
-        return this.operations.get(id)
+        super(name);
+        this.operations  = new GeneralCollection<Operation> ([]);
     }
 }
 
@@ -51,14 +56,14 @@ export class Interface extends Component
  */
 export class AbstractClass extends Component
 {
-    operations:ICollection<Operation> = new GeneralCollection<Operation>([]);
-    attributes:ICollection<Attribute> = new GeneralCollection<Attribute>([]);
-    get(id: string)
+    public operations:ICollection<Operation>;
+    public attributes:ICollection<Attribute>;
+
+    public constructor(name: string)
     {
-        let property: ComponentProperty = this.operations.get(id);
-        if(!property)
-            property = this.attributes.get(id)
-        return property;
+        super(name);
+        this.operations  = new GeneralCollection<Operation> ([]);
+        this.attributes  = new GeneralCollection<Attribute> ([]);
     }
 }
 
@@ -67,13 +72,13 @@ export class AbstractClass extends Component
  */
 export class Class extends Component
 {
-    operations:ICollection<Operation> = new GeneralCollection<Operation>([]);
-    attributes:ICollection<Attribute> = new GeneralCollection<Attribute>([]);
-    get(id: string)
+    public operations:ICollection<Operation>;
+    public attributes:ICollection<Attribute>;
+
+    public constructor(name: string)
     {
-        let property: ComponentProperty = this.operations.get(id);
-        if(!property)
-            property = this.attributes.get(id)
-        return property;
+        super(name);
+        this.operations  = new GeneralCollection<Operation> ([]);
+        this.attributes  = new GeneralCollection<Attribute> ([]);
     }
 }

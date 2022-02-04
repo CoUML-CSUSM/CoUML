@@ -22,6 +22,7 @@ export interface ICollection<T> extends IGettable
 export class GeneralCollection<T> implements ICollection<T>{
 
 	items: T[] = [];
+
 	/**
 	 * contstuctor with array of item type
 	 * @param collection 
@@ -45,6 +46,8 @@ export class GeneralCollection<T> implements ICollection<T>{
 	 * @param item 
 	 */
 	insert(item: T): void {
+		console.log("inserting....");
+		console.log(item);
 		 this.items.push(item);
 	}
 
@@ -96,74 +99,76 @@ export class GeneralCollection<T> implements ICollection<T>{
 
 }
 
-/**
- * RelationshipCollection
- */
-export class RelationalCollection implements ICollection<DiagramElement>{
+// /**
+//  * RelationshipCollection
+//  */
+// export class RelationalCollection implements ICollection<DiagramElement>{
 	
-	private items: Map<string, DiagramElement> = new Map<string, DiagramElement>();
-	toJSON(): any {
-		return {
-			items: Object.fromEntries(this.items),
-		}
-	 }
+// 	private items: Map<string, DiagramElement> = new Map<string, DiagramElement>();
+// 	toJSON(): any {
+// 		return {
+// 			items: Object.fromEntries(this.items),
+// 		}
+// 	 }
 
-	constructor(collection: DiagramElement[])
-	{
-		for(let elem of collection)
-			this.insert(elem)
-	}
+// 	constructor(collection: DiagramElement[])
+// 	{
+// 		for(let elem of collection)
+// 			this.insert(elem)
+// 	}
 
-	iterator(): ICollectionIterator<DiagramElement> 
-	{
-		return new CollectionIterator<DiagramElement>(
-				new GeneralCollection<DiagramElement>(
-					Array.from(this.items.values())
-				)
-			);
-	}
+// 	iterator(): ICollectionIterator<DiagramElement> 
+// 	{
+// 		return new CollectionIterator<DiagramElement>(
+// 				new GeneralCollection<DiagramElement>(
+// 					Array.from(this.items.values())
+// 				)
+// 			);
+// 	}
 
-	insert(item: DiagramElement): void {
-		this.items.set(item.id, item);
-	}
+// 	insert(item: DiagramElement): void {
+// 		console.log("inserting....");
+// 		console.log(item);
+// 		this.items.set(item.id, item);
+// 	}
 
-	remove(signature: string): DiagramElement | null 
-	{
-		let relation = null
-		if(this.items.has(signature))
-		{
-			relation = this.items.get(signature);
-			this.items.delete(relation);
-		}
-		return relation;
-	}
+// 	remove(signature: string): DiagramElement | null 
+// 	{
+// 		let relation = null
+// 		if(this.items.has(signature))
+// 		{
+// 			relation = this.items.get(signature);
+// 			this.items.delete(relation);
+// 		}
+// 		return relation;
+// 	}
 	
-	get(key: string): null | DiagramElement
-	{
-		if(this.items.has(key))
-			return this.items.get(key);
-		return this.find(key);
-	}
+// 	get(key: string): null | DiagramElement
+// 	{
+// 		if(this.items.has(key))
+// 			return this.items.get(key);
+// 		return this.find(key);
+// 	}
 
-	private find(key: string): null | DiagramElement
-	{
-		for(let e of this.items.values())
-		{
-			if(!(e instanceof RelationalCollection)){
-				let de = e as Component;
-				if(key === de.name)
-					return de;
-			}
-		}
-		return null;
-	}
+// 	private find(key: string): null | DiagramElement
+// 	{
+// 		for(let e of this.items.values())
+// 		{
+// 			if(!(e instanceof RelationalCollection)){
+// 				let de = e as Component;
+// 				if(key === de.name)
+// 					return de;
+// 			}
+// 		}
+// 		return null;
+// 	}
 
-	get size(): number 
-	{
-		return this.items.size
-	}
+// 	get size(): number 
+// 	{
+// 		return this.items.size
+// 	}
 
-}
+// }
 
 /**
  * AttributeCollectionIterator

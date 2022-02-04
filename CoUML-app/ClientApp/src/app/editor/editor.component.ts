@@ -251,8 +251,9 @@ export class EditorComponent implements AfterViewInit, OnInit{
 		let r: Relationship = new Relationship();
 		r.type = RelationshipType.Realization;
 		r.fromCompnent(c);
-		let parent = this._projectDeveloper._projectDiagram.elements.get("IShape") as Component
-		r.toComponent(parent);
+		// let parent = this._projectDeveloper._projectDiagram.elements.get("IShape") as Component
+		let parent = "0b68a108-f685-4e44-9e6e-a325d8d439f3";
+		r.to = parent;
 
 		// make relation
 		c.relations.insert(r.id)
@@ -270,7 +271,7 @@ export class EditorComponent implements AfterViewInit, OnInit{
 			value: r
 		},
 		{
-			id: [parent.id],
+			id: [parent],
 			affectedProperty: PropertyType.Relations,
 			action: ActionType.Insert,
 			value: r.id

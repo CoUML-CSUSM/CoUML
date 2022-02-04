@@ -43,7 +43,9 @@ export class CoUmlHubService{
 		});
 
 		// listen for changes
-		this._coUmlHubConnection.on("Dispatch", (changes)=>{
+		this._coUmlHubConnection.on("Dispatch", (changesDTO)=>{
+			let changes = JSON.parse(changesDTO);
+			console.log(changes);
 			this.dispatch(changes);
 		});
 	}
@@ -63,7 +65,8 @@ export class CoUmlHubService{
 	public commit(changes: ChangeRecord[])
 	{
 		this.log.log(CoUmlHubService.name, "commit")
-		this._coUmlHubConnection.invoke("Push", 'test', changes);
+		let changesDTO = JSON.stringify(changes)
+		this._coUmlHubConnection.invoke("Push", 'test', changesDTO);
 	}
 
 	public dispatch(changes: ChangeRecord[])

@@ -1,8 +1,6 @@
-import { DiagramElement, IGettable } from "./Diagram";
-import { Component } from "./Component";
+import { DiagramElement, GeneralCollection, ICollection, IGettable, Component } from "./DiagramModel";
 import { VisibilityType, DataType, RelationshipType } from "./Types";
-import { ICollection } from "./Collection";
-import {v4 as Uuid} from 'uuid';
+
 /**
  * describ a relationship between a set of diagram elements
  * Examples: 
@@ -18,11 +16,20 @@ import {v4 as Uuid} from 'uuid';
  * implimentation
  *      Comp impliments IComp{}
  */
-export class Relationship extends DiagramElement {
-	type: RelationshipType;
-	from: string;
-	to: string;
-	attributes: ICollection<Attribute>;
+export class Relationship extends DiagramElement 
+{
+
+	public type: RelationshipType;
+	public from: string;
+	public to: string;
+
+	public attributes: ICollection<Attribute>;
+
+	public constructor()
+	{
+		super();
+        this.attributes  = new GeneralCollection<Attribute> ([]);
+	}
 
 	fromCompnent( component: Component){
 		this.from = component.id
@@ -31,21 +38,16 @@ export class Relationship extends DiagramElement {
 		this.to = component?.id
 	}
 
-	get(id: string)
-	{
-		return this.attributes.get(id);
-	}
 }
 
 export abstract class ComponentProperty{
-	id: string = Uuid();
-	visibility: VisibilityType;
-	name: string;
-	isStatic: boolean;
-	propertyString: string = null; //says =null
-	type: DataType;             //not sure if we want enums we can make an abstract rn
+	public id: string;
+	public visibility: VisibilityType;
+	public name: string;
+	public isStatic: boolean;
+	public propertyString: string; 
+	public type: DataType;
 }
-
 /**
  * describs an attibute of a diagram element
  * diagram:
@@ -53,9 +55,12 @@ export abstract class ComponentProperty{
  * implimentation: 
  *      private DataType myAttribute = new DefaultObject<DataType>();
  */
-export class Attribute extends ComponentProperty{
-	multiplicity: Multiplicity; //diagram says int[10..-1]=null idk. no car in ts. make * -1
-	defaultValue: string = null;      //says =null
+export class Attribute extends ComponentProperty
+{
+
+	multiplicity: Multiplicity; 
+	
+	defaultValue: string; 
 }
 
 
@@ -66,10 +71,14 @@ export class Attribute extends ComponentProperty{
  * implimentation: 
  *      public DataType foo( DataType p, DataType q){}
  */
- export class Operation extends ComponentProperty implements IGettable{
-	parameters: ICollection<Attribute>;
-	get(id: string) {
-		return this.parameters.get(id);
+ export class Operation extends ComponentProperty
+{
+	public parameters: ICollection<Attribute>;
+
+	constructor()
+	{
+		super();
+		this.parameters = new GeneralCollection<Attribute> ([]);
 	}
 }
 
@@ -85,7 +94,7 @@ export class Attribute extends ComponentProperty{
  */
 export class Multiplicity
 {
-	min: number = null;
-	max: number = null;
+	public min: number = null;
+	public max: number = null;
 }
 

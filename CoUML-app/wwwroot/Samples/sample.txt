@@ -1,6 +1,6 @@
 {
   "elements": {
-    "$type": "CoUML_app.Models.RelationalCollection, CoUML-app",
+    "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.DiagramElement, CoUML-app]], CoUML-app",
     "items": [
       {
         "$type": "CoUML_app.Models.Interface, CoUML-app",
@@ -8,23 +8,78 @@
           "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.Operation, CoUML-app]], CoUML-app",
           "items": [
             {
+              "parameters": {
+                "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.Attribute, CoUML-app]], CoUML-app",
+                "items": [],
+                "size": 0
+              },
+              "id": "916d8889-f46e-46f4-98e7-9793f294957b",
               "visibility": 43,
               "name": "draw",
-              "parameters": null,
-              "returnType": {
+              "propertyString": null,
+              "type": {
                 "dataType": "void"
+              }
+            },
+            {
+              "parameters": {
+                "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.Attribute, CoUML-app]], CoUML-app",
+                "items": [
+                  {
+                    "multiplicity": {
+                      "min": 0,
+                      "max": 0
+                    },
+                    "defaultValue": null,
+                    "id": "dbf6b814-185c-4e9e-a963-776e5c549f89",
+                    "visibility": 45,
+                    "name": "percent",
+                    "propertyString": null,
+                    "type": {
+                      "dataType": "double"
+                    }
+                  }
+                ],
+                "size": 1
               },
-              "propertyString": null
+              "id": "9d53558b-2c0f-4d48-9ba7-7eb7d705e0ba",
+              "visibility": 43,
+              "name": "scale",
+              "propertyString": null,
+              "type": {
+                "dataType": "void"
+              }
+            },
+            {
+              "parameters": {
+                "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.Attribute, CoUML-app]], CoUML-app",
+                "items": [],
+                "size": 0
+              },
+              "id": "548618a3-b598-4f3f-9b5d-96d54696c161",
+              "visibility": 43,
+              "name": "area",
+              "propertyString": null,
+              "type": {
+                "dataType": "double"
+              }
             }
+          ],
+          "size": 3
+        },
+        "name": "IShape",
+        "relations": {
+          "$type": "CoUML_app.Models.GeneralCollection`1[[System.String, System.Private.CoreLib]], CoUML-app",
+          "items": [
+            "b63dace7-e3e8-45bf-b76d-9e54246f64cf"
           ],
           "size": 1
         },
-        "name": "IShape",
-        "user": {
+        "editor": {
           "$type": "CoUML_app.Models.NullUser, CoUML-app",
           "id": "N/A"
         },
-        "id": "59c442fc-14ae-404b-906c-4978461db042",
+        "id": "0b68a108-f685-4e44-9e6e-a325d8d439f3",
         "dimension": {
           "$type": "CoUML_app.Models.Dimension, CoUML-app",
           "x": 100,
@@ -44,27 +99,35 @@
           "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.Attribute, CoUML-app]], CoUML-app",
           "items": [
             {
-              "visibility": 45,
-              "name": "diagonal",
-              "type": {
-                "dataType": "double"
-              },
               "multiplicity": {
                 "min": 0,
                 "max": 0
               },
               "defaultValue": null,
-              "propertyString": null
+              "id": "86607446-1993-4add-8bac-e4cdd5bb3495",
+              "visibility": 45,
+              "name": "diagonal",
+              "propertyString": null,
+              "type": {
+                "dataType": "double"
+              }
             }
           ],
           "size": 1
         },
         "name": "Hexagon",
-        "user": {
+        "relations": {
+          "$type": "CoUML_app.Models.GeneralCollection`1[[System.String, System.Private.CoreLib]], CoUML-app",
+          "items": [
+            "b63dace7-e3e8-45bf-b76d-9e54246f64cf"
+          ],
+          "size": 1
+        },
+        "editor": {
           "$type": "CoUML_app.Models.NullUser, CoUML-app",
           "id": "N/A"
         },
-        "id": "8005b4da-a558-47f6-bd7d-9a0444318fd4",
+        "id": "31c0ee0f-043e-48c0-ab8e-059ebbd9b03e",
         "dimension": {
           "$type": "CoUML_app.Models.Dimension, CoUML-app",
           "x": 100,
@@ -75,19 +138,19 @@
       },
       {
         "$type": "CoUML_app.Models.Relationship, CoUML-app",
+        "type": 5,
+        "from": "31c0ee0f-043e-48c0-ab8e-059ebbd9b03e",
+        "to": "0b68a108-f685-4e44-9e6e-a325d8d439f3",
         "attributes": {
           "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.Attribute, CoUML-app]], CoUML-app",
           "items": [],
           "size": 0
         },
-        "type": 5,
-        "from": "8005b4da-a558-47f6-bd7d-9a0444318fd4",
-        "to": "59c442fc-14ae-404b-906c-4978461db042",
-        "user": {
+        "editor": {
           "$type": "CoUML_app.Models.NullUser, CoUML-app",
           "id": "N/A"
         },
-        "id": "9a22cb76-08cb-40c5-8364-b0b2c1d4352a",
+        "id": "b63dace7-e3e8-45bf-b76d-9e54246f64cf",
         "dimension": {
           "$type": "CoUML_app.Models.Dimension, CoUML-app",
           "x": 100,

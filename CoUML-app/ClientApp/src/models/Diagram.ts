@@ -1,15 +1,34 @@
+import { Type } from 'class-transformer';
 import {v4 as Uuid} from 'uuid';
-import { ICollection, RelationalCollection, Dimension, IUser, NullUser  } from './DiagramModel';
+import { GeneralCollection } from './Collection';
+import { ICollection, Dimension, IUser, NullUser, Relationship, Interface, Class, AbstractClass, User,  } from './DiagramModel';
 
 export class Diagram
 {
-	public elements: ICollection<DiagramElement> = new RelationalCollection([]);
+	public elements: ICollection<DiagramElement>;
+
+	public constructor()
+	{
+		this.elements = new GeneralCollection<DiagramElement>([])
+	}
 }
-export abstract class DiagramElement implements IGettable{
-	editor: IUser = new NullUser();
-	id: string = Uuid();
-	dimension: Dimension = new Dimension();
-	abstract get(id: string);
+
+export abstract class DiagramElement
+{
+
+	public editor: IUser;
+	
+	public id: string;
+	
+	public dimension: Dimension;
+
+	public constructor()
+	{
+		this.editor = new NullUser();
+		this.id = Uuid();
+		this.dimension = new Dimension();
+	}
+
 }
 
 export interface IGettable

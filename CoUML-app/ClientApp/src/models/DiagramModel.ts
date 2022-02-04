@@ -4,6 +4,7 @@ import { Diagram, DiagramElement } from './Diagram';
 import { Dimension } from './Dimension';
 import { Relationship, Operation, Attribute } from './Subcomponent';
 import { User, IUser, NullUser } from './User';
+import {DataType} from'./Types';
 
 export * from './Collection';
 export * from './Diagram';
@@ -21,9 +22,29 @@ export class DiagramBuilder
 		let d = JSON.parse(diagram_DTO);
 
 		let __diagram = new Diagram();
-		for(let i = 0; i<d.elements.size; i++)
+		for(let elem of d["elements"]["items"])
 		{
-			__diagram.elements.insert(d.elements.items[i]);
+			let element;
+			switch(this.getType(elem)){
+				case "Interface":
+					element = this.buildInterface(elem);
+					break;
+				case "Relationship":
+					element = this.buildRelationship(elem);
+					break;
+				case "Class":
+					element = this.buildClass(elem);
+					break;
+				case "AbstractClass":
+					element = this.buildAbstractClass(elem);
+					break;
+				case "Enumeration":
+					element = this.buildEnumeration(elem);
+					break;
+				default:
+					break;
+			}
+			__diagram.elements.insert(element);
 		}
 		return __diagram;
 	}
@@ -31,11 +52,11 @@ export class DiagramBuilder
 	buildRelationship(x: Relationship): DiagramElement {
 		let __relationship = new Relationship();
 		__relationship.id = x.id;
-		__relationship.editor = this.buildUser(x.editor);
-		__relationship.dimension = this.buildDimension(x.dimension);
+		__relationship.editor = this.buildUser(x["editor"]);
+		__relationship.dimension = this.buildDimension(x["dimension"]);
 		__relationship.from = x.from;
 		__relationship.to = x.to;
-		__relationship.attributes = this.buildAttributeCollection(x.attributes as GeneralCollection<Attribute>)
+		this.buildAttributeCollection(__relationship.attributes, x.attributes)
 		return __relationship;
 	}
 	
@@ -44,9 +65,9 @@ export class DiagramBuilder
 		__class.id = x.id;
 		__class.editor = this.buildUser(x.editor);
 		__class.dimension = this.buildDimension(x.dimension);
-		__class.attributes = this.buildAttributeCollection( x.attributes as GeneralCollection<Attribute>);
-		__class.operations = this.buildOperationsCollection( x.operations as GeneralCollection<Operation>);
-		__class.relations = this.buildRelationshipCollection( x.relations as GeneralCollection<string>);
+		this.buildAttributeCollection(__class.attributes, x.attributes);
+		this.buildOperationsCollection(__class.operations, x.operations);
+		this.buildStringCollection( __class.relations, x.relations);
 		return __class;
 	}
 	buildAbstractClass(x: AbstractClass): DiagramElement {
@@ -54,9 +75,9 @@ export class DiagramBuilder
 		__abstract.id = x.id;
 		__abstract.editor = this.buildUser(x.editor);
 		__abstract.dimension = this.buildDimension(x.dimension);
-		__abstract.attributes = this.buildAttributeCollection( x.attributes as GeneralCollection<Attribute>);
-		__abstract.operations = this.buildOperationsCollection( x.operations as GeneralCollection<Operation>);
-		__abstract.relations = this.buildRelationshipCollection( x.relations as GeneralCollection<string>);
+		this.buildAttributeCollection(__abstract.attributes, x.attributes);
+		this.buildOperationsCollection(__abstract.operations, x.operations);
+		this.buildStringCollection(__abstract.relations, x.relations);
 		return __abstract;
 	}
 	buildEnumeration(x: Enumeration): DiagramElement {
@@ -67,46 +88,84 @@ export class DiagramBuilder
 	{
 		let __interface: Interface = new Interface(x.name);
 		__interface.id = x.id;
-		__interface.editor = this.buildUser(x.editor);
-		__interface.dimension = this.buildDimension(x.dimension);
-		__interface.operations = this.buildOperationsCollection(x.operations as GeneralCollection<Operation>);
-		__interface.relations = this.buildRelationshipCollection(x.relations as GeneralCollection<string>);
+		__interface.editor = this.buildUser(x["editor"]);
+		__interface.dimension = this.buildDimension(x["dimension"]);
+		this.buildOperationsCollection(__interface.operations, x["operations"]);
+		this.buildStringCollection(__interface.relations, x["relations"]);
 		return __interface;
 	}
 
 
-	buildRelationshipCollection(x: GeneralCollection<string>): ICollection<string> {
-		return new GeneralCollection<string>(x.items);
+	buildStringCollection(coll, x)
+	{
+		for(let str of x.items)
+			coll.insert(str)
 	}
 
 
-	buildOperationsCollection(x: GeneralCollection<Operation>): ICollection<Operation> {
-		return new GeneralCollection<Operation>(x.items);
+	buildOperationsCollection(coll, x)
+	{
+		for(let op of x.items)
+			coll.insert(this.buildOperation(op));
 	}
 
-	buildAttributeCollection(x: GeneralCollection<Attribute>): ICollection<Attribute> {
-		return new GeneralCollection<Attribute>(x.items);
+	buildOperation(x: any): Operation {
+		let __operation = new Operation();
+		__operation.id = x.id;
+		__operation.visibility = x.visibility;
+		__operation.name = x.name;
+		__operation.isStatic = x.isStatic;
+		__operation.propertyString = x.propertyString;
+		__operation.type = new DataType(x.type);
+		this.buildAttributeCollection(__operation.parameters, x.parameters);
+		return __operation;
 	}
 
-	buildUser(x: User): IUser {
-			return this.getType(x)[0] == User.name ? new User(x.id): new NullUser();
+	buildAttributeCollection(coll: ICollection<Attribute>, x)
+	{
+		for(let at of x.items)
+			coll.insert(this.buildAttribute(at));
+	}
+
+	buildAttribute(x: any): any {
+		let __attribute = new Attribute()
+		__attribute.id = x.id;
+		__attribute.visibility = x.visibility;
+		__attribute.name = x.name;
+		__attribute.isStatic = x.isStatic;
+		__attribute.propertyString = x.propertyString;
+		__attribute.type =  new DataType(x.type);
+		__attribute.multiplicity = x.multiplicity;
+		__attribute.defaultValue = x.defaultValue;
+		return __attribute;
+	}
+
+	buildUser(x): IUser {
+		return this.getType(x) == "User" ? new User(x.id): new NullUser();
 	}
 
 	buildDimension(x: Dimension): Dimension
 	{
-		return {
-			x: x.x,
-			y: x.y,
-			width: x.width,
-			height: x.height
-		}
+		return new Dimension(
+			x.x,
+			x.y,
+			x.width,
+			x.height
+		);
 	}
 
-	getType(e)
+
+	/**
+	 * takes a JSON string {  "$type": "CoUML_app.Models.Interface, CoUML-app", ...}
+	 * returns "Interface"
+	 * @param element 
+	 * @returns 
+	 */
+	getType(element)
 	{
-		console.log(`get type`);
-		console.log(JSON.stringify(e, undefined, 2));
-		let rx = /\w+\.\w+\.(\w+)/g;
-		return rx.exec(e.$type)[0];
+		console.log(element["$type"]);
+		let regex = /(\w*?),*?(?=,)/g;
+		let type = regex.exec(element["$type"])[0];
+		return type;
 	}
 } 
