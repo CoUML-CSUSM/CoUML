@@ -1,4 +1,5 @@
 import { GeneralCollection } from "./Collection";
+import { IGettable } from "./Diagram";
 import { DiagramElement, Operation, Attribute, ComponentProperty,  ICollection } from "./DiagramModel";
 
 
@@ -9,7 +10,7 @@ import { DiagramElement, Operation, Attribute, ComponentProperty,  ICollection }
  * AbstractClass
  * Class
  */
-export abstract class Component extends DiagramElement
+export abstract class Component extends DiagramElement implements IGettable
 {
     public name:string;
     public relations:ICollection<string>;
@@ -20,6 +21,8 @@ export abstract class Component extends DiagramElement
         this.name = name;
         this.relations = new GeneralCollection<string> ([]);
     }
+
+    abstract get(id);
 }
 
 /**
@@ -35,6 +38,10 @@ export class Enumeration extends Component
         this.enums  = new GeneralCollection<string> ([]);
     }
 
+    get(id: any) {
+        return this.enums.get(id);
+    }
+    
 }
 
 /**
@@ -48,6 +55,10 @@ export class Interface extends Component
     {
         super(name);
         this.operations  = new GeneralCollection<Operation> ([]);
+    }
+
+    get(id: any) {
+        return this.operations.get(id);
     }
 }
 
@@ -65,6 +76,11 @@ export class AbstractClass extends Component
         this.operations  = new GeneralCollection<Operation> ([]);
         this.attributes  = new GeneralCollection<Attribute> ([]);
     }
+
+
+    get(id: any) {
+        return this.operations.get(id) || this.attributes.get(id);
+    }
 }
 
 /**
@@ -72,6 +88,7 @@ export class AbstractClass extends Component
  */
 export class Class extends Component
 {
+
     public operations:ICollection<Operation>;
     public attributes:ICollection<Attribute>;
 
@@ -80,5 +97,10 @@ export class Class extends Component
         super(name);
         this.operations  = new GeneralCollection<Operation> ([]);
         this.attributes  = new GeneralCollection<Attribute> ([]);
+    }
+
+
+    get(id: any) {
+        return this.operations.get(id) || this.attributes.get(id);
     }
 }

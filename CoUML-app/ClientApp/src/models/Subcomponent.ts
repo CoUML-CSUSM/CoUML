@@ -16,7 +16,7 @@ import { VisibilityType, DataType, RelationshipType } from "./Types";
  * implimentation
  *      Comp impliments IComp{}
  */
-export class Relationship extends DiagramElement 
+export class Relationship extends DiagramElement implements IGettable
 {
 
 	public type: RelationshipType;
@@ -29,6 +29,10 @@ export class Relationship extends DiagramElement
 	{
 		super();
         this.attributes  = new GeneralCollection<Attribute> ([]);
+	}
+
+	get(id: string) {
+		return this.attributes.get(id);
 	}
 
 	fromCompnent( component: Component){
@@ -71,7 +75,7 @@ export class Attribute extends ComponentProperty
  * implimentation: 
  *      public DataType foo( DataType p, DataType q){}
  */
- export class Operation extends ComponentProperty
+ export class Operation extends ComponentProperty implements IGettable
 {
 	public parameters: ICollection<Attribute>;
 
@@ -79,6 +83,10 @@ export class Attribute extends ComponentProperty
 	{
 		super();
 		this.parameters = new GeneralCollection<Attribute> ([]);
+	}
+
+	get(id: string) {
+		return this.parameters.get(id);
 	}
 }
 

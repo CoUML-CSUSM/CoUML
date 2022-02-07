@@ -1,10 +1,28 @@
 
-export interface ChangeRecord
+export class ChangeRecord
 {
 	id: string[];
 	affectedProperty: PropertyType;
 	action: ActionType;
-	value: any
+	private _value: any
+	get value()
+	{
+		return this._value;
+	}
+
+	set value(value)
+	{
+		this._value = value;
+		this["$type"] = value.constructor.name;
+	}
+
+	constructor( ids: string[], property: PropertyType, action: ActionType, value: any)
+	{
+		this. id = ids;
+		this.affectedProperty = property;
+		this.action = action;
+		this.value = value;
+	}
 }
 
 export enum ActionType

@@ -1,4 +1,3 @@
-import { Type } from 'class-transformer';
 import {v4 as Uuid} from 'uuid';
 import { GeneralCollection } from './Collection';
 import { ICollection, Dimension, IUser, NullUser, Relationship, Interface, Class, AbstractClass, User,  } from './DiagramModel';

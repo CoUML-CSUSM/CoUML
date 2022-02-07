@@ -251,31 +251,40 @@ export class EditorComponent implements AfterViewInit, OnInit{
 		let r: Relationship = new Relationship();
 		r.type = RelationshipType.Realization;
 		r.fromCompnent(c);
-		// let parent = this._projectDeveloper._projectDiagram.elements.get("IShape") as Component
-		let parent = "0b68a108-f685-4e44-9e6e-a325d8d439f3";
-		r.to = parent;
+		r.to = this._projectDeveloper.__parentId;
 
 		// make relation
 		c.relations.insert(r.id)
 
-		changes.push({
-			id: null,
-			affectedProperty: PropertyType.Elements,
-			action: ActionType.Insert,
-			value: c
-		},
-		{
-			id: null,
-			affectedProperty: PropertyType.Elements,
-			action: ActionType.Insert,
-			value: r
-		},
-		{
-			id: [parent],
-			affectedProperty: PropertyType.Relations,
-			action: ActionType.Insert,
-			value: r.id
-		},
+		let me  =  new Operation();
+		me.isStatic  = false;
+		me.name = "delete";
+		me.visibility = VisibilityType.Public;
+
+		changes.push(new ChangeRecord(
+			null,
+			PropertyType.Elements,
+			ActionType.Insert,
+			c
+		),
+		// {
+		// 	id: null,
+		// 	affectedProperty: PropertyType.Elements,
+		// 	action: ActionType.Insert,
+		// 	value: r
+		// },
+		// {
+		// 	id: [this._projectDeveloper.__parentId],
+		// 	affectedProperty: PropertyType.Relations,
+		// 	action: ActionType.Insert,
+		// 	value: r.id
+		// },
+		// {
+		// 	id: [this._projectDeveloper.__parentId],
+		// 	affectedProperty: PropertyType.Operations,
+		// 	action:  ActionType.Insert,
+		// 	value: me
+		// }
 		);
 
 		this._projectDeveloper.makeChange(changes)

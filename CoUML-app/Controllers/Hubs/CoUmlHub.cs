@@ -179,11 +179,11 @@ namespace CoUML_app.Controllers.Hubs
                 //TODO: look up real diagram and return
             }
 
-            return JsonConvert.SerializeObject(testDiagram, Formatting.Indented, new JsonSerializerSettings
-                    {
-                        TypeNameHandling = TypeNameHandling.Auto
-                    });
-            // return this.OpenSampleFile();
+            // return JsonConvert.SerializeObject(testDiagram, Formatting.Indented, new JsonSerializerSettings
+            //         {
+            //             TypeNameHandling = TypeNameHandling.Auto
+            //         });
+            return this.OpenSampleFile();
             // return JsonConvert.SerializeObject(testDiagram, Formatting.Indented);
 
                 

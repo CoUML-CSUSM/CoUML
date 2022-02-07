@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { CoUmlHubService } from "../service/couml-hub.service";
-import { Diagram, DiagramBuilder, ChangeRecord, ActionType, PropertyType, Component, Class, AbstractClass, Interface, Enumeration, IGettable } from 'src/models/DiagramModel';
+import { Diagram, Assembler, ChangeRecord, ActionType, PropertyType, Component, Class, AbstractClass, Interface, Enumeration, IGettable } from 'src/models/DiagramModel';
 
 
 @Injectable()
 export class ProjectDeveloper{
 
 	_projectDiagram: Diagram = null;
+
+	__parentId =  "0b68a108-f685-4e44-9e6e-a325d8d439f3";
 
 	constructor(private _coUmlHub: CoUmlHubService)	{}
 
@@ -18,7 +20,7 @@ export class ProjectDeveloper{
 			.then( (d) => {
 				this._coUmlHub.subscribe(this);
 				console.log(d);
-				this._projectDiagram = new DiagramBuilder().buildDiagram (d);
+				this._projectDiagram = Assembler.assembleDiagram (d);
 				console.log(this._projectDiagram);
 
 				// setTimeout(()=> this.manualInsert(), 5000);
@@ -59,20 +61,18 @@ export class ProjectDeveloper{
 
 		let action = ActionType[change.action].toLowerCase();
 		let affectedProperty = PropertyType[change.affectedProperty].toLowerCase();
+		change.value = Assembler.assembleComponent(change.value);
 		let operation = "";
 
-		let affectedComponent = this._projectDiagram.elements as IGettable;
+		let affectedComponent: IGettable = this._projectDiagram.elements;
 		if(change.id)
-			for(let i of change.id)
-			{
-				affectedComponent = affectedComponent.get(i) as IGettable;
-			}
+			for(let id of change.id)
+				affectedComponent = affectedComponent.get(id);
 
-		console.log(affectedComponent);
 		switch(change.action){
 			case ActionType.Insert:
 			case ActionType.Remove:
-				operation = `${affectedProperty}.${action}(change.value)`;
+				operation = `${change.id? affectedProperty + ".": ''}${action}(change.value)`;
 				break;
 
 			case ActionType.Lock:
@@ -82,9 +82,9 @@ export class ProjectDeveloper{
 				break;
 		}			
 
-		console.log("affectedComponent");
+		console.log("affectedComponent.operation");
 		console.log(affectedComponent);
-		console.log(`${affectedComponent.constructor.name}.${operation}`);
+		console.log(operation);
 		eval("affectedComponent." + operation);
 
 		console.log("result");
