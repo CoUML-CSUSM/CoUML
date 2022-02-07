@@ -43,10 +43,10 @@ export class ProjectDeveloper{
 		for(let change of changes)
 		{
 			
-			// setTimeout(()=> {
+			setTimeout(()=> {
 
 				this.applyChange(change);
-			// }, 2500);
+			}, 2500);
 		}
 		console.log("DONE!");
 		console.log(this._projectDiagram);
