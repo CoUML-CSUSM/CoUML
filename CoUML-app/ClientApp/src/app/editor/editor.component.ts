@@ -267,24 +267,24 @@ export class EditorComponent implements AfterViewInit, OnInit{
 			ActionType.Insert,
 			c
 		),
-		// {
-		// 	id: null,
-		// 	affectedProperty: PropertyType.Elements,
-		// 	action: ActionType.Insert,
-		// 	value: r
-		// },
-		// {
-		// 	id: [this._projectDeveloper.__parentId],
-		// 	affectedProperty: PropertyType.Relations,
-		// 	action: ActionType.Insert,
-		// 	value: r.id
-		// },
-		// {
-		// 	id: [this._projectDeveloper.__parentId],
-		// 	affectedProperty: PropertyType.Operations,
-		// 	action:  ActionType.Insert,
-		// 	value: me
-		// }
+		new ChangeRecord(
+			null,
+			PropertyType.Elements,
+			ActionType.Insert,
+			r
+		),
+		new ChangeRecord(
+			[this._projectDeveloper.__parentId],
+			PropertyType.Relations,
+			ActionType.Insert,
+			r.id
+		),
+		new ChangeRecord(
+			[this._projectDeveloper.__parentId],
+			PropertyType.Operations,
+			ActionType.Insert,
+			me
+		)
 		);
 
 		this._projectDeveloper.makeChange(changes)

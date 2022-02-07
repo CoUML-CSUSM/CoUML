@@ -21,11 +21,12 @@ export abstract class DiagramElement
 	
 	public dimension: Dimension;
 
-	public constructor()
+	public constructor(type: string)
 	{
 		this.editor = new NullUser();
 		this.id = Uuid();
 		this.dimension = new Dimension();
+		this["$type"] = `CoUML_app.Model.${type}, CoUML_app`;
 	}
 
 }

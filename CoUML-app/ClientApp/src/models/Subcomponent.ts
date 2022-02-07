@@ -27,7 +27,7 @@ export class Relationship extends DiagramElement implements IGettable
 
 	public constructor()
 	{
-		super();
+		super("Relationship");
         this.attributes  = new GeneralCollection<Attribute> ([]);
 	}
 
@@ -51,6 +51,10 @@ export abstract class ComponentProperty{
 	public isStatic: boolean;
 	public propertyString: string; 
 	public type: DataType;
+	constructor(type)
+	{
+		this["$type"] = `CoUML_app.Model.${type}, CoUML_app`;
+	}
 }
 /**
  * describs an attibute of a diagram element
@@ -65,6 +69,9 @@ export class Attribute extends ComponentProperty
 	multiplicity: Multiplicity; 
 	
 	defaultValue: string; 
+	constructor(){
+		super("Attribute");
+	}
 }
 
 
@@ -81,7 +88,7 @@ export class Attribute extends ComponentProperty
 
 	constructor()
 	{
-		super();
+		super("Operation");
 		this.parameters = new GeneralCollection<Attribute> ([]);
 	}
 

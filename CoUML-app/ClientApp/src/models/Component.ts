@@ -15,9 +15,9 @@ export abstract class Component extends DiagramElement implements IGettable
     public name:string;
     public relations:ICollection<string>;
 
-    constructor(name: string)
+    constructor(type: string, name: string)
     {
-        super();
+        super(type);
         this.name = name;
         this.relations = new GeneralCollection<string> ([]);
     }
@@ -34,7 +34,7 @@ export class Enumeration extends Component
 
     public constructor(name: string)
     {
-        super(name);
+        super("Enumeration", name);
         this.enums  = new GeneralCollection<string> ([]);
     }
 
@@ -53,7 +53,7 @@ export class Interface extends Component
 
     public constructor(name: string)
     {
-        super(name);
+        super("Interface", name);
         this.operations  = new GeneralCollection<Operation> ([]);
     }
 
@@ -72,7 +72,7 @@ export class AbstractClass extends Component
 
     public constructor(name: string)
     {
-        super(name);
+        super("AbstractClass", name);
         this.operations  = new GeneralCollection<Operation> ([]);
         this.attributes  = new GeneralCollection<Attribute> ([]);
     }
@@ -94,7 +94,7 @@ export class Class extends Component
 
     public constructor(name: string)
     {
-        super(name);
+        super("Class", name);
         this.operations  = new GeneralCollection<Operation> ([]);
         this.attributes  = new GeneralCollection<Attribute> ([]);
     }

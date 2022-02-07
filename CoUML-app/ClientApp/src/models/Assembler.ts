@@ -15,35 +15,38 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 	export function assembleComponent(elem)
 	{
 		let element;
-		if(elem instanceof Object)
-			switch(getType(elem)){
-				case "Relationship":
-					element = assembleRelationship(elem);
-					break;
-				case "Interface":
-					element = assembleInterface(elem);
-					break;
-				case "AbstractClass":
-					element = assembleAbstractClass(elem);
-					break;
-				case "Class":
-					element = assembleClass(elem);
-					break;
-				case "Enumeration":
-					element = assembleEnumeration(elem);
-					break;
-				case "Operation":
-					element = assembleOperation(elem);
-					break;
-				case "Attribute":
-					element = assembleAttribute(elem);
-					break;
-				default:
-					break;
-			}
-		else{
-			console.log("Component is not an object");
-			element = elem;
+		switch(getType(elem)){
+			case "Relationship":
+				case Relationship.name:
+				element = assembleRelationship(elem);
+				break;
+			case "Interface":
+				case Interface.name:
+				element = assembleInterface(elem);
+				break;
+			case "AbstractClass":
+				case AbstractClass.name:
+				element = assembleAbstractClass(elem);
+				break;
+			case "Class":
+				element = assembleClass(elem);
+				break;
+			case "Enumeration":
+				case Enumeration.name:
+				element = assembleEnumeration(elem);
+				break;
+			case "Operation":
+				case Operation.name:
+				element = assembleOperation(elem);
+				break;
+			case "Attribute":
+				case Attribute.name:
+				element = assembleAttribute(elem);
+				break;
+			default:
+				console.log("Component is not an object");
+				element = elem;
+				break;
 		}
 		console.log("New Component created");
 		console.log(elem)
@@ -165,8 +168,14 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 	 */
 	function getType(element)
 	{
-		console.log(element["$type"]);
-		let regex = /(\w*?),*?(?=,)/g;
-		let type = regex.exec(element["$type"])[0];
-		return type;
+		console.log("getType")
+		try{
+			console.log(element["$type"]);
+			let regex = /(\w*?),*?(?=,)/g;
+			let type = regex.exec(element["$type"])[0];
+			return type;
+		}catch(any){
+			console.log("no $type");
+			return null;
+		}
 	}

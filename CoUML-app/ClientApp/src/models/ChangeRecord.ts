@@ -1,27 +1,20 @@
+import { DiagramElement } from "./Diagram";
+import { ComponentProperty } from "./Subcomponent";
 
 export class ChangeRecord
 {
 	id: string[];
 	affectedProperty: PropertyType;
 	action: ActionType;
-	private _value: any
-	get value()
-	{
-		return this._value;
-	}
-
-	set value(value)
-	{
-		this._value = value;
-		this["$type"] = value.constructor.name;
-	}
-
+	value: any
 	constructor( ids: string[], property: PropertyType, action: ActionType, value: any)
 	{
 		this. id = ids;
 		this.affectedProperty = property;
 		this.action = action;
 		this.value = value;
+		// if(this.value instanceof DiagramElement || this.value instanceof ComponentProperty)
+		// 	this.value["$type"] = "CoUML_app.Models." + value.constructor.name +", CoUML_app";
 	}
 }
 
@@ -31,7 +24,7 @@ export enum ActionType
 	Remove, // value must be < string | id>
 	Change, // value must be approprate datatypes of ChangePropertyType
 	Lock,	
-	Release
+	Release 
 }
 
 export enum PropertyType
