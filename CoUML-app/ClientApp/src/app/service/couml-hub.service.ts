@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import * as Automerge from 'automerge';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
+import { ProjectManager } from '../controller/project-manager.controller';
 import { environment } from '../../environments/environment';
 
 
@@ -13,6 +14,7 @@ export class CoUmlHubService{
 
 	public log: ConsoleLogger;
 	private _projectDeveloper: ProjectDeveloper = null;
+	private _projectManager: ProjectManager = null;
 
 	constructor(){
 		this.log = new ConsoleLogger();
@@ -80,6 +82,11 @@ export class CoUmlHubService{
 	}
 
 
+	public generate()
+	{
+		//this._projectManager
+		this._coUmlHubConnection.invoke("Generate");
+	}
 }
 
 export class ConsoleLogger{

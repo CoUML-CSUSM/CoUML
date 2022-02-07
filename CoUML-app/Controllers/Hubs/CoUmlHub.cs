@@ -204,6 +204,13 @@ namespace CoUML_app.Controllers.Hubs
             ;
         }
 
+
+        public void Generate(){
+            //idk what to put here rn
+            //something like just making a diagram object
+            Console.WriteLine("c# generate test output");
+            
+        }
     }
 
     static class DevUtility{
