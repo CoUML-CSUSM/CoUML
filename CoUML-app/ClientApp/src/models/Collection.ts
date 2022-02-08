@@ -88,8 +88,8 @@ export class GeneralCollection<T> implements ICollection<T>{
 	get(id: string): null | T
 	{
 		// (callbackfn: (value: T, index: number, array: T[]) => void, thisArg?: any)
-		for(let de   of this.items as unknown[] as DiagramElement[])
-			if(id.valueOf() == de.id.valueOf())
+		for(let de of this.items as unknown[] as DiagramElement[])
+			if(id == de?.id)
 					return de as unknown as T;
 		return null;
 	}
