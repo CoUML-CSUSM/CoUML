@@ -23,7 +23,7 @@ export class ProjectDeveloper{
 				this._projectDiagram = Assembler.assembleDiagram (d);
 				console.log(this._projectDiagram);
 
-				// setTimeout(()=> this.manualInsert(), 5000);
+				setTimeout(()=> this.manualInsert(), 5000);
 			} ); // create AMDiagram from diagram 
 	}
 
@@ -41,14 +41,14 @@ export class ProjectDeveloper{
 	
 	public applyChanges(changes: ChangeRecord[])
 	{
-		console.log("apply changes");
+		console.log("-------------- apply changes ---------------");
 		for(let change of changes)
 		{
 			
 			setTimeout(()=> {
 
 				this.applyChange(change);
-			}, 2500);
+			}, 500);
 		}
 		console.log("DONE!");
 		console.log(this._projectDiagram);
@@ -66,8 +66,11 @@ export class ProjectDeveloper{
 
 		let affectedComponent: IGettable = this._projectDiagram.elements;
 		if(change.id)
-			for(let id of change.id)
+			for(let id of change.id){
 				affectedComponent = affectedComponent.get(id);
+				console.log("switch  affectedComponent");
+				console.log(affectedComponent);
+			}
 
 		switch(change.action){
 			case ActionType.Insert:
@@ -92,8 +95,7 @@ export class ProjectDeveloper{
 	}
 
 	manualInsert(){
-		let de = this._projectDiagram.elements.get("0b68a108-f685-4e44-9e6e-a325d8d439f3") as Component;
-			console.log(`de instanceof Component ==> ${de instanceof Component}`)
+		let de = this._projectDiagram.elements.get(this.__parentId) as Interface;
 			console.log(de);
 			de.relations.insert("Testing!!!!");
 		console.log(this._projectDiagram);

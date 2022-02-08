@@ -85,15 +85,12 @@ export class GeneralCollection<T> implements ICollection<T>{
 		return i >= 0 && i < this.size; 
 	}
 
-	get(key: string): null | T
+	get(id: string): null | T
 	{
 		// (callbackfn: (value: T, index: number, array: T[]) => void, thisArg?: any)
-		this.items.forEach((de: T)=>{
-			if(de instanceof Component){
-				if(key == (de as Component).name)
-					return de;
-			}
-		});
+		for(let de   of this.items as unknown[] as DiagramElement[])
+			if(id.valueOf() == de.id.valueOf())
+					return de as unknown as T;
 		return null;
 	}
 
