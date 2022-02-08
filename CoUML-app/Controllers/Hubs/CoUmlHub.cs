@@ -115,7 +115,8 @@ namespace CoUML_app.Controllers.Hubs
         /// <typeparam name="string"></typeparam>
         /// <returns></returns>
         private readonly static ConnectionMap<string, IUser> _connections = new ConnectionMap<string, IUser>();
-        private static Diagram testDiagram = DevUtility.DiagramDefualt(); // test code here
+        //private static Diagram testDiagram = DevUtility.DiagramDefualt(); // test code here
+        private static Diagram testDiagram = DevUtility.TestDiagram();
         // public CoUmlHub()
         // {
         // }
@@ -176,6 +177,7 @@ namespace CoUML_app.Controllers.Hubs
             if( dId != "test")
             {
                 //TODO: look up real diagram and return
+                Console.WriteLine("not test id");
             }
 
             return JsonConvert.SerializeObject(testDiagram, Formatting.Indented, new JsonSerializerSettings
@@ -254,5 +256,16 @@ namespace CoUML_app.Controllers.Hubs
 
             return d;
         }
+
+        public static Diagram TestDiagram(){//creates a diagram to match the top one on the site
+            Diagram d = new Diagram();
+            Class first = new Class("First Value");
+            first.dimension = new Dimension(100,60,120,80);
+            Class test = new Class("Test");
+            test.dimension = new Dimension(230,60,120,80);
+            d.elements.Insert(first);
+            d.elements.Insert(test);
+            return d;
+        }        
     }
 }

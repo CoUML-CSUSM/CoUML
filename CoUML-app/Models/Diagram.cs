@@ -7,6 +7,7 @@ namespace CoUML_app.Models
 
 	public class Diagram
 	{
+		public string id;
 		public ICollection<DiagramElement> elements {get;} = new RelationalCollection();
 	}
 

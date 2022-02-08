@@ -5,6 +5,7 @@ import { Attribute } from './Subcomponent';
 
 export class Diagram
 {
+	public id: string;
 	public elements: ICollection<DiagramElement> = new RelationalCollection([]);
 }
 export abstract class DiagramElement{
