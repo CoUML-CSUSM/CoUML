@@ -287,7 +287,7 @@ export class EditorComponent implements AfterViewInit, OnInit{
 		)
 		);
 
-		this._projectDeveloper.makeChange(changes)
+		this._projectDeveloper.makeChanges(changes)
 	}
 }
 

@@ -214,8 +214,6 @@ namespace CoUML_app.Controllers.Hubs
 
             return File.ReadAllText(path);
         }
-
-
     }
 
     static class DevUtility{

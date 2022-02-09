@@ -14,8 +14,8 @@ export interface ICollection<T> extends IGettable
 {
 	iterator(): ICollectionIterator<T>;
 	insert(item: T): void;
-	remove(key: any): T | null;
-	get(key: string): T | null;
+	remove(id: any): T | null;
+	get(id: string): T | null;
 	size: number;
 }
 
@@ -85,15 +85,15 @@ export class GeneralCollection<T> implements ICollection<T>{
 		return i >= 0 && i < this.size; 
 	}
 
+
+	// this breaks if it's not a more complex item!!!
 	get(id: string): null | T
 	{
-		// (callbackfn: (value: T, index: number, array: T[]) => void, thisArg?: any)
 		for(let de of this.items as unknown[] as DiagramElement[])
 			if(id == de?.id)
 					return de as unknown as T;
 		return null;
 	}
-
 }
 
 // /**

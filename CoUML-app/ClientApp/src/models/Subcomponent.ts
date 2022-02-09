@@ -46,14 +46,14 @@ export class Relationship extends DiagramElement implements IGettable
 
 export abstract class ComponentProperty{
 	public id: string;
-	public visibility: VisibilityType;
 	public name: string;
+	public visibility: VisibilityType;
 	public isStatic: boolean;
 	public propertyString: string; 
 	public type: DataType;
 	constructor(type)
 	{
-		this["$type"] = `CoUML_app.Model.${type}, CoUML_app`;
+		this["$type"] = `CoUML_app.Model.${type}, CoUML-app`;
 	}
 }
 /**
@@ -69,6 +69,7 @@ export class Attribute extends ComponentProperty
 	multiplicity: Multiplicity; 
 	
 	defaultValue: string; 
+	
 	constructor(){
 		super("Attribute");
 	}

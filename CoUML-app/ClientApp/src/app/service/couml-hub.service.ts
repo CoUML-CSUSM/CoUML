@@ -11,31 +11,33 @@ export class CoUmlHubService{
 	
 	private _url = environment.apiUrl + "/couml";
 
-	public log: ConsoleLogger;
 	private _projectDeveloper: ProjectDeveloper = null;
 
 	constructor(){
-		this.log = new ConsoleLogger();
 		this._coUmlHubConnection = new HubConnectionBuilder()
 				.withUrl(this._url)
 				.build();
 		this.startConnection();
 	}
 
+	/**
+	 * 2 way comunication between hub and  developer
+	 * @param projectDeveloper 
+	 */
 	public subscribe(projectDeveloper: ProjectDeveloper): void
 	{
 		if(!this._projectDeveloper)
 			this._projectDeveloper = projectDeveloper;
 	}
 
-	public startConnection()
+	private startConnection()
 	{
 		console.log(`CoUmlHubService::startConnection()`);
 
 		this._coUmlHubConnection
 				.start()
-				.then(()=> this.log.log(CoUmlHubService.name,"startConnection", `Connections started with URL: ${this._url}`))
-				.catch((err) => this.log.log(CoUmlHubService.name,"startConnection",'Error while starting connection: ' + err));
+				.then(()=> console.log(CoUmlHubService.name,"startConnection", `Connections started with URL: ${this._url}`))
+				.catch((err) => console.log(CoUmlHubService.name,"startConnection",'Error while starting connection: ' + err));
 
 		// listen for *test*
 		this._coUmlHubConnection.on("testInterfaceMethod", (response: string)=>{
@@ -51,7 +53,7 @@ export class CoUmlHubService{
 	}
 
 	/**
-	 * 
+	 * diagram is fetched from server
 	 * @param dId get Diagram from server
 	 * @returns 
 	 */
@@ -62,13 +64,20 @@ export class CoUmlHubService{
 		// return this._coUmlHubConnection.invoke<Diagram>('Fetch',dId); 
 	}
 
+	/**
+	 * Changes are commited from client to server
+	 * @param changes 
+	 */
 	public commit(changes: ChangeRecord[])
 	{
-		this.log.log(CoUmlHubService.name, "commit")
 		let changesDTO = JSON.stringify(changes)
 		this._coUmlHubConnection.invoke("Push", 'test', changesDTO);
 	}
 
+	/**
+	 * changes are despatched from the server to a client
+	 * @param changes changes to be applied to this client
+	 */
 	public dispatch(changes: ChangeRecord[])
 	{
 		if(this._projectDeveloper)
@@ -76,31 +85,10 @@ export class CoUmlHubService{
 	}
 
 
+	/// for test only!!!!
 	public triggerBreakPoint()
 	{
 		this._coUmlHubConnection.invoke("TriggerBreakPoint");
 	}
 
-
-
-
-	sample: string = '';
-
-
 }
-
-export class ConsoleLogger{
-	public log(className: string, functionName: string, message?){
-		let format = "color: HotPink; font-size:1.25em;"
-		console.log("%c%s::%s(...)\n\t%s",format, className, functionName);
-		console.log(message, 2, undefined);
-	}
-}
-
-
-/*
-
-for (int i = 0; i< n;i++){...}
-
-forEach( (i:int) => {...} );
-*/

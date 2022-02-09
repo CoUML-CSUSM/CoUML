@@ -8,7 +8,7 @@ export class ProjectDeveloper{
 
 	_projectDiagram: Diagram = null;
 
-	__parentId =  "0b68a108-f685-4e44-9e6e-a325d8d439f3";
+	__parentId =  "0b68a108-f685-4e44-9e6e-a325d8d439f3"; // for testing only!!!!
 
 	constructor(private _coUmlHub: CoUmlHubService)	{}
 
@@ -22,9 +22,7 @@ export class ProjectDeveloper{
 				console.log(d);
 				this._projectDiagram = Assembler.assembleDiagram (d);
 				console.log(this._projectDiagram);
-
-				setTimeout(()=> this.manualInsert(), 5000);
-			} ); // create AMDiagram from diagram 
+			} ); 
 	}
 
 	public close ()
@@ -32,10 +30,9 @@ export class ProjectDeveloper{
 		//TODO: close the project and remove yourself from the group
 	}
 
-	public makeChange(changes: ChangeRecord[])
+	public makeChanges(changes: ChangeRecord[])
 	{
 		this._coUmlHub.commit(changes);
-
 	}
 
 	
@@ -45,19 +42,17 @@ export class ProjectDeveloper{
 		for(let change of changes)
 		{
 			
-			setTimeout(()=> {
 
-				this.applyChange(change);
-			}, 500);
+			this.applyChange(change);
 		}
-		console.log("DONE!");
+		console.log("-------------- Done! ---------------");
 		console.log(this._projectDiagram);
 	}
 
 	private applyChange(change: ChangeRecord)
 	{
-		console.log("change");
-		console.log(change);
+		// console.log("change");
+		// console.log(change);
 
 		let action = ActionType[change.action].toLowerCase();
 		let affectedProperty = PropertyType[change.affectedProperty].toLowerCase();
@@ -68,8 +63,6 @@ export class ProjectDeveloper{
 		if(change.id)
 			for(let id of change.id){
 				affectedComponent = affectedComponent.get(id);
-				console.log("switch  affectedComponent");
-				console.log(affectedComponent);
 			}
 
 		switch(change.action){
@@ -85,19 +78,11 @@ export class ProjectDeveloper{
 				break;
 		}			
 
-		console.log("affectedComponent.operation");
-		console.log(affectedComponent);
-		console.log(operation);
+		// /*logs*/
+		// console.log("affectedComponent.operation");
+		// console.log(affectedComponent);
+		// console.log(operation);
 		eval("affectedComponent." + operation);
 
-		console.log("result");
-		console.log(this._projectDiagram);
-	}
-
-	manualInsert(){
-		let de = this._projectDiagram.elements.get(this.__parentId) as Interface;
-			console.log(de);
-			de.relations.insert("Testing!!!!");
-		console.log(this._projectDiagram);
 	}
 }
