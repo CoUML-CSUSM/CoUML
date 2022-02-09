@@ -135,80 +135,80 @@ namespace CoUML_app.Models
 		}
 	}
 
-	public class RelationalCollection: ICollection<DiagramElement>
-	{
-		private Dictionary<Guid, DiagramElement> _items;
-		public List<DiagramElement> items{
-			get{
-				return new List<DiagramElement>(this._items.Values);
-			}
-		}
+	// public class RelationalCollection: ICollection<DiagramElement>
+	// {
+	// 	private Dictionary<string, DiagramElement> _items;
+	// 	public List<DiagramElement> items{
+	// 		get{
+	// 			return new List<DiagramElement>(this._items.Values);
+	// 		}
+	// 	}
 
-		/// <summary>
-		/// constructor
-		/// </summary>
-		/// <param name="collection"> set of diagram Elements</param>
-		public RelationalCollection( DiagramElement[] collection)
-		{
-			this._items = new Dictionary<Guid, DiagramElement>();
-			foreach (DiagramElement item in collection)
-			{
-				this._items.Add(item.id, item);
-			}
-		}
+	// 	/// <summary>
+	// 	/// constructor
+	// 	/// </summary>
+	// 	/// <param name="collection"> set of diagram Elements</param>
+	// 	public RelationalCollection( DiagramElement[] collection)
+	// 	{
+	// 		this._items = new Dictionary<string, DiagramElement>();
+	// 		foreach (DiagramElement item in collection)
+	// 		{
+	// 			this._items.Add(item.id, item);
+	// 		}
+	// 	}
 
-		/// <summary>
-		/// constructor - empty
-		/// </summary>
-		public RelationalCollection()
-		{
-			this._items = new Dictionary<Guid, DiagramElement>();
-		}
+	// 	/// <summary>
+	// 	/// constructor - empty
+	// 	/// </summary>
+	// 	public RelationalCollection()
+	// 	{
+	// 		this._items = new Dictionary<string, DiagramElement>();
+	// 	}
 
-		public ICollectionIterator<DiagramElement> Iterator()
-		{
-			return new CollectionIterator<DiagramElement>(
-				new GeneralCollection<DiagramElement>(
-					(new List<DiagramElement>(this._items.Values)).ToArray()
-				)
-			);
-		}
+	// 	public ICollectionIterator<DiagramElement> Iterator()
+	// 	{
+	// 		return new CollectionIterator<DiagramElement>(
+	// 			new GeneralCollection<DiagramElement>(
+	// 				(new List<DiagramElement>(this._items.Values)).ToArray()
+	// 			)
+	// 		);
+	// 	}
 		
-		public void Insert( DiagramElement item)
-		{
-			this._items.Add( item.id, item);
-		}
+	// 	public void Insert( DiagramElement item)
+	// 	{
+	// 		this._items.Add( item.id, item);
+	// 	}
 
-		public DiagramElement Remove(string id)
-		{
-			DiagramElement item = default(DiagramElement);
-			Guid guid = new Guid(id);
-			if(this._items.TryGetValue(guid, out item))
-				this._items.Remove(guid);
-			return item;
-		}
+	// 	public DiagramElement Remove(string id)
+	// 	{
+	// 		DiagramElement item = default(DiagramElement);
+	// 		string guid = new Guid(id).ToString();
+	// 		if(this._items.TryGetValue(guid, out item))
+	// 			this._items.Remove(guid);
+	// 		return item;
+	// 	}
 
-		public DiagramElement Remove(int index)
-		{
-			DiagramElement item = default(DiagramElement);
-			if(index >= 0 && index < size )
-			{
-				item = (new List<DiagramElement>(this._items.Values)).ToArray()[index];
-				this._items.Remove(((DiagramElement)item).id);
-			}
-			return item;
-		}
+	// 	public DiagramElement Remove(int index)
+	// 	{
+	// 		DiagramElement item = default(DiagramElement);
+	// 		if(index >= 0 && index < size )
+	// 		{
+	// 			item = (new List<DiagramElement>(this._items.Values)).ToArray()[index];
+	// 			this._items.Remove(((DiagramElement)item).id);
+	// 		}
+	// 		return item;
+	// 	}
 
 
-		public int size
-		{
-			get
-			{
-				return this._items.Count;
-			}
-		}
+	// 	public int size
+	// 	{
+	// 		get
+	// 		{
+	// 			return this._items.Count;
+	// 		}
+	// 	}
 
-	}
+	// }
 
 	public class CollectionIterator<T>: ICollectionIterator<T>
 	{

@@ -1,7 +1,6 @@
-import { DiagramElement } from "./Diagram";
-import { Component } from "./Component";
+import { DiagramElement, GeneralCollection, ICollection, IGettable, Component } from "./DiagramModel";
 import { VisibilityType, DataType, RelationshipType } from "./Types";
-import { ICollection } from "./Collection";
+
 /**
  * describ a relationship between a set of diagram elements
  * Examples: 
@@ -17,11 +16,24 @@ import { ICollection } from "./Collection";
  * implimentation
  *      Comp impliments IComp{}
  */
-export class Relationship extends DiagramElement {
-	type: RelationshipType;
-	from: string;
-	to: string;
-	atributes: ICollection<Attribute>;
+export class Relationship extends DiagramElement implements IGettable
+{
+
+	public type: RelationshipType;
+	public from: string;
+	public to: string;
+
+	public attributes: ICollection<Attribute>;
+
+	public constructor()
+	{
+		super("Relationship");
+        this.attributes  = new GeneralCollection<Attribute> ([]);
+	}
+
+	get(id: string) {
+		return this.attributes.get(id);
+	}
 
 	fromCompnent( component: Component){
 		this.from = component.id
@@ -29,24 +41,21 @@ export class Relationship extends DiagramElement {
 	toComponent( component: Component){
 		this.to = component?.id
 	}
+
 }
 
-/**
- * The multiplicity of an atribute
- * types of representation and values:
- *  diagram     implimentation
- *  1           {   1, null  }  exact values: the inital value is min and max is null
- *  5           {   5, null  }
- *  0..5        {   0,  5    }  range values: min and max respective 
- *  2..*        {   2,  -1   }  infinite (*): ang value less than 0
- * 
- */
-export class Multiplicity
-{
-	min: number = null;
-	max: number = null;
+export abstract class ComponentProperty{
+	public id: string;
+	public name: string;
+	public visibility: VisibilityType;
+	public isStatic: boolean;
+	public propertyString: string; 
+	public type: DataType;
+	constructor(type)
+	{
+		this["$type"] = `CoUML_app.Model.${type}, CoUML-app`;
+	}
 }
-
 /**
  * describs an attibute of a diagram element
  * diagram:
@@ -54,13 +63,16 @@ export class Multiplicity
  * implimentation: 
  *      private DataType myAttribute = new DefaultObject<DataType>();
  */
-export class Attribute{
-	visibility: VisibilityType;
-	name: string;
-	type: DataType;             //not sure if we want enums we can make an abstract rn
-	multiplicity: Multiplicity; //diagram says int[10..-1]=null idk. no car in ts. make * -1
-	defaultValue: string = null;      //says =null
-	propertyString: string = null;//says =null
+export class Attribute extends ComponentProperty
+{
+
+	multiplicity: Multiplicity; 
+	
+	defaultValue: string; 
+	
+	constructor(){
+		super("Attribute");
+	}
 }
 
 
@@ -71,11 +83,34 @@ export class Attribute{
  * implimentation: 
  *      public DataType foo( DataType p, DataType q){}
  */
- export class Operation{
-	visibility: VisibilityType;
-	name: string;
-	parameters: ICollection<Attribute>;
-	returnType: DataType;
-	isStatic: boolean;
-	propertyString: string = null; //=null
+ export class Operation extends ComponentProperty implements IGettable
+{
+	public parameters: ICollection<Attribute>;
+
+	constructor()
+	{
+		super("Operation");
+		this.parameters = new GeneralCollection<Attribute> ([]);
+	}
+
+	get(id: string) {
+		return this.parameters.get(id);
+	}
 }
+
+/**
+ * The multiplicity of an attribute
+ * types of representation and values:
+ *  diagram     implimentation
+ *  1           {   1, null  }  exact values: the inital value is min and max is null
+ *  5           {   5, null  }
+ *  0..5        {   0,  5    }  range values: min and max respective 
+ *  2..*        {   2,  -1   }  infinite (*): ang value less than 0
+ * 
+ */
+export class Multiplicity
+{
+	public min: number = null;
+	public max: number = null;
+}
+

@@ -1,14 +1,37 @@
-import { DataType } from 'automerge';
-import {v4 as uuidv4} from 'uuid';
-import { Interface, Enumeration, AbstractClass, Class, Component, Relationship, GeneralCollection, ICollection, RelationalCollection, Dimension, Operation, User, IUser, NullUser  } from './DiagramModel';
-import { Attribute } from './Subcomponent';
+import {v4 as Uuid} from 'uuid';
+import { GeneralCollection } from './Collection';
+import { ICollection, Dimension, IUser, NullUser, Relationship, Interface, Class, AbstractClass, User,  } from './DiagramModel';
 
 export class Diagram
 {
-	public elements: ICollection<DiagramElement> = new RelationalCollection([]);
+	public elements: ICollection<DiagramElement>;
+
+	public constructor()
+	{
+		this.elements = new GeneralCollection<DiagramElement>([])
+	}
 }
-export abstract class DiagramElement{
-	editor: IUser = new NullUser();
-	id: string = uuidv4();
-	dimension: Dimension = new Dimension();
+
+export abstract class DiagramElement
+{
+
+	public editor: IUser;
+	
+	public id: string;
+	
+	public dimension: Dimension;
+
+	public constructor(type: string)
+	{
+		this.editor = new NullUser();
+		this.id = Uuid();
+		this.dimension = new Dimension();
+		this["$type"] = `CoUML_app.Model.${type}, CoUML_app`;
+	}
+
+}
+
+export interface IGettable
+{
+	get(id: string);
 }

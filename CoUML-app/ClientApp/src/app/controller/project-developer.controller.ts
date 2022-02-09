@@ -1,30 +1,28 @@
 import { Injectable } from '@angular/core';
 import { CoUmlHubService } from "../service/couml-hub.service";
-import * as Automerge from 'automerge';
-import { Class, Diagram, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, DiagramBuilder } from 'src/models/DiagramModel';
+import { Diagram, Assembler, ChangeRecord, ActionType, PropertyType, Component, Class, AbstractClass, Interface, Enumeration, IGettable } from 'src/models/DiagramModel';
+
 
 @Injectable()
 export class ProjectDeveloper{
 
-	am_diagram: Automerge.FreezeObject<Diagram>;
-	projectDiagram: Diagram;
-	recentPatch: Automerge.Patch;
+	_projectDiagram: Diagram = null;
 
-	constructor(private _CoUmlHub: CoUmlHubService)	{}
+	__parentId =  "0b68a108-f685-4e44-9e6e-a325d8d439f3"; // for testing only!!!!
+
+	constructor(private _coUmlHub: CoUmlHubService)	{}
 
 
-	public open( id: string)
+	public open( id: string )
 	{
 		
-		this._CoUmlHub.fetch( id ) //get diagram from server
+		this._coUmlHub.fetch( id ) //get diagram from server
 			.then( (d) => {
-				this._CoUmlHub.subscribe(this);
+				this._coUmlHub.subscribe(this);
 				console.log(d);
-				this.projectDiagram = new DiagramBuilder().buildDiagram (d);
-				this.am_diagram = Automerge.from(this.projectDiagram);
-				console.log(this.projectDiagram);
-				console.log(`Automerge Diagram\n${this.describe()}`);
-			} ); // create AMDiagram from diagram 
+				this._projectDiagram = Assembler.assembleDiagram (d);
+				console.log(this._projectDiagram);
+			} ); 
 	}
 
 	public close ()
@@ -32,50 +30,59 @@ export class ProjectDeveloper{
 		//TODO: close the project and remove yourself from the group
 	}
 
-	public makeChange(diagram: Diagram)
+	public makeChanges(changes: ChangeRecord[])
 	{
-		let newDiagram = Automerge.from(diagram);
-		let changes = Automerge.getChanges(this.am_diagram, newDiagram);
-		this.am_diagram = newDiagram;
-		this._CoUmlHub.commit(changes);
-
-		this.describe();
+		this._coUmlHub.commit(changes);
 	}
 
-	public applyChange(diagram: Automerge.BinaryChange[])
+	
+	public applyChanges(changes: ChangeRecord[])
 	{
-		[this.am_diagram, this.recentPatch] = Automerge.applyChanges(this.am_diagram, diagram);
+		console.log("-------------- apply changes ---------------");
+		for(let change of changes)
+		{
+			
 
-		/* log */ this._CoUmlHub.log.log(ProjectDeveloper.name, "applyChanges", JSON.stringify(this.recentPatch) );
-
-		this.describe();
-
-		//TODO: render on screen
+			this.applyChange(change);
+		}
+		console.log("-------------- Done! ---------------");
+		console.log(this._projectDiagram);
 	}
 
-	public describe():string
+	private applyChange(change: ChangeRecord)
 	{
-		return JSON.stringify(this.am_diagram, undefined, 2);
+		// console.log("change");
+		// console.log(change);
+
+		let action = ActionType[change.action].toLowerCase();
+		let affectedProperty = PropertyType[change.affectedProperty].toLowerCase();
+		change.value = Assembler.assembleComponent(change.value);
+		let operation = "";
+
+		let affectedComponent: IGettable = this._projectDiagram.elements;
+		if(change.id)
+			for(let id of change.id){
+				affectedComponent = affectedComponent.get(id);
+			}
+
+		switch(change.action){
+			case ActionType.Insert:
+			case ActionType.Remove:
+				operation = `${change.id? affectedProperty + ".": ''}${action}(change.value)`;
+				break;
+
+			case ActionType.Lock:
+			case ActionType.Release:
+			case ActionType.Change:
+				operation = `${affectedProperty} = change.value`;
+				break;
+		}			
+
+		// /*logs*/
+		// console.log("affectedComponent.operation");
+		// console.log(affectedComponent);
+		// console.log(operation);
+		eval("affectedComponent." + operation);
+
 	}
 }
-
-/** * * * * * * * * * * * * * * * * * * * * * * *
- * example code from github https://github.com/automerge/automerge
- ** * * * * * * * * * * * * * * * * * * * * * * *
-
- // On one node
-let newDoc = Automerge.change(currentDoc, doc => {
-  // make arbitrary change to the document
-})
-let changes = Automerge.getChanges(currentDoc, newDoc)
-
-// broadcast changes as a byte array
-network.broadcast(changes)
-
-// On another node, receive the byte array
-let changes = network.receive()
-let [newDoc, patch] = Automerge.applyChanges(currentDoc, changes)
-// `patch` is a description of the changes that were applied (a kind of diff)
-
-
- */
