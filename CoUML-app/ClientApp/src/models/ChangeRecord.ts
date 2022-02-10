@@ -7,14 +7,14 @@ export class ChangeRecord
 	affectedProperty: PropertyType;
 	action: ActionType;
 	value: any
-	constructor( ids: string[], property: PropertyType, action: ActionType, value: any)
+	arguments: any;
+	constructor( ids: string[], property: PropertyType, action: ActionType, value: any, args: any)
 	{
 		this. id = ids;
 		this.affectedProperty = property;
 		this.action = action;
 		this.value = value;
-		// if(this.value instanceof DiagramElement || this.value instanceof ComponentProperty)
-		// 	this.value["$type"] = "CoUML_app.Models." + value.constructor.name +", CoUML_app";
+		this.arguments = args;
 	}
 }
 

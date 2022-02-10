@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CoUmlHubService } from "../service/couml-hub.service";
 import { Diagram, Assembler, ChangeRecord, ActionType, PropertyType, Component, Class, AbstractClass, Interface, Enumeration, IGettable } from 'src/models/DiagramModel';
+import { EditorComponent } from '../editor/editor.component';
 
 
 @Injectable()
@@ -10,8 +11,13 @@ export class ProjectDeveloper{
 
 	__parentId =  "0b68a108-f685-4e44-9e6e-a325d8d439f3"; // for testing only!!!!
 
+	_diagramEditor: EditorComponent = null;
+
 	constructor(private _coUmlHub: CoUmlHubService)	{}
 
+	subscribe(diagramEditor: EditorComponent) {
+		this._diagramEditor = diagramEditor;
+	}
 
 	public open( id: string )
 	{
@@ -20,8 +26,9 @@ export class ProjectDeveloper{
 			.then( (d) => {
 				this._coUmlHub.subscribe(this);
 				console.log(d);
-				this._projectDiagram = Assembler.assembleDiagram (d);
+				this._projectDiagram = Assembler.assembleDiagram(d);
 				console.log(this._projectDiagram);
+				this._diagramEditor.draw();
 			} ); 
 	}
 
@@ -41,8 +48,6 @@ export class ProjectDeveloper{
 		console.log("-------------- apply changes ---------------");
 		for(let change of changes)
 		{
-			
-
 			this.applyChange(change);
 		}
 		console.log("-------------- Done! ---------------");
@@ -83,6 +88,7 @@ export class ProjectDeveloper{
 		// console.log(affectedComponent);
 		// console.log(operation);
 		eval("affectedComponent." + operation);
+		this._diagramEditor.update(change.arguments);
 
 	}
 }

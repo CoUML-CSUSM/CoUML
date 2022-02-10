@@ -194,13 +194,13 @@ namespace CoUML_app.Controllers.Hubs
             // TODO: changes get pushed from client to server to be logged and sent backout to other clients
 
             //push changes out to other clients
-            Dispatch(dId, changes);
+            Dispatch(dId, Context.ConnectionId, changes);
 
         }
 
-        public void Dispatch(string dId, string changes)
+        public void Dispatch(string dId, string callerId, string changes)
         {
-            Clients.Group(dId).Dispatch(changes);
+            Clients.GroupExcept(dId, new List<string>(){callerId}.AsReadOnly()).Dispatch(changes);
         }
 
         public void TriggerBreakPoint()

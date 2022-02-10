@@ -185,7 +185,7 @@ export class GeneralCollection<T> implements ICollection<T>{
 	}
 	getNext():T{
 		if(this.hasNext){
-			return this._collection.items[++this._position];
+			return this._collection.items[this._position++];
 		}
 	}
 	hasPrevious():boolean{
@@ -193,7 +193,7 @@ export class GeneralCollection<T> implements ICollection<T>{
 	}
 	getPrevious():T{
 		if(this.hasPrevious){
-			return this._collection.items[--this._position];
+			return this._collection.items[this._position--];
 		}
 	}
 }

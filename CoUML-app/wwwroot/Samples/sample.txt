@@ -131,7 +131,7 @@
         "dimension": {
           "$type": "CoUML_app.Models.Dimension, CoUML-app",
           "x": 100,
-          "y": 100,
+          "y": 300,
           "width": 40,
           "height": 60
         }
