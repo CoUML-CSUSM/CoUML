@@ -7,14 +7,12 @@ export class ChangeRecord
 	affectedProperty: PropertyType;
 	action: ActionType;
 	value: any
-	arguments: any;
-	constructor( ids: string[], property: PropertyType, action: ActionType, value: any, args: any)
+	constructor( ids: string[], property: PropertyType, action: ActionType, value: any)
 	{
 		this. id = ids;
 		this.affectedProperty = property;
 		this.action = action;
 		this.value = value;
-		this.arguments = args;
 	}
 }
 

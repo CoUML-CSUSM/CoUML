@@ -25,18 +25,26 @@ export class EditorComponent {
 		this._projectDeveloper.subscribe(this);
 	}
 
-	// _changes: ChangeRecord[] = [];
+	_changes: ChangeRecord[] = [];
 
-	// set changes(change: ChangeRecord)
-	// {
-	// 	this._changes.push(change);
-	// 	this._projectDeveloper.makeChanges(this._changes);
-	// }
+	recordChange(change: ChangeRecord)
+	{
+		this._changes.push(change);
+		this._projectDeveloper.makeChanges(this._changes);
+	}
 
+	myBoo(x){console.log('%c\t\t%s\t\t', 'font-size: 16pt; background: #222; color: #bada55', x);}
+
+	/*
+
+	this["DiagramEditorChanges"].makeChanges([]);
+	
+	*/
 
 	public draw() {
 		this.graphContainer = new mxGraph(this.container.nativeElement);
-		this.graphContainer["DiagramEditorChanges"] = this._projectDeveloper;
+		// this.graphContainer["_projectDeveloper"] = this._projectDeveloper;
+		var EditorComponent = this;
 		this.graphContainer.getModel().beginUpdate();
 
 
@@ -49,13 +57,12 @@ export class EditorComponent {
 			
 			if (newValue != null){
 				mxGraph.prototype.labelChanged.apply(this, arguments);
-				this["DiagramEditorChanges"].makeChanges([ new ChangeRecord(
-						[cell.id],
-						PropertyType.Name, 
-						ActionType.Change,
-						newValue,
-						arguments
-					)]);
+				EditorComponent.recordChange( new ChangeRecord(
+					[cell.id],
+					PropertyType.Name, 
+					ActionType.Change,
+					newValue
+				));
 			}
 			return null;
 		};
@@ -106,8 +113,11 @@ export class EditorComponent {
 		}
 	}
 	
-	update(arg){
-		this.graphContainer.labelChanged.apply(this.graphContainer, arg);
+	update(change: ChangeRecord){
+		this.graphContainer.getModel().setValue(
+			this.graphContainer.getModel().getCell(change.id[0]),
+			change.value
+		);
 	}
 
 	//***************************************************/

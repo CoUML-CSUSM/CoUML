@@ -88,7 +88,7 @@ export class ProjectDeveloper{
 		// console.log(affectedComponent);
 		// console.log(operation);
 		eval("affectedComponent." + operation);
-		this._diagramEditor.update(change.arguments);
+		this._diagramEditor.update(change);
 
 	}
 }
