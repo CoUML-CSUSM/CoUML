@@ -13,6 +13,8 @@ export class ProjectDeveloper{
 
 	_diagramEditor: EditorComponent = null;
 
+	_changes: ChangeRecord[] = [];
+
 	constructor(private _coUmlHub: CoUmlHubService)	{}
 
 	subscribe(diagramEditor: EditorComponent) {
@@ -37,9 +39,10 @@ export class ProjectDeveloper{
 		//TODO: close the project and remove yourself from the group
 	}
 
-	public makeChanges(changes: ChangeRecord[])
+	public commitStagedChanges()
 	{
-		this._coUmlHub.commit(changes);
+		this._coUmlHub.commit(this._changes);
+		this._changes = [];
 	}
 
 	
@@ -49,6 +52,7 @@ export class ProjectDeveloper{
 		for(let change of changes)
 		{
 			this.applyChange(change);
+			this._diagramEditor.update(change);
 		}
 		console.log("-------------- Done! ---------------");
 		console.log(this._projectDiagram);
@@ -56,8 +60,8 @@ export class ProjectDeveloper{
 
 	private applyChange(change: ChangeRecord)
 	{
-		// console.log("change");
-		// console.log(change);
+		console.log("applyChange");
+		console.log(change);
 
 		let action = ActionType[change.action].toLowerCase();
 		let affectedProperty = PropertyType[change.affectedProperty].toLowerCase();
@@ -84,12 +88,19 @@ export class ProjectDeveloper{
 				break;
 		}			
 
-		// /*logs*/
-		// console.log("affectedComponent.operation");
-		// console.log(affectedComponent);
-		// console.log(operation);
 		eval("affectedComponent." + operation);
-		this._diagramEditor.update(change);
 
+		console.log("result");
+		console.log(this._projectDiagram);
+
+	}
+
+	stageChange(change: ChangeRecord) {
+		// apply change locally
+		this.applyChange(change);
+		this._changes.push(change)
+
+		//apply globally
+		this.commitStagedChanges();
 	}
 }

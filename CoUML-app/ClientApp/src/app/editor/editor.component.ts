@@ -25,19 +25,12 @@ export class EditorComponent {
 		this._projectDeveloper.subscribe(this);
 	}
 
-	_changes: ChangeRecord[] = [];
-
 	stageChange(change: ChangeRecord)
 	{
-		console.log("change added")
+		console.log("change staged")
 		console.log(change);
-		this._changes.push(change);
+		this._projectDeveloper.stageChange(change);
 	}
-	commitStagedChanges()
-	{
-		this._projectDeveloper.makeChanges(this._changes);
-	}
-
 
 	public draw() {
 		this.graphContainer = new mxGraph(this.container.nativeElement);
@@ -46,19 +39,20 @@ export class EditorComponent {
 
 
 		// on change label event 
-		this.graphContainer.labelChanged = function(cell, newValue){
-			
-			if (newValue != null){
-				mxGraph.prototype.labelChanged.apply(this, arguments);
+		this.graphContainer.addListener(mxEvent.LABEL_CHANGED,
+			function(eventSource, eventObject){
+				console.log('%c\t\t%s\t\t', 'font-size: 16pt; background: #222; color: #bada55', "LABEL_CHANGED");
+				let affectedCells = eventObject.getProperties();
+				// let id = eventObject.getProperties().cell.id;
+				// let newValue = eventObject.getProperties().value;
+
 				thisEditorComponentContext.stageChange( new ChangeRecord(
-					[cell.id],
+					[affectedCells.cell.id],
 					PropertyType.Name, 
 					ActionType.Change,
-					newValue
+					affectedCells.value
 				));
-			}
-			return null;
-		};
+		});
 
 		this.graphContainer.startEditing = function(mouseEvent){
 			console.log('%c\t\t%s\t\t', 'font-size: 16pt; background: #222; color: #bada55', "startEditing");
@@ -66,25 +60,36 @@ export class EditorComponent {
 			mxGraph.prototype.startEditing.apply(this, arguments);
 		};
 
-		this.graphContainer.cellsMoved = function(cells, dx, dy, disconnected, contrain, extend){
-			console.log('%c\t\t%s\t\t', 'font-size: 16pt; background: #222; color: #bada55', "cellsMoved");
-			console.log(arguments);
-			mxGraph.prototype.cellsMoved.apply(this, arguments);
+		this.graphContainer.addListener(mxEvent.CELLS_MOVED,
+			function(eventSource, eventObject){
+				let affectedCells = eventObject.getProperties();
+				console.log('%c\t\t%s\t\t', 'font-size: 16pt; background: #222; color: #bada55', "cellsMoved");
 
-			thisEditorComponentContext.stageChange(new ChangeRecord(
-				[cells[0].id],
-				PropertyType.Dimension,
-				ActionType.Shift,
-				delete arguments['cells']
-			));
-			this.stopEditing(false);
-		};
+				let ids = [];
+				affectedCells.cells.forEach(cell=> {
+					console.log(`cell.id = ${cell.id}`);
+					ids.push(cell.id)
+				});
+
+				console.log(affectedCells)
+
+				thisEditorComponentContext.stageChange(new ChangeRecord(
+					ids,
+					PropertyType.Dimension,
+					ActionType.Shift,
+					{
+						dx: affectedCells.dx,
+						dy: affectedCells.dy,
+						disconnected: affectedCells.disconnected, 
+					}
+				));
+			});
 
 		this.graphContainer.stopEditing = function(cancel){
 			console.log('%c\t\t%s\t\t', 'font-size: 16pt; background: #222; color: #bada55', "stopEditing");
 			console.log(arguments);
 			mxGraph.prototype.stopEditing.apply(this, arguments);
-			thisEditorComponentContext.commitStagedChanges();
+			// thisEditorComponentContext.commitStagedChanges();
 		};
 
 
@@ -135,22 +140,22 @@ export class EditorComponent {
 	}
 	
 	update(change: ChangeRecord){
+		let affectedCell = this.graphContainer.getModel().getCell(change.id[0]);
 		switch(change.action){
 			case ActionType.Change:
 				this.graphContainer.getModel().setValue(
-					this.graphContainer.getModel().getCell(change.id[0]),
+					affectedCell,
 					change.value
 				);
 				break;
 
 			case ActionType.Shift:
-					this.graphContainer.moveCells(
-						[this.graphContainer.getModel().getCell(change.id[0])],
-						change.value.dx,
-						change.value.dy,
-						false
-					);
-					break;
+				let absoluteDeminsions = this._projectDeveloper._projectDiagram.elements.get(change.id[0]).dimension;
+				let newCellGeometry = this.graphContainer.getCellGeometry(affectedCell).clone();
+				newCellGeometry.x = absoluteDeminsions.x;
+				newCellGeometry.y = absoluteDeminsions.y;
+				this.graphContainer.getModel().setGeometry(affectedCell, newCellGeometry);
+				break;
 		}
 	}
 
@@ -160,60 +165,6 @@ export class EditorComponent {
 	{
 		this._projectDeveloper.open(this.diagramId);
 	}
-/*
-	public makeTestChange()
-	{	
-		let changes: ChangeRecord[] = [];
 
-		// class
-		let c: Class  =  new Class("Triangle");
-		let a: Attribute = new Attribute();
-		a.visibility = VisibilityType.Private;
-		a.type = {dataType: "double"};
-		c.attributes.insert(a);
-
-		// c impliments i
-		let r: Relationship = new Relationship();
-		r.type = RelationshipType.Realization;
-		r.fromCompnent(c);
-		r.to = this._projectDeveloper.__parentId;
-
-		// make relation
-		c.relations.insert(r.id)
-
-		let me  =  new Operation();
-		me.isStatic  = false;
-		me.name = "delete";
-		me.visibility = VisibilityType.Public;
-
-		changes.push(new ChangeRecord(
-			null,
-			PropertyType.Elements,
-			ActionType.Insert,
-			c
-		),
-		new ChangeRecord(
-			null,
-			PropertyType.Elements,
-			ActionType.Insert,
-			r
-		),
-		new ChangeRecord(
-			[this._projectDeveloper.__parentId],
-			PropertyType.Relations,
-			ActionType.Insert,
-			r.id
-		),
-		new ChangeRecord(
-			[this._projectDeveloper.__parentId],
-			PropertyType.Operations,
-			ActionType.Insert,
-			me
-		)
-		);
-
-		this._projectDeveloper.makeChanges(changes)
-	}
-*/
 }
 
