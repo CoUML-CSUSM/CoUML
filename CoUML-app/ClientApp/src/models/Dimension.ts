@@ -18,4 +18,10 @@ export class Dimension implements IDimension {
 		this.height = h;
 		this.width = w;
 	}
+
+	shift(offset)
+	{
+		this.x += offset.dx;
+		this.y += offset.dy;
+	}
 }

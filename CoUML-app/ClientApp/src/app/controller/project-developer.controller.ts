@@ -71,6 +71,7 @@ export class ProjectDeveloper{
 			}
 
 		switch(change.action){
+			case ActionType.Shift:
 			case ActionType.Insert:
 			case ActionType.Remove:
 				operation = `${change.id? affectedProperty + ".": ''}${action}(change.value)`;

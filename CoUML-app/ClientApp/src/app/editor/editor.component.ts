@@ -27,37 +27,30 @@ export class EditorComponent {
 
 	_changes: ChangeRecord[] = [];
 
-	recordChange(change: ChangeRecord)
+	stageChange(change: ChangeRecord)
 	{
+		console.log("change added")
+		console.log(change);
 		this._changes.push(change);
+	}
+	commitStagedChanges()
+	{
 		this._projectDeveloper.makeChanges(this._changes);
 	}
 
-	myBoo(x){console.log('%c\t\t%s\t\t', 'font-size: 16pt; background: #222; color: #bada55', x);}
-
-	/*
-
-	this["DiagramEditorChanges"].makeChanges([]);
-	
-	*/
 
 	public draw() {
 		this.graphContainer = new mxGraph(this.container.nativeElement);
-		// this.graphContainer["_projectDeveloper"] = this._projectDeveloper;
-		var EditorComponent = this;
+		var thisEditorComponentContext = this; 
 		this.graphContainer.getModel().beginUpdate();
 
 
 		// on change label event 
 		this.graphContainer.labelChanged = function(cell, newValue){
-			console.log("cell");
-			console.log(cell);
-			console.log("newValue");
-			console.log(newValue);
 			
 			if (newValue != null){
 				mxGraph.prototype.labelChanged.apply(this, arguments);
-				EditorComponent.recordChange( new ChangeRecord(
+				thisEditorComponentContext.stageChange( new ChangeRecord(
 					[cell.id],
 					PropertyType.Name, 
 					ActionType.Change,
@@ -66,6 +59,34 @@ export class EditorComponent {
 			}
 			return null;
 		};
+
+		this.graphContainer.startEditing = function(mouseEvent){
+			console.log('%c\t\t%s\t\t', 'font-size: 16pt; background: #222; color: #bada55', "startEditing");
+			console.log(arguments);
+			mxGraph.prototype.startEditing.apply(this, arguments);
+		};
+
+		this.graphContainer.cellsMoved = function(cells, dx, dy, disconnected, contrain, extend){
+			console.log('%c\t\t%s\t\t', 'font-size: 16pt; background: #222; color: #bada55', "cellsMoved");
+			console.log(arguments);
+			mxGraph.prototype.cellsMoved.apply(this, arguments);
+
+			thisEditorComponentContext.stageChange(new ChangeRecord(
+				[cells[0].id],
+				PropertyType.Dimension,
+				ActionType.Shift,
+				delete arguments['cells']
+			));
+			this.stopEditing(false);
+		};
+
+		this.graphContainer.stopEditing = function(cancel){
+			console.log('%c\t\t%s\t\t', 'font-size: 16pt; background: #222; color: #bada55', "stopEditing");
+			console.log(arguments);
+			mxGraph.prototype.stopEditing.apply(this, arguments);
+			thisEditorComponentContext.commitStagedChanges();
+		};
+
 
 
 		// create diagram from ProjectDeveloper Diagram
@@ -114,10 +135,23 @@ export class EditorComponent {
 	}
 	
 	update(change: ChangeRecord){
-		this.graphContainer.getModel().setValue(
-			this.graphContainer.getModel().getCell(change.id[0]),
-			change.value
-		);
+		switch(change.action){
+			case ActionType.Change:
+				this.graphContainer.getModel().setValue(
+					this.graphContainer.getModel().getCell(change.id[0]),
+					change.value
+				);
+				break;
+
+			case ActionType.Shift:
+					this.graphContainer.moveCells(
+						[this.graphContainer.getModel().getCell(change.id[0])],
+						change.value.dx,
+						change.value.dy,
+						false
+					);
+					break;
+		}
 	}
 
 	//***************************************************/
@@ -126,7 +160,7 @@ export class EditorComponent {
 	{
 		this._projectDeveloper.open(this.diagramId);
 	}
-
+/*
 	public makeTestChange()
 	{	
 		let changes: ChangeRecord[] = [];
@@ -152,33 +186,34 @@ export class EditorComponent {
 		me.name = "delete";
 		me.visibility = VisibilityType.Public;
 
-		// changes.push(new ChangeRecord(
-		// 	null,
-		// 	PropertyType.Elements,
-		// 	ActionType.Insert,
-		// 	c
-		// ),
-		// new ChangeRecord(
-		// 	null,
-		// 	PropertyType.Elements,
-		// 	ActionType.Insert,
-		// 	r
-		// ),
-		// new ChangeRecord(
-		// 	[this._projectDeveloper.__parentId],
-		// 	PropertyType.Relations,
-		// 	ActionType.Insert,
-		// 	r.id
-		// ),
-		// new ChangeRecord(
-		// 	[this._projectDeveloper.__parentId],
-		// 	PropertyType.Operations,
-		// 	ActionType.Insert,
-		// 	me
-		// )
-		// );
+		changes.push(new ChangeRecord(
+			null,
+			PropertyType.Elements,
+			ActionType.Insert,
+			c
+		),
+		new ChangeRecord(
+			null,
+			PropertyType.Elements,
+			ActionType.Insert,
+			r
+		),
+		new ChangeRecord(
+			[this._projectDeveloper.__parentId],
+			PropertyType.Relations,
+			ActionType.Insert,
+			r.id
+		),
+		new ChangeRecord(
+			[this._projectDeveloper.__parentId],
+			PropertyType.Operations,
+			ActionType.Insert,
+			me
+		)
+		);
 
 		this._projectDeveloper.makeChanges(changes)
 	}
+*/
 }
 

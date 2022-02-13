@@ -22,7 +22,8 @@ export enum ActionType
 	Remove, // value must be < string | id>
 	Change, // value must be approprate datatypes of ChangePropertyType
 	Lock,	
-	Release 
+	Release,
+	Shift 
 }
 
 export enum PropertyType
