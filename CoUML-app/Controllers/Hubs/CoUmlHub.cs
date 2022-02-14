@@ -270,8 +270,8 @@ namespace CoUML_app.Controllers.Hubs
             Relationship r = new Relationship
             {
                 type = RelationshipType.Realization,
-                fromComponent = c,
-                toComponent = i,
+                sourceComponent = c,
+                targetComponent = i,
             };
             c.relations.Insert(r.id);
             i.relations.Insert(r.id);

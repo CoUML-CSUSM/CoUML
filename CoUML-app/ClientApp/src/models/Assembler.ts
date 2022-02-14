@@ -59,8 +59,8 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 		__relationship.id = x.id;
 		__relationship.editor = assembleUser(x["editor"]);
 		__relationship.dimension = assembleDimension(x["dimension"]);
-		__relationship.from = x.from;
-		__relationship.to = x.to;
+		__relationship.source = x.source;
+		__relationship.target = x.target;
 		assembleAttributeCollection(__relationship.attributes, x.attributes)
 		return __relationship;
 	}

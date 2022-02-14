@@ -29,8 +29,8 @@ namespace CoUML_app.Models
         //class attributes
         Name,
         Type,
-        To,
-        From,
+        Target,
+        Source,
         Visibility,
         IsStatic,
         PropertyString,

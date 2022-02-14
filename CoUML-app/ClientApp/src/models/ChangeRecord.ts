@@ -38,8 +38,8 @@ export enum PropertyType
 	//class attributes
 	Name,
 	Type,
-	To,
-	From,
+	Target,
+	Source,
 	Visibility,
 	IsStatic,
 	PropertyString,

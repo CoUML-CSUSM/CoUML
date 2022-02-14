@@ -21,7 +21,15 @@ export class Dimension implements IDimension {
 
 	shift(offset)
 	{
-		this.x += offset.dx;
-		this.y += offset.dy;
+		this.x = offset.dx;
+		this.y = offset.dy;
+	}
+
+	change(newDim: Dimension)
+	{
+		this.x = newDim.x | this.x;
+		this.y = newDim.y | this.y;
+		this.width = newDim.x | this.width;
+		this.height = newDim.x | this.height;
 	}
 }
