@@ -19,10 +19,10 @@ export class Dimension implements IDimension {
 		this.width = w;
 	}
 
-	shift(offset)
+	shift(point)
 	{
-		this.x = offset.dx;
-		this.y = offset.dy;
+		this.x = point.x;
+		this.y = point.y;
 	}
 
 	change(newDim: Dimension)

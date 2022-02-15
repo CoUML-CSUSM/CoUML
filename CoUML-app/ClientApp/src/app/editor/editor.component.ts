@@ -71,8 +71,8 @@ export class EditorComponent {
 					PropertyType.Dimension,
 					ActionType.Shift,
 					{ // new absolute location
-						dx: affectedCells.cells[0]?.geometry.x,
-						dy: affectedCells.cells[0]?.geometry.y,
+						x: affectedCells.cells[0]?.geometry.x,
+						y: affectedCells.cells[0]?.geometry.y,
 					}
 				));
 			});
