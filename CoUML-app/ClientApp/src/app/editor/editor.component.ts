@@ -106,6 +106,7 @@ export class EditorComponent {
 				let value = isConnectioning? affectedCellId: null;
 
 				// relation - connect | dissconnect
+				//sets the source|target to componentId if connect and null if disconnect
 				thisEditorComponentContext.stageChange(
 					new ChangeRecord(
 						[affectedEdge.edge.id],
@@ -116,16 +117,17 @@ export class EditorComponent {
 				);
 				
 				// move edge point if disconnected
+				// set the location of the disconected end
 				thisEditorComponentContext.stageChange(
 					new ChangeRecord(
 						[affectedEdge.edge.id],
 						PropertyType.Dimension,
 						ActionType.Change,
 						new Dimension(
-							affectedEdge.geometry.sourcePoint?.x,
-							affectedEdge.geometry.sourcePoint?.y,
-							affectedEdge.geometry.targetPoint?.x,
-							affectedEdge.geometry.targetPoint?.y
+							affectedEdge.edge.geometry.sourcePoint?.x,
+							affectedEdge.edge.geometry.sourcePoint?.y,
+							affectedEdge.edge.geometry.targetPoint?.x,
+							affectedEdge.edge.geometry.targetPoint?.y
 						)
 					)
 				);
@@ -233,7 +235,9 @@ export class EditorComponent {
 			case ActionType.Change:
 				switch(change.affectedProperty){
 					case PropertyType.Name:	this.updateLabelValue(affectedCell, change); break;
-					case PropertyType.Dimension: this.updateEdgeGeometry(affectedCell,change); break
+					case PropertyType.Dimension: this.updateEdgeGeometry(affectedCell,change); break;
+					case PropertyType.Target:
+						case PropertyType.Source: this.updateEdgeConnections(affectedCell,change); break;
 				}
 				break;
 
@@ -242,21 +246,30 @@ export class EditorComponent {
 				break;
 		}
 	}
-	updateCellGeometry(affectedCell: mxCell, change: ChangeRecord) {
+	private updateCellGeometry(affectedCell: mxCell, change: ChangeRecord) {
 		// let absoluteDeminsions = this._projectDeveloper._projectDiagram.elements.get(change.id[0]).dimension;
 		let newCellGeometry = this.graphContainer.getCellGeometry(affectedCell).clone();
 		newCellGeometry.x = change.value.x;
 		newCellGeometry.y = change.value.y;
 		this.graphContainer.getModel().setGeometry(affectedCell, newCellGeometry);
-		// this is broken now!!!
 	}
 	
-	private updateEdgeGeometry(affectedCell: mxCell, change: ChangeRecord) {
-		// affectedCell.geometry.sourcePoint
+	private updateEdgeGeometry(affectedEdge: mxCell, change: ChangeRecord) {
 		console.log("updateEdgeGeometry");
-		console.log(affectedCell);
+		console.log(affectedEdge);
+		let point = change.affectedProperty == PropertyType.Source?
+			new mxPoint(change.value.x, change.value.y):
+				new mxPoint(change.value.width, change.value.height);
+
+		let newEdgeGeometry = affectedEdge.getGeometry().clone();
+		newEdgeGeometry.setTerminalPoint(point, change.affectedProperty == PropertyType.Source);
+		this.graphContainer.getModel().setGeometry(affectedEdge, newEdgeGeometry);
+		
 	}
 
+	private updateEdgeConnections(affectedEdge: mxCell, change: ChangeRecord) {
+		throw new Error('Method not implemented.');
+	}
 
 	private updateLabelValue(affectedCell: mxCell, change: ChangeRecord)
 	{

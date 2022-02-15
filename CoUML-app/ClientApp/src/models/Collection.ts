@@ -53,16 +53,21 @@ export class GeneralCollection<T> implements ICollection<T>{
 
 	/**
 	 * removes item from collection
-	 * @param itemAtIndex index of item
+	 * @param id index of item
 	 * @returns item removed
 	 */
-	remove(itemAtIndex: number): T | null
+	remove(id: any): T | null
 	{
 		let item: T = null;
-		if(this.validIndex(itemAtIndex))
+		if(this.validIndex(id))
 		{
-			item = this.items[itemAtIndex];
-			this.items = this.items.splice(itemAtIndex);
+			item = this.items[id];
+			this.items = this.items.splice(id);
+		}
+		else if(id instanceof String)
+		{
+			let i = this.items.indexOf(id as unknown as T);
+			this.items = this.items.splice(i);
 		}
 		return item;
 	}
@@ -82,7 +87,11 @@ export class GeneralCollection<T> implements ICollection<T>{
 	 */
 	validIndex(i: number): boolean
 	{
-		return i >= 0 && i < this.size; 
+		try{
+			return i >= 0 && i < this.size; 
+		}catch(error){
+			return false;
+		}
 	}
 
 

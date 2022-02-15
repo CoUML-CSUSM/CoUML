@@ -39,16 +39,11 @@ export class ProjectDeveloper{
 		//TODO: close the project and remove yourself from the group
 	}
 
-	public commitStagedChanges()
-	{
-		this._coUmlHub.commit(this._changes);
-		this._changes = [];
-	}
-
 	
 	public applyChanges(changes: ChangeRecord[])
 	{
 		console.log("-------------- apply changes ---------------");
+		console.log(changes);
 		for(let change of changes)
 		{
 			this.applyChange(change);
@@ -98,9 +93,30 @@ export class ProjectDeveloper{
 	stageChange(change: ChangeRecord) {
 		// apply change locally
 		this.applyChange(change);
-		this._changes.push(change)
+		this._changes.push(change);
 
 		//apply globally
 		this.commitStagedChanges();
 	}
+
+	private async commitStagedChanges()
+	{
+		if(!this.shouldDelay)
+		{
+			this.shouldDelay = true;
+			this._coUmlHub.commit(this._changes);
+			this._changes = [];
+			//artificial delay that prevents the program from updating too offten, but submits any last added elements
+			setTimeout(()=>{
+				this.shouldDelay = false;
+				if(0 < this._changes.length)
+					this.commitStagedChanges();
+			}, this.delayPeriod);
+		}
+	}
+
+	private shouldDelay = false;
+	private delayPeriod = 1000; // 1 second
+
+
 }
