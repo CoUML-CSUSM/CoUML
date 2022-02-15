@@ -11,6 +11,9 @@ using Microsoft.Extensions.Logging;
 
 using CoUML_app.Models;
 
+//mongodb stuff
+using MongoDB.Driver;
+using MongoDB.Bson;
 
 /**
 https://docs.microsoft.com/en-us/aspnet/signalr/overview/guide-to-the-api/working-with-groups
@@ -117,6 +120,9 @@ namespace CoUML_app.Controllers.Hubs
         private readonly static ConnectionMap<string, IUser> _connections = new ConnectionMap<string, IUser>();
         //private static Diagram testDiagram = DevUtility.DiagramDefualt(); // test code here
         private static Diagram testDiagram = DevUtility.TestDiagram();
+
+        
+
         // public CoUmlHub()
         // {
         // }
@@ -180,6 +186,16 @@ namespace CoUML_app.Controllers.Hubs
                 Console.WriteLine("not test id");
             }
 
+            //finds document from database
+            var dbClient = new MongoClient("mongodb://localhost:27017");
+            IMongoDatabase db = dbClient.GetDatabase("CoUML");
+
+            var collection = db.GetCollection<BsonDocument>("Diagrams");
+            var filter = Builders<BsonDocument>.Filter.Eq("id", "test");
+            //this is the stuff we need!!!
+            var diagramText = collection.Distinct<string>("diagram", filter).ToListAsync().Result[0].ToString();
+            Console.WriteLine(diagramText);
+
             return JsonConvert.SerializeObject(testDiagram, Formatting.Indented, new JsonSerializerSettings
                     {
                         TypeNameHandling = TypeNameHandling.Auto
@@ -212,6 +228,21 @@ namespace CoUML_app.Controllers.Hubs
             //something like just making a diagram object
             Console.WriteLine("c# generate test output");
             
+
+            //mongodb database
+            var dbClient = new MongoClient("mongodb://localhost:27017");
+            //adds document to the database
+            IMongoDatabase db = dbClient.GetDatabase("CoUML");
+
+            var collection = db.GetCollection<BsonDocument>("Diagrams");
+
+            var doc = new BsonDocument
+            {
+                {"id", "new"},
+                {"diagram", "333"}
+            };
+
+            collection.InsertOne(doc);
         }
     }
 

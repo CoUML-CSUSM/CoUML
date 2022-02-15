@@ -15,7 +15,7 @@ export class ProjectManager{
 
     constructor(private _coUmlHub: CoUmlHubService){}
 
-    public create(){
+    public generate(){
         console.log('mtest');
 
         //test stuff delete later
@@ -32,7 +32,11 @@ export class ProjectManager{
         console.log(this.newDiagram.elements[0].editor);
         this._coUmlHub.generate();
 
-        
+        (d) => {
+            //this._coUmlHub.subscribe(this);
+            //console.log(d);
+            this.newDiagram = new DiagramBuilder().buildDiagram (d);}
+        /*
         //delete later
         this._coUmlHub.fetch( "" ) //get diagram from server
 			.then( (d) => {
@@ -43,6 +47,7 @@ export class ProjectManager{
 				//console.log(this.newDiagram);
 				//console.log(`Automerge Diagram\n${this.describe()}`);
 			} ); // create AMDiagram from diagram 
+            */
             
     }
 }

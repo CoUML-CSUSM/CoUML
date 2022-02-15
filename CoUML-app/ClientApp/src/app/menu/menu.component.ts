@@ -11,7 +11,7 @@ import { ProjectManager } from '../controller/project-manager.controller';
 
     constructor(private _projectManager: ProjectManager){}
 
-    public create(){
-        this._projectManager.create();
+    public generate(){
+        this._projectManager.generate();
     }
   }
