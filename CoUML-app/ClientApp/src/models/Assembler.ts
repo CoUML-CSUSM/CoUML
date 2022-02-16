@@ -61,6 +61,7 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 		__relationship.dimension = assembleDimension(x["dimension"]);
 		__relationship.source = x.source;
 		__relationship.target = x.target;
+		__relationship.type = x.type;
 		assembleAttributeCollection(__relationship.attributes, x.attributes)
 		return __relationship;
 	}

@@ -10,7 +10,7 @@ import { ProjectDeveloper } from '../controller/project-developer.controller';
   templateUrl: './editor.component.html',
   providers: [ProjectDeveloper]
 })
-export class EditorComponent {
+export class EditorComponent implements AfterViewInit{
 
 	private graphContainer: mxGraph;
 	diagram_description: string;
@@ -24,12 +24,17 @@ export class EditorComponent {
 	constructor(private _projectDeveloper: ProjectDeveloper) {
 		this._projectDeveloper.subscribe(this);
 	}
+	ngAfterViewInit(): void {
+		this.graphContainer = new mxGraph(this.container.nativeElement);
+		this.addStyles();
+	}
 
 	stageChange(change: ChangeRecord)
 	{
 		console.log("change staged")
 		console.log(change);
 		this._projectDeveloper.stageChange(change);
+		this.addStyles();
 	}
 
 	private addListeners()
@@ -194,20 +199,38 @@ export class EditorComponent {
 			});
 	}
 
+	private addStyles()
+	{
+		let  edgeStyleDefualt = this.graphContainer.getStylesheet().getDefaultEdgeStyle();
+		edgeStyleDefualt[mxConstants.STYLE_STARTSIZE] = 12;
+		edgeStyleDefualt[mxConstants.STYLE_ENDSIZE] = 12;
+
+		let edgeStyleRealization = mxUtils.clone(edgeStyleDefualt);
+		edgeStyleRealization[mxConstants.STYLE_DASHED] = true;
+		edgeStyleRealization[mxConstants.STYLE_DASH_PATTERN] = '12 4';
+		edgeStyleRealization[mxConstants.STYLE_ENDARROW] = mxConstants.ARROW_BLOCK;
+		edgeStyleRealization[mxConstants.STYLE_ENDFILL] = false;
+		this.graphContainer.getStylesheet().putCellStyle(
+			RelationshipType[RelationshipType.Realization], 
+			edgeStyleRealization
+			);
+
+	}
+	
 	public draw() {
-		this.graphContainer = new mxGraph(this.container.nativeElement);
+		// done set edge style
 		
 		this.graphContainer.getModel().beginUpdate();
-
 		// create diagram from ProjectDeveloper Diagram
 		try {
 			const parent = this.graphContainer.getDefaultParent();
 
-			let elementIterator: ICollectionIterator<DiagramElement> = this._projectDeveloper._projectDiagram.elements.iterator();
+			let elementIterator: ICollectionIterator<DiagramElement> 
+				= this._projectDeveloper._projectDiagram.elements.iterator();
 			
-				
-			let relatioshipsLast = [];
-
+			// relationships will be added after all components are added
+			let relatioships = []; 
+			
 			while(elementIterator.hasNext())
 			{
 				let diagramElement = elementIterator.getNext();
@@ -223,14 +246,11 @@ export class EditorComponent {
 						diagramElement.dimension.height
 					);
 				else if( diagramElement instanceof Relationship){
-						relatioshipsLast.push(diagramElement)
+						relatioships.push(diagramElement)
 				}
-						
 			}
 
-			console.log(relatioshipsLast);
-	
-			for( let relation  of relatioshipsLast)
+			for( let relation  of relatioships)
 			{
 				// TODO : figure out how to insert an edge that has no source or target 
 				this.graphContainer.insertEdge(
@@ -238,7 +258,8 @@ export class EditorComponent {
 					relation.id, 
 					relation.attributes.toString(), 
 					this.graphContainer.getModel().getCell(relation.source), 
-					this.graphContainer.getModel().getCell(relation.target), 
+					this.graphContainer.getModel().getCell(relation.target),
+					RelationshipType[relation.type]
 				);
 			}
 					

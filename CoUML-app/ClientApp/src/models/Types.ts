@@ -17,7 +17,7 @@ export class DataType
 
 export enum RelationshipType
 {
-    Dependency,
+    Dependency, 
     Association,
     Aggregation,
     Composistion,
