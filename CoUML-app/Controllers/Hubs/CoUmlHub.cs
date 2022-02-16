@@ -179,11 +179,11 @@ namespace CoUML_app.Controllers.Hubs
                 //TODO: look up real diagram and return
             }
 
-            // return JsonConvert.SerializeObject(testDiagram, Formatting.Indented, new JsonSerializerSettings
-            //         {
-            //             TypeNameHandling = TypeNameHandling.Auto
-            //         });
-            return this.OpenSampleFile();
+            return JsonConvert.SerializeObject(testDiagram, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.Auto
+                    });
+            // return this.OpenSampleFile();
             // return JsonConvert.SerializeObject(testDiagram, Formatting.Indented);
 
                 
@@ -264,6 +264,7 @@ namespace CoUML_app.Controllers.Hubs
                 visibility = VisibilityType.Private,
                 type = new DataType{ dataType = "double" }
             };
+            c.dimension.y = 300;
             c.attributes.Insert(a);
 
             // c impliments i
@@ -275,6 +276,7 @@ namespace CoUML_app.Controllers.Hubs
             };
             c.relations.Insert(r.id);
             i.relations.Insert(r.id);
+
 
             d.elements.Insert(i);
             d.elements.Insert(c);

@@ -201,19 +201,75 @@ export class EditorComponent implements AfterViewInit{
 
 	private addStyles()
 	{
+		let dashPattern = '12 4';
 		let  edgeStyleDefualt = this.graphContainer.getStylesheet().getDefaultEdgeStyle();
 		edgeStyleDefualt[mxConstants.STYLE_STARTSIZE] = 12;
 		edgeStyleDefualt[mxConstants.STYLE_ENDSIZE] = 12;
 
-		let edgeStyleRealization = mxUtils.clone(edgeStyleDefualt);
-		edgeStyleRealization[mxConstants.STYLE_DASHED] = true;
-		edgeStyleRealization[mxConstants.STYLE_DASH_PATTERN] = '12 4';
-		edgeStyleRealization[mxConstants.STYLE_ENDARROW] = mxConstants.ARROW_BLOCK;
-		edgeStyleRealization[mxConstants.STYLE_ENDFILL] = false;
+		// Realization  - - -|>
+		let realizationStyle = mxUtils.clone(edgeStyleDefualt);
+		realizationStyle[mxConstants.STYLE_DASHED] = true;
+		realizationStyle[mxConstants.STYLE_DASH_PATTERN] = dashPattern;
+		realizationStyle[mxConstants.STYLE_ENDARROW] = mxConstants.ARROW_BLOCK;
+		realizationStyle[mxConstants.STYLE_ENDFILL] = false;
 		this.graphContainer.getStylesheet().putCellStyle(
 			RelationshipType[RelationshipType.Realization], 
-			edgeStyleRealization
+			realizationStyle
 			);
+		
+
+		// Dependency, - - - >
+		let dependencyStyle = mxUtils.clone(edgeStyleDefualt);
+		dependencyStyle[mxConstants.STYLE_DASHED] = true;
+		dependencyStyle[mxConstants.STYLE_DASH_PATTERN] = dashPattern;
+		dependencyStyle[mxConstants.STYLE_ENDARROW] = mxConstants.ARROW_OPEN;
+		dependencyStyle[mxConstants.STYLE_ENDFILL] = false;
+		this.graphContainer.getStylesheet().putCellStyle(
+			RelationshipType[RelationshipType.Dependency], 
+			dependencyStyle
+			);
+
+		// Association, -------
+		let associationStyle = mxUtils.clone(edgeStyleDefualt);
+		associationStyle[mxConstants.STYLE_DASHED] = false;
+		associationStyle[mxConstants.STYLE_ENDARROW] = mxConstants.NONE;
+		this.graphContainer.getStylesheet().putCellStyle(
+			RelationshipType[RelationshipType.Association], 
+			associationStyle
+			);
+
+		// Aggregation,<>------ 
+		let aggregationStyle = mxUtils.clone(edgeStyleDefualt);
+		aggregationStyle[mxConstants.STYLE_DASHED] = false;
+		aggregationStyle[mxConstants.STYLE_ENDARROW] = mxConstants.NONE;
+		aggregationStyle[mxConstants.STYLE_STARTARROW] = mxConstants.ARROW_DIAMOND;
+		aggregationStyle[mxConstants.STYLE_ENDFILL] = false;
+		this.graphContainer.getStylesheet().putCellStyle(
+			RelationshipType[RelationshipType.Aggregation], 
+			aggregationStyle
+			);
+			
+		// Composistion, <X>------ 
+		let composistionStyle = mxUtils.clone(edgeStyleDefualt);
+		composistionStyle[mxConstants.STYLE_DASHED] = false;
+		composistionStyle[mxConstants.STYLE_ENDARROW] = mxConstants.NONE;
+		composistionStyle[mxConstants.STYLE_STARTARROW] = mxConstants.ARROW_DIAMOND;
+		this.graphContainer.getStylesheet().putCellStyle(
+			RelationshipType[RelationshipType.Composistion], 
+			composistionStyle
+			);
+
+		
+		// Generalization, ----|>
+		let generalizationStyle = mxUtils.clone(edgeStyleDefualt);
+		generalizationStyle[mxConstants.STYLE_DASHED] = false;
+		generalizationStyle[mxConstants.STYLE_ENDARROW] = mxConstants.ARROW_BLOCK;
+		generalizationStyle[mxConstants.STYLE_ENDFILL] = false;
+		this.graphContainer.getStylesheet().putCellStyle(
+			RelationshipType[RelationshipType.Generalization], 
+			generalizationStyle
+			);
+			
 
 	}
 	

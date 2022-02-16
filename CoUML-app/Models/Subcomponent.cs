@@ -5,8 +5,8 @@ namespace CoUML_app.Models
 
 	public class Relationship : DiagramElement{
 		public RelationshipType type {get; set;}
-		public string souce {get; set;}
-		public Component sourceComponent{set{souce = value.id;}}
+		public string source {get; set;}
+		public Component sourceComponent{set{source = value.id;}}
 		public string target {get; set;}
 		public Component targetComponent{set{target = value.id;}}
 		public ICollection<Attribute> attributes{get; set;}
