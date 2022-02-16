@@ -173,6 +173,14 @@ export class EditorComponent {
 				console.log(affectedCells);
 			});
 		*/
+
+		this.graphContainer.addListener(mxEvent.CLICK, 
+			// click on object to see its makup.
+			function(eventSource, eventObject){
+				let affectedCells = eventObject.getProperties();
+				console.log('%c\t\t%s\t\t', 'font-size: 8pt; background: #222; color: #bada55', "");
+				console.log(affectedCells);
+			});
 	}
 
 	public draw() {
@@ -255,16 +263,22 @@ export class EditorComponent {
 	}
 	
 	private updateEdgeGeometry(affectedEdge: mxCell, change: ChangeRecord) {
+		// https://stackoverflow.com/questions/49839882/mxgraph-adding-edges
 		console.log("updateEdgeGeometry");
 		console.log(affectedEdge);
-		let point = change.affectedProperty == PropertyType.Source?
+
+		let isSource = change.affectedProperty == PropertyType.Source;
+		let point = isSource?
 			new mxPoint(change.value.x, change.value.y):
 				new mxPoint(change.value.width, change.value.height);
 
 		let newEdgeGeometry = affectedEdge.getGeometry().clone();
-		newEdgeGeometry.setTerminalPoint(point, change.affectedProperty == PropertyType.Source);
+		newEdgeGeometry.setTerminalPoint(point, isSource);
+		newEdgeGeometry.relative = true
+		console.log(newEdgeGeometry);
+
+		affectedEdge.removeFromTerminal(isSource);
 		this.graphContainer.getModel().setGeometry(affectedEdge, newEdgeGeometry);
-		
 	}
 
 	private updateEdgeConnections(affectedEdge: mxCell, change: ChangeRecord) {

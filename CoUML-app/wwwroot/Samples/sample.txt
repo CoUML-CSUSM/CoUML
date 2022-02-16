@@ -84,8 +84,8 @@
           "$type": "CoUML_app.Models.Dimension, CoUML-app",
           "x": 100,
           "y": 100,
-          "width": 40,
-          "height": 60
+          "width": 60,
+          "height": 40
         }
       },
       {
@@ -132,8 +132,8 @@
           "$type": "CoUML_app.Models.Dimension, CoUML-app",
           "x": 100,
           "y": 300,
-          "width": 40,
-          "height": 60
+          "width": 60,
+          "height": 40
         }
       },
       {
@@ -155,8 +155,8 @@
           "$type": "CoUML_app.Models.Dimension, CoUML-app",
           "x": 100,
           "y": 100,
-          "width": 40,
-          "height": 60
+          "width": 60,
+          "height": 40
         }
       }
     ],
