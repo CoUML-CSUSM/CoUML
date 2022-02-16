@@ -101,10 +101,11 @@ export class EditorComponent {
 				//connect action --> terminal
 				let isConnectioning = affectedEdge.terminal? true: false;
 
-				let affectedCellId = isConnectioning? affectedEdge.terminal?.id: affectedEdge.previous?.id ;
-				let affecedProperty = affectedCellId == affectedEdge.edge.source?.id? PropertyType.Source: PropertyType.Target;
-				let value = isConnectioning? affectedCellId: null;
+				let affectedCellId = isConnectioning? affectedEdge.terminal?.id: affectedEdge.previous?.id ; 	// the id of the (dis)connecting component
+				let affecedProperty = affectedEdge.source? PropertyType.Source: PropertyType.Target;			// is this component the target or the source?
+				let value = isConnectioning? affectedCellId: null;												// id if connecting, null if disconnecting
 
+				console.log('%c %s','font-size: 12pt; background: #123; color: #eee', affecedProperty==PropertyType.Source?"source":"target" )
 				// relation - connect | dissconnect
 				//sets the source|target to componentId if connect and null if disconnect
 				thisEditorComponentContext.stageChange(
@@ -123,12 +124,19 @@ export class EditorComponent {
 						[affectedEdge.edge.id],
 						PropertyType.Dimension,
 						ActionType.Change,
-						new Dimension(
-							affectedEdge.edge.geometry.sourcePoint?.x,
-							affectedEdge.edge.geometry.sourcePoint?.y,
-							affectedEdge.edge.geometry.targetPoint?.x,
-							affectedEdge.edge.geometry.targetPoint?.y
-						)
+						affecedProperty == PropertyType.Source?
+							new Dimension(
+								affectedEdge.edge.geometry.sourcePoint?.x,
+								affectedEdge.edge.geometry.sourcePoint?.y,
+								null,
+								null
+							):
+							new Dimension(
+								null,
+								null,
+								affectedEdge.edge.geometry.targetPoint?.x,
+								affectedEdge.edge.geometry.targetPoint?.y
+							)
 					)
 				);
 
@@ -267,14 +275,15 @@ export class EditorComponent {
 		console.log("updateEdgeGeometry");
 		console.log(affectedEdge);
 
-		let isSource = change.affectedProperty == PropertyType.Source;
+		let isSource = !(change.value.height);
 		let point = isSource?
 			new mxPoint(change.value.x, change.value.y):
 				new mxPoint(change.value.width, change.value.height);
 
+		console.log('%c %s','font-size: 12pt; background: #123; color: #eee', isSource?"source":"target" )
+
 		let newEdgeGeometry = affectedEdge.getGeometry().clone();
 		newEdgeGeometry.setTerminalPoint(point, isSource);
-		newEdgeGeometry.relative = true
 		console.log(newEdgeGeometry);
 
 		affectedEdge.removeFromTerminal(isSource);

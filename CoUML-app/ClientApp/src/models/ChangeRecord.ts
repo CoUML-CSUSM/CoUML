@@ -29,24 +29,24 @@ export enum ActionType
 export enum PropertyType
 {
 	//collections
-	Elements,
-	Operations,
-	Attributes,
-	Relations,
-	Enums,
+	Elements,			//0
+	Operations,			//1
+	Attributes,			//2
+	Relations,			//3
+	Enums,				//4
 
 	//class attributes
-	Name,
-	Type,
-	Target,
-	Source,
-	Visibility,
-	IsStatic,
-	PropertyString,
-	Parameters,
-	Multiplicity,
-	DefaultValue,
-	Dimension,
-	Editor
+	Name,				//5
+	Type,				//6
+	Target,				//7
+	Source,				//8
+	Visibility,			//9
+	IsStatic,			//10
+	PropertyString,		//11
+	Parameters,			//12
+	Multiplicity,		//13
+	DefaultValue,		//14
+	Dimension,			//15
+	Editor				//16
 }
 

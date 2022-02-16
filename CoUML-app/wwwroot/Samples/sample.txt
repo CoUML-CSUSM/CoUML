@@ -153,10 +153,10 @@
         "id": "b63dace7-e3e8-45bf-b76d-9e54246f64cf",
         "dimension": {
           "$type": "CoUML_app.Models.Dimension, CoUML-app",
-          "x": 100,
-          "y": 100,
-          "width": 60,
-          "height": 40
+          "x": null,
+          "y": null,
+          "width": null,
+          "height": null
         }
       }
     ],

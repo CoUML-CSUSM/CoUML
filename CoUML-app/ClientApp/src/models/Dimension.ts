@@ -11,7 +11,7 @@ export class Dimension implements IDimension {
 	width: number;
 	height: number;
 
-	constructor (x: number = 100, y: number = 100, w: number = 60, h: number = 40)
+	constructor (x = null, y = null, w = null, h = null)
 	{
 		this.x = x;
 		this.y = y;
