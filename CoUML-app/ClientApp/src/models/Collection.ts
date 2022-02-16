@@ -58,16 +58,19 @@ export class GeneralCollection<T> implements ICollection<T>{
 	 */
 	remove(id: any): T | null
 	{
+		console.log(`!!!!!!!removing \n${id} \nfrom \n[${this.items.toString()}]`)
 		let item: T = null;
-		if(this.validIndex(id))
+		if(typeof(id) == 'number' && this.validIndex(id))
 		{
 			item = this.items[id];
 			this.items = this.items.splice(id);
 		}
-		else if(id instanceof String)
+		else
 		{
-			let i = this.items.indexOf(id as unknown as T);
-			this.items = this.items.splice(i);
+			console.log("id is string");
+			// let i = this.items.indexOf(id as unknown as T);
+			// this.items = this.items.splice(i);
+			this.items = this.items.filter(item => (item as unknown as string) !== id);
 		}
 		return item;
 	}

@@ -32,4 +32,5 @@ export class Dimension implements IDimension {
 		this.width = newDim.x | this.width;
 		this.height = newDim.x | this.height;
 	}
+
 }

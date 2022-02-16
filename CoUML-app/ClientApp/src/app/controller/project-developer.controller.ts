@@ -116,7 +116,7 @@ export class ProjectDeveloper{
 	}
 
 	private shouldDelay = false;
-	private delayPeriod = 1000; // 1 second
+	private delayPeriod = 500; // 1 second
 
 
 }

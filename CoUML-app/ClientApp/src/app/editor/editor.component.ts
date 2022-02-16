@@ -287,25 +287,14 @@ export class EditorComponent {
 
 	private updateEdgeConnections(affectedEdge: mxCell, change: ChangeRecord) {
 		let isSource = change.affectedProperty == PropertyType.Source;
-		if(!change.value)	// disconnecting
-		{
-			console.log('%c disconnect', f_info);
+		if(!change.value)	
+		{// disconnecting
 			affectedEdge.removeFromTerminal(isSource);
 
-		}else				// connecting
-		{
+		}else
+		{// connecting
 			let affectedCell = this.graphContainer.getModel().getCell(change.value);
-			console.log('%c connect',  f_info);
-
-			console.log(affectedEdge);
-			console.log(affectedCell);
-			console.log(isSource);
-
-			this.graphContainer.getModel().setTerminal(
-				affectedEdge,
-				affectedCell,
-				isSource
-			)
+			this.graphContainer.getModel().setTerminal( affectedEdge, affectedCell, isSource );
 		}
 
 	}
