@@ -100,56 +100,59 @@ export class EditorComponent {
 				//disconnect action --> previous
 				//connect action --> terminal
 				let isConnectioning = affectedEdge.terminal? true: false;
+				let isDisconnectioning = affectedEdge.previous? true: false;
+				let isMovingTerminal = !affectedEdge.terminal && !affectedEdge.previous
 
 				let affectedCellId = isConnectioning? affectedEdge.terminal?.id: affectedEdge.previous?.id ; 	// the id of the (dis)connecting component
 				let affecedProperty = affectedEdge.source? PropertyType.Source: PropertyType.Target;			// is this component the target or the source?
 				let value = isConnectioning? affectedCellId: null;												// id if connecting, null if disconnecting
 
-				console.log('%c %s','font-size: 12pt; background: #123; color: #eee', affecedProperty==PropertyType.Source?"source":"target" )
 				// relation - connect | dissconnect
-				//sets the source|target to componentId if connect and null if disconnect
-				thisEditorComponentContext.stageChange(
-					new ChangeRecord(
-						[affectedEdge.edge.id],
-						affecedProperty,
-						ActionType.Change,
-						value
-					)
-				);
+				// sets the source|target to componentId if connect and null if disconnect
+				if(isConnectioning || isDisconnectioning)
+				{
+					thisEditorComponentContext.stageChange(
+						new ChangeRecord(
+							[affectedEdge.edge.id],
+							affecedProperty,
+							ActionType.Change,
+							value
+						)
+					);
+
+					//component update relation
+					thisEditorComponentContext.stageChange(
+						new ChangeRecord(
+							[affectedCellId],
+							PropertyType.Relations,
+							isConnectioning? ActionType.Insert: ActionType.Remove,
+							affectedEdge.edge.id
+						)
+					);
+
+				}
 				
 				// move edge point if disconnected
 				// set the location of the disconected end
-				thisEditorComponentContext.stageChange(
-					new ChangeRecord(
-						[affectedEdge.edge.id],
-						PropertyType.Dimension,
-						ActionType.Change,
-						affecedProperty == PropertyType.Source?
-							new Dimension(
-								affectedEdge.edge.geometry.sourcePoint?.x,
-								affectedEdge.edge.geometry.sourcePoint?.y,
-								null,
-								null
-							):
-							new Dimension(
-								null,
-								null,
-								affectedEdge.edge.geometry.targetPoint?.x,
-								affectedEdge.edge.geometry.targetPoint?.y
-							)
-					)
-				);
-
-				//component update relation
-				thisEditorComponentContext.stageChange(
-					new ChangeRecord(
-						[affectedCellId],
-						PropertyType.Relations,
-						isConnectioning? ActionType.Insert: ActionType.Remove,
-						affectedEdge.edge.id
-					)
-				);
-
+				if(isDisconnectioning || isMovingTerminal)
+					thisEditorComponentContext.stageChange(
+						new ChangeRecord(
+							[affectedEdge.edge.id],
+							PropertyType.Dimension,
+							ActionType.Change,
+							affecedProperty == PropertyType.Source?
+								new Dimension(
+									affectedEdge.edge.geometry.sourcePoint?.x,
+									affectedEdge.edge.geometry.sourcePoint?.y,
+									null, null
+								):
+								new Dimension(
+									null, null,
+									affectedEdge.edge.geometry.targetPoint?.x,
+									affectedEdge.edge.geometry.targetPoint?.y
+								)
+						)
+					);
 			});
 			
 
