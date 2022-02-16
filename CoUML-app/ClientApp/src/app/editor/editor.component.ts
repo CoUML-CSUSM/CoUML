@@ -39,7 +39,7 @@ export class EditorComponent {
 		this.graphContainer.addListener(mxEvent.LABEL_CHANGED,
 			// on change label event 
 			function(eventSource, eventObject){
-				console.log('%c\t\t%s\t\t', 'font-size: 16pt; background: #222; color: #bada55', "LABEL_CHANGED");
+				console.log('%c%s', f_alert, "LABEL_CHANGED");
 				let affectedCells = eventObject.getProperties();
 
 				thisEditorComponentContext.stageChange( new ChangeRecord(
@@ -54,7 +54,7 @@ export class EditorComponent {
 			// on cell move event
 			function(eventSource, eventObject){
 				let affectedCells = eventObject.getProperties();
-				console.log('%c\t\t%s\t\t', 'font-size: 16pt; background: #222; color: #bada55', "CELLS_MOVED");
+				console.log('%c%s', f_alert, "CELLS_MOVED");
 
 				console.log(affectedCells);
 
@@ -82,7 +82,7 @@ export class EditorComponent {
 			//
 			function(eventSource, eventObject){
 				let affectedCells = eventObject.getProperties();
-				console.log('%c\t\t%s\t\t', 'font-size: 16pt; background: #222; color: #bada55', "EDITING_STOPPED");
+				console.log('%c%s', f_alert, "EDITING_STOPPED");
 				console.log(affectedCells);
 			});
 
@@ -90,7 +90,7 @@ export class EditorComponent {
 			//event when  edge is connected or disconeccted from a cell
 			function(eventSource, eventObject){
 				let affectedEdge = eventObject.getProperties();
-				console.log('%c\t\t%s\t\t', 'font-size: 16pt; background: #222; color: #bada55', "CELL_CONNECTED");
+				console.log('%c%s', f_alert, "CELL_CONNECTED");
 
 				console.log(affectedEdge);
 				console.log(`edge: ${affectedEdge.edge.id}`);
@@ -131,7 +131,7 @@ export class EditorComponent {
 					);
 
 				}
-				
+
 				// move edge point if disconnected
 				// set the location of the disconected end
 				if(isDisconnectioning || isMovingTerminal)
@@ -160,7 +160,7 @@ export class EditorComponent {
 			// When double click on cell to change label
 			function(eventSource, eventObject){
 				let affectedCells = eventObject.getProperties();
-				console.log('%c\t\t%s\t\t', 'font-size: 16pt; background: #222; color: #bada55', "START_EDITING");
+				console.log('%c%s', f_alert, "START_EDITING");
 
 				console.log(affectedCells.cell.id);
 			});
@@ -170,7 +170,7 @@ export class EditorComponent {
 			// mxEvent.ADD_CELLS
 			function(eventSource, eventObject){
 				let affectedCells = eventObject.getProperties();
-				console.log('%c\t\t%s\t\t', 'font-size: 16pt; background: #222; color: #bada55', "CELLS_ADDED ");
+				console.log('%c%s', f_alert, "CELLS_ADDED ");
 				console.log(affectedCells);
 			});
 
@@ -180,7 +180,7 @@ export class EditorComponent {
 			// NADA
 			function(eventSource, eventObject){
 				let affectedCells = eventObject.getProperties();
-				console.log('%c\t\t%s\t\t', 'font-size: 16pt; background: #222; color: #bada55', "");
+				console.log('%c%s', f_alert, "");
 				console.log(affectedCells);
 			});
 		*/
@@ -189,7 +189,7 @@ export class EditorComponent {
 			// click on object to see its makup.
 			function(eventSource, eventObject){
 				let affectedCells = eventObject.getProperties();
-				console.log('%c\t\t%s\t\t', 'font-size: 8pt; background: #222; color: #bada55', "");
+				console.log('%c%s',f_alert, "mxCell description");
 				console.log(affectedCells);
 			});
 	}
@@ -266,7 +266,6 @@ export class EditorComponent {
 		}
 	}
 	private updateCellGeometry(affectedCell: mxCell, change: ChangeRecord) {
-		// let absoluteDeminsions = this._projectDeveloper._projectDiagram.elements.get(change.id[0]).dimension;
 		let newCellGeometry = this.graphContainer.getCellGeometry(affectedCell).clone();
 		newCellGeometry.x = change.value.x;
 		newCellGeometry.y = change.value.y;
@@ -274,27 +273,41 @@ export class EditorComponent {
 	}
 	
 	private updateEdgeGeometry(affectedEdge: mxCell, change: ChangeRecord) {
-		// https://stackoverflow.com/questions/49839882/mxgraph-adding-edges
-		console.log("updateEdgeGeometry");
-		console.log(affectedEdge);
-
 		let isSource = !(change.value.height);
+		
 		let point = isSource?
 			new mxPoint(change.value.x, change.value.y):
 				new mxPoint(change.value.width, change.value.height);
 
-		console.log('%c %s','font-size: 12pt; background: #123; color: #eee', isSource?"source":"target" )
-
 		let newEdgeGeometry = affectedEdge.getGeometry().clone();
 		newEdgeGeometry.setTerminalPoint(point, isSource);
-		console.log(newEdgeGeometry);
 
-		affectedEdge.removeFromTerminal(isSource);
 		this.graphContainer.getModel().setGeometry(affectedEdge, newEdgeGeometry);
 	}
 
 	private updateEdgeConnections(affectedEdge: mxCell, change: ChangeRecord) {
-		throw new Error('Method not implemented.');
+		let isSource = change.affectedProperty == PropertyType.Source;
+		if(!change.value)	// disconnecting
+		{
+			console.log('%c disconnect', f_info);
+			affectedEdge.removeFromTerminal(isSource);
+
+		}else				// connecting
+		{
+			let affectedCell = this.graphContainer.getModel().getCell(change.value);
+			console.log('%c connect',  f_info);
+
+			console.log(affectedEdge);
+			console.log(affectedCell);
+			console.log(isSource);
+
+			this.graphContainer.getModel().setTerminal(
+				affectedEdge,
+				affectedCell,
+				isSource
+			)
+		}
+
 	}
 
 	private updateLabelValue(affectedCell: mxCell, change: ChangeRecord)
@@ -314,3 +327,6 @@ export class EditorComponent {
 
 }
 
+
+	var f_info = 'width: 100%; background: yellow; color: navy;'
+	var f_alert = 'text-align: center; width: 100%; background: black; color: red; font-size: 1.5em'
