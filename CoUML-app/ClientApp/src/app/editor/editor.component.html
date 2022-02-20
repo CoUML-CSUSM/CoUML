@@ -1,21 +1,6 @@
-<span class="p-float-label">
-  <input id="float-input" type="text" pInputText [(ngModel)]="diagramId"> 
-  <label for="float-input">Diagram Id</label>
-</span>
-
-<!-- <p-button label="OpenDiagram" (onClick)="open()" ></p-button> -->
-<!-- <p-button label="make change" (onClick)="makeTestChange()" ></p-button> -->
-
-<p>
-  {{diagram_description}}
-</p>
-
 <div #container id="mxgraph-diagram-container"
     style="
-      position:absolute;
       overflow: hidden;
-      height: 75%;
-      width: 75%;
       background:url('editors/images/grid.gif');
     "
   >

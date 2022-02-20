@@ -1,3 +1,13 @@
-.homecomponent {
-    display:flex;
+.workspaceLayout {
+    display: grid;
+    grid-template-columns: max-content auto;
+    position: absolute;
+    top: 72px;
+    bottom: 0;
+    right: 0;
+    left: 0;
+
+}
+.editor, .sidebar{
+    display: contents;
 }
