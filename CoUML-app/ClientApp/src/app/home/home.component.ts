@@ -18,11 +18,11 @@ export class HomeComponent {
 
   ip: string;
 
-	constructor(public coUmlConnection: CoUmlHubService) {}
+	constructor(public _coUmlHub: CoUmlHubService) {}
 
   break()
   {
-    this.coUmlConnection.triggerBreakPoint();
+    this._coUmlHub.triggerBreakPoint();
   }
 
 

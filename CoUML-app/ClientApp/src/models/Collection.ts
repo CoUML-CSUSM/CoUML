@@ -1,5 +1,5 @@
 import { Class, Component, Interface } from "./Component";
-import { DiagramElement } from "./Diagram";
+import { DiagramElement, IGettable } from "./Diagram";
 
 //interface for collections to create iterators
 export interface ICollectionIterator<T>
@@ -10,18 +10,19 @@ export interface ICollectionIterator<T>
 	getPrevious():T;
 }
 
-export interface ICollection<T>
+export interface ICollection<T> extends IGettable
 {
 	iterator(): ICollectionIterator<T>;
 	insert(item: T): void;
-	remove(key: any): T | null;
-	get(key: string): T | null;
+	remove(id: any): T | null;
+	get(id: string): T | null;
 	size: number;
 }
 
 export class GeneralCollection<T> implements ICollection<T>{
 
 	items: T[] = [];
+
 	/**
 	 * contstuctor with array of item type
 	 * @param collection 
@@ -45,6 +46,8 @@ export class GeneralCollection<T> implements ICollection<T>{
 	 * @param item 
 	 */
 	insert(item: T): void {
+		console.log("inserting....");
+		console.log(item);
 		 this.items.push(item);
 	}
 
@@ -82,88 +85,87 @@ export class GeneralCollection<T> implements ICollection<T>{
 		return i >= 0 && i < this.size; 
 	}
 
-	get(key: string): null | T
+
+	// this breaks if it's not a more complex item!!!
+	get(id: string): null | T
 	{
-		// (callbackfn: (value: T, index: number, array: T[]) => void, thisArg?: any)
-		this.items.forEach((de: T)=>{
-			if(de instanceof Component){
-				if(key == (de as Component).name)
-					return de;
-			}
-		});
+		for(let de of this.items as unknown[] as DiagramElement[])
+			if(id == de?.id)
+					return de as unknown as T;
 		return null;
 	}
-
 }
 
-/**
- * RelationshipCollection
- */
-export class RelationalCollection implements ICollection<DiagramElement>{
+// /**
+//  * RelationshipCollection
+//  */
+// export class RelationalCollection implements ICollection<DiagramElement>{
 	
-	private items: Map<string, DiagramElement> = new Map<string, DiagramElement>();
-	toJSON(): any {
-		return {
-			items: Object.fromEntries(this.items),
-		}
-	 }
+// 	private items: Map<string, DiagramElement> = new Map<string, DiagramElement>();
+// 	toJSON(): any {
+// 		return {
+// 			items: Object.fromEntries(this.items),
+// 		}
+// 	 }
 
-	constructor(collection: DiagramElement[])
-	{
-		for(let elem of collection)
-			this.insert(elem)
-	}
+// 	constructor(collection: DiagramElement[])
+// 	{
+// 		for(let elem of collection)
+// 			this.insert(elem)
+// 	}
 
-	iterator(): ICollectionIterator<DiagramElement> 
-	{
-		return new CollectionIterator<DiagramElement>(
-				new GeneralCollection<DiagramElement>(
-					Array.from(this.items.values())
-				)
-			);
-	}
+// 	iterator(): ICollectionIterator<DiagramElement> 
+// 	{
+// 		return new CollectionIterator<DiagramElement>(
+// 				new GeneralCollection<DiagramElement>(
+// 					Array.from(this.items.values())
+// 				)
+// 			);
+// 	}
 
-	insert(item: DiagramElement): void {
-		this.items.set(item.id, item);
-	}
+// 	insert(item: DiagramElement): void {
+// 		console.log("inserting....");
+// 		console.log(item);
+// 		this.items.set(item.id, item);
+// 	}
 
-	remove(signature: string): DiagramElement | null 
-	{
-		let relation = null
-		if(this.items.has(signature))
-		{
-			relation = this.items.get(signature);
-			this.items.delete(relation);
-		}
-		return relation;
-	}
+// 	remove(signature: string): DiagramElement | null 
+// 	{
+// 		let relation = null
+// 		if(this.items.has(signature))
+// 		{
+// 			relation = this.items.get(signature);
+// 			this.items.delete(relation);
+// 		}
+// 		return relation;
+// 	}
 	
-	get(key: string): null | DiagramElement
-	{
-		if(this.items.has(key))
-			return this.items.get(key);
-		return this.find(key);
-	}
+// 	get(key: string): null | DiagramElement
+// 	{
+// 		if(this.items.has(key))
+// 			return this.items.get(key);
+// 		return this.find(key);
+// 	}
 
-	private find(key: string): null | DiagramElement
-	{
-		for(let e of this.items.values())
-		{
-			if(!(e instanceof RelationalCollection)){
-				let de = e as Component;
-				if(key === de.name)
-					return de;
-			}
-		}
-		return null;
-	}
+// 	private find(key: string): null | DiagramElement
+// 	{
+// 		for(let e of this.items.values())
+// 		{
+// 			if(!(e instanceof RelationalCollection)){
+// 				let de = e as Component;
+// 				if(key === de.name)
+// 					return de;
+// 			}
+// 		}
+// 		return null;
+// 	}
 
-	get size(): number 
-	{
-		return this.items.size
-	}
+// 	get size(): number 
+// 	{
+// 		return this.items.size
+// 	}
 
-}
+// }
 
 /**
  * AttributeCollectionIterator

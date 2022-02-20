@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -7,9 +8,11 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 
 using CoUML_app.Models;
+using Attribute = CoUML_app.Models.Attribute;
 
 //mongodb stuff
 using MongoDB.Driver;
@@ -27,7 +30,7 @@ namespace CoUML_app.Controllers.Hubs
     /// </summary>
     public interface ICoUmlClient{
         Task testInterfaceMethod(string message);
-        Task Dispatch(sbyte[] changes);
+        Task Dispatch(string changes);
     }
 
     /// data structure to store active users
@@ -118,6 +121,7 @@ namespace CoUML_app.Controllers.Hubs
         /// <typeparam name="string"></typeparam>
         /// <returns></returns>
         private readonly static ConnectionMap<string, IUser> _connections = new ConnectionMap<string, IUser>();
+
         //private static Diagram testDiagram = DevUtility.DiagramDefualt(); // test code here
         private static Diagram testDiagram = DevUtility.EmptyDiagram();
 
@@ -126,6 +130,7 @@ namespace CoUML_app.Controllers.Hubs
         // public CoUmlHub()
         // {
         // }
+
         
         
         /// <summary>
@@ -186,6 +191,7 @@ namespace CoUML_app.Controllers.Hubs
                 Console.WriteLine("not test id");
             }
 
+
             //finds document from database
             var dbClient = new MongoClient("mongodb://localhost:27017");
             IMongoDatabase db = dbClient.GetDatabase("CoUML");
@@ -201,10 +207,14 @@ namespace CoUML_app.Controllers.Hubs
                     {
                         TypeNameHandling = TypeNameHandling.Auto
                     });
+            // return this.OpenSampleFile();
+            // return JsonConvert.SerializeObject(testDiagram, Formatting.Indented);
+
+
                 
         }
 
-        public void Push(string dId, sbyte[] changes)
+        public void Push(string dId, string changes)
         {
             // TODO: changes get pushed from client to server to be logged and sent backout to other clients
 
@@ -213,7 +223,7 @@ namespace CoUML_app.Controllers.Hubs
 
         }
 
-        public void Dispatch(string dId, sbyte[] changes)
+        public void Dispatch(string dId, string changes)
         {
             Clients.Group(dId).Dispatch(changes);
         }
@@ -222,6 +232,7 @@ namespace CoUML_app.Controllers.Hubs
         {
             ;
         }
+
 
         //creates a diagram string that gets sent to the database
         public void Generate(string Did){
@@ -245,6 +256,14 @@ namespace CoUML_app.Controllers.Hubs
 
             collection.InsertOne(doc);
         }
+
+        public string OpenSampleFile()
+        {
+            string path = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Samples/"))[0];
+
+            return File.ReadAllText(path);
+
+        }
     }
 
     static class DevUtility{
@@ -259,9 +278,33 @@ namespace CoUML_app.Controllers.Hubs
             {   
                 name = "draw",
                 visibility = VisibilityType.Public,
-                returnType = new DataType{ dataType = "void"}
+                type = new DataType{ dataType = "void"}
             };
             i.operations.Insert(io);
+
+            io = new Operation
+            {   
+                name = "scale",
+                visibility = VisibilityType.Public,
+                type = new DataType{ dataType = "void"}
+            };
+            io.parameters.Insert(
+                new Attribute {
+                    name = "percent",
+                    visibility = VisibilityType.Private,
+                    type = new DataType{ dataType = "double" }
+                }
+            );
+            i.operations.Insert(io);
+
+            io = new Operation
+            {   
+                name = "area",
+                visibility = VisibilityType.Public,
+                type = new DataType{ dataType = "double"}
+            };
+            i.operations.Insert(io);
+
 
             // class
             Class c  =  new Class("Hexagon");
@@ -280,17 +323,20 @@ namespace CoUML_app.Controllers.Hubs
                 fromComponent = c,
                 toComponent = i,
             };
-            
+            c.relations.Insert(r.id);
+            i.relations.Insert(r.id);
 
             d.elements.Insert(i);
             d.elements.Insert(c);
-            d.elements.Insert(r);            
+            d.elements.Insert(r); 
 
             return d;
         }
 
+
         public static Diagram EmptyDiagram(){
             return new Diagram();
         }      
+
     }
 }
