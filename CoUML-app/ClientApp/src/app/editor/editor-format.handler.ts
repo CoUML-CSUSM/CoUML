@@ -3,9 +3,11 @@ import { ActionType, ChangeRecord, Dimension, PropertyType, RelationshipType } f
 
 @Injectable()
 export class EditorFormatHandler{
-	addEdgeStyles(graph: mxGraph)
+
+	readonly dashPattern: string  = '12 4';
+	public addEdgeStyles(graph: mxGraph)
 	{
-		let dashPattern = '12 4';
+		// let dashPattern = '12 4';
 		let  edgeStyleDefualt = graph.getStylesheet().getDefaultEdgeStyle();
 		edgeStyleDefualt[mxConstants.STYLE_STARTSIZE] = 12;
 		edgeStyleDefualt[mxConstants.STYLE_ENDSIZE] = 12;
@@ -13,7 +15,7 @@ export class EditorFormatHandler{
 		// Realization  - - -|>
 		let realizationStyle = mxUtils.clone(edgeStyleDefualt);
 		realizationStyle[mxConstants.STYLE_DASHED] = true;
-		realizationStyle[mxConstants.STYLE_DASH_PATTERN] = dashPattern;
+		realizationStyle[mxConstants.STYLE_DASH_PATTERN] = this.dashPattern;
 		realizationStyle[mxConstants.STYLE_ENDARROW] = mxConstants.ARROW_BLOCK;
 		realizationStyle[mxConstants.STYLE_ENDFILL] = false;
 		graph.getStylesheet().putCellStyle(
@@ -25,7 +27,7 @@ export class EditorFormatHandler{
 		// Dependency, - - - >
 		let dependencyStyle = mxUtils.clone(edgeStyleDefualt);
 		dependencyStyle[mxConstants.STYLE_DASHED] = true;
-		dependencyStyle[mxConstants.STYLE_DASH_PATTERN] = dashPattern;
+		dependencyStyle[mxConstants.STYLE_DASH_PATTERN] = this.dashPattern;
 		dependencyStyle[mxConstants.STYLE_ENDARROW] = mxConstants.ARROW_OPEN;
 		dependencyStyle[mxConstants.STYLE_ENDFILL] = false;
 		graph.getStylesheet().putCellStyle(

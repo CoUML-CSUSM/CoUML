@@ -1,8 +1,8 @@
 import { AfterViewInit, Component as AngularComponent, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Class, AbstractClass, Diagram, DiagramElement, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, ChangeRecord, ActionType, PropertyType, ICollectionIterator, Enumeration, Dimension } from 'src/models/DiagramModel';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
-import { EditorFormatHandler } from './editorFormat.handler';
-import { EditorNotificationHandler } from './editorNotification.handler';
+import { EditorFormatHandler } from './editor-format.handler';
+import { EditorNotificationHandler } from './editor-notification.handler';
 
 /**
  * https://github.com/typed-mxgraph/typed-mxgraph

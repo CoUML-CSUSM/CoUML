@@ -60,7 +60,7 @@ export class ProjectDeveloper{
 
 		let action = ActionType[change.action].toLowerCase();
 		let affectedProperty = PropertyType[change.affectedProperty].toLowerCase();
-		change.value = Assembler.assembleComponent(change.value);
+		change.value = Assembler.assembleDiagramElement(change.value);
 		let operation = "";
 
 		let affectedComponent: IGettable = this._projectDiagram.elements;

@@ -7,12 +7,12 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 		let __diagram = new Diagram();
 		for(let elem of d["elements"]["items"])
 		{
-			__diagram.elements.insert(assembleComponent(elem));
+			__diagram.elements.insert(assembleDiagramElement(elem));
 		}
 		return __diagram;
 	}
 
-	export function assembleComponent(elem)
+	export function assembleDiagramElement(elem): DiagramElement
 	{
 		let element;
 		switch(getType(elem)){

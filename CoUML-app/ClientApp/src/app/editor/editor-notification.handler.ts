@@ -14,7 +14,7 @@ export class EditorNotificationHandler
 		this._listenerCatalog.set(mxEvent.CELLS_ADDED, this.cellsAdded);
 		this._listenerCatalog.set(mxEvent.START_EDITING, this.startEditing);
 		this._listenerCatalog.set(mxEvent.CELL_CONNECTED, this.cellConnected);
-		this._listenerCatalog.set(mxEvent.EDITING_STOPPED, this.editingStoped);
+		this._listenerCatalog.set(mxEvent.EDITING_STOPPED, this.editingStopped);
 		this._listenerCatalog.set(mxEvent.CELLS_MOVED, this.cellsMoved);
 
 	}
@@ -71,7 +71,7 @@ export class EditorNotificationHandler
 
 	}
 
-	editingStoped(graph: mxGraph, editorComponent: EditorComponent){
+	editingStopped(graph: mxGraph, editorComponent: EditorComponent){
 		graph.addListener(mxEvent.EDITING_STOPPED,
 			//
 			function(eventSource, eventObject){
