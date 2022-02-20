@@ -9,51 +9,16 @@ import {  User, DiagramElement } from 'src/models/DiagramModel';
 export class ProjectManager{
     newDiagram: Diagram;
 
-    //test stuff delete later
-    //testUser: User;
-    //testElement: Relationship;
-
     constructor(private _coUmlHub: CoUmlHubService){}
 
-    public generate(){
-        //console.log('mtest');
+    public generate(Did:string){
 
-        //test stuff delete later
-        /*
-        this.testUser = new User("hi");
-        this.testElement = new Relationship();
-        this.testElement.editor = this.testUser;
-        */
-
-
-        this.newDiagram = new Diagram();
-
-        //delete later
-        //this.newDiagram.elements[0] = this.testElement;
-
-        //console.log(this.newDiagram.elements[0].editor);
-        this._coUmlHub.generate();
+        console.log("Creating new diagram")
+        this._coUmlHub.generate(Did);
         
-        (d) => {
-            //this._coUmlHub.subscribe(this);
-            //console.log("here");
-            //console.log(d);
+        (d) => {;
             this.newDiagram = new DiagramBuilder().buildDiagram (d);
-            //console.log(this.newDiagram);
         };
-            
-        /*
-        //delete later
-        this._coUmlHub.fetch( "" ) //get diagram from server
-			.then( (d) => {
-				//this._coUmlHub.subscribe(this);
-				//console.log(d);
-				this.newDiagram = new DiagramBuilder().buildDiagram (d);
-				//this.am_diagram = Automerge.from(this.newDiagram);
-				//console.log(this.newDiagram);
-				//console.log(`Automerge Diagram\n${this.describe()}`);
-			} ); // create AMDiagram from diagram 
-            */
             
     }
 }

@@ -82,10 +82,9 @@ export class CoUmlHubService{
 	}
 
 
-	public generate()
+	public generate(Did:string)
 	{
-		//this._projectManager
-		this._coUmlHubConnection.invoke("Generate");
+		this._coUmlHubConnection.invoke("Generate",Did);
 	}
 }
 

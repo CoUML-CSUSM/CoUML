@@ -194,7 +194,8 @@ namespace CoUML_app.Controllers.Hubs
             var filter = Builders<BsonDocument>.Filter.Eq("id", dId);
             //this is the stuff we need!!!
             var diagramText = collection.Distinct<string>("diagram", filter).ToListAsync().Result[0].ToString();
-            Console.WriteLine(diagramText);
+            Console.WriteLine(diagramText);//outputs the diagram text
+            //^ should change it so this is what gets returned ^
 
             return JsonConvert.SerializeObject(testDiagram, Formatting.Indented, new JsonSerializerSettings
                     {
@@ -222,18 +223,8 @@ namespace CoUML_app.Controllers.Hubs
             ;
         }
 
-
-        public void Generate(){
-            //idk what to put here rn
-            //something like just making a diagram object
-            /*
-            Console.WriteLine("c# generate test output");
-            Console.WriteLine(JsonConvert.SerializeObject(testDiagram, Formatting.Indented, new JsonSerializerSettings
-                    {
-                        TypeNameHandling = TypeNameHandling.Auto
-                    }));
-                    */
-            
+        //creates a diagram string that gets sent to the database
+        public void Generate(string Did){
 
             //mongodb database
             var dbClient = new MongoClient("mongodb://localhost:27017");
@@ -244,14 +235,12 @@ namespace CoUML_app.Controllers.Hubs
 
             var doc = new BsonDocument
             {
-                {"id", "null"},
+                {"id", Did},
                 {"diagram", JsonConvert.SerializeObject(testDiagram, Formatting.Indented, new JsonSerializerSettings
                     {
                         TypeNameHandling = TypeNameHandling.Auto
-                    })}
-                //{"diagram", testDiagram.ToString()}
-                // {"id", "null"},
-                // {"diagram", "{   \"elements\": {\"$type\": \"CoUML_app.Models.RelationalCollection, CoUML-app\",\"items\": [],\"size\": 0} }"}
+                    })}//string that contains all the info of the diagram
+                
             };
 
             collection.InsertOne(doc);
@@ -299,17 +288,6 @@ namespace CoUML_app.Controllers.Hubs
 
             return d;
         }
-
-        public static Diagram TestDiagram(){//creates a diagram to match the top one on the site
-            Diagram d = new Diagram();
-            Class first = new Class("First Value");
-            first.dimension = new Dimension(100,60,120,80);
-            Class test = new Class("Test");
-            test.dimension = new Dimension(230,60,120,80);
-            d.elements.Insert(first);
-            d.elements.Insert(test);
-            return d;
-        }  
 
         public static Diagram EmptyDiagram(){
             return new Diagram();

@@ -12,6 +12,11 @@ import { ProjectManager } from '../controller/project-manager.controller';
     constructor(private _projectManager: ProjectManager){}
 
     public generate(){
-        this._projectManager.generate();
+        this._projectManager.generate("null");
     }
+
+    //change it to this once you set the default Did to "null"
+  //   public generate(Did:string){
+  //     this._projectManager.generate(Did);
+  // }
   }
