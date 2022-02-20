@@ -1,4 +1,5 @@
 {
+  "id": "test",
   "elements": {
     "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.DiagramElement, CoUML-app]], CoUML-app",
     "items": [
