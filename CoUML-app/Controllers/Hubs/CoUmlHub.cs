@@ -119,7 +119,7 @@ namespace CoUML_app.Controllers.Hubs
         /// <returns></returns>
         private readonly static ConnectionMap<string, IUser> _connections = new ConnectionMap<string, IUser>();
         //private static Diagram testDiagram = DevUtility.DiagramDefualt(); // test code here
-        private static Diagram testDiagram = DevUtility.TestDiagram();
+        private static Diagram testDiagram = DevUtility.EmptyDiagram();
 
         
 
@@ -191,7 +191,7 @@ namespace CoUML_app.Controllers.Hubs
             IMongoDatabase db = dbClient.GetDatabase("CoUML");
 
             var collection = db.GetCollection<BsonDocument>("Diagrams");
-            var filter = Builders<BsonDocument>.Filter.Eq("id", "test");
+            var filter = Builders<BsonDocument>.Filter.Eq("id", dId);
             //this is the stuff we need!!!
             var diagramText = collection.Distinct<string>("diagram", filter).ToListAsync().Result[0].ToString();
             Console.WriteLine(diagramText);
@@ -226,7 +226,13 @@ namespace CoUML_app.Controllers.Hubs
         public void Generate(){
             //idk what to put here rn
             //something like just making a diagram object
+            /*
             Console.WriteLine("c# generate test output");
+            Console.WriteLine(JsonConvert.SerializeObject(testDiagram, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.Auto
+                    }));
+                    */
             
 
             //mongodb database
@@ -238,8 +244,14 @@ namespace CoUML_app.Controllers.Hubs
 
             var doc = new BsonDocument
             {
-                {"id", "new"},
-                {"diagram", "333"}
+                {"id", "null"},
+                {"diagram", JsonConvert.SerializeObject(testDiagram, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.Auto
+                    })}
+                //{"diagram", testDiagram.ToString()}
+                // {"id", "null"},
+                // {"diagram", "{   \"elements\": {\"$type\": \"CoUML_app.Models.RelationalCollection, CoUML-app\",\"items\": [],\"size\": 0} }"}
             };
 
             collection.InsertOne(doc);
@@ -297,6 +309,10 @@ namespace CoUML_app.Controllers.Hubs
             d.elements.Insert(first);
             d.elements.Insert(test);
             return d;
-        }        
+        }  
+
+        public static Diagram EmptyDiagram(){
+            return new Diagram();
+        }      
     }
 }

@@ -10,32 +10,38 @@ export class ProjectManager{
     newDiagram: Diagram;
 
     //test stuff delete later
-    testUser: User;
-    testElement: Relationship;
+    //testUser: User;
+    //testElement: Relationship;
 
     constructor(private _coUmlHub: CoUmlHubService){}
 
     public generate(){
-        console.log('mtest');
+        //console.log('mtest');
 
         //test stuff delete later
+        /*
         this.testUser = new User("hi");
         this.testElement = new Relationship();
         this.testElement.editor = this.testUser;
+        */
 
 
         this.newDiagram = new Diagram();
 
         //delete later
-        this.newDiagram.elements[0] = this.testElement;
+        //this.newDiagram.elements[0] = this.testElement;
 
-        console.log(this.newDiagram.elements[0].editor);
+        //console.log(this.newDiagram.elements[0].editor);
         this._coUmlHub.generate();
-
+        
         (d) => {
             //this._coUmlHub.subscribe(this);
+            //console.log("here");
             //console.log(d);
-            this.newDiagram = new DiagramBuilder().buildDiagram (d);}
+            this.newDiagram = new DiagramBuilder().buildDiagram (d);
+            //console.log(this.newDiagram);
+        };
+            
         /*
         //delete later
         this._coUmlHub.fetch( "" ) //get diagram from server
