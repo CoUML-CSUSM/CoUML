@@ -191,7 +191,6 @@ namespace CoUML_app.Controllers.Hubs
                 Console.WriteLine("not test id");
             }
 
-
             //finds document from database
             var dbClient = new MongoClient("mongodb://localhost:27017");
             IMongoDatabase db = dbClient.GetDatabase("CoUML");
@@ -219,13 +218,13 @@ namespace CoUML_app.Controllers.Hubs
             // TODO: changes get pushed from client to server to be logged and sent backout to other clients
 
             //push changes out to other clients
-            Dispatch(dId, changes);
+            Dispatch(dId, Context.ConnectionId, changes);
 
         }
 
-        public void Dispatch(string dId, string changes)
+        public void Dispatch(string dId, string callerId, string changes)
         {
-            Clients.Group(dId).Dispatch(changes);
+            Clients.GroupExcept(dId, new List<string>(){callerId}.AsReadOnly()).Dispatch(changes);
         }
 
         public void TriggerBreakPoint()
@@ -314,17 +313,19 @@ namespace CoUML_app.Controllers.Hubs
                 visibility = VisibilityType.Private,
                 type = new DataType{ dataType = "double" }
             };
+            c.dimension.y = 300;
             c.attributes.Insert(a);
 
             // c impliments i
             Relationship r = new Relationship
             {
                 type = RelationshipType.Realization,
-                fromComponent = c,
-                toComponent = i,
+                sourceComponent = c,
+                targetComponent = i,
             };
             c.relations.Insert(r.id);
             i.relations.Insert(r.id);
+
 
             d.elements.Insert(i);
             d.elements.Insert(c);

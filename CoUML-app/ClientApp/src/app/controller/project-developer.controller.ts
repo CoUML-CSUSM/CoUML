@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CoUmlHubService } from "../service/couml-hub.service";
 import { Diagram, Assembler, ChangeRecord, ActionType, PropertyType, Component, Class, AbstractClass, Interface, Enumeration, IGettable } from 'src/models/DiagramModel';
+import { EditorComponent } from '../editor/editor.component';
 
 
 @Injectable()
@@ -10,8 +11,15 @@ export class ProjectDeveloper{
 
 	__parentId =  "0b68a108-f685-4e44-9e6e-a325d8d439f3"; // for testing only!!!!
 
+	_diagramEditor: EditorComponent = null;
+
+	_changes: ChangeRecord[] = [];
+
 	constructor(private _coUmlHub: CoUmlHubService)	{}
 
+	subscribe(diagramEditor: EditorComponent) {
+		this._diagramEditor = diagramEditor;
+	}
 
 	public open( id: string )
 	{
@@ -20,8 +28,9 @@ export class ProjectDeveloper{
 			.then( (d) => {
 				this._coUmlHub.subscribe(this);
 				console.log(d);
-				this._projectDiagram = Assembler.assembleDiagram (d);
+				this._projectDiagram = Assembler.assembleDiagram(d);
 				console.log(this._projectDiagram);
+				this._diagramEditor.draw();
 			} ); 
 	}
 
@@ -29,23 +38,16 @@ export class ProjectDeveloper{
 	{
 		//TODO: close the project and remove yourself from the group
 	}
-
-	public makeChanges(changes: ChangeRecord[])
-	{
-		this._coUmlHub.commit(changes);
-
-	}
-
 	
 	public applyChanges(changes: ChangeRecord[])
 	{
 
 		console.log("-------------- apply changes ---------------");
+		console.log(changes);
 		for(let change of changes)
 		{
-			
-
 			this.applyChange(change);
+			this._diagramEditor.processChange(change);
 		}
 		console.log("-------------- Done! ---------------");
 		console.log(this._projectDiagram);
@@ -54,12 +56,12 @@ export class ProjectDeveloper{
 
 	private applyChange(change: ChangeRecord)
 	{
-		// console.log("change");
-		// console.log(change);
+		console.log("applyChange");
+		console.log(change);
 
 		let action = ActionType[change.action].toLowerCase();
 		let affectedProperty = PropertyType[change.affectedProperty].toLowerCase();
-		change.value = Assembler.assembleComponent(change.value);
+		change.value = Assembler.assembleDiagramElement(change.value);
 		let operation = "";
 
 		let affectedComponent: IGettable = this._projectDiagram.elements;
@@ -69,6 +71,7 @@ export class ProjectDeveloper{
 			}
 
 		switch(change.action){
+			case ActionType.Shift:
 			case ActionType.Insert:
 			case ActionType.Remove:
 				operation = `${change.id? affectedProperty + ".": ''}${action}(change.value)`;
@@ -81,11 +84,40 @@ export class ProjectDeveloper{
 				break;
 		}			
 
-		// /*logs*/
-		// console.log("affectedComponent.operation");
-		// console.log(affectedComponent);
-		// console.log(operation);
 		eval("affectedComponent." + operation);
 
+		console.log("result");
+		console.log(this._projectDiagram);
+
 	}
+
+	stageChange(change: ChangeRecord) {
+		// apply change locally
+		this.applyChange(change);
+		this._changes.push(change);
+
+		//apply globally
+		this.commitStagedChanges();
+	}
+
+	private async commitStagedChanges()
+	{
+		if(!this.shouldDelay)
+		{
+			this.shouldDelay = true;
+			this._coUmlHub.commit(this._changes);
+			this._changes = [];
+			//artificial delay that prevents the program from updating too offten, but submits any last added elements
+			setTimeout(()=>{
+				this.shouldDelay = false;
+				if(0 < this._changes.length)
+					this.commitStagedChanges();
+			}, this.delayPeriod);
+		}
+	}
+
+	private shouldDelay = false;
+	private delayPeriod = 500; // 1 second
+
+
 }

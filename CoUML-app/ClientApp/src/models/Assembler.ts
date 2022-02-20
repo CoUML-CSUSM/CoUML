@@ -7,12 +7,12 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 		let __diagram = new Diagram();
 		for(let elem of d["elements"]["items"])
 		{
-			__diagram.elements.insert(assembleComponent(elem));
+			__diagram.elements.insert(assembleDiagramElement(elem));
 		}
 		return __diagram;
 	}
 
-	export function assembleComponent(elem)
+	export function assembleDiagramElement(elem): DiagramElement
 	{
 		let element;
 		switch(getType(elem)){
@@ -59,8 +59,9 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 		__relationship.id = x.id;
 		__relationship.editor = assembleUser(x["editor"]);
 		__relationship.dimension = assembleDimension(x["dimension"]);
-		__relationship.from = x.from;
-		__relationship.to = x.to;
+		__relationship.source = x.source;
+		__relationship.target = x.target;
+		__relationship.type = x.type;
 		assembleAttributeCollection(__relationship.attributes, x.attributes)
 		return __relationship;
 	}

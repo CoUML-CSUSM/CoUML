@@ -53,16 +53,24 @@ export class GeneralCollection<T> implements ICollection<T>{
 
 	/**
 	 * removes item from collection
-	 * @param itemAtIndex index of item
+	 * @param id index of item
 	 * @returns item removed
 	 */
-	remove(itemAtIndex: number): T | null
+	remove(id: any): T | null
 	{
+		console.log(`!!!!!!!removing \n${id} \nfrom \n[${this.items.toString()}]`)
 		let item: T = null;
-		if(this.validIndex(itemAtIndex))
+		if(typeof(id) == 'number' && this.validIndex(id))
 		{
-			item = this.items[itemAtIndex];
-			this.items = this.items.splice(itemAtIndex);
+			item = this.items[id];
+			this.items = this.items.splice(id);
+		}
+		else
+		{
+			console.log("id is string");
+			// let i = this.items.indexOf(id as unknown as T);
+			// this.items = this.items.splice(i);
+			this.items = this.items.filter(item => (item as unknown as string) !== id);
 		}
 		return item;
 	}
@@ -82,7 +90,11 @@ export class GeneralCollection<T> implements ICollection<T>{
 	 */
 	validIndex(i: number): boolean
 	{
-		return i >= 0 && i < this.size; 
+		try{
+			return i >= 0 && i < this.size; 
+		}catch(error){
+			return false;
+		}
 	}
 
 
@@ -185,7 +197,7 @@ export class GeneralCollection<T> implements ICollection<T>{
 	}
 	getNext():T{
 		if(this.hasNext){
-			return this._collection.items[++this._position];
+			return this._collection.items[this._position++];
 		}
 	}
 	hasPrevious():boolean{
@@ -193,7 +205,7 @@ export class GeneralCollection<T> implements ICollection<T>{
 	}
 	getPrevious():T{
 		if(this.hasPrevious){
-			return this._collection.items[--this._position];
+			return this._collection.items[this._position--];
 		}
 	}
 }

@@ -20,8 +20,8 @@ export class Relationship extends DiagramElement implements IGettable
 {
 
 	public type: RelationshipType;
-	public from: string;
-	public to: string;
+	public source: string;
+	public target: string;
 
 	public attributes: ICollection<Attribute>;
 
@@ -35,11 +35,11 @@ export class Relationship extends DiagramElement implements IGettable
 		return this.attributes.get(id);
 	}
 
-	fromCompnent( component: Component){
-		this.from = component.id
+	sourceCompnent( component: Component){
+		this.source = component.id
 	}
-	toComponent( component: Component){
-		this.to = component?.id
+	targetComponent( component: Component){
+		this.target = component?.id
 	}
 
 }

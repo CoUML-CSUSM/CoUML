@@ -13,8 +13,6 @@ export class ChangeRecord
 		this.affectedProperty = property;
 		this.action = action;
 		this.value = value;
-		// if(this.value instanceof DiagramElement || this.value instanceof ComponentProperty)
-		// 	this.value["$type"] = "CoUML_app.Models." + value.constructor.name +", CoUML_app";
 	}
 }
 
@@ -24,30 +22,31 @@ export enum ActionType
 	Remove, // value must be < string | id>
 	Change, // value must be approprate datatypes of ChangePropertyType
 	Lock,	
-	Release 
+	Release,
+	Shift 
 }
 
 export enum PropertyType
 {
 	//collections
-	Elements,
-	Operations,
-	Attributes,
-	Relations,
-	Enums,
+	Elements,			//0
+	Operations,			//1
+	Attributes,			//2
+	Relations,			//3
+	Enums,				//4
 
 	//class attributes
-	Name,
-	Type,
-	To,
-	From,
-	Visibility,
-	IsStatic,
-	PropertyString,
-	Parameters,
-	Multiplicity,
-	DefaultValue,
-	Dimension,
-	Editor
+	Name,				//5
+	Type,				//6
+	Target,				//7
+	Source,				//8
+	Visibility,			//9
+	IsStatic,			//10
+	PropertyString,		//11
+	Parameters,			//12
+	Multiplicity,		//13
+	DefaultValue,		//14
+	Dimension,			//15
+	Editor				//16
 }
 

@@ -84,8 +84,8 @@
           "$type": "CoUML_app.Models.Dimension, CoUML-app",
           "x": 100,
           "y": 100,
-          "width": 40,
-          "height": 60
+          "width": 60,
+          "height": 40
         }
       },
       {
@@ -131,16 +131,16 @@
         "dimension": {
           "$type": "CoUML_app.Models.Dimension, CoUML-app",
           "x": 100,
-          "y": 100,
-          "width": 40,
-          "height": 60
+          "y": 300,
+          "width": 60,
+          "height": 40
         }
       },
       {
         "$type": "CoUML_app.Models.Relationship, CoUML-app",
         "type": 5,
-        "from": "31c0ee0f-043e-48c0-ab8e-059ebbd9b03e",
-        "to": "0b68a108-f685-4e44-9e6e-a325d8d439f3",
+        "source": "31c0ee0f-043e-48c0-ab8e-059ebbd9b03e",
+        "target": "0b68a108-f685-4e44-9e6e-a325d8d439f3",
         "attributes": {
           "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.Attribute, CoUML-app]], CoUML-app",
           "items": [],
@@ -153,10 +153,10 @@
         "id": "b63dace7-e3e8-45bf-b76d-9e54246f64cf",
         "dimension": {
           "$type": "CoUML_app.Models.Dimension, CoUML-app",
-          "x": 100,
-          "y": 100,
-          "width": 40,
-          "height": 60
+          "x": null,
+          "y": null,
+          "width": null,
+          "height": null
         }
       }
     ],
