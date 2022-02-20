@@ -14,6 +14,9 @@ using Microsoft.Extensions.Logging;
 using CoUML_app.Models;
 using Attribute = CoUML_app.Models.Attribute;
 
+//mongodb stuff
+using MongoDB.Driver;
+using MongoDB.Bson;
 
 /**
 https://docs.microsoft.com/en-us/aspnet/signalr/overview/guide-to-the-api/working-with-groups
@@ -118,7 +121,15 @@ namespace CoUML_app.Controllers.Hubs
         /// <typeparam name="string"></typeparam>
         /// <returns></returns>
         private readonly static ConnectionMap<string, IUser> _connections = new ConnectionMap<string, IUser>();
-        private static Diagram testDiagram = DevUtility.DiagramDefualt(); // test code here
+
+        //private static Diagram testDiagram = DevUtility.DiagramDefualt(); // test code here
+        private static Diagram testDiagram = DevUtility.EmptyDiagram();
+
+        
+
+        // public CoUmlHub()
+        // {
+        // }
 
         
         
@@ -177,7 +188,19 @@ namespace CoUML_app.Controllers.Hubs
             if( dId != "test")
             {
                 //TODO: look up real diagram and return
+                Console.WriteLine("not test id");
             }
+
+            //finds document from database
+            var dbClient = new MongoClient("mongodb://localhost:27017");
+            IMongoDatabase db = dbClient.GetDatabase("CoUML");
+
+            var collection = db.GetCollection<BsonDocument>("Diagrams");
+            var filter = Builders<BsonDocument>.Filter.Eq("id", dId);
+            //this is the stuff we need!!!
+            var diagramText = collection.Distinct<string>("diagram", filter).ToListAsync().Result[0].ToString();
+            Console.WriteLine(diagramText);//outputs the diagram text
+            //^ should change it so this is what gets returned ^
 
             return JsonConvert.SerializeObject(testDiagram, Formatting.Indented, new JsonSerializerSettings
                     {
@@ -185,6 +208,7 @@ namespace CoUML_app.Controllers.Hubs
                     });
             // return this.OpenSampleFile();
             // return JsonConvert.SerializeObject(testDiagram, Formatting.Indented);
+
 
                 
         }
@@ -208,11 +232,36 @@ namespace CoUML_app.Controllers.Hubs
             ;
         }
 
+
+        //creates a diagram string that gets sent to the database
+        public void Generate(string Did){
+
+            //mongodb database
+            var dbClient = new MongoClient("mongodb://localhost:27017");
+            //adds document to the database
+            IMongoDatabase db = dbClient.GetDatabase("CoUML");
+
+            var collection = db.GetCollection<BsonDocument>("Diagrams");
+
+            var doc = new BsonDocument
+            {
+                {"id", Did},
+                {"diagram", JsonConvert.SerializeObject(testDiagram, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.Auto
+                    })}//string that contains all the info of the diagram
+                
+            };
+
+            collection.InsertOne(doc);
+        }
+
         public string OpenSampleFile()
         {
             string path = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Samples/"))[0];
 
             return File.ReadAllText(path);
+
         }
     }
 
@@ -285,6 +334,10 @@ namespace CoUML_app.Controllers.Hubs
             return d;
         }
 
+
+        public static Diagram EmptyDiagram(){
+            return new Diagram();
+        }      
 
     }
 }

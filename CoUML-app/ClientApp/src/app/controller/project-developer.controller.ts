@@ -38,10 +38,10 @@ export class ProjectDeveloper{
 	{
 		//TODO: close the project and remove yourself from the group
 	}
-
 	
 	public applyChanges(changes: ChangeRecord[])
 	{
+
 		console.log("-------------- apply changes ---------------");
 		console.log(changes);
 		for(let change of changes)
@@ -51,6 +51,7 @@ export class ProjectDeveloper{
 		}
 		console.log("-------------- Done! ---------------");
 		console.log(this._projectDiagram);
+
 	}
 
 	private applyChange(change: ChangeRecord)

@@ -8,12 +8,16 @@ namespace CoUML_app.Models
 
 	public class Diagram
 	{
+
+		public string id;
+
 		public ICollection<DiagramElement> elements {get;}
 
 		public Diagram()
 		{
 			this.elements = new GeneralCollection<DiagramElement>();
 		}
+
 	}
 
 	public abstract class DiagramElement

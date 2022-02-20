@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
+import { ProjectManager } from '../controller/project-manager.controller';
 import { environment } from '../../environments/environment';
 import { ChangeRecord } from 'src/models/ChangeRecord';
 
@@ -12,6 +13,7 @@ export class CoUmlHubService{
 	private _url = environment.apiUrl + "/couml";
 
 	private _projectDeveloper: ProjectDeveloper = null;
+	private _projectManager: ProjectManager = null;
 
 	constructor(){
 		this._coUmlHubConnection = new HubConnectionBuilder()
@@ -89,6 +91,12 @@ export class CoUmlHubService{
 	public triggerBreakPoint()
 	{
 		this._coUmlHubConnection.invoke("TriggerBreakPoint");
+	}
+
+
+	public generate(Did:string)
+	{
+		this._coUmlHubConnection.invoke("Generate",Did);
 	}
 
 }
