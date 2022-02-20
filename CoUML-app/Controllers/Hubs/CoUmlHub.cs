@@ -191,6 +191,7 @@ namespace CoUML_app.Controllers.Hubs
                 Console.WriteLine("not test id");
             }
 
+            /*
             //finds document from database
             var dbClient = new MongoClient("mongodb://localhost:27017");
             IMongoDatabase db = dbClient.GetDatabase("CoUML");
@@ -201,7 +202,7 @@ namespace CoUML_app.Controllers.Hubs
             var diagramText = collection.Distinct<string>("diagram", filter).ToListAsync().Result[0].ToString();
             Console.WriteLine(diagramText);//outputs the diagram text
             //^ should change it so this is what gets returned ^
-
+            */
             return JsonConvert.SerializeObject(testDiagram, Formatting.Indented, new JsonSerializerSettings
                     {
                         TypeNameHandling = TypeNameHandling.Auto
