@@ -47,7 +47,7 @@ export class ProjectDeveloper{
 		for(let change of changes)
 		{
 			this.applyChange(change);
-			this._diagramEditor.update(change);
+			this._diagramEditor.processChange(change);
 		}
 		console.log("-------------- Done! ---------------");
 		console.log(this._projectDiagram);

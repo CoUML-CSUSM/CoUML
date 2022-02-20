@@ -4,6 +4,7 @@ import { ICollection, Dimension, IUser, NullUser, Relationship, Interface, Class
 
 export class Diagram
 {
+	public id: string;
 	public elements: ICollection<DiagramElement>;
 
 	public constructor()

@@ -1,6 +1,8 @@
 import { AfterViewInit, Component as AngularComponent, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Class, AbstractClass, Diagram, DiagramElement, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, ChangeRecord, ActionType, PropertyType, ICollectionIterator, Enumeration, Dimension } from 'src/models/DiagramModel';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
+import { EditorFormatHandler } from './editorFormat.handler';
+import { EditorNotificationHandler } from './editorNotification.handler';
 
 /**
  * https://github.com/typed-mxgraph/typed-mxgraph
@@ -8,25 +10,42 @@ import { ProjectDeveloper } from '../controller/project-developer.controller';
 @AngularComponent({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
-  providers: [ProjectDeveloper]
+  providers: [ProjectDeveloper, EditorFormatHandler, EditorNotificationHandler]
 })
 export class EditorComponent implements AfterViewInit{
 
-	private graphContainer: mxGraph;
+	private _graphContainer: mxGraph;
 	diagram_description: string;
 	diagramId: string;
-
 
 	@ViewChild('container', { read: ElementRef, static: true })
 	public container: ElementRef<HTMLElement>;
 
 
-	constructor(private _projectDeveloper: ProjectDeveloper) {
+	constructor(
+		private _projectDeveloper: ProjectDeveloper, 
+		private _formatHandler: EditorFormatHandler,
+		private _notificationHandler: EditorNotificationHandler
+	) {
 		this._projectDeveloper.subscribe(this);
 	}
+
 	ngAfterViewInit(): void {
-		this.graphContainer = new mxGraph(this.container.nativeElement);
-		this.addStyles();
+		this._graphContainer = new mxGraph(this.container.nativeElement);
+		this._formatHandler.addEdgeStyles(this._graphContainer);
+		this._notificationHandler.addListeners(
+			[
+				mxEvent.LABEL_CHANGED,
+				mxEvent.CELLS_ADDED,
+				mxEvent.START_EDITING, 
+				mxEvent.CELL_CONNECTED, 
+				mxEvent.EDITING_STOPPED,
+				mxEvent.CELLS_MOVED
+			],
+			this._graphContainer,
+			this
+		);
+		setTimeout(()=>	this._projectDeveloper.open(this.diagramId), 500);
 	}
 
 	stageChange(change: ChangeRecord)
@@ -34,252 +53,15 @@ export class EditorComponent implements AfterViewInit{
 		console.log("change staged")
 		console.log(change);
 		this._projectDeveloper.stageChange(change);
-		this.addStyles();
 	}
 
-	private addListeners()
-	{
-		var thisEditorComponentContext = this; 
-		
-		this.graphContainer.addListener(mxEvent.LABEL_CHANGED,
-			// on change label event 
-			function(eventSource, eventObject){
-				console.log('%c%s', f_alert, "LABEL_CHANGED");
-				let affectedCells = eventObject.getProperties();
-
-				thisEditorComponentContext.stageChange( new ChangeRecord(
-					[affectedCells.cell.id],
-					PropertyType.Name, 
-					ActionType.Change,
-					affectedCells.value
-				));
-		});
-
-		this.graphContainer.addListener(mxEvent.CELLS_MOVED,
-			// on cell move event
-			function(eventSource, eventObject){
-				let affectedCells = eventObject.getProperties();
-				console.log('%c%s', f_alert, "CELLS_MOVED");
-
-				console.log(affectedCells);
-
-				let ids = [];
-				affectedCells.cells.forEach(cell=> {
-					console.log(`cell.id = ${cell.id}`);
-					ids.push(cell.id)
-				});
-
-				console.log(affectedCells)
-
-				thisEditorComponentContext.stageChange(new ChangeRecord(
-					ids,
-					PropertyType.Dimension,
-					ActionType.Shift,
-					{ // new absolute location
-						x: affectedCells.cells[0]?.geometry.x,
-						y: affectedCells.cells[0]?.geometry.y,
-					}
-				));
-			});
-
-
-		this.graphContainer.addListener(mxEvent.EDITING_STOPPED,
-			//
-			function(eventSource, eventObject){
-				let affectedCells = eventObject.getProperties();
-				console.log('%c%s', f_alert, "EDITING_STOPPED");
-				console.log(affectedCells);
-			});
-
-		this.graphContainer.addListener(mxEvent.CELL_CONNECTED, 
-			//event when  edge is connected or disconeccted from a cell
-			function(eventSource, eventObject){
-				let affectedEdge = eventObject.getProperties();
-				console.log('%c%s', f_alert, "CELL_CONNECTED");
-
-				console.log(affectedEdge);
-				console.log(`edge: ${affectedEdge.edge.id}`);
-				console.log(`source(from): ${affectedEdge.edge.source?.id}`);
-				console.log(`target(to): ${affectedEdge.edge.target?.id}`);
-
-				//disconnect action --> previous
-				//connect action --> terminal
-				let isConnectioning = affectedEdge.terminal? true: false;
-				let isDisconnectioning = affectedEdge.previous? true: false;
-				let isMovingTerminal = !affectedEdge.terminal && !affectedEdge.previous
-
-				let affectedCellId = isConnectioning? affectedEdge.terminal?.id: affectedEdge.previous?.id ; 	// the id of the (dis)connecting component
-				let affecedProperty = affectedEdge.source? PropertyType.Source: PropertyType.Target;			// is this component the target or the source?
-				let value = isConnectioning? affectedCellId: null;												// id if connecting, null if disconnecting
-
-				// relation - connect | dissconnect
-				// sets the source|target to componentId if connect and null if disconnect
-				if(isConnectioning || isDisconnectioning)
-				{
-					thisEditorComponentContext.stageChange(
-						new ChangeRecord(
-							[affectedEdge.edge.id],
-							affecedProperty,
-							ActionType.Change,
-							value
-						)
-					);
-
-					//component update relation
-					thisEditorComponentContext.stageChange(
-						new ChangeRecord(
-							[affectedCellId],
-							PropertyType.Relations,
-							isConnectioning? ActionType.Insert: ActionType.Remove,
-							affectedEdge.edge.id
-						)
-					);
-
-				}
-
-				// move edge point if disconnected
-				// set the location of the disconected end
-				if(isDisconnectioning || isMovingTerminal)
-					thisEditorComponentContext.stageChange(
-						new ChangeRecord(
-							[affectedEdge.edge.id],
-							PropertyType.Dimension,
-							ActionType.Change,
-							affecedProperty == PropertyType.Source?
-								new Dimension(
-									affectedEdge.edge.geometry.sourcePoint?.x,
-									affectedEdge.edge.geometry.sourcePoint?.y,
-									null, null
-								):
-								new Dimension(
-									null, null,
-									affectedEdge.edge.geometry.targetPoint?.x,
-									affectedEdge.edge.geometry.targetPoint?.y
-								)
-						)
-					);
-			});
-			
-
-		this.graphContainer.addListener(mxEvent.START_EDITING, 
-			// When double click on cell to change label
-			function(eventSource, eventObject){
-				let affectedCells = eventObject.getProperties();
-				console.log('%c%s', f_alert, "START_EDITING");
-
-				console.log(affectedCells.cell.id);
-			});
-
-
-		this.graphContainer.addListener(mxEvent.CELLS_ADDED, 
-			// mxEvent.ADD_CELLS
-			function(eventSource, eventObject){
-				let affectedCells = eventObject.getProperties();
-				console.log('%c%s', f_alert, "CELLS_ADDED ");
-				console.log(affectedCells);
-			});
-
-		/*
-		//listener template
-		this.graphContainer.addListener(mxEvent, 
-			// NADA
-			function(eventSource, eventObject){
-				let affectedCells = eventObject.getProperties();
-				console.log('%c%s', f_alert, "");
-				console.log(affectedCells);
-			});
-		*/
-
-		this.graphContainer.addListener(mxEvent.CLICK, 
-			// click on object to see its makup.
-			function(eventSource, eventObject){
-				let affectedCells = eventObject.getProperties();
-				console.log('%c%s',f_alert, "mxCell description");
-				console.log(affectedCells);
-			});
-	}
-
-	private addStyles()
-	{
-		let dashPattern = '12 4';
-		let  edgeStyleDefualt = this.graphContainer.getStylesheet().getDefaultEdgeStyle();
-		edgeStyleDefualt[mxConstants.STYLE_STARTSIZE] = 12;
-		edgeStyleDefualt[mxConstants.STYLE_ENDSIZE] = 12;
-
-		// Realization  - - -|>
-		let realizationStyle = mxUtils.clone(edgeStyleDefualt);
-		realizationStyle[mxConstants.STYLE_DASHED] = true;
-		realizationStyle[mxConstants.STYLE_DASH_PATTERN] = dashPattern;
-		realizationStyle[mxConstants.STYLE_ENDARROW] = mxConstants.ARROW_BLOCK;
-		realizationStyle[mxConstants.STYLE_ENDFILL] = false;
-		this.graphContainer.getStylesheet().putCellStyle(
-			RelationshipType[RelationshipType.Realization], 
-			realizationStyle
-			);
-		
-
-		// Dependency, - - - >
-		let dependencyStyle = mxUtils.clone(edgeStyleDefualt);
-		dependencyStyle[mxConstants.STYLE_DASHED] = true;
-		dependencyStyle[mxConstants.STYLE_DASH_PATTERN] = dashPattern;
-		dependencyStyle[mxConstants.STYLE_ENDARROW] = mxConstants.ARROW_OPEN;
-		dependencyStyle[mxConstants.STYLE_ENDFILL] = false;
-		this.graphContainer.getStylesheet().putCellStyle(
-			RelationshipType[RelationshipType.Dependency], 
-			dependencyStyle
-			);
-
-		// Association, -------
-		let associationStyle = mxUtils.clone(edgeStyleDefualt);
-		associationStyle[mxConstants.STYLE_DASHED] = false;
-		associationStyle[mxConstants.STYLE_ENDARROW] = mxConstants.NONE;
-		this.graphContainer.getStylesheet().putCellStyle(
-			RelationshipType[RelationshipType.Association], 
-			associationStyle
-			);
-
-		// Aggregation,<>------ 
-		let aggregationStyle = mxUtils.clone(edgeStyleDefualt);
-		aggregationStyle[mxConstants.STYLE_DASHED] = false;
-		aggregationStyle[mxConstants.STYLE_ENDARROW] = mxConstants.NONE;
-		aggregationStyle[mxConstants.STYLE_STARTARROW] = mxConstants.ARROW_DIAMOND;
-		aggregationStyle[mxConstants.STYLE_ENDFILL] = false;
-		this.graphContainer.getStylesheet().putCellStyle(
-			RelationshipType[RelationshipType.Aggregation], 
-			aggregationStyle
-			);
-			
-		// Composistion, <X>------ 
-		let composistionStyle = mxUtils.clone(edgeStyleDefualt);
-		composistionStyle[mxConstants.STYLE_DASHED] = false;
-		composistionStyle[mxConstants.STYLE_ENDARROW] = mxConstants.NONE;
-		composistionStyle[mxConstants.STYLE_STARTARROW] = mxConstants.ARROW_DIAMOND;
-		this.graphContainer.getStylesheet().putCellStyle(
-			RelationshipType[RelationshipType.Composistion], 
-			composistionStyle
-			);
-
-		
-		// Generalization, ----|>
-		let generalizationStyle = mxUtils.clone(edgeStyleDefualt);
-		generalizationStyle[mxConstants.STYLE_DASHED] = false;
-		generalizationStyle[mxConstants.STYLE_ENDARROW] = mxConstants.ARROW_BLOCK;
-		generalizationStyle[mxConstants.STYLE_ENDFILL] = false;
-		this.graphContainer.getStylesheet().putCellStyle(
-			RelationshipType[RelationshipType.Generalization], 
-			generalizationStyle
-			);
-			
-
-	}
 	
 	public draw() {
-		// done set edge style
-		
-		this.graphContainer.getModel().beginUpdate();
-		// create diagram from ProjectDeveloper Diagram
+		//turn off notifications before drawing new graph 
+		this._graphContainer.eventsEnabled = false;
+		this._graphContainer.getModel().beginUpdate();
 		try {
-			const parent = this.graphContainer.getDefaultParent();
+			const parent = this._graphContainer.getDefaultParent();
 
 			let elementIterator: ICollectionIterator<DiagramElement> 
 				= this._projectDeveloper._projectDiagram.elements.iterator();
@@ -292,7 +74,7 @@ export class EditorComponent implements AfterViewInit{
 				let diagramElement = elementIterator.getNext();
 
 				if(diagramElement instanceof Component)
-					this.graphContainer.insertVertex(
+					this._graphContainer.insertVertex(
 						parent,
 						diagramElement.id, 
 						diagramElement.name, 
@@ -309,24 +91,26 @@ export class EditorComponent implements AfterViewInit{
 			for( let relation  of relatioships)
 			{
 				// TODO : figure out how to insert an edge that has no source or target 
-				this.graphContainer.insertEdge(
+				this._graphContainer.insertEdge(
 					parent, 
 					relation.id, 
 					relation.attributes.toString(), 
-					this.graphContainer.getModel().getCell(relation.source), 
-					this.graphContainer.getModel().getCell(relation.target),
+					this._graphContainer.getModel().getCell(relation.source), 
+					this._graphContainer.getModel().getCell(relation.target),
 					RelationshipType[relation.type]
 				);
 			}
 					
 		} finally {
-			this.graphContainer.getModel().endUpdate();
-			this.addListeners();
+			this._graphContainer.getModel().endUpdate();
+
+			// turn notifications back on
+			this._graphContainer.eventsEnabled = true;
 		}
 	}
 	
-	update(change: ChangeRecord){
-		let affectedCell = this.graphContainer.getModel().getCell(change.id[0]);
+	public processChange(change: ChangeRecord){
+		let affectedCell = this._graphContainer.getModel().getCell(change.id[0]);
 		switch(change.action){
 			case ActionType.Change:
 				switch(change.affectedProperty){
@@ -343,10 +127,10 @@ export class EditorComponent implements AfterViewInit{
 		}
 	}
 	private updateCellGeometry(affectedCell: mxCell, change: ChangeRecord) {
-		let newCellGeometry = this.graphContainer.getCellGeometry(affectedCell).clone();
+		let newCellGeometry = this._graphContainer.getCellGeometry(affectedCell).clone();
 		newCellGeometry.x = change.value.x;
 		newCellGeometry.y = change.value.y;
-		this.graphContainer.getModel().setGeometry(affectedCell, newCellGeometry);
+		this._graphContainer.getModel().setGeometry(affectedCell, newCellGeometry);
 	}
 	
 	private updateEdgeGeometry(affectedEdge: mxCell, change: ChangeRecord) {
@@ -359,7 +143,7 @@ export class EditorComponent implements AfterViewInit{
 		let newEdgeGeometry = affectedEdge.getGeometry().clone();
 		newEdgeGeometry.setTerminalPoint(point, isSource);
 
-		this.graphContainer.getModel().setGeometry(affectedEdge, newEdgeGeometry);
+		this._graphContainer.getModel().setGeometry(affectedEdge, newEdgeGeometry);
 	}
 
 	private updateEdgeConnections(affectedEdge: mxCell, change: ChangeRecord) {
@@ -370,29 +154,18 @@ export class EditorComponent implements AfterViewInit{
 
 		}else
 		{// connecting
-			let affectedCell = this.graphContainer.getModel().getCell(change.value);
-			this.graphContainer.getModel().setTerminal( affectedEdge, affectedCell, isSource );
+			let affectedCell = this._graphContainer.getModel().getCell(change.value);
+			this._graphContainer.getModel().setTerminal( affectedEdge, affectedCell, isSource );
 		}
 
 	}
 
 	private updateLabelValue(affectedCell: mxCell, change: ChangeRecord)
 	{
-		this.graphContainer.getModel().setValue(
+		this._graphContainer.getModel().setValue(
 			affectedCell,
 			change.value
 		);
 	}
-
-	//***************************************************/
-
-	public open()
-	{
-		this._projectDeveloper.open(this.diagramId);
-	}
-
 }
 
-
-	var f_info = 'width: 100%; background: yellow; color: navy;'
-	var f_alert = 'text-align: center; width: 100%; background: black; color: red; font-size: 1.5em'
