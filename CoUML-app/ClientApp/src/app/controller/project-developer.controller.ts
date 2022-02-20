@@ -33,11 +33,13 @@ export class ProjectDeveloper{
 	public makeChanges(changes: ChangeRecord[])
 	{
 		this._coUmlHub.commit(changes);
+
 	}
 
 	
 	public applyChanges(changes: ChangeRecord[])
 	{
+
 		console.log("-------------- apply changes ---------------");
 		for(let change of changes)
 		{
@@ -47,6 +49,7 @@ export class ProjectDeveloper{
 		}
 		console.log("-------------- Done! ---------------");
 		console.log(this._projectDiagram);
+
 	}
 
 	private applyChange(change: ChangeRecord)

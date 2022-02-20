@@ -12,6 +12,7 @@ import { CounterComponent } from './counter/counter.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
 
 import { EditorComponent } from './editor/editor.component';
+import { MenuComponent } from './menu/menu.component';
 
 import { SidebarComponent } from './sidebar/sidebar.component';
 
@@ -32,6 +33,7 @@ import {CheckboxModule} from 'primeng/checkbox';
     FetchDataComponent,
 
     EditorComponent,
+    MenuComponent,
 
     SidebarComponent
 
