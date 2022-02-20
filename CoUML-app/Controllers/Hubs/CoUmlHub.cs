@@ -122,8 +122,8 @@ namespace CoUML_app.Controllers.Hubs
         /// <returns></returns>
         private readonly static ConnectionMap<string, IUser> _connections = new ConnectionMap<string, IUser>();
 
-        //private static Diagram testDiagram = DevUtility.DiagramDefualt(); // test code here
-        private static Diagram testDiagram = DevUtility.EmptyDiagram();
+        private static Diagram testDiagram = DevUtility.DiagramDefualt(); // test code here
+        //private static Diagram testDiagram = DevUtility.EmptyDiagram();
 
         
 

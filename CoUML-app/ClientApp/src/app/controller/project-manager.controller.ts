@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CoUmlHubService } from "../service/couml-hub.service";
-import * as Automerge from 'automerge';
-import { Class, Diagram, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, DiagramBuilder } from 'src/models/DiagramModel';
+import { Class, Diagram, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, Assembler } from 'src/models/DiagramModel';
 import {  User, DiagramElement } from 'src/models/DiagramModel';
 
 
@@ -17,7 +16,7 @@ export class ProjectManager{
         this._coUmlHub.generate(Did);
         
         (d) => {;
-            this.newDiagram = new DiagramBuilder().buildDiagram (d);
+            this.newDiagram = Assembler.assembleDiagram(d);
         };
             
     }
