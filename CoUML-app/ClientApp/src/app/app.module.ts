@@ -24,6 +24,7 @@ import {InputTextModule} from 'primeng/inputtext';
 import {CheckboxModule} from 'primeng/checkbox';
 import {MenubarModule} from 'primeng/menubar';
 import {MenuItem} from 'primeng/api';
+import {TabViewModule} from 'primeng/tabview';
 
 
 @NgModule({
@@ -57,6 +58,7 @@ import {MenuItem} from 'primeng/api';
     InputTextModule,
     CheckboxModule,
     MenubarModule,
+    TabViewModule,
     
   ],
   providers: [

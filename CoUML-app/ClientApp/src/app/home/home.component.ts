@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild} from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, ElementRef, Renderer2, ViewChild} from '@angular/core';
 
 import { CoUmlHubService } from '../service/couml-hub.service';
 
@@ -13,20 +13,28 @@ import { CoUmlHubService } from '../service/couml-hub.service';
   styleUrls: ['./home.component.css']
 })
 
-export class HomeComponent {
+export class HomeComponent implements AfterViewChecked {
 
   ip: string;
+  top:string = "top: 100px;";
 
-	constructor(public _coUmlHub: CoUmlHubService) {}
+	constructor(
+    private _coUmlHub: CoUmlHubService,
+    private _renderer: Renderer2
+    ) {
 
-  // @ViewChild('appmenu')
-  // _menu: ElementRef;
+  }
 
-  // get top (){
-  //   let top =  "top: " + (this._menu?.nativeElement?.offsetHeight | "72" as any) + "px;";
-  //   console.log(top);
-  //   return top;
-  // }
+  //Gets the height of the menu and sets the top to the hight
+  // so that the edit board and the menu always meet.
+  // the menu height changes based on the browser settings so static values do not help
+  ngAfterViewChecked(): void {
+    var height = `${this._menu.nativeElement.offsetHeight}px`;
+    this._renderer.setStyle(this._workspace.nativeElement, "top", height);
+  }
+
+  @ViewChild('appmenu') _menu: ElementRef;
+  @ViewChild('appworkspace') _workspace: ElementRef;
 }
 
 

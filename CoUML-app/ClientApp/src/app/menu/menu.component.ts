@@ -11,14 +11,14 @@ import { CoUmlHubService } from '../service/couml-hub.service';
   })
   export class MenuComponent{
 
-    items: MenuItem[];
+    _menuItems: MenuItem[];
 
 
     constructor(
       private _projectManager: ProjectManager,
       private _coUmlHub: CoUmlHubService
       ){
-      this.items = [
+      this._menuItems = [
         {
           label: "File",
           items: [
