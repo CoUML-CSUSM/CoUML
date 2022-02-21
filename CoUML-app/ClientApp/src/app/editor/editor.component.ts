@@ -1,8 +1,8 @@
 import { AfterViewInit, Component as AngularComponent, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Class, AbstractClass, Diagram, DiagramElement, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, ChangeRecord, ActionType, PropertyType, ICollectionIterator, Enumeration, Dimension } from 'src/models/DiagramModel';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
-import { EditorFormatHandler } from './editor-format.handler';
-import { EditorNotificationHandler } from './editor-notification.handler';
+import * as EditorFormatHandler  from './editor-format.handler';
+import * as EditorNotificationHandler  from './editor-notification.handler';
 
 /**
  * https://github.com/typed-mxgraph/typed-mxgraph
@@ -10,30 +10,33 @@ import { EditorNotificationHandler } from './editor-notification.handler';
 @AngularComponent({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
-  providers: [ProjectDeveloper, EditorFormatHandler, EditorNotificationHandler]
+  providers: [ProjectDeveloper]
 })
 export class EditorComponent implements AfterViewInit{
 
-	private _graphContainer: mxGraph;
+	private _graph: mxGraph;
 	diagram_description: string;
 	diagramId: string;
 
-	@ViewChild('container', { read: ElementRef, static: true })
-	public container: ElementRef<HTMLElement>;
+	@ViewChild('graphContainer', { read: ElementRef, static: true })
+	public graphContainer: ElementRef<HTMLElement>;
 
+	@ViewChild('toolbarContainer', { read: ElementRef, static: true })
+	public toolbarContainer: ElementRef<HTMLElement>;
+
+    private _toolbar: mxToolbar;
 
 	constructor(
-		private _projectDeveloper: ProjectDeveloper, 
-		private _formatHandler: EditorFormatHandler,
-		private _notificationHandler: EditorNotificationHandler
+		private _projectDeveloper: ProjectDeveloper
 	) {
 		this._projectDeveloper.subscribe(this);
 	}
 
 	ngAfterViewInit(): void {
-		this._graphContainer = new mxGraph(this.container.nativeElement);
-		this._formatHandler.addEdgeStyles(this._graphContainer);
-		this._notificationHandler.addListeners(
+		this._graph = new mxGraph(this.graphContainer.nativeElement);
+		EditorFormatHandler.addEdgeStyles(this._graph);
+		EditorFormatHandler.addCellStyles(this._graph);
+		EditorNotificationHandler.addListeners(
 			[
 				mxEvent.LABEL_CHANGED,
 				mxEvent.CELLS_ADDED,
@@ -42,9 +45,12 @@ export class EditorComponent implements AfterViewInit{
 				mxEvent.EDITING_STOPPED,
 				mxEvent.CELLS_MOVED
 			],
-			this._graphContainer,
+			this._graph,
 			this
 		);
+        this._toolbar = new mxToolbar(this.toolbarContainer.nativeElement);
+		this.addToolbarItems();
+
 		setTimeout(()=>	this._projectDeveloper.open(this.diagramId), 500);
 	}
 
@@ -55,13 +61,14 @@ export class EditorComponent implements AfterViewInit{
 		this._projectDeveloper.stageChange(change);
 	}
 
+
 	
 	public draw() {
 		//turn off notifications before drawing new graph 
-		this._graphContainer.eventsEnabled = false;
-		this._graphContainer.getModel().beginUpdate();
+		this._graph.eventsEnabled = false;
+		this._graph.getModel().beginUpdate();
 		try {
-			const parent = this._graphContainer.getDefaultParent();
+			const parent = this._graph.getDefaultParent();
 
 			let elementIterator: ICollectionIterator<DiagramElement> 
 				= this._projectDeveloper._projectDiagram.elements.iterator();
@@ -73,16 +80,35 @@ export class EditorComponent implements AfterViewInit{
 			{
 				let diagramElement = elementIterator.getNext();
 
-				if(diagramElement instanceof Component)
-					this._graphContainer.insertVertex(
+				if(diagramElement instanceof Component){
+					let component = this._graph.insertVertex(
 						parent,
 						diagramElement.id, 
 						diagramElement.name, 
 						diagramElement.dimension.x, 
 						diagramElement.dimension.y, 
 						diagramElement.dimension.width, 
-						diagramElement.dimension.height
+						diagramElement.dimension.height,
+						diagramElement.constructor.name
 					);
+					
+					if(diagramElement instanceof AbstractClass || diagramElement instanceof Class)
+					{
+						let attributeIterator: ICollectionIterator<Attribute> = diagramElement.attributes.iterator();
+
+						while(attributeIterator.hasNext())
+						{
+							let attribute  = attributeIterator.getNext();
+							this._graph.insertVertex(
+								component,
+								attribute.id,
+								attribute.name,
+								0, 0, 50, 10
+							)
+						}
+					}
+
+				}
 				else if( diagramElement instanceof Relationship){
 						relatioships.push(diagramElement)
 				}
@@ -91,26 +117,26 @@ export class EditorComponent implements AfterViewInit{
 			for( let relation  of relatioships)
 			{
 				// TODO : figure out how to insert an edge that has no source or target 
-				this._graphContainer.insertEdge(
+				this._graph.insertEdge(
 					parent, 
 					relation.id, 
 					relation.attributes.toString(), 
-					this._graphContainer.getModel().getCell(relation.source), 
-					this._graphContainer.getModel().getCell(relation.target),
+					this._graph.getModel().getCell(relation.source), 
+					this._graph.getModel().getCell(relation.target),
 					RelationshipType[relation.type]
 				);
 			}
 					
 		} finally {
-			this._graphContainer.getModel().endUpdate();
+			this._graph.getModel().endUpdate();
 
 			// turn notifications back on
-			this._graphContainer.eventsEnabled = true;
+			this._graph.eventsEnabled = true;
 		}
 	}
 	
 	public processChange(change: ChangeRecord){
-		let affectedCell = this._graphContainer.getModel().getCell(change.id[0]);
+		let affectedCell = this._graph.getModel().getCell(change.id[0]);
 		switch(change.action){
 			case ActionType.Change:
 				switch(change.affectedProperty){
@@ -127,10 +153,10 @@ export class EditorComponent implements AfterViewInit{
 		}
 	}
 	private updateCellGeometry(affectedCell: mxCell, change: ChangeRecord) {
-		let newCellGeometry = this._graphContainer.getCellGeometry(affectedCell).clone();
+		let newCellGeometry = this._graph.getCellGeometry(affectedCell).clone();
 		newCellGeometry.x = change.value.x;
 		newCellGeometry.y = change.value.y;
-		this._graphContainer.getModel().setGeometry(affectedCell, newCellGeometry);
+		this._graph.getModel().setGeometry(affectedCell, newCellGeometry);
 	}
 	
 	private updateEdgeGeometry(affectedEdge: mxCell, change: ChangeRecord) {
@@ -143,7 +169,7 @@ export class EditorComponent implements AfterViewInit{
 		let newEdgeGeometry = affectedEdge.getGeometry().clone();
 		newEdgeGeometry.setTerminalPoint(point, isSource);
 
-		this._graphContainer.getModel().setGeometry(affectedEdge, newEdgeGeometry);
+		this._graph.getModel().setGeometry(affectedEdge, newEdgeGeometry);
 	}
 
 	private updateEdgeConnections(affectedEdge: mxCell, change: ChangeRecord) {
@@ -154,18 +180,66 @@ export class EditorComponent implements AfterViewInit{
 
 		}else
 		{// connecting
-			let affectedCell = this._graphContainer.getModel().getCell(change.value);
-			this._graphContainer.getModel().setTerminal( affectedEdge, affectedCell, isSource );
+			let affectedCell = this._graph.getModel().getCell(change.value);
+			this._graph.getModel().setTerminal( affectedEdge, affectedCell, isSource );
 		}
 
 	}
 
 	private updateLabelValue(affectedCell: mxCell, change: ChangeRecord)
 	{
-		this._graphContainer.getModel().setValue(
+		this._graph.getModel().setValue(
 			affectedCell,
 			change.value
 		);
 	}
+
+	addToolbarItems()
+	{
+		let iconCatalog = new Map();
+		iconCatalog.set('editors/images/rectangle.gif', Interface.name);
+		iconCatalog.set('editors/images/ellipse.gif', AbstractClass.name);
+		iconCatalog.set('editors/images/rhombus.gif', Class.name);
+		iconCatalog.set('editors/images/triangle.gif', Enumeration.name);
+
+		iconCatalog.forEach((style, path)=>this.addItemToToolbar(path, style));
+	}
+
+	addItemToToolbar(iconPath, style)
+	{
+		var componentPrototype = new mxCell(null, new mxGeometry(0, 0, 60, 40), style);
+		componentPrototype.setVertex(true);
+	
+		var img = this.dragDrop(componentPrototype, iconPath);
+	}
+
+	dragDrop(prototype, image)
+		{
+			// Function that is executed when the image is dropped on
+			// the graph. The cell argument points to the cell under
+			// the mousepointer if there is one.
+			var drop = function(graph, evt, cell, x, y)
+			{
+				graph.stopEditing(false);
+
+				var vertex = graph.getModel().cloneCell(prototype);
+				vertex.geometry.x = Math.floor(x / 10) * 10;
+				vertex.geometry.y = Math.floor(y / 10) * 10;
+					
+				graph.addCell(vertex);
+				graph.setSelectionCell(vertex);
+			}
+			
+			// Creates the image which is used as the drag icon (preview)
+			var img = this._toolbar.addMode("Drag", image, function(evt, cell)
+			{
+				var pt = this.graph.getPointForEvent(evt);
+				drop(this._graph, evt, cell, pt.x, pt.y);
+			});
+			
+			mxUtils.makeDraggable(img, this._graph, drop);
+			
+			return img;
+		}
 }
 

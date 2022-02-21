@@ -6,15 +6,10 @@ import { RouterModule } from '@angular/router';
 
 
 import { AppComponent } from './app.component';
-import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
-import { CounterComponent } from './counter/counter.component';
-import { FetchDataComponent } from './fetch-data/fetch-data.component';
-
 import { EditorComponent } from './editor/editor.component';
 import { MenuComponent } from './menu/menu.component';
 
-import { SidebarComponent } from './sidebar/sidebar.component';
 
 import { CoUmlHubService } from './service/couml-hub.service';
 
@@ -23,22 +18,17 @@ import { ButtonModule } from 'primeng/button';
 import {InputTextModule} from 'primeng/inputtext';
 import {CheckboxModule} from 'primeng/checkbox';
 import {MenubarModule} from 'primeng/menubar';
-import {MenuItem} from 'primeng/api';
+
 import {TabViewModule} from 'primeng/tabview';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    NavMenuComponent,
     HomeComponent,
-    // CounterComponent,
-    // FetchDataComponent,
-
     EditorComponent,
     MenuComponent,
 
-    SidebarComponent
 
   ],
 

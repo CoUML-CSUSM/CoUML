@@ -2,30 +2,22 @@ import { Injectable } from "@angular/core";
 import { ActionType, ChangeRecord, Dimension, PropertyType } from "src/models/DiagramModel";
 import { EditorComponent } from "./editor.component";
 
-@Injectable()
-export class EditorNotificationHandler
-{
-	private _listenerCatalog: Map<mxEvent, Function>;
+	const _listenerCatalog: Map<mxEvent, Function> = new Map();
+		_listenerCatalog.set(mxEvent.LABEL_CHANGED, labelChanged);
+		_listenerCatalog.set(mxEvent.CELLS_ADDED, cellsAdded);
+		_listenerCatalog.set(mxEvent.START_EDITING, startEditing);
+		_listenerCatalog.set(mxEvent.CELL_CONNECTED, cellConnected);
+		_listenerCatalog.set(mxEvent.EDITING_STOPPED, editingStopped);
+		_listenerCatalog.set(mxEvent.CELLS_MOVED, cellsMoved);
 
-	constructor()
-	{
-		this._listenerCatalog = new Map();
-		this._listenerCatalog.set(mxEvent.LABEL_CHANGED, this.labelChanged);
-		this._listenerCatalog.set(mxEvent.CELLS_ADDED, this.cellsAdded);
-		this._listenerCatalog.set(mxEvent.START_EDITING, this.startEditing);
-		this._listenerCatalog.set(mxEvent.CELL_CONNECTED, this.cellConnected);
-		this._listenerCatalog.set(mxEvent.EDITING_STOPPED, this.editingStopped);
-		this._listenerCatalog.set(mxEvent.CELLS_MOVED, this.cellsMoved);
-
-	}
-	addListeners(events: mxEvent[], graph: mxGraph, editorComponent: EditorComponent)
+	export function addListeners(events: mxEvent[], graph: mxGraph, editorComponent: EditorComponent)
 	{
 		events.forEach(event =>{
-			this._listenerCatalog.get(event).call(null, graph, editorComponent)
+			_listenerCatalog.get(event).call(null, graph, editorComponent)
 		});
 	}
 
-	labelChanged(graph: mxGraph, editorComponent: EditorComponent){
+	function labelChanged(graph: mxGraph, editorComponent: EditorComponent){
 		graph.addListener(mxEvent.LABEL_CHANGED,
 			// on change label event 
 			function(eventSource, eventObject){
@@ -41,7 +33,7 @@ export class EditorNotificationHandler
 		});
 	}
 
-	cellsMoved(graph: mxGraph, editorComponent: EditorComponent){
+	function cellsMoved(graph: mxGraph, editorComponent: EditorComponent){
 		graph.addListener(mxEvent.CELLS_MOVED,
 			// on cell move event
 			function(eventSource, eventObject){
@@ -71,7 +63,7 @@ export class EditorNotificationHandler
 
 	}
 
-	editingStopped(graph: mxGraph, editorComponent: EditorComponent){
+	function editingStopped(graph: mxGraph, editorComponent: EditorComponent){
 		graph.addListener(mxEvent.EDITING_STOPPED,
 			//
 			function(eventSource, eventObject){
@@ -81,7 +73,7 @@ export class EditorNotificationHandler
 			});
 	}
 
-	cellConnected(graph: mxGraph, editorComponent: EditorComponent){
+	function cellConnected(graph: mxGraph, editorComponent: EditorComponent){
 		graph.addListener(mxEvent.CELL_CONNECTED, 
 			//event when  edge is connected or disconeccted from a cell
 			function(eventSource, eventObject){
@@ -153,7 +145,7 @@ export class EditorNotificationHandler
 			
 		}
 
-	startEditing(graph: mxGraph, editorComponent: EditorComponent){
+	function startEditing(graph: mxGraph, editorComponent: EditorComponent){
 		graph.addListener(mxEvent.START_EDITING, 
 			// When double click on cell to change label
 			function(eventSource, eventObject){
@@ -164,7 +156,7 @@ export class EditorNotificationHandler
 			});
 
 	}
-	cellsAdded(graph: mxGraph, editorComponent: EditorComponent){
+	function cellsAdded(graph: mxGraph, editorComponent: EditorComponent){
 		graph.addListener(mxEvent.CELLS_ADDED, 
 			// mxEvent.ADD_CELLS
 			function(eventSource, eventObject){
@@ -174,7 +166,7 @@ export class EditorNotificationHandler
 			});
 	}
 	
-	click(graph: mxGraph, editorComponent: EditorComponent){
+	function click(graph: mxGraph, editorComponent: EditorComponent){
 		graph.addListener(mxEvent.CLICK, 
 			// click on object to see its makup.
 			function(eventSource, eventObject){
@@ -184,7 +176,7 @@ export class EditorNotificationHandler
 			});
 	}
 
-	template(graph: mxGraph, editorComponent: EditorComponent){
+	function template(graph: mxGraph, editorComponent: EditorComponent){
 		//listener template
 		graph.addListener(mxEvent.FIRED, 
 			// NADA
@@ -195,7 +187,7 @@ export class EditorNotificationHandler
 			});
 	}
 
-}
+
 
 var f_info = 'width: 100%; background: yellow; color: navy;';
 var f_alert = 'text-align: center; width: 100%; background: black; color: red; font-size: 1.5em;';
