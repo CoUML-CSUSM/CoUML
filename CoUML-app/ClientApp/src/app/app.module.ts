@@ -22,6 +22,8 @@ import { CoUmlHubService } from './service/couml-hub.service';
 import { ButtonModule } from 'primeng/button';
 import {InputTextModule} from 'primeng/inputtext';
 import {CheckboxModule} from 'primeng/checkbox';
+import {MenubarModule} from 'primeng/menubar';
+import {MenuItem} from 'primeng/api';
 
 
 @NgModule({
@@ -29,8 +31,8 @@ import {CheckboxModule} from 'primeng/checkbox';
     AppComponent,
     NavMenuComponent,
     HomeComponent,
-    CounterComponent,
-    FetchDataComponent,
+    // CounterComponent,
+    // FetchDataComponent,
 
     EditorComponent,
     MenuComponent,
@@ -38,21 +40,24 @@ import {CheckboxModule} from 'primeng/checkbox';
     SidebarComponent
 
   ],
+
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
     FormsModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'counter', component: CounterComponent },
-      { path: 'fetch-data', component: FetchDataComponent },
+      // { path: 'counter', component: CounterComponent },
+      // { path: 'fetch-data', component: FetchDataComponent },
     ]),
 
 
     /* primeng */
     ButtonModule,
     InputTextModule,
-    CheckboxModule
+    CheckboxModule,
+    MenubarModule,
+    
   ],
   providers: [
 
