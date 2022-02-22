@@ -198,7 +198,9 @@ namespace CoUML_app.Controllers.Hubs
             var collection = db.GetCollection<BsonDocument>("Diagrams");
             var filter = Builders<BsonDocument>.Filter.Eq("id", dId);
             //this is the stuff we need!!!
-            var diagramText = collection.Distinct<string>("diagram", filter).ToListAsync().Result[0].ToString();
+            //old one for getting string from database
+            //var diagramText = collection.Distinct<string>("diagram", filter).ToListAsync().Result[0].ToString();
+            var diagramText = collection.Find(filter).Project("{_id: 0}").FirstOrDefault().ToString();
             Console.WriteLine(diagramText);//outputs the diagram text
             //^ should change it so this is what gets returned ^
 
