@@ -46,7 +46,8 @@ export class EditorComponent implements AfterViewInit{
 				mxEvent.START_EDITING, 
 				mxEvent.CELL_CONNECTED, 
 				mxEvent.EDITING_STOPPED,
-				mxEvent.CELLS_MOVED
+				mxEvent.CELLS_MOVED,
+				mxEvent. CLICK
 			],
 			this._graph,
 			this
@@ -107,8 +108,8 @@ export class EditorComponent implements AfterViewInit{
 								attribute.id,
 								attribute.name,
 								0, 0, 
-								this.nest(diagramElement.dimension.width), 
-								this.nest(diagramElement.dimension.height), 
+								diagramElement.dimension.width, 
+								diagramElement.dimension.height, 
 							)
 						}
 					}
@@ -126,8 +127,8 @@ export class EditorComponent implements AfterViewInit{
 								operator.id,
 								operator.name,
 								0, 0, 
-								this.nest(diagramElement.dimension.width), 
-								this.nest(diagramElement.dimension.height), 
+								diagramElement.dimension.width, 
+								diagramElement.dimension.height, 
 							)
 						}
 					}

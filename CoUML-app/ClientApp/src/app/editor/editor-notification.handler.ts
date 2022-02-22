@@ -9,6 +9,7 @@ import { EditorComponent } from "./editor.component";
 		_listenerCatalog.set(mxEvent.CELL_CONNECTED, cellConnected);
 		_listenerCatalog.set(mxEvent.EDITING_STOPPED, editingStopped);
 		_listenerCatalog.set(mxEvent.CELLS_MOVED, cellsMoved);
+		_listenerCatalog.set(mxEvent.CLICK, click);
 
 	export function addListeners(events: mxEvent[], graph: mxGraph, editorComponent: EditorComponent)
 	{
