@@ -307,30 +307,54 @@ namespace CoUML_app.Controllers.Hubs
 
 
             // class
-            Class c  =  new Class("Hexagon");
-            Models.Attribute a = new Models.Attribute
+            Class c1  =  new Class("Hexagon");
+            Models.Attribute a1 = new Models.Attribute
             {
                 name = "diagonal",
                 visibility = VisibilityType.Private,
                 type = new DataType{ dataType = "double" }
             };
-            c.dimension.y = 300;
-            c.attributes.Insert(a);
+            c1.dimension.y += 300;
+            c1.attributes.Insert(a1);
 
             // c impliments i
-            Relationship r = new Relationship
+            Relationship r1 = new Relationship
             {
                 type = RelationshipType.Realization,
-                sourceComponent = c,
+                sourceComponent = c1,
                 targetComponent = i,
             };
-            c.relations.Insert(r.id);
-            i.relations.Insert(r.id);
+            c1.relations.Insert(r1.id);
+            i.relations.Insert(r1.id);
 
+
+            // class2
+            Class c2  =  new Class("Trangle");
+            Models.Attribute a2 = new Models.Attribute
+            {
+                name = "height",
+                visibility = VisibilityType.Private,
+                type = new DataType{ dataType = "double" }
+            };
+            c2.dimension.y += 300;
+            c2.dimension.x += 300;
+            c2.attributes.Insert(a2);
+
+            // c impliments i
+            Relationship r2 = new Relationship
+            {
+                type = RelationshipType.Realization,
+                sourceComponent = c2,
+                targetComponent = i,
+            };
+            c2.relations.Insert(r2.id);
+            i.relations.Insert(r2.id);
 
             d.elements.Insert(i);
-            d.elements.Insert(c);
-            d.elements.Insert(r); 
+            d.elements.Insert(c1);
+            d.elements.Insert(r1); 
+            d.elements.Insert(c2); 
+            d.elements.Insert(r2); 
 
             return d;
         }

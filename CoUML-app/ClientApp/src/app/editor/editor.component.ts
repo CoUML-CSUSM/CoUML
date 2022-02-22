@@ -34,8 +34,11 @@ export class EditorComponent implements AfterViewInit{
 
 	ngAfterViewInit(): void {
 		this._graph = new mxGraph(this.graphContainer.nativeElement);
+		// this._graph.init(this.graphContainer.nativeElement);
 		EditorFormatHandler.addEdgeStyles(this._graph);
 		EditorFormatHandler.addCellStyles(this._graph);
+		EditorFormatHandler.intiLayoutManager(this._graph);
+
 		EditorNotificationHandler.addListeners(
 			[
 				mxEvent.LABEL_CHANGED,
@@ -103,7 +106,28 @@ export class EditorComponent implements AfterViewInit{
 								component,
 								attribute.id,
 								attribute.name,
-								0, 0, 50, 10
+								0, 0, 
+								this.nest(diagramElement.dimension.width), 
+								this.nest(diagramElement.dimension.height), 
+							)
+						}
+					}
+					if(diagramElement instanceof AbstractClass 
+						|| diagramElement instanceof Class
+						|| diagramElement instanceof Interface)
+					{
+						let operatorIterator: ICollectionIterator<Operation> = diagramElement.operations.iterator();
+
+						while(operatorIterator.hasNext())
+						{
+							let operator  = operatorIterator.getNext();
+							this._graph.insertVertex(
+								component,
+								operator.id,
+								operator.name,
+								0, 0, 
+								this.nest(diagramElement.dimension.width), 
+								this.nest(diagramElement.dimension.height), 
 							)
 						}
 					}
@@ -207,39 +231,46 @@ export class EditorComponent implements AfterViewInit{
 
 	addItemToToolbar(iconPath, style)
 	{
-		var componentPrototype = new mxCell(null, new mxGeometry(0, 0, 60, 40), style);
+		var componentPrototype = new mxCell(null, new mxGeometry(0, 0, 120, 20), style);
 		componentPrototype.setVertex(true);
 	
 		var img = this.dragDrop(componentPrototype, iconPath);
 	}
 
 	dragDrop(prototype, image)
+	{
+		// Function that is executed when the image is dropped on
+		// the graph. The cell argument points to the cell under
+		// the mousepointer if there is one.
+		// floor is used to keep the components to snap to the grid
+		var drop = function(graph, evt, cell, x, y)
 		{
-			// Function that is executed when the image is dropped on
-			// the graph. The cell argument points to the cell under
-			// the mousepointer if there is one.
-			var drop = function(graph, evt, cell, x, y)
-			{
-				graph.stopEditing(false);
+			graph.stopEditing(false);
 
-				var vertex = graph.getModel().cloneCell(prototype);
-				vertex.geometry.x = Math.floor(x / 10) * 10;
-				vertex.geometry.y = Math.floor(y / 10) * 10;
-					
-				graph.addCell(vertex);
-				graph.setSelectionCell(vertex);
-			}
-			
-			// Creates the image which is used as the drag icon (preview)
-			var img = this._toolbar.addMode("Drag", image, function(evt, cell)
-			{
-				var pt = this.graph.getPointForEvent(evt);
-				drop(this._graph, evt, cell, pt.x, pt.y);
-			});
-			
-			mxUtils.makeDraggable(img, this._graph, drop);
-			
-			return img;
+			var vertex = graph.getModel().cloneCell(prototype);
+			vertex.geometry.x = Math.floor(x / 10) * 10; 
+			vertex.geometry.y = Math.floor(y / 10) * 10;
+				
+			graph.addCell(vertex);
+			graph.setSelectionCell(vertex);
 		}
+		
+		// Creates the image which is used as the drag icon (preview)
+		var img = this._toolbar.addMode("Drag", image, function(evt, cell)
+		{
+			var pt = this.graph.getPointForEvent(evt);
+			drop(this._graph, evt, cell, pt.x, pt.y);
+		});
+		
+		mxUtils.makeDraggable(img, this._graph, drop);
+		
+		return img;
+	}
+
+	private nest(size: number): number
+	{
+		// return Math.floor((size * 0.95)/10) * 10;
+		return size;
+	}
 }
 
