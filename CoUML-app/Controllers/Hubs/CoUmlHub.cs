@@ -220,6 +220,13 @@ namespace CoUML_app.Controllers.Hubs
             //push changes out to other clients
             Dispatch(dId, Context.ConnectionId, changes);
 
+            //add mongodb update code
+
+            //mongodb database
+            var dbClient = new MongoClient("mongodb://localhost:27017");
+            //adds document to the database
+            IMongoDatabase db = dbClient.GetDatabase("CoUML");
+
         }
 
         public void Dispatch(string dId, string callerId, string changes)
@@ -243,15 +250,27 @@ namespace CoUML_app.Controllers.Hubs
 
             var collection = db.GetCollection<BsonDocument>("Diagrams");
 
-            var doc = new BsonDocument
-            {
-                {"id", Did},
-                {"diagram", JsonConvert.SerializeObject(testDiagram, Formatting.Indented, new JsonSerializerSettings
-                    {
-                        TypeNameHandling = TypeNameHandling.Auto
-                    })}//string that contains all the info of the diagram
+            //old way of sending the doc as a string
+            // var doc = new BsonDocument
+            // {
+            //     {"id", Did},
+            //     {"diagram", JsonConvert.SerializeObject(testDiagram, Formatting.Indented, new JsonSerializerSettings
+            //         {
+            //             TypeNameHandling = TypeNameHandling.Auto
+            //         })}//string that contains all the info of the diagram
                 
-            };
+            // };
+
+            // collection.InsertOne(doc);
+
+            // var doc = new BsonDocument
+            // {
+            //      JsonConvert.SerializeObject(testDiagram)//string that contains all the info of the diagram
+                
+            // };
+
+            //sends diagram as bson doc using the string of the diagram
+            MongoDB.Bson.BsonDocument doc = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonDocument>(JsonConvert.SerializeObject(testDiagram));
 
             collection.InsertOne(doc);
         }
