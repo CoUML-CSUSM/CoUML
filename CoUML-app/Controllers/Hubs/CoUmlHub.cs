@@ -203,11 +203,13 @@ namespace CoUML_app.Controllers.Hubs
             var diagramText = collection.Find(filter).Project("{_id: 0}").FirstOrDefault().ToString();
             Console.WriteLine(diagramText);//outputs the diagram text
             //^ should change it so this is what gets returned ^
-
+/*
             return JsonConvert.SerializeObject(testDiagram, Formatting.Indented, new JsonSerializerSettings
                     {
                         TypeNameHandling = TypeNameHandling.Auto
                     });
+                    */
+                    return diagramText;
             // return this.OpenSampleFile();
             // return JsonConvert.SerializeObject(testDiagram, Formatting.Indented);
 
