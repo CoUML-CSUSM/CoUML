@@ -1,8 +1,8 @@
 import { AfterViewInit, Component as AngularComponent, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Class, AbstractClass, Diagram, DiagramElement, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, ChangeRecord, ActionType, PropertyType, ICollectionIterator, Enumeration, Dimension } from 'src/models/DiagramModel';
+import { Class, AbstractClass, Diagram, DiagramElement, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, ChangeRecord, ActionType, PropertyType, ICollectionIterator, Enumeration, Dimension, DEFUALT_DIMENSION } from 'src/models/DiagramModel';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 import * as EditorFormatHandler  from './editor-format.handler';
-import * as EditorNotificationHandler  from './editor-notification.handler';
+import * as EditorEventHandler  from './editor-notification.handler';
 
 /**
  * https://github.com/typed-mxgraph/typed-mxgraph
@@ -33,13 +33,14 @@ export class EditorComponent implements AfterViewInit{
 	}
 
 	ngAfterViewInit(): void {
+
+		//init graph div
 		this._graph = new mxGraph(this.graphContainer.nativeElement);
-		// this._graph.init(this.graphContainer.nativeElement);
 		EditorFormatHandler.addEdgeStyles(this._graph);
 		EditorFormatHandler.addCellStyles(this._graph);
 		EditorFormatHandler.intiLayoutManager(this._graph);
 
-		EditorNotificationHandler.addListeners(
+		EditorEventHandler.addListeners(
 			[
 				mxEvent.LABEL_CHANGED,
 				mxEvent.CELLS_ADDED,
@@ -52,9 +53,13 @@ export class EditorComponent implements AfterViewInit{
 			this._graph,
 			this
 		);
+		
+
+		//init toolbar div
         this._toolbar = new mxToolbar(this.toolbarContainer.nativeElement);
 		this.addToolbarItems();
 
+		//get test diagram
 		setTimeout(()=>	this._projectDeveloper.open(this.diagramId), 500);
 	}
 
@@ -222,23 +227,17 @@ export class EditorComponent implements AfterViewInit{
 	addToolbarItems()
 	{
 		let iconCatalog = new Map();
-		iconCatalog.set('editors/images/rectangle.gif', Interface.name);
-		iconCatalog.set('editors/images/ellipse.gif', AbstractClass.name);
-		iconCatalog.set('editors/images/rhombus.gif', Class.name);
-		iconCatalog.set('editors/images/triangle.gif', Enumeration.name);
+		//iconCatalog.set(symbol, prototype);
+		iconCatalog.set('editors/images/rectangle.gif', Interface);
+		iconCatalog.set('editors/images/ellipse.gif', AbstractClass);
+		iconCatalog.set('editors/images/rhombus.gif', Class);
+		iconCatalog.set('editors/images/triangle.gif', Enumeration);
 
-		iconCatalog.forEach((style, path)=>this.addItemToToolbar(path, style));
+		iconCatalog.forEach((prototype, symbol)=>this.dragDrop(prototype, symbol));
 	}
 
-	addItemToToolbar(iconPath, style)
-	{
-		var componentPrototype = new mxCell(null, new mxGeometry(0, 0, 120, 20), style);
-		componentPrototype.setVertex(true);
-	
-		var img = this.dragDrop(componentPrototype, iconPath);
-	}
 
-	dragDrop(prototype, image)
+	dragDrop(prototype, image:  string)
 	{
 		// Function that is executed when the image is dropped on
 		// the graph. The cell argument points to the cell under
@@ -248,12 +247,25 @@ export class EditorComponent implements AfterViewInit{
 		{
 			graph.stopEditing(false);
 
-			var vertex = graph.getModel().cloneCell(prototype);
-			vertex.geometry.x = Math.floor(x / 10) * 10; 
-			vertex.geometry.y = Math.floor(y / 10) * 10;
+			let component = new prototype("untitled"); //creates new compnent object of approrate type
+			component.dimension.x =   Math.floor(x / 10) * 10;
+			component.dimension.y =   Math.floor(y / 10) * 10;
+
+			console.log(component);
+			
+			let vertex = graph.insertVertex(
+				graph.getDefaultParent(),
+				component.id, 
+				component.name, 
+				component.dimension.x, 
+				component.dimension.y, 
+				component.dimension.width, 
+				component.dimension.height,
+				component.constructor.name
+			);
 				
-			graph.addCell(vertex);
 			graph.setSelectionCell(vertex);
+
 		}
 		
 		// Creates the image which is used as the drag icon (preview)
@@ -266,12 +278,6 @@ export class EditorComponent implements AfterViewInit{
 		mxUtils.makeDraggable(img, this._graph, drop);
 		
 		return img;
-	}
-
-	private nest(size: number): number
-	{
-		// return Math.floor((size * 0.95)/10) * 10;
-		return size;
 	}
 }
 

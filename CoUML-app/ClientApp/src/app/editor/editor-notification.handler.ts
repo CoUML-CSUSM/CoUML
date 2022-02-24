@@ -5,6 +5,7 @@ import { EditorComponent } from "./editor.component";
 	const _listenerCatalog: Map<mxEvent, Function> = new Map();
 		_listenerCatalog.set(mxEvent.LABEL_CHANGED, labelChanged);
 		_listenerCatalog.set(mxEvent.CELLS_ADDED, cellsAdded);
+		// _listenerCatalog.set(mxEvent.ADD_CELLS, addCells);
 		_listenerCatalog.set(mxEvent.START_EDITING, startEditing);
 		_listenerCatalog.set(mxEvent.CELL_CONNECTED, cellConnected);
 		_listenerCatalog.set(mxEvent.EDITING_STOPPED, editingStopped);
@@ -164,6 +165,8 @@ import { EditorComponent } from "./editor.component";
 				let affectedCells = eventObject.getProperties();
 				console.log('%c%s', f_alert, "CELLS_ADDED ");
 				console.log(affectedCells);
+
+				
 			});
 	}
 	
@@ -176,6 +179,17 @@ import { EditorComponent } from "./editor.component";
 				console.log(affectedCells);
 			});
 	}
+
+	// function addCells(graph: mxGraph, editorComponent: EditorComponent){
+	// 	//fires when new irem is dragged from the toolbar into the diagram
+	// 	graph.addListener(mxEvent.ADD_CELLS,
+	// 		function(eventSource, eventObject){
+	// 			let affectedCells = eventObject.getProperties();
+	// 			console.log('%c%s', f_alert, "ADD_CELLS");
+	// 			console.log(affectedCells);
+	// 		});
+			
+	// }
 
 	function template(graph: mxGraph, editorComponent: EditorComponent){
 		//listener template

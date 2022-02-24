@@ -330,15 +330,15 @@ namespace CoUML_app.Controllers.Hubs
 
             // class2
             Class c2  =  new Class("Trangle");
-            Models.Attribute a2 = new Models.Attribute
-            {
-                name = "height",
-                visibility = VisibilityType.Private,
-                type = new DataType{ dataType = "double" }
-            };
+            // Models.Attribute a2 = new Models.Attribute
+            // {
+            //     name = "height",
+            //     visibility = VisibilityType.Private,
+            //     type = new DataType{ dataType = "double" }
+            // };
             c2.dimension.y += 300;
             c2.dimension.x += 300;
-            c2.attributes.Insert(a2);
+            // c2.attributes.Insert(a2);
 
             // c impliments i
             Relationship r2 = new Relationship

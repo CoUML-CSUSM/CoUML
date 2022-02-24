@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { AbstractClass, ActionType, ChangeRecord, Class, Dimension, Enumeration, Interface, PropertyType, RelationshipType } from "src/models/DiagramModel";
 
 const DASH_PATTERN: string  = '12 4';
+const MARGIN: number = 5;
 const HEIGHT:number = 30;
 
 export function addCellStyles(graph: mxGraph)
@@ -42,6 +43,11 @@ export function addCellStyles(graph: mxGraph)
 	style['childLayout'] = "stackLayout";
 	style['horizontalStack'] = 0;
 	style['resizeParent'] = 1;
+
+	style['marginLeft'] = MARGIN;
+	style['marginRight'] = MARGIN;
+	style['marginTop'] = MARGIN;
+	style['marginBottom'] = MARGIN;
 
 
 	style[mxConstants.STYLE_STROKECOLOR] = 'red';
