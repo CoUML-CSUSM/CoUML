@@ -224,60 +224,9 @@ export class EditorComponent implements AfterViewInit{
 		);
 	}
 
-	addToolbarItems()
-	{
-		let iconCatalog = new Map();
-		//iconCatalog.set(symbol, prototype);
-		iconCatalog.set('editors/images/rectangle.gif', Interface);
-		iconCatalog.set('editors/images/ellipse.gif', AbstractClass);
-		iconCatalog.set('editors/images/rhombus.gif', Class);
-		iconCatalog.set('editors/images/triangle.gif', Enumeration);
-
-		iconCatalog.forEach((prototype, symbol)=>this.dragDrop(prototype, symbol));
-	}
 
 
-	dragDrop(prototype, image:  string)
-	{
-		// Function that is executed when the image is dropped on
-		// the graph. The cell argument points to the cell under
-		// the mousepointer if there is one.
-		// floor is used to keep the components to snap to the grid
-		var drop = function(graph, evt, cell, x, y)
-		{
-			graph.stopEditing(false);
 
-			let component = new prototype("untitled"); //creates new compnent object of approrate type
-			component.dimension.x =   Math.floor(x / 10) * 10;
-			component.dimension.y =   Math.floor(y / 10) * 10;
 
-			console.log(component);
-			
-			let vertex = graph.insertVertex(
-				graph.getDefaultParent(),
-				component.id, 
-				component.name, 
-				component.dimension.x, 
-				component.dimension.y, 
-				component.dimension.width, 
-				component.dimension.height,
-				component.constructor.name
-			);
-				
-			graph.setSelectionCell(vertex);
-
-		}
-		
-		// Creates the image which is used as the drag icon (preview)
-		var img = this._toolbar.addMode("Drag", image, function(evt, cell)
-		{
-			var pt = this.graph.getPointForEvent(evt);
-			drop(this._graph, evt, cell, pt.x, pt.y);
-		});
-		
-		mxUtils.makeDraggable(img, this._graph, drop);
-		
-		return img;
-	}
 }
 

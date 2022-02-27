@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { ActionType, ChangeRecord, Dimension, PropertyType } from "src/models/DiagramModel";
+import { AbstractClass, ActionType, ChangeRecord, Class, Dimension, Enumeration, Interface, PropertyType } from "src/models/DiagramModel";
 import { EditorComponent } from "./editor.component";
 
 	const _listenerCatalog: Map<mxEvent, Function> = new Map();
@@ -17,6 +17,64 @@ import { EditorComponent } from "./editor.component";
 		events.forEach(event =>{
 			_listenerCatalog.get(event).call(null, graph, editorComponent)
 		});
+	}
+
+	const _itemCatalog: Map<any, string > = new Map();
+	//iconCatalog.set(symbol, prototype);
+	_itemCatalog.set( Interface, 'editors/images/rectangle.gif', );
+	_itemCatalog.set( AbstractClass, 'editors/images/ellipse.gif');
+	_itemCatalog.set( Class, 'editors/images/rhombus.gif');
+	_itemCatalog.set( Enumeration, 'editors/images/triangle.gif');
+
+	export function addToolbarItems(items: any[], editorComponent: EditorComponent)
+	{
+
+		items.forEach( item =>{
+			_itemCatalog.get(item)=>dragDrop(itme, symbol));
+		});
+			
+	}
+	function dragDrop(prototype, image:  string, editorComponent: EditorComponent)
+	{
+		// Function that is executed when the image is dropped on
+		// the graph. The cell argument points to the cell under
+		// the mousepointer if there is one.
+		// floor is used to keep the components to snap to the grid
+		var drop = function(graph, evt, cell, x, y)
+		{
+			graph.stopEditing(false);
+
+			let component = new prototype("untitled"); //creates new compnent object of approrate type
+			component.dimension.x =   Math.floor(x / 10) * 10;
+			component.dimension.y =   Math.floor(y / 10) * 10;
+
+			console.log(component);
+			
+			let vertex = graph.insertVertex(
+				graph.getDefaultParent(),
+				component.id, 
+				component.name, 
+				component.dimension.x, 
+				component.dimension.y, 
+				component.dimension.width, 
+				component.dimension.height,
+				component.constructor.name
+			);
+				
+			graph.setSelectionCell(vertex);
+
+		}
+		
+		// Creates the image which is used as the drag icon (preview)
+		var img = this._toolbar.addMode("Drag", image, function(evt, cell)
+		{
+			var pt = this.graph.getPointForEvent(evt);
+			drop(this._graph, evt, cell, pt.x, pt.y);
+		});
+		
+		mxUtils.makeDraggable(img, this._graph, drop);
+		
+		return img;
 	}
 
 	function labelChanged(graph: mxGraph, editorComponent: EditorComponent){
