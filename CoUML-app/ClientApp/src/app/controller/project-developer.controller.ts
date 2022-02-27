@@ -46,22 +46,27 @@ export class ProjectDeveloper{
 		console.log(changes);
 		for(let change of changes)
 		{
-			this.applyChange(change);
-			this._diagramEditor.processChange(change);
+			setTimeout(()=>{
+
+				this.applyChange(change);
+				this._diagramEditor.processChange(change);
+			}, 100)
 		}
 		console.log("-------------- Done! ---------------");
 		console.log(this._projectDiagram);
 
 	}
 
-	private applyChange(change: ChangeRecord)
+	private applyChange(change: ChangeRecord, remote: boolean = true )
 	{
 		console.log("applyChange");
 		console.log(change);
 
 		let action = ActionType[change.action].toLowerCase();
 		let affectedProperty = PropertyType[change.affectedProperty].toLowerCase();
-		change.value = Assembler.assembleDiagramElement(change.value);
+		if(remote)
+			change.value = Assembler.assembleDiagramElement(change.value);
+			
 		let operation = "";
 
 		let affectedComponent: IGettable = this._projectDiagram.elements;
@@ -93,7 +98,7 @@ export class ProjectDeveloper{
 
 	stageChange(change: ChangeRecord) {
 		// apply change locally
-		this.applyChange(change);
+		this.applyChange(change, false);
 		this._changes.push(change);
 
 		//apply globally

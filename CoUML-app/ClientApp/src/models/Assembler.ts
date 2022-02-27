@@ -49,7 +49,7 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 				break;
 		}
 		console.log("New Component created");
-		console.log(elem)
+		console.log(element)
 		
 		return element;
 	}
@@ -169,11 +169,13 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 	 */
 	function getType(element)
 	{
-		console.log("getType")
+		console.log("----- getType")
+		console.log(element)
 		try{
 			console.log(element["$type"]);
 			let regex = /(\w*?),*?(?=,)/g;
 			let type = regex.exec(element["$type"])[0];
+			console.log(`returning "${type}"-----`);
 			return type;
 		}catch(any){
 			console.log("no $type");

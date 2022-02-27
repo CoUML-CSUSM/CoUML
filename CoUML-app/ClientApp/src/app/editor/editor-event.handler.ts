@@ -30,10 +30,11 @@ import { EditorComponent } from "./editor.component";
 	{
 
 		items.forEach( item =>{
-			_itemCatalog.get(item)=>dragDrop(itme, symbol));
+			dragDrop(item, _itemCatalog.get(item), editorComponent);
 		});
 			
 	}
+	
 	function dragDrop(prototype, image:  string, editorComponent: EditorComponent)
 	{
 		// Function that is executed when the image is dropped on
@@ -63,16 +64,23 @@ import { EditorComponent } from "./editor.component";
 				
 			graph.setSelectionCell(vertex);
 
+			editorComponent.stageChange(new ChangeRecord(
+				null,
+				PropertyType.Elements,
+				ActionType.Insert,
+				component
+			));
+
 		}
 		
 		// Creates the image which is used as the drag icon (preview)
-		var img = this._toolbar.addMode("Drag", image, function(evt, cell)
+		var img = editorComponent.toolbar.addMode("Drag", image, function(evt, cell)
 		{
-			var pt = this.graph.getPointForEvent(evt);
-			drop(this._graph, evt, cell, pt.x, pt.y);
+			var pt = editorComponent.graph.getPointForEvent(evt, true);
+			drop(editorComponent.graph, evt, cell, pt.x, pt.y);
 		});
 		
-		mxUtils.makeDraggable(img, this._graph, drop);
+		mxUtils.makeDraggable(img, editorComponent.graph, drop);
 		
 		return img;
 	}

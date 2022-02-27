@@ -2,7 +2,7 @@ import { AfterViewInit, Component as AngularComponent, ElementRef, OnInit, ViewC
 import { Class, AbstractClass, Diagram, DiagramElement, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, ChangeRecord, ActionType, PropertyType, ICollectionIterator, Enumeration, Dimension, DEFUALT_DIMENSION } from 'src/models/DiagramModel';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 import * as EditorFormatHandler  from './editor-format.handler';
-import * as EditorEventHandler  from './editor-notification.handler';
+import * as EditorEventHandler  from './editor-event.handler';
 
 /**
  * https://github.com/typed-mxgraph/typed-mxgraph
@@ -25,6 +25,9 @@ export class EditorComponent implements AfterViewInit{
 	public toolbarContainer: ElementRef<HTMLElement>;
 
     private _toolbar: mxToolbar;
+
+	get toolbar(){ return this._toolbar;}
+	get graph(){return this._graph;}
 
 	constructor(
 		private _projectDeveloper: ProjectDeveloper
@@ -57,7 +60,10 @@ export class EditorComponent implements AfterViewInit{
 
 		//init toolbar div
         this._toolbar = new mxToolbar(this.toolbarContainer.nativeElement);
-		this.addToolbarItems();
+		EditorEventHandler.addToolbarItems(
+			[Class, AbstractClass, Interface, Enumeration],
+			this
+		);
 
 		//get test diagram
 		setTimeout(()=>	this._projectDeveloper.open(this.diagramId), 500);
@@ -77,7 +83,6 @@ export class EditorComponent implements AfterViewInit{
 		this._graph.eventsEnabled = false;
 		this._graph.getModel().beginUpdate();
 		try {
-			const parent = this._graph.getDefaultParent();
 
 			let elementIterator: ICollectionIterator<DiagramElement> 
 				= this._projectDeveloper._projectDiagram.elements.iterator();
@@ -90,54 +95,7 @@ export class EditorComponent implements AfterViewInit{
 				let diagramElement = elementIterator.getNext();
 
 				if(diagramElement instanceof Component){
-					let component = this._graph.insertVertex(
-						parent,
-						diagramElement.id, 
-						diagramElement.name, 
-						diagramElement.dimension.x, 
-						diagramElement.dimension.y, 
-						diagramElement.dimension.width, 
-						diagramElement.dimension.height,
-						diagramElement.constructor.name
-					);
-					
-					if(diagramElement instanceof AbstractClass || diagramElement instanceof Class)
-					{
-						let attributeIterator: ICollectionIterator<Attribute> = diagramElement.attributes.iterator();
-
-						while(attributeIterator.hasNext())
-						{
-							let attribute  = attributeIterator.getNext();
-							this._graph.insertVertex(
-								component,
-								attribute.id,
-								attribute.name,
-								0, 0, 
-								diagramElement.dimension.width, 
-								diagramElement.dimension.height, 
-							)
-						}
-					}
-					if(diagramElement instanceof AbstractClass 
-						|| diagramElement instanceof Class
-						|| diagramElement instanceof Interface)
-					{
-						let operatorIterator: ICollectionIterator<Operation> = diagramElement.operations.iterator();
-
-						while(operatorIterator.hasNext())
-						{
-							let operator  = operatorIterator.getNext();
-							this._graph.insertVertex(
-								component,
-								operator.id,
-								operator.name,
-								0, 0, 
-								diagramElement.dimension.width, 
-								diagramElement.dimension.height, 
-							)
-						}
-					}
-
+					this.insertCell(diagramElement)
 				}
 				else if( diagramElement instanceof Relationship){
 						relatioships.push(diagramElement)
@@ -148,7 +106,7 @@ export class EditorComponent implements AfterViewInit{
 			{
 				// TODO : figure out how to insert an edge that has no source or target 
 				this._graph.insertEdge(
-					parent, 
+					this._graph.getDefaultParent(), 
 					relation.id, 
 					relation.attributes.toString(), 
 					this._graph.getModel().getCell(relation.source), 
@@ -159,14 +117,74 @@ export class EditorComponent implements AfterViewInit{
 					
 		} finally {
 			this._graph.getModel().endUpdate();
-
-			// turn notifications back on
 			this._graph.eventsEnabled = true;
 		}
 	}
 	
+	private insertCell(component: Component) {
+
+
+		console.log("this._graph.insertVertex");
+
+
+		let graphComponent = this._graph.insertVertex(
+			this._graph.getDefaultParent(),
+			component.id, 
+			component.name, 
+			component.dimension.x, 
+			component.dimension.y, 
+			component.dimension.width, 
+			component.dimension.height,
+			component.constructor.name
+		);
+		
+		if(component instanceof AbstractClass || component instanceof Class)
+		{
+			let attributeIterator: ICollectionIterator<Attribute> = component.attributes.iterator();
+
+			while(attributeIterator.hasNext())
+			{
+				let attribute  = attributeIterator.getNext();
+				this._graph.insertVertex(
+					graphComponent,
+					attribute.id,
+					attribute.name,
+					0, 0, 
+					component.dimension.width, 
+					component.dimension.height, 
+				)
+			}
+		}
+		if(component instanceof AbstractClass 
+			|| component instanceof Class
+			|| component instanceof Interface)
+		{
+			let operatorIterator: ICollectionIterator<Operation> = component.operations.iterator();
+
+			while(operatorIterator.hasNext())
+			{
+				let operator  = operatorIterator.getNext();
+				this._graph.insertVertex(
+					graphComponent,
+					operator.id,
+					operator.name,
+					0, 0, 
+					component.dimension.width, 
+					component.dimension.height, 
+				)
+			}
+		}
+	}
+
+
 	public processChange(change: ChangeRecord){
-		let affectedCell = this._graph.getModel().getCell(change.id[0]);
+		let affectedCell = change.id? this._graph.getModel().getCell(change.id.pop()): null;
+		
+		console.log("processChange");
+		console.log(change)
+		console.log("affected cell")
+		console.log(affectedCell)
+
 		switch(change.action){
 			case ActionType.Change:
 				switch(change.affectedProperty){
@@ -180,8 +198,16 @@ export class EditorComponent implements AfterViewInit{
 			case ActionType.Shift:
 				this.updateCellGeometry(affectedCell, change);
 				break;
+			
+			case ActionType.Insert:
+				switch(change.affectedProperty){
+					case PropertyType.Elements:
+						this.insertCell(change.value as Component);
+				}
+				break;
 		}
 	}
+
 	private updateCellGeometry(affectedCell: mxCell, change: ChangeRecord) {
 		let newCellGeometry = this._graph.getCellGeometry(affectedCell).clone();
 		newCellGeometry.x = change.value.x;
