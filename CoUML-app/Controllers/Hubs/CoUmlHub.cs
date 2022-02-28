@@ -286,6 +286,16 @@ namespace CoUML_app.Controllers.Hubs
             return File.ReadAllText(path);
 
         }
+
+        public void Send(string Did, String Diagram){
+            var dbClient = new MongoClient("mongodb://localhost:27017");
+            IMongoDatabase db = dbClient.GetDatabase("CoUML");
+            var collection = db.GetCollection<BsonDocument>("Diagrams");
+
+            var filter = Builders<BsonDocument>.Filter.Eq("id", Did);
+            var doc = BsonDocument.Parse(Diagram);
+            collection.ReplaceOne(filter, doc);
+        }
     }
 
     static class DevUtility{

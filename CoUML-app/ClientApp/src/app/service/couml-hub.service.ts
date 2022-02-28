@@ -4,6 +4,7 @@ import { ProjectDeveloper } from '../controller/project-developer.controller';
 import { ProjectManager } from '../controller/project-manager.controller';
 import { environment } from '../../environments/environment';
 import { ChangeRecord } from 'src/models/ChangeRecord';
+import { Diagram } from 'src/models/Diagram';
 
 
 @Injectable()
@@ -97,6 +98,12 @@ export class CoUmlHubService{
 	public generate(Did:string)
 	{
 		this._coUmlHubConnection.invoke("Generate",Did);
+	}
+
+	//sends document text over to c#
+	public send(Did:string, projectDiagram: Diagram){
+		let changeDiagram = JSON.stringify(projectDiagram)
+		this._coUmlHubConnection.invoke("Send",Did,changeDiagram);
 	}
 
 }
