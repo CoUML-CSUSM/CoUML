@@ -72,7 +72,9 @@ export class EditorComponent implements AfterViewInit{
 				mxEvent.CELL_CONNECTED, 
 				mxEvent.EDITING_STOPPED,
 				mxEvent.CELLS_MOVED,
-				mxEvent.CLICK
+				mxEvent.CLICK,
+				mxEvent.CONNECT,
+				mxEvent.START,
 			],
 			this._graph,
 			this

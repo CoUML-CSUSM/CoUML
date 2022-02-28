@@ -11,7 +11,8 @@ import { EditorComponent } from "./editor.component";
 		_listenerCatalog.set(mxEvent.EDITING_STOPPED, editingStopped);
 		_listenerCatalog.set(mxEvent.CELLS_MOVED, cellsMoved);
 		_listenerCatalog.set(mxEvent.CLICK, click);
-		// _listenerCatalog.set(mxEvent.SELECT, click);
+		_listenerCatalog.set(mxEvent.CONNECT, connect);
+		_listenerCatalog.set(mxEvent.START, start);
 
 	export function addListeners(events: mxEvent[], graph: mxGraph, editorComponent: EditorComponent)
 	{
@@ -61,8 +62,7 @@ import { EditorComponent } from "./editor.component";
 				component.dimension.width, 
 				component.dimension.height,
 				component.constructor.name
-			);
-				
+			);				
 			graph.setSelectionCell(vertex);
 
 			editorComponent.stageChange(new ChangeRecord(
@@ -147,53 +147,51 @@ import { EditorComponent } from "./editor.component";
 			//event when  edge is connected or disconeccted from a cell
 			function(eventSource, eventObject){
 				let affectedEdge = eventObject.getProperties();
+				
+				
 				console.log('%c%s', f_alert, "CELL_CONNECTED");
-
 				console.log(affectedEdge);
 				console.log(`edge: ${affectedEdge.edge.id}`);
 				console.log(`source(from): ${affectedEdge.edge.source?.id}`);
 				console.log(`target(to): ${affectedEdge.edge.target?.id}`);
 
-				//disconnect action --> previous
-				//connect action --> terminal
-				let isConnectioning = affectedEdge.terminal? true: false;
-				let isDisconnectioning = affectedEdge.previous? true: false;
-				let isMovingTerminal = !affectedEdge.terminal && !affectedEdge.previous
+				if( valid(affectedEdge.edge.id)){
+					//disconnect action --> previous
+					//connect action --> terminal
+					let isConnectioning = affectedEdge.terminal? true: false;
+					let isDisconnectioning = affectedEdge.previous? true: false;
+					let isMovingTerminal = !affectedEdge.terminal && !affectedEdge.previous
 
-				let affectedCellId = isConnectioning? affectedEdge.terminal?.id: affectedEdge.previous?.id ; 	// the id of the (dis)connecting component
-				let affecedProperty = affectedEdge.source? PropertyType.Source: PropertyType.Target;			// is this component the target or the source?
-				let value = isConnectioning? affectedCellId: null;												// id if connecting, null if disconnecting
+					let affectedCellId = isConnectioning? affectedEdge.terminal?.id: affectedEdge.previous?.id ; 	// the id of the (dis)connecting component
+					let affecedProperty = affectedEdge.source? PropertyType.Source: PropertyType.Target;			// is this component the target or the source?
+					let value = isConnectioning? affectedCellId: null;												// id if connecting, null if disconnecting
 
-				// relation - connect | dissconnect
-				// sets the source|target to componentId if connect and null if disconnect
-				if(isConnectioning || isDisconnectioning)
-				{
-					editorComponent.stageChange(
-						new ChangeRecord(
-							[affectedEdge.edge.id],
-							affecedProperty,
-							ActionType.Change,
-							value
-						)
-					);
+					// relation - connect | dissconnect
+					// sets the source|target to componentId if connect and null if disconnect
+					if(isConnectioning || isDisconnectioning)
+					{
+						editorComponent.stageChange(
+							new ChangeRecord(
+								[affectedEdge.edge.id],
+								affecedProperty,
+								ActionType.Change,
+								value
+							) );
 
-					//component update relation
-					editorComponent.stageChange(
-						new ChangeRecord(
-							[affectedCellId],
-							PropertyType.Relations,
-							isConnectioning? ActionType.Insert: ActionType.Remove,
-							affectedEdge.edge.id
-						)
-					);
+						//component update relation
+						editorComponent.stageChange(
+							new ChangeRecord(
+								[affectedCellId],
+								PropertyType.Relations,
+								isConnectioning? ActionType.Insert: ActionType.Remove,
+								affectedEdge.edge.id
+							) );
+					}
 
-				}
-
-				// move edge point if disconnected
-				// set the location of the disconected end
-				if(isDisconnectioning || isMovingTerminal)
-					editorComponent.stageChange(
-						new ChangeRecord(
+					// move edge point if disconnected
+					// set the location of the disconected end
+					if(isDisconnectioning || isMovingTerminal)
+						editorComponent.stageChange( new ChangeRecord(
 							[affectedEdge.edge.id],
 							PropertyType.Dimension,
 							ActionType.Change,
@@ -208,11 +206,15 @@ import { EditorComponent } from "./editor.component";
 									affectedEdge.edge.geometry.targetPoint?.x,
 									affectedEdge.edge.geometry.targetPoint?.y
 								)
-						)
-					);
-			});
+						) );
+				}
+		});
 			
-		}
+	}
+	function valid(id: string):boolean{ 
+		//TODO: better way to validate id
+		return id.length > 5 ;
+	}
 
 	function startEditing(graph: mxGraph, editorComponent: EditorComponent){
 		graph.addListener(mxEvent.START_EDITING, 
@@ -220,6 +222,18 @@ import { EditorComponent } from "./editor.component";
 			function(eventSource, eventObject){
 				let affectedCells = eventObject.getProperties();
 				console.log('%c%s', f_alert, "START_EDITING");
+
+				console.log(affectedCells.cell.id);
+			});
+
+	}
+
+	function start(graph: mxGraph, editorComponent: EditorComponent){
+		graph.addListener(mxEvent.START, 
+			// When double click on cell to change label
+			function(eventSource, eventObject){
+				let affectedCells = eventObject.getProperties();
+				console.log('%c%s', f_alert, "START");
 
 				console.log(affectedCells.cell.id);
 			});
@@ -233,6 +247,8 @@ import { EditorComponent } from "./editor.component";
 				console.log('%c%s', f_alert, "CELLS_ADDED ");
 				console.log(affectedCells);
 
+				//if cell is new edge
+				// if(affectedCells)
 				
 			});
 	}
@@ -266,6 +282,19 @@ import { EditorComponent } from "./editor.component";
 	// 		});
 			
 	// }
+
+	function connect(graph: mxGraph, editorComponent: EditorComponent){
+		//listener for new connections
+		graph.connectionHandler.addListener(mxEvent.CONNECT, 
+			// NADA
+			function(eventSource, eventObject){
+				let affectedCells = eventObject.getProperties();
+				console.log('%c%s', f_alert, "connectionHandler.CONNECT");
+				console.log(affectedCells);
+			});
+	}
+
+
 
 	function template(graph: mxGraph, editorComponent: EditorComponent){
 		//listener template
