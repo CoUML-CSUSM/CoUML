@@ -11,6 +11,7 @@ import { EditorComponent } from "./editor.component";
 		_listenerCatalog.set(mxEvent.EDITING_STOPPED, editingStopped);
 		_listenerCatalog.set(mxEvent.CELLS_MOVED, cellsMoved);
 		_listenerCatalog.set(mxEvent.CLICK, click);
+		// _listenerCatalog.set(mxEvent.SELECT, click);
 
 	export function addListeners(events: mxEvent[], graph: mxGraph, editorComponent: EditorComponent)
 	{
@@ -240,11 +241,20 @@ import { EditorComponent } from "./editor.component";
 		graph.addListener(mxEvent.CLICK, 
 			// click on object to see its makup.
 			function(eventSource, eventObject){
-				let affectedCells = eventObject.getProperties();
+				let affectedCells = eventObject.getProperties().cell;
 				console.log('%c%s',f_alert, "mxCell description");
 				console.log(affectedCells);
+
+				if(graph.isCellLocked(affectedCells))
+					affectedCells = undefined;
+				if(affectedCells == undefined )
+					graph.clearSelection();
+				
+				editorComponent.releaseLock(affectedCells);
 			});
 	}
+
+
 
 	// function addCells(graph: mxGraph, editorComponent: EditorComponent){
 	// 	//fires when new irem is dragged from the toolbar into the diagram

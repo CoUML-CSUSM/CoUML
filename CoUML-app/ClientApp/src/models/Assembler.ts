@@ -43,6 +43,15 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 				case Attribute.name:
 				element = assembleAttribute(elem);
 				break;
+			case "User":
+				case User.name:
+					element = assembleUser(elem)
+				break;
+
+			case "NullUser":
+				case NullUser.name:
+					element = new NullUser();
+				break;
 			default:
 				console.log("Component is not an object");
 				element = elem;

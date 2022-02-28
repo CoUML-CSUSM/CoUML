@@ -1,5 +1,5 @@
 import { AfterViewInit, Component as AngularComponent, ElementRef, OnInit, ViewChild, HostListener } from '@angular/core';
-import { Class, AbstractClass, Diagram, DiagramElement, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, ChangeRecord, ActionType, PropertyType, ICollectionIterator, Enumeration, Dimension, DEFUALT_DIMENSION } from 'src/models/DiagramModel';
+import { Class, AbstractClass, Diagram, DiagramElement, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, ChangeRecord, ActionType, PropertyType, ICollectionIterator, Enumeration, Dimension, DEFUALT_DIMENSION, NullUser } from 'src/models/DiagramModel';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 import * as EditorFormatHandler  from './editor-format.handler';
 import * as EditorEventHandler  from './editor-event.handler';
@@ -17,6 +17,8 @@ export class EditorComponent implements AfterViewInit{
 	private _graph: mxGraph;
 	diagram_description: string;
 	diagramId: string;
+
+	_currentSelection: mxCell = null;
 
 	@ViewChild('graphContainer', { read: ElementRef, static: true })
 	public graphContainer: ElementRef<HTMLElement>;
@@ -70,7 +72,7 @@ export class EditorComponent implements AfterViewInit{
 				mxEvent.CELL_CONNECTED, 
 				mxEvent.EDITING_STOPPED,
 				mxEvent.CELLS_MOVED,
-				mxEvent. CLICK
+				mxEvent.CLICK
 			],
 			this._graph,
 			this
@@ -100,6 +102,14 @@ export class EditorComponent implements AfterViewInit{
 	public draw() {
 		//turn off notifications before drawing new graph 
 		this._graph.eventsEnabled = false;
+		this._graph.setConnectable(true);
+
+		this._graph.isCellLocked = function(cell)
+		{
+			return this.getCellStyle(cell)['selectable'] == false;
+		}
+
+		// this._graph.iscellS
 		this._graph.getModel().beginUpdate();
 		try {
 
@@ -219,6 +229,11 @@ export class EditorComponent implements AfterViewInit{
 						this.insertCell(change.value as Component);
 				}
 				break;
+			case ActionType.Lock:
+			case ActionType.Release:
+				let isSelectable = (change.value instanceof NullUser || change.value.id == this._projectDeveloper._editor.id);
+				this._graph.toggleCellStyle('selectable', isSelectable, affectedCell);
+				break;
 		}
 	}
 
@@ -262,6 +277,36 @@ export class EditorComponent implements AfterViewInit{
 			affectedCell,
 			change.value
 		);
+	}
+
+	releaseLock(newSelection: mxCell)
+	{
+		console.log("-----releaseLock----")
+		console.log(newSelection);
+		// if should release
+		if(this._currentSelection != null) // something is currently locked
+		{
+
+			this.stageChange(new ChangeRecord(
+				[this._currentSelection.id],
+				PropertyType.Editor,
+				ActionType.Release,
+				new NullUser()
+			));
+			this._currentSelection = null;
+		}
+		if(newSelection){
+			if (newSelection.style == undefined)
+				newSelection = newSelection.parent // if attribute lock parent comp
+			this._currentSelection = newSelection;
+			this.stageChange(new ChangeRecord(
+				[this._currentSelection.id],
+				PropertyType.Editor,
+				ActionType.Lock,
+				this._projectDeveloper._editor
+			));
+
+		}
 	}
 
 

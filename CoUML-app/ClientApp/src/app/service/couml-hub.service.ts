@@ -3,7 +3,7 @@ import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 import { ProjectManager } from '../controller/project-manager.controller';
 import { environment } from '../../environments/environment';
-import { ChangeRecord } from 'src/models/ChangeRecord';
+import { Assembler, ChangeRecord, User } from 'src/models/DiagramModel';
 
 
 @Injectable()
@@ -30,6 +30,8 @@ export class CoUmlHubService{
 	{
 		if(!this._projectDeveloper)
 			this._projectDeveloper = projectDeveloper;
+			this._projectDeveloper.setEditor(new User(this._coUmlHubConnection.connectionId));
+			
 	}
 
 	private startConnection()
@@ -42,8 +44,8 @@ export class CoUmlHubService{
 				.catch((err) => console.log(CoUmlHubService.name,"startConnection",'Error while starting connection: ' + err));
 
 		// listen for *test*
-		this._coUmlHubConnection.on("testInterfaceMethod", (response: string)=>{
-			console.log(`testing responce: ${response}`);
+		this._coUmlHubConnection.on("issueUser", (userId: string)=>{
+			console.log(`New User ID issued ${userId}`);
 		});
 
 		// listen for changes
@@ -82,8 +84,13 @@ export class CoUmlHubService{
 	 */
 	public dispatch(changes: ChangeRecord[])
 	{
-		if(this._projectDeveloper)
+		if(this._projectDeveloper){
+			changes.forEach((change)=>{
+				change.value = Assembler.assembleDiagramElement(change.value);
+			});
 			this._projectDeveloper.applyChanges(changes);
+
+		}
 	}
 
 

@@ -7,27 +7,6 @@ const HEIGHT:number = 30;
 
 export function addCellStyles(graph: mxGraph)
 {
-	/**
-	 swimlane;
-	 fontStyle=1;
-	 align=center;
-	 verticalAlign=middle;
-	 childLayout=stackLayout;
-	 horizontal=1;
-	 startSize=30;
-	 horizontalStack=0;
-	 resizeParent=1;
-	 resizeParentMax=0;
-	 resizeLast=0;
-	 collapsible=1;
-	 marginBottom=0;
-	 fontFamily=Roboto Mono;
-	 fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DRoboto%2BMono;
-	 fillColor=default;
-	 strokeColor=default;
-	 fontColor=default;
-	 */
-
 	// mxConstants.ENTITY_SEGMENT = 20;
 	graph.border = 50;
 
@@ -48,6 +27,7 @@ export function addCellStyles(graph: mxGraph)
 	style['marginRight'] = MARGIN;
 	style['marginTop'] = MARGIN;
 	style['marginBottom'] = MARGIN;
+	style['selectable'] = true;
 
 
 	style[mxConstants.STYLE_STROKECOLOR] = 'red';

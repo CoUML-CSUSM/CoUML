@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CoUmlHubService } from "../service/couml-hub.service";
-import { Diagram, Assembler, ChangeRecord, ActionType, PropertyType, Component, Class, AbstractClass, Interface, Enumeration, IGettable } from 'src/models/DiagramModel';
+import { Diagram, Assembler, ChangeRecord, ActionType, PropertyType, Component, Class, AbstractClass, Interface, Enumeration, IGettable, IUser } from 'src/models/DiagramModel';
 import { EditorComponent } from '../editor/editor.component';
 
 
@@ -9,9 +9,8 @@ export class ProjectDeveloper{
 
 	_projectDiagram: Diagram = null;
 
-	__parentId =  "0b68a108-f685-4e44-9e6e-a325d8d439f3"; // for testing only!!!!
-
 	_diagramEditor: EditorComponent = null;
+	_editor: IUser
 
 	_changes: ChangeRecord[] = [];
 
@@ -19,6 +18,12 @@ export class ProjectDeveloper{
 
 	subscribe(diagramEditor: EditorComponent) {
 		this._diagramEditor = diagramEditor;
+	}
+
+	setEditor(user: IUser) {
+		this._editor = user;
+		console.log("editor set to");
+		console.log(this._editor);
 	}
 
 	public open( id: string )
@@ -57,15 +62,13 @@ export class ProjectDeveloper{
 
 	}
 
-	private applyChange(change: ChangeRecord, remote: boolean = true )
+	private applyChange(change: ChangeRecord)
 	{
 		console.log("applyChange");
 		console.log(change);
 
 		let action = ActionType[change.action].toLowerCase();
 		let affectedProperty = PropertyType[change.affectedProperty].toLowerCase();
-		if(remote)
-			change.value = Assembler.assembleDiagramElement(change.value);
 			
 		let operation = "";
 
@@ -98,7 +101,7 @@ export class ProjectDeveloper{
 
 	stageChange(change: ChangeRecord) {
 		// apply change locally
-		this.applyChange(change, false);
+		this.applyChange(change);
 		this._changes.push(change);
 
 		//apply globally

@@ -29,7 +29,7 @@ namespace CoUML_app.Controllers.Hubs
     /// functions that can be run on the client from the server
     /// </summary>
     public interface ICoUmlClient{
-        Task testInterfaceMethod(string message);
+        Task issueUser(string message);
         Task Dispatch(string changes);
     }
 
@@ -144,7 +144,7 @@ namespace CoUML_app.Controllers.Hubs
             IUser name = new User(connectionId);
             _connections.Add(connectionId, name);
 
-            TestCall(connectionId);
+            IssueUser(connectionId);
 
             return base.OnConnectedAsync();
         }
@@ -167,9 +167,9 @@ namespace CoUML_app.Controllers.Hubs
         /// test server to client communication
         /// </summary>
         /// <param name="connectionId">connectionId of client being called</param>
-        public void TestCall(string connectionId)
+        public void IssueUser(string connectionId)
         {
-            Clients.Client(connectionId).testInterfaceMethod(connectionId + ": this is the test message :D");
+            Clients.Client(connectionId).issueUser(connectionId);
         }
 
 
