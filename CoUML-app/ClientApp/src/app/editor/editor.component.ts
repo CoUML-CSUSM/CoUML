@@ -1,4 +1,4 @@
-import { AfterViewInit, Component as AngularComponent, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component as AngularComponent, ElementRef, OnInit, ViewChild, HostListener } from '@angular/core';
 import { Class, AbstractClass, Diagram, DiagramElement, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, ChangeRecord, ActionType, PropertyType, ICollectionIterator, Enumeration, Dimension, DEFUALT_DIMENSION } from 'src/models/DiagramModel';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 import * as EditorFormatHandler  from './editor-format.handler';
@@ -33,7 +33,26 @@ export class EditorComponent implements AfterViewInit{
 		private _projectDeveloper: ProjectDeveloper
 	) {
 		this._projectDeveloper.subscribe(this);
+		this.onResize();
 	}
+
+
+
+	/** frame controls */
+
+	canvasHeight: number;
+    canvasWidth: number;
+
+	toolbarWidth: number = 200;
+	
+	@HostListener('window:resize', ['$event'])
+	onResize(event?) {
+	this.canvasHeight = window.innerHeight;
+	this.canvasWidth = window.innerWidth - this.toolbarWidth;
+	}
+	/*************************** */
+
+
 
 	ngAfterViewInit(): void {
 
@@ -179,11 +198,6 @@ export class EditorComponent implements AfterViewInit{
 
 	public processChange(change: ChangeRecord){
 		let affectedCell = change.id? this._graph.getModel().getCell(change.id.pop()): null;
-		
-		console.log("processChange");
-		console.log(change)
-		console.log("affected cell")
-		console.log(affectedCell)
 
 		switch(change.action){
 			case ActionType.Change:

@@ -1,12 +1,17 @@
 
 
-  <div class="absolute">
+  <div class="absolute" 
+    [style.marginLeft.px]="toolbarWidth"
+    [style.width.px]="canvasWidth"
+    [style.height.px]="canvasHeight"
+    >
     <div #graphContainer 
-    class="w-screen h-screen overflow-scroll"
-    style=" background:url('editors/images/grid.gif');" > </div>
+    class="overflow-scroll"
+    style=" background:url('editors/images/grid.gif'); height: -webkit-fill-available;" 
+    > </div>
   </div>
 
-  <div class="absolute">
+  <div class="absolute" [style.width.px]="toolbarWidth">
     <div #toolbarContainer class="card h-screen"> </div>
   </div>
 

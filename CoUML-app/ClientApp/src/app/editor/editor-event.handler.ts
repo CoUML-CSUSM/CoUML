@@ -20,11 +20,11 @@ import { EditorComponent } from "./editor.component";
 	}
 
 	const _itemCatalog: Map<any, string > = new Map();
-	//iconCatalog.set(symbol, prototype);
-	_itemCatalog.set( Interface, 'editors/images/rectangle.gif', );
-	_itemCatalog.set( AbstractClass, 'editors/images/ellipse.gif');
-	_itemCatalog.set( Class, 'editors/images/rhombus.gif');
-	_itemCatalog.set( Enumeration, 'editors/images/triangle.gif');
+	//iconCatalog.set(prototype, wwwroot/ <<path>>);
+	_itemCatalog.set( Interface, 'editors/images/uml/Interface.svg', );
+	_itemCatalog.set( AbstractClass, 'editors/images/uml/Abstract.svg');
+	_itemCatalog.set( Class, 'editors/images/uml/Class.svg');
+	_itemCatalog.set( Enumeration, 'editors/images/uml/Enumeration.svg');
 
 	export function addToolbarItems(items: any[], editorComponent: EditorComponent)
 	{
