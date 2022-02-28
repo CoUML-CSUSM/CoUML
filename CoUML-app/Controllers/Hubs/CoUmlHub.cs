@@ -324,8 +324,8 @@ namespace CoUML_app.Controllers.Hubs
                 sourceComponent = c1,
                 targetComponent = i,
             };
-            c1.relations.Insert(r1.id);
-            i.relations.Insert(r1.id);
+            // c1.relations.Insert(r1.id);
+            // i.relations.Insert(r1.id);
 
 
             // class2
@@ -347,8 +347,8 @@ namespace CoUML_app.Controllers.Hubs
                 sourceComponent = c2,
                 targetComponent = i,
             };
-            c2.relations.Insert(r2.id);
-            i.relations.Insert(r2.id);
+            // c2.relations.Insert(r2.id);
+            // i.relations.Insert(r2.id);
 
             d.elements.Insert(i);
             d.elements.Insert(c1);

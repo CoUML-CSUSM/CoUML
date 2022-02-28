@@ -13,13 +13,13 @@ import { DiagramElement, Operation, Attribute, ComponentProperty,  ICollection }
 export abstract class Component extends DiagramElement implements IGettable
 {
     public name:string;
-    public relations:ICollection<string>;
+    // public relations:ICollection<string>;
 
     constructor(type: string, name: string)
     {
         super(type);
         this.name = name;
-        this.relations = new GeneralCollection<string> ([]);
+        // this.relations = new GeneralCollection<string> ([]);
     }
 
     abstract get(id);

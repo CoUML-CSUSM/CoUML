@@ -82,7 +82,7 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 		__class.dimension = assembleDimension(x.dimension);
 		assembleAttributeCollection(__class.attributes, x.attributes);
 		assembleOperationsCollection(__class.operations, x.operations);
-		assembleStringCollection( __class.relations, x.relations);
+		// assembleStringCollection( __class.relations, x.relations);
 		return __class;
 	}
 	function assembleAbstractClass(x: AbstractClass): DiagramElement {
@@ -92,7 +92,7 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 		__abstract.dimension = assembleDimension(x.dimension);
 		assembleAttributeCollection(__abstract.attributes, x.attributes);
 		assembleOperationsCollection(__abstract.operations, x.operations);
-		assembleStringCollection(__abstract.relations, x.relations);
+		// assembleStringCollection(__abstract.relations, x.relations);
 		return __abstract;
 	}
 	function assembleEnumeration(x: Enumeration): DiagramElement {
@@ -106,7 +106,7 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 		__interface.editor = assembleUser(x["editor"]);
 		__interface.dimension = assembleDimension(x["dimension"]);
 		assembleOperationsCollection(__interface.operations, x["operations"]);
-		assembleStringCollection(__interface.relations, x["relations"]);
+		// assembleStringCollection(__interface.relations, x["relations"]);
 		return __interface;
 	}
 

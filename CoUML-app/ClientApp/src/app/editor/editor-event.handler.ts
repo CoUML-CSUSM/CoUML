@@ -178,14 +178,14 @@ import { EditorComponent } from "./editor.component";
 								value
 							) );
 
-						//component update relation
-						editorComponent.stageChange(
-							new ChangeRecord(
-								[affectedCellId],
-								PropertyType.Relations,
-								isConnectioning? ActionType.Insert: ActionType.Remove,
-								affectedEdge.edge.id
-							) );
+						// //component update relation
+						// editorComponent.stageChange(
+						// 	new ChangeRecord(
+						// 		[affectedCellId],
+						// 		PropertyType.Relations,
+						// 		isConnectioning? ActionType.Insert: ActionType.Remove,
+						// 		affectedEdge.edge.id
+						// 	) );
 					}
 
 					// move edge point if disconnected
@@ -291,6 +291,8 @@ import { EditorComponent } from "./editor.component";
 				let affectedCells = eventObject.getProperties();
 				console.log('%c%s', f_alert, "connectionHandler.CONNECT");
 				console.log(affectedCells);
+
+				
 			});
 	}
 
