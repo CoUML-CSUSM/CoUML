@@ -27,7 +27,7 @@ export function addCellStyles(graph: mxGraph)
 	style['marginRight'] = MARGIN;
 	style['marginTop'] = MARGIN;
 	style['marginBottom'] = MARGIN;
-	style['selectable'] = true;
+	style['selectable'] = 1;
 
 
 	style[mxConstants.STYLE_STROKECOLOR] = 'red';

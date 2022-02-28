@@ -106,7 +106,7 @@ export class EditorComponent implements AfterViewInit{
 
 		this._graph.isCellLocked = function(cell)
 		{
-			return this.getCellStyle(cell)['selectable'] == false;
+			return this.getCellStyle(cell)['selectable'] == 0;
 		}
 
 		// this._graph.iscellS
@@ -231,9 +231,30 @@ export class EditorComponent implements AfterViewInit{
 				break;
 			case ActionType.Lock:
 			case ActionType.Release:
-				let isSelectable = (change.value instanceof NullUser || change.value.id == this._projectDeveloper._editor.id);
-				this._graph.toggleCellStyle('selectable', isSelectable, affectedCell);
-				break;
+				this.updateCellLock(affectedCell,change); break;
+		}
+	}
+
+	private updateCellLock(affectedCell: mxCell, change: ChangeRecord)
+	{
+		let isSelectable = (change.value instanceof NullUser || change.value.id == this._projectDeveloper._editor.id);
+		this._graph.toggleCellStyle('selectable', isSelectable, affectedCell);
+
+		var overlays = this._graph.getCellOverlays(affectedCell);
+						
+		if (!isSelectable)
+		{
+			// Creates a new overlay with an image and a tooltip
+			var overlay = new mxCellOverlay(
+				new mxImage('editors/images/overlays/user3.png', 16, 16),
+				`locked by: ${change.value.id}`);
+
+			// Sets the overlay for the cell in the graph
+			this._graph.addCellOverlay(affectedCell, overlay);
+		}
+		else
+		{
+			this._graph.removeCellOverlays(affectedCell);
 		}
 	}
 
