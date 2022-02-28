@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { AbstractClass, ActionType, ChangeRecord, Class, Dimension, Enumeration, Interface, PropertyType } from "src/models/DiagramModel";
+import { AbstractClass, ActionType, ChangeRecord, Class, Dimension, Enumeration, Interface, PropertyType, Relationship, RelationshipType } from "src/models/DiagramModel";
 import { EditorComponent } from "./editor.component";
 
 	const _listenerCatalog: Map<mxEvent, Function> = new Map();
@@ -288,11 +288,32 @@ import { EditorComponent } from "./editor.component";
 		graph.connectionHandler.addListener(mxEvent.CONNECT, 
 			// NADA
 			function(eventSource, eventObject){
-				let affectedCells = eventObject.getProperties();
+				let affectedCells = eventObject.getProperties('cell').cell;
 				console.log('%c%s', f_alert, "connectionHandler.CONNECT");
 				console.log(affectedCells);
 
-				
+				if(affectedCells.edge)
+				{
+					//new relationship
+					let relation = new Relationship();
+					relation.target = affectedCells.target.id;
+					relation.source = affectedCells.source.id;
+					relation.type = affectedCells.style | RelationshipType.Association;
+
+					affectedCells.id = relation.id;
+					affectedCells.value = relation.attributes;
+					affectedCells.style = RelationshipType[relation.type]
+
+					editorComponent.stageChange(new ChangeRecord(
+						null,
+						PropertyType.Elements,
+						ActionType.Insert,
+						relation
+					));
+
+				}
+
+
 			});
 	}
 

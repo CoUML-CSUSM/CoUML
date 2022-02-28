@@ -135,7 +135,6 @@ export class EditorComponent implements AfterViewInit{
 
 			for( let relation  of relatioships)
 			{
-				// TODO : figure out how to insert an edge that has no source or target 
 				this._graph.insertEdge(
 					this._graph.getDefaultParent(), 
 					relation.id, 
@@ -207,6 +206,38 @@ export class EditorComponent implements AfterViewInit{
 		}
 	}
 
+	private insertEdge(relation: Relationship)
+	{
+		// TODO : figure out how to insert an edge that has no source or target 
+		
+		var edge = new mxCell(relation.attributes.toString(), new mxGeometry(0, 0, 50, 50), RelationshipType[relation.type]);
+		edge.edge = true;
+		edge.geometry.relative = true;
+		edge.style = RelationshipType[relation.type];
+		
+		if(relation.source)
+			edge.setTerminal(this._graph.getModel().getCell(relation.source), true);
+		else
+			edge.geometry.setTerminalPoint(new mxPoint(relation.dimension.x, relation.dimension.y), true); //source
+
+		if(relation.target)
+			edge.setTerminal(this._graph.getModel().getCell(relation.target), false);
+		else
+			edge.geometry.setTerminalPoint(new mxPoint(relation.dimension.width, relation.dimension.height), false); //target
+	  
+	  
+		edge = this._graph.addCell(edge);
+
+		// this._graph.insertEdge(
+		// 	this._graph.getDefaultParent(), 
+		// 	relation.id, 
+		// 	relation.attributes.toString(), 
+		// 	this._graph.getModel().getCell(relation.source), 
+		// 	this._graph.getModel().getCell(relation.target),
+		// 	RelationshipType[relation.type]
+		// );
+	}
+
 
 	public processChange(change: ChangeRecord){
 		let affectedCell = change.id? this._graph.getModel().getCell(change.id.pop()): null;
@@ -228,7 +259,11 @@ export class EditorComponent implements AfterViewInit{
 			case ActionType.Insert:
 				switch(change.affectedProperty){
 					case PropertyType.Elements:
-						this.insertCell(change.value as Component);
+						if(change.value instanceof Relationship)
+							this.insertEdge(change.value);
+						else
+							this.insertCell(change.value);
+						break;
 				}
 				break;
 			case ActionType.Lock:
