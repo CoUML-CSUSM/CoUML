@@ -22,7 +22,8 @@ export function addCellStyles(graph: mxGraph)
 	style['childLayout'] = "stackLayout";
 	style['horizontalStack'] = 0;
 	style['resizeParent'] = 1;
-
+	style[mxConstants.STYLE_RESIZABLE] = '0';
+	
 	style['marginLeft'] = MARGIN;
 	style['marginRight'] = MARGIN;
 	style['marginTop'] = MARGIN;
@@ -170,8 +171,8 @@ export function addEdgeStyles(graph: mxGraph)
 	let aggregationStyle = mxUtils.clone(edgeStyleDefualt);
 	aggregationStyle[mxConstants.STYLE_DASHED] = false;
 	aggregationStyle[mxConstants.STYLE_ENDARROW] = mxConstants.NONE;
-	aggregationStyle[mxConstants.STYLE_STARTARROW] = mxConstants.ARROW_DIAMOND;
-	aggregationStyle[mxConstants.STYLE_ENDFILL] = false;
+	aggregationStyle[mxConstants.STYLE_STARTARROW] = mxConstants.ARROW_DIAMOND_THIN;
+	aggregationStyle[mxConstants.STYLE_STARTFILL] = false;
 	graph.getStylesheet().putCellStyle(
 		RelationshipType[RelationshipType.Aggregation], 
 		aggregationStyle
@@ -181,7 +182,7 @@ export function addEdgeStyles(graph: mxGraph)
 	let composistionStyle = mxUtils.clone(edgeStyleDefualt);
 	composistionStyle[mxConstants.STYLE_DASHED] = false;
 	composistionStyle[mxConstants.STYLE_ENDARROW] = mxConstants.NONE;
-	composistionStyle[mxConstants.STYLE_STARTARROW] = mxConstants.ARROW_DIAMOND;
+	composistionStyle[mxConstants.STYLE_STARTARROW] = mxConstants.ARROW_DIAMOND_THIN;
 	graph.getStylesheet().putCellStyle(
 		RelationshipType[RelationshipType.Composistion], 
 		composistionStyle

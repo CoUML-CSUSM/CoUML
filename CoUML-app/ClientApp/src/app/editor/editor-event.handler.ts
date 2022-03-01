@@ -13,6 +13,7 @@ import { EditorComponent } from "./editor.component";
 		_listenerCatalog.set(mxEvent.CLICK, click);
 		_listenerCatalog.set(mxEvent.CONNECT, connect);
 		_listenerCatalog.set(mxEvent.START, start);
+		_listenerCatalog.set(mxEvent.SELECT, select);
 
 	export function addListeners(events: mxEvent[], graph: mxGraph, editorComponent: EditorComponent)
 	{
@@ -286,7 +287,6 @@ import { EditorComponent } from "./editor.component";
 	function connect(graph: mxGraph, editorComponent: EditorComponent){
 		//listener for new connections
 		graph.connectionHandler.addListener(mxEvent.CONNECT, 
-			// NADA
 			function(eventSource, eventObject){
 				let affectedCells = eventObject.getProperties('cell').cell;
 				console.log('%c%s', f_alert, "connectionHandler.CONNECT");
@@ -296,8 +296,16 @@ import { EditorComponent } from "./editor.component";
 				{
 					//new relationship
 					let relation = new Relationship();
-					relation.target = affectedCells.target.id;
 					relation.source = affectedCells.source.id;
+					relation.target = affectedCells.target?.id; // may be null
+
+					relation.dimension = new Dimension(
+						affectedCells.geometry.x,
+						affectedCells.geometry.y,
+						affectedCells.geometry.targetPoint.x,
+						affectedCells.geometry.targetPoint.y,
+					);
+
 					relation.type = affectedCells.style | RelationshipType.Association;
 
 					affectedCells.id = relation.id;
@@ -317,6 +325,18 @@ import { EditorComponent } from "./editor.component";
 			});
 	}
 
+
+
+	function select(graph: mxGraph, editorComponent: EditorComponent){
+		//listener template
+		graph.addListener(mxEvent.SELECT, 
+			// NADA
+			function(eventSource, eventObject){
+				let affectedCells = eventObject.getProperties();
+				console.log('%c%s', f_alert, "mxEvent.SELECT");
+				console.log(affectedCells);
+			});
+	}
 
 
 	function template(graph: mxGraph, editorComponent: EditorComponent){

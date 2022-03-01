@@ -75,11 +75,14 @@ export class EditorComponent implements AfterViewInit{
 				mxEvent.CLICK,
 				mxEvent.CONNECT,
 				mxEvent.START,
+				mxEvent.SELECT,
 			],
 			this._graph,
 			this
 		);
 		
+		mxEvent.disableContextMenu(this.graphContainer.nativeElement);
+		this.addContextMenu()
 
 		//init toolbar div
         this._toolbar = new mxToolbar(this.toolbarContainer.nativeElement);
@@ -90,6 +93,39 @@ export class EditorComponent implements AfterViewInit{
 
 		//get test diagram
 		setTimeout(()=>	this._projectDeveloper.open(this.diagramId), 500);
+	}
+
+	private addContextMenu()
+	{
+		let editorComponent = this;
+		this._graph.popupMenuHandler.factoryMethod = function(menu, cell, evt)
+		{
+			console.log(cell)
+			if(cell.edge)
+			{
+				menu.addItem('Dependency', null, ()=>editorComponent.setRelationType(cell, RelationshipType.Dependency));
+				menu.addItem('Association', null, ()=>editorComponent.setRelationType(cell, RelationshipType.Association));
+				menu.addItem('Aggregation', null, ()=>editorComponent.setRelationType(cell, RelationshipType.Aggregation));
+				menu.addItem('Composistion', null, ()=>editorComponent.setRelationType(cell, RelationshipType.Composistion));
+				menu.addItem('Generalization', null, ()=>editorComponent.setRelationType(cell, RelationshipType.Generalization));
+				menu.addItem('Realization', null, ()=>editorComponent.setRelationType(cell, RelationshipType.Realization));
+				
+			}
+			
+		};
+	}
+
+	setRelationType(edge: mxCell, relationType: RelationshipType):void
+	{
+		edge.style = RelationshipType[relationType];
+		this._graph.refresh();
+
+		this.stageChange(new ChangeRecord(
+			[edge.id],
+			PropertyType.Type,
+			ActionType.Change,
+			relationType
+		));
 	}
 
 	stageChange(change: ChangeRecord)
@@ -135,14 +171,7 @@ export class EditorComponent implements AfterViewInit{
 
 			for( let relation  of relatioships)
 			{
-				this._graph.insertEdge(
-					this._graph.getDefaultParent(), 
-					relation.id, 
-					relation.attributes.toString(), 
-					this._graph.getModel().getCell(relation.source), 
-					this._graph.getModel().getCell(relation.target),
-					RelationshipType[relation.type]
-				);
+				this.insertEdge(relation);
 			}
 					
 		} finally {
@@ -207,11 +236,13 @@ export class EditorComponent implements AfterViewInit{
 	}
 
 	private insertEdge(relation: Relationship)
-	{
-		// TODO : figure out how to insert an edge that has no source or target 
-		
-		var edge = new mxCell(relation.attributes.toString(), new mxGeometry(0, 0, 50, 50), RelationshipType[relation.type]);
+	{	
+		var edge = new mxCell(
+			relation.attributes.toString(), 
+			new mxGeometry(0, 0, 0, 0), 
+			RelationshipType[relation.type]);
 		edge.edge = true;
+		edge.id = relation.id
 		edge.geometry.relative = true;
 		edge.style = RelationshipType[relation.type];
 		
@@ -225,17 +256,8 @@ export class EditorComponent implements AfterViewInit{
 		else
 			edge.geometry.setTerminalPoint(new mxPoint(relation.dimension.width, relation.dimension.height), false); //target
 	  
-	  
 		edge = this._graph.addCell(edge);
 
-		// this._graph.insertEdge(
-		// 	this._graph.getDefaultParent(), 
-		// 	relation.id, 
-		// 	relation.attributes.toString(), 
-		// 	this._graph.getModel().getCell(relation.source), 
-		// 	this._graph.getModel().getCell(relation.target),
-		// 	RelationshipType[relation.type]
-		// );
 	}
 
 
@@ -249,6 +271,10 @@ export class EditorComponent implements AfterViewInit{
 					case PropertyType.Dimension: this.updateEdgeGeometry(affectedCell,change); break;
 					case PropertyType.Target:
 						case PropertyType.Source: this.updateEdgeConnections(affectedCell,change); break;
+					case PropertyType.Type:
+						affectedCell.style = RelationshipType[change.value];
+						this._graph.refresh();
+						break;
 				}
 				break;
 
