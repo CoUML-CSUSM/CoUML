@@ -1,5 +1,5 @@
-import { Injectable } from "@angular/core";
-import { AbstractClass, ActionType, ChangeRecord, Class, Dimension, Enumeration, Interface, PropertyType, Relationship, RelationshipType } from "src/models/DiagramModel";
+// import { , Injectable } from "@angular/core";
+import { AbstractClass, ActionType, ChangeRecord, Class, Dimension, Enumeration, Interface, PropertyType, Relationship, RelationshipType, Operation, Attribute } from "src/models/DiagramModel";
 import { EditorComponent } from "./editor.component";
 
 	const _listenerCatalog: Map<mxEvent, Function> = new Map();
@@ -28,6 +28,8 @@ import { EditorComponent } from "./editor.component";
 	_itemCatalog.set( AbstractClass, 'editors/images/uml/Abstract.png');
 	_itemCatalog.set( Class, 'editors/images/uml/Class.png');
 	_itemCatalog.set( Enumeration, 'editors/images/uml/Enumeration.png');
+	_itemCatalog.set( Attribute, 'editors/images/uml/Attribute.png');
+	_itemCatalog.set( Operation, 'editors/images/uml/Operation.png');
 
 	export function addToolbarItems(items: any[], editorComponent: EditorComponent)
 	{

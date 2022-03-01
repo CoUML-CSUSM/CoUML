@@ -87,7 +87,7 @@ export class EditorComponent implements AfterViewInit{
 		//init toolbar div
         this._toolbar = new mxToolbar(this.toolbarContainer.nativeElement);
 		EditorEventHandler.addToolbarItems(
-			[Class, AbstractClass, Interface, Enumeration],
+			[Class, AbstractClass, Interface, Enumeration, Attribute, Operation],
 			this
 		);
 
@@ -103,12 +103,12 @@ export class EditorComponent implements AfterViewInit{
 			console.log(cell)
 			if(cell.edge)
 			{
-				menu.addItem('Dependency',		'editors/images/uml/Dependency.png',	()=>editorComponent.setRelationType(cell, RelationshipType.Dependency));
-				menu.addItem('Association',		'editors/images/uml/Association.png',	 ()=>editorComponent.setRelationType(cell, RelationshipType.Association));
-				menu.addItem('Aggregation', 	'editors/images/uml/Aggregation.png',	 ()=>editorComponent.setRelationType(cell, RelationshipType.Aggregation));
-				menu.addItem('Composition',		'editors/images/uml/Composition.png',	()=>editorComponent.setRelationType(cell, RelationshipType.Composition));
-				menu.addItem('Generalization',	'editors/images/uml/Generalization.png',	()=>editorComponent.setRelationType(cell, RelationshipType.Generalization));
-				menu.addItem('Realization',		'editors/images/uml/Realization.png',	()=>editorComponent.setRelationType(cell, RelationshipType.Realization));
+				menu.addItem('Dependency',		'editors/images/uml/Dependency.gif',	()=>editorComponent.setRelationType(cell, RelationshipType.Dependency));
+				menu.addItem('Association',		'editors/images/uml/Association.gif',	 ()=>editorComponent.setRelationType(cell, RelationshipType.Association));
+				menu.addItem('Aggregation', 	'editors/images/uml/Aggregation.gif',	 ()=>editorComponent.setRelationType(cell, RelationshipType.Aggregation));
+				menu.addItem('Composition',		'editors/images/uml/Composition.gif',	()=>editorComponent.setRelationType(cell, RelationshipType.Composition));
+				menu.addItem('Generalization',	'editors/images/uml/Generalization.gif',	()=>editorComponent.setRelationType(cell, RelationshipType.Generalization));
+				menu.addItem('Realization',		'editors/images/uml/Realization.gif',	()=>editorComponent.setRelationType(cell, RelationshipType.Realization));
 				
 			}
 			
@@ -309,7 +309,7 @@ export class EditorComponent implements AfterViewInit{
 		{
 			// Creates a new overlay with an image and a tooltip
 			var overlay = new mxCellOverlay(
-				new mxImage('editors/images/overlays/user3.png', 16, 16),
+				new mxImage('editors/images/overlays/user3.gif', 16, 16),
 				`locked by: ${change.value.id}`);
 
 			// Sets the overlay for the cell in the graph
