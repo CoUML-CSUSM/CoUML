@@ -20,7 +20,7 @@ export enum RelationshipType
     Dependency, 
     Association,
     Aggregation,
-    Composistion,
+    Composition,
     Generalization,
     Realization
 }

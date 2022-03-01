@@ -74,8 +74,8 @@ export class EditorComponent implements AfterViewInit{
 				mxEvent.CELLS_MOVED,
 				mxEvent.CLICK,
 				mxEvent.CONNECT,
-				mxEvent.START,
-				mxEvent.SELECT,
+				// mxEvent.START,
+				// mxEvent.SELECT,
 			],
 			this._graph,
 			this
@@ -103,12 +103,12 @@ export class EditorComponent implements AfterViewInit{
 			console.log(cell)
 			if(cell.edge)
 			{
-				menu.addItem('Dependency', null, ()=>editorComponent.setRelationType(cell, RelationshipType.Dependency));
-				menu.addItem('Association', null, ()=>editorComponent.setRelationType(cell, RelationshipType.Association));
-				menu.addItem('Aggregation', null, ()=>editorComponent.setRelationType(cell, RelationshipType.Aggregation));
-				menu.addItem('Composistion', null, ()=>editorComponent.setRelationType(cell, RelationshipType.Composistion));
-				menu.addItem('Generalization', null, ()=>editorComponent.setRelationType(cell, RelationshipType.Generalization));
-				menu.addItem('Realization', null, ()=>editorComponent.setRelationType(cell, RelationshipType.Realization));
+				menu.addItem('Dependency',		'editors/images/uml/Dependency.png',	()=>editorComponent.setRelationType(cell, RelationshipType.Dependency));
+				menu.addItem('Association',		'editors/images/uml/Association.png',	 ()=>editorComponent.setRelationType(cell, RelationshipType.Association));
+				menu.addItem('Aggregation', 	'editors/images/uml/Aggregation.png',	 ()=>editorComponent.setRelationType(cell, RelationshipType.Aggregation));
+				menu.addItem('Composition',		'editors/images/uml/Composition.png',	()=>editorComponent.setRelationType(cell, RelationshipType.Composition));
+				menu.addItem('Generalization',	'editors/images/uml/Generalization.png',	()=>editorComponent.setRelationType(cell, RelationshipType.Generalization));
+				menu.addItem('Realization',		'editors/images/uml/Realization.png',	()=>editorComponent.setRelationType(cell, RelationshipType.Realization));
 				
 			}
 			

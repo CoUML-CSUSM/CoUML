@@ -24,10 +24,10 @@ import { EditorComponent } from "./editor.component";
 
 	const _itemCatalog: Map<any, string > = new Map();
 	//iconCatalog.set(prototype, wwwroot/ <<path>>);
-	_itemCatalog.set( Interface, 'editors/images/uml/Interface.svg', );
-	_itemCatalog.set( AbstractClass, 'editors/images/uml/Abstract.svg');
-	_itemCatalog.set( Class, 'editors/images/uml/Class.svg');
-	_itemCatalog.set( Enumeration, 'editors/images/uml/Enumeration.svg');
+	_itemCatalog.set( Interface, 'editors/images/uml/Interface.png', );
+	_itemCatalog.set( AbstractClass, 'editors/images/uml/Abstract.png');
+	_itemCatalog.set( Class, 'editors/images/uml/Class.png');
+	_itemCatalog.set( Enumeration, 'editors/images/uml/Enumeration.png');
 
 	export function addToolbarItems(items: any[], editorComponent: EditorComponent)
 	{

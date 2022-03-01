@@ -184,7 +184,7 @@ export function addEdgeStyles(graph: mxGraph)
 	composistionStyle[mxConstants.STYLE_ENDARROW] = mxConstants.NONE;
 	composistionStyle[mxConstants.STYLE_STARTARROW] = mxConstants.ARROW_DIAMOND_THIN;
 	graph.getStylesheet().putCellStyle(
-		RelationshipType[RelationshipType.Composistion], 
+		RelationshipType[RelationshipType.Composition], 
 		composistionStyle
 		);
 
