@@ -32,18 +32,22 @@ export function addCellStyles(graph: mxGraph)
 
 
 	style[mxConstants.STYLE_STROKECOLOR] = 'red';
+	style[mxConstants.STYLE_FONTSTYLE] = 1;
 	graph.getStylesheet().putCellStyle(Class.name, style);
 
 	style = mxUtils.clone(style);
 	style[mxConstants.STYLE_STROKECOLOR] = 'yellow';
+	style[mxConstants.STYLE_FONTSTYLE] = 2;
 	graph.getStylesheet().putCellStyle(AbstractClass.name, style);
 
 	style = mxUtils.clone(style);
 	style[mxConstants.STYLE_STROKECOLOR] = 'green';
+	style[mxConstants.STYLE_FONTSTYLE] = 1;
 	graph.getStylesheet().putCellStyle(Interface.name, style);
 
 	style = mxUtils.clone(style);
 	style[mxConstants.STYLE_STROKECOLOR] = 'blue';
+	style[mxConstants.STYLE_FONTSTYLE] = 1;
 	graph.getStylesheet().putCellStyle(Enumeration.name, style);
 
 }

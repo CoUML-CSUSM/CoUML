@@ -1,11 +1,26 @@
-// import { , Injectable } from "@angular/core";
-import { AbstractClass, ActionType, ChangeRecord, Class, Dimension, Enumeration, Interface, PropertyType, Relationship, RelationshipType, Operation, Attribute } from "src/models/DiagramModel";
+import { AbstractClass, 
+	ActionType, 
+	PropertyType, 
+	ChangeRecord, 
+	DiagramElement,
+	Component,
+	Class, 
+	Dimension, 
+	Enumeration, 
+	Interface, 
+	Relationship, 
+	RelationshipType, 
+	Operation, Attribute } from "src/models/DiagramModel";
 import { EditorComponent } from "./editor.component";
+
+
+ //================================================================================================
+ //	add  listeners from the catalog
+ //================================================================================================
 
 	const _listenerCatalog: Map<mxEvent, Function> = new Map();
 		_listenerCatalog.set(mxEvent.LABEL_CHANGED, labelChanged);
 		_listenerCatalog.set(mxEvent.CELLS_ADDED, cellsAdded);
-		// _listenerCatalog.set(mxEvent.ADD_CELLS, addCells);
 		_listenerCatalog.set(mxEvent.START_EDITING, startEditing);
 		_listenerCatalog.set(mxEvent.CELL_CONNECTED, cellConnected);
 		_listenerCatalog.set(mxEvent.EDITING_STOPPED, editingStopped);
@@ -22,6 +37,43 @@ import { EditorComponent } from "./editor.component";
 		});
 	}
 
+
+ //================================================================================================
+ //	context menue for Relations
+ //================================================================================================
+	export function addContextMenu(graph: mxGraph, editorComponent: EditorComponent)
+	{
+		graph.popupMenuHandler.factoryMethod = function(menu, cell, evt)
+		{
+			console.log(cell)
+			if(cell.edge)
+			{
+				menu.addItem('Dependency',		'editors/images/uml/Dependency.svg',	()=>setRelationType(cell, RelationshipType.Dependency));
+				menu.addItem('Association',		'editors/images/uml/Association.svg',	 ()=>setRelationType(cell, RelationshipType.Association));
+				menu.addItem('Aggregation', 	'editors/images/uml/Aggregation.svg',	 ()=>setRelationType(cell, RelationshipType.Aggregation));
+				menu.addItem('Composition',		'editors/images/uml/Composition.svg',	()=>setRelationType(cell, RelationshipType.Composition));
+				menu.addItem('Generalization',	'editors/images/uml/Generalization.svg',	()=>setRelationType(cell, RelationshipType.Generalization));
+				menu.addItem('Realization',		'editors/images/uml/Realization.svg',	()=>setRelationType(cell, RelationshipType.Realization));
+			}
+		};
+
+		var setRelationType = function(edge: mxCell, relationType: RelationshipType):void
+		{
+			edge.style = RelationshipType[relationType];
+			graph.refresh();
+
+			editorComponent.stageChange(new ChangeRecord(
+				[edge.id],
+				PropertyType.Type,
+				ActionType.Change,
+				relationType
+			));
+		}
+	}
+
+ //================================================================================================
+ //	Toolbar, drag and drop
+ //================================================================================================
 	const _itemCatalog: Map<any, string > = new Map();
 	//iconCatalog.set(prototype, wwwroot/ <<path>>);
 	_itemCatalog.set( Interface, 'editors/images/uml/Interface.svg', );
@@ -33,13 +85,11 @@ import { EditorComponent } from "./editor.component";
 
 	export function addToolbarItems(items: any[], editorComponent: EditorComponent)
 	{
-
 		items.forEach( item =>{
 			dragDrop(item, _itemCatalog.get(item), editorComponent);
-		});
-			
+		});	
 	}
-	
+
 	/**
 	 * Function the fires when a new component is deagged from the toolbar to the diagram
 	 * @param prototype the component type (class name) that the tool bar item represents
@@ -56,31 +106,35 @@ import { EditorComponent } from "./editor.component";
 		{
 			graph.stopEditing(false);
 
-			let component = new prototype("untitled"); //creates new compnent object of approrate type
-			component.dimension.x =   Math.floor(x / 10) * 10;
-			component.dimension.y =   Math.floor(y / 10) * 10;
+			let component = new prototype(); //creates new compnent object of approrate type
+			if(component instanceof Component)
+			{
+				component.dimension.x =   Math.floor(x / 10) * 10;
+				component.dimension.y =   Math.floor(y / 10) * 10;
 
-			console.log(component);
-			
-			let vertex = graph.insertVertex(
-				graph.getDefaultParent(),
-				component.id, 
-				component.name, 
-				component.dimension.x, 
-				component.dimension.y, 
-				component.dimension.width, 
-				component.dimension.height,
-				component.constructor.name
-			);				
-			graph.setSelectionCell(vertex);
+				let vertex = graph.insertVertex(
+					graph.getDefaultParent(),
+					component.id, 
+					component.name, 
+					component.dimension.x, 
+					component.dimension.y, 
+					component.dimension.width, 
+					component.dimension.height,
+					component.constructor.name
+				);				
+				graph.setSelectionCell(vertex);
 
-			editorComponent.stageChange(new ChangeRecord(
-				null,
-				PropertyType.Elements,
-				ActionType.Insert,
-				component
-			));
-
+				editorComponent.stageChange(new ChangeRecord(
+					null,
+					PropertyType.Elements,
+					ActionType.Insert,
+					component
+				));
+			}
+			else
+			{
+				
+			}
 		}
 		
 		// Creates the image which is used as the drag icon (preview)
@@ -96,6 +150,9 @@ import { EditorComponent } from "./editor.component";
 	}
 
 
+ //================================================================================================
+ //	listeners
+ //================================================================================================
 	/**
 	 * function that fires when a lable changes
 	 * @param graph 
@@ -313,19 +370,6 @@ import { EditorComponent } from "./editor.component";
 				editorComponent.releaseLock(affectedCells);
 			});
 	}
-
-
-
-	// function addCells(graph: mxGraph, editorComponent: EditorComponent){
-	// 	//fires when new irem is dragged from the toolbar into the diagram
-	// 	graph.addListener(mxEvent.ADD_CELLS,
-	// 		function(eventSource, eventObject){
-	// 			let affectedCells = eventObject.getProperties();
-	// 			console.log('%c%s', f_alert, "ADD_CELLS");
-	// 			console.log(affectedCells);
-	// 		});
-			
-	// }
 
 	/**
 	 * function that fires when a new relation is drawn between 2 compnents

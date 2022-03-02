@@ -6,12 +6,10 @@ namespace CoUML_app.Models
 {
 	public abstract class Component : DiagramElement{
 		public string name { get;set; }
-		// public ICollection<string> relations {get; set;}
 
 		public Component(string name)
 		{
 			this.name = name;
-			// this.relations = new GeneralCollection<string>();
 		}
 	}
 

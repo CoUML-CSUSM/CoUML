@@ -75,15 +75,13 @@ export class EditorComponent implements AfterViewInit{
 				mxEvent.CELLS_MOVED,
 				mxEvent.CLICK,
 				mxEvent.CONNECT,
-				// mxEvent.START,
-				// mxEvent.SELECT,
 			],
 			this._graph,
 			this
 		);
 		
 		mxEvent.disableContextMenu(this.graphContainer.nativeElement);
-		this.addContextMenu()
+		EditorEventHandler.addContextMenu( this._graph, this);
 
 		//init toolbar div
         this._toolbar = new mxToolbar(this.toolbarContainer.nativeElement);
@@ -96,38 +94,9 @@ export class EditorComponent implements AfterViewInit{
 		setTimeout(()=>	this._projectDeveloper.open(this.diagramId), 500);
 	}
 
-	private addContextMenu()
-	{
-		let editorComponent = this;
-		this._graph.popupMenuHandler.factoryMethod = function(menu, cell, evt)
-		{
-			console.log(cell)
-			if(cell.edge)
-			{
-				menu.addItem('Dependency',		'editors/images/uml/Dependency.gif',	()=>editorComponent.setRelationType(cell, RelationshipType.Dependency));
-				menu.addItem('Association',		'editors/images/uml/Association.gif',	 ()=>editorComponent.setRelationType(cell, RelationshipType.Association));
-				menu.addItem('Aggregation', 	'editors/images/uml/Aggregation.gif',	 ()=>editorComponent.setRelationType(cell, RelationshipType.Aggregation));
-				menu.addItem('Composition',		'editors/images/uml/Composition.gif',	()=>editorComponent.setRelationType(cell, RelationshipType.Composition));
-				menu.addItem('Generalization',	'editors/images/uml/Generalization.gif',	()=>editorComponent.setRelationType(cell, RelationshipType.Generalization));
-				menu.addItem('Realization',		'editors/images/uml/Realization.gif',	()=>editorComponent.setRelationType(cell, RelationshipType.Realization));
-				
-			}
-			
-		};
-	}
+	
 
-	setRelationType(edge: mxCell, relationType: RelationshipType):void
-	{
-		edge.style = RelationshipType[relationType];
-		this._graph.refresh();
-
-		this.stageChange(new ChangeRecord(
-			[edge.id],
-			PropertyType.Type,
-			ActionType.Change,
-			relationType
-		));
-	}
+	
 
 	stageChange(change: ChangeRecord)
 	{
