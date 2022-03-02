@@ -24,12 +24,12 @@ import { EditorComponent } from "./editor.component";
 
 	const _itemCatalog: Map<any, string > = new Map();
 	//iconCatalog.set(prototype, wwwroot/ <<path>>);
-	_itemCatalog.set( Interface, 'editors/images/uml/Interface.png', );
-	_itemCatalog.set( AbstractClass, 'editors/images/uml/Abstract.png');
-	_itemCatalog.set( Class, 'editors/images/uml/Class.png');
-	_itemCatalog.set( Enumeration, 'editors/images/uml/Enumeration.png');
-	_itemCatalog.set( Attribute, 'editors/images/uml/Attribute.png');
-	_itemCatalog.set( Operation, 'editors/images/uml/Operation.png');
+	_itemCatalog.set( Interface, 'editors/images/uml/Interface.svg', );
+	_itemCatalog.set( AbstractClass, 'editors/images/uml/Abstract.svg');
+	_itemCatalog.set( Class, 'editors/images/uml/Class.svg');
+	_itemCatalog.set( Enumeration, 'editors/images/uml/Enumeration.svg');
+	_itemCatalog.set( Attribute, 'editors/images/uml/Attribute.svg');
+	_itemCatalog.set( Operation, 'editors/images/uml/Operation.svg');
 
 	export function addToolbarItems(items: any[], editorComponent: EditorComponent)
 	{
@@ -40,6 +40,12 @@ import { EditorComponent } from "./editor.component";
 			
 	}
 	
+	/**
+	 * Function the fires when a new component is deagged from the toolbar to the diagram
+	 * @param prototype the component type (class name) that the tool bar item represents
+	 * @param image location of representitive image
+	 * @param editorComponent 
+	 */
 	function dragDrop(prototype, image:  string, editorComponent: EditorComponent)
 	{
 		// Function that is executed when the image is dropped on
@@ -89,6 +95,12 @@ import { EditorComponent } from "./editor.component";
 		return img;
 	}
 
+
+	/**
+	 * function that fires when a lable changes
+	 * @param graph 
+	 * @param editorComponent 
+	 */
 	function labelChanged(graph: mxGraph, editorComponent: EditorComponent){
 		graph.addListener(mxEvent.LABEL_CHANGED,
 			// on change label event 
@@ -105,6 +117,12 @@ import { EditorComponent } from "./editor.component";
 		});
 	}
 
+
+	/**
+	 * 
+	 * @param graph 
+	 * @param editorComponent 
+	 */
 	function cellsMoved(graph: mxGraph, editorComponent: EditorComponent){
 		graph.addListener(mxEvent.CELLS_MOVED,
 			// on cell move event
@@ -132,9 +150,13 @@ import { EditorComponent } from "./editor.component";
 					}
 				));
 			});
-
 	}
 
+	/**
+	 * 
+	 * @param graph 
+	 * @param editorComponent 
+	 */
 	function editingStopped(graph: mxGraph, editorComponent: EditorComponent){
 		graph.addListener(mxEvent.EDITING_STOPPED,
 			//
@@ -145,6 +167,11 @@ import { EditorComponent } from "./editor.component";
 			});
 	}
 
+	/**
+	 * 
+	 * @param graph 
+	 * @param editorComponent 
+	 */
 	function cellConnected(graph: mxGraph, editorComponent: EditorComponent){
 		graph.addListener(mxEvent.CELL_CONNECTED, 
 			//event when  edge is connected or disconeccted from a cell
@@ -180,15 +207,6 @@ import { EditorComponent } from "./editor.component";
 								ActionType.Change,
 								value
 							) );
-
-						// //component update relation
-						// editorComponent.stageChange(
-						// 	new ChangeRecord(
-						// 		[affectedCellId],
-						// 		PropertyType.Relations,
-						// 		isConnectioning? ActionType.Insert: ActionType.Remove,
-						// 		affectedEdge.edge.id
-						// 	) );
 					}
 
 					// move edge point if disconnected
@@ -214,11 +232,22 @@ import { EditorComponent } from "./editor.component";
 		});
 			
 	}
+
+	/**
+	 * 
+	 * @param id 
+	 * @returns 
+	 */
 	function valid(id: string):boolean{ 
 		//TODO: better way to validate id
 		return id.length > 5 ;
 	}
 
+	/**
+	 * 
+	 * @param graph 
+	 * @param editorComponent 
+	 */
 	function startEditing(graph: mxGraph, editorComponent: EditorComponent){
 		graph.addListener(mxEvent.START_EDITING, 
 			// When double click on cell to change label
@@ -231,6 +260,11 @@ import { EditorComponent } from "./editor.component";
 
 	}
 
+	/**
+	 * 
+	 * @param graph 
+	 * @param editorComponent 
+	 */
 	function start(graph: mxGraph, editorComponent: EditorComponent){
 		graph.addListener(mxEvent.START, 
 			// When double click on cell to change label
@@ -242,6 +276,12 @@ import { EditorComponent } from "./editor.component";
 			});
 
 	}
+
+	/**
+	 * 
+	 * @param graph 
+	 * @param editorComponent 
+	 */
 	function cellsAdded(graph: mxGraph, editorComponent: EditorComponent){
 		graph.addListener(mxEvent.CELLS_ADDED, 
 			// mxEvent.ADD_CELLS
@@ -249,13 +289,14 @@ import { EditorComponent } from "./editor.component";
 				let affectedCells = eventObject.getProperties();
 				console.log('%c%s', f_alert, "CELLS_ADDED ");
 				console.log(affectedCells);
-
-				//if cell is new edge
-				// if(affectedCells)
-				
 			});
 	}
 	
+	/**
+	 * 
+	 * @param graph 
+	 * @param editorComponent 
+	 */
 	function click(graph: mxGraph, editorComponent: EditorComponent){
 		graph.addListener(mxEvent.CLICK, 
 			// click on object to see its makup.
@@ -286,6 +327,11 @@ import { EditorComponent } from "./editor.component";
 			
 	// }
 
+	/**
+	 * function that fires when a new relation is drawn between 2 compnents
+	 * @param graph 
+	 * @param editorComponent 
+	 */
 	function connect(graph: mxGraph, editorComponent: EditorComponent){
 		//listener for new connections
 		graph.connectionHandler.addListener(mxEvent.CONNECT, 
@@ -304,8 +350,8 @@ import { EditorComponent } from "./editor.component";
 					relation.dimension = new Dimension(
 						affectedCells.geometry.x,
 						affectedCells.geometry.y,
-						affectedCells.geometry.targetPoint.x,
-						affectedCells.geometry.targetPoint.y,
+						affectedCells.geometry.targetPoint?.x | affectedCells.geometry.width,
+						affectedCells.geometry.targetPoint?.y| affectedCells.geometry.height,
 					);
 
 					relation.type = affectedCells.style | RelationshipType.Association;
@@ -328,7 +374,11 @@ import { EditorComponent } from "./editor.component";
 	}
 
 
-
+	/**
+	 * doesnt do anthing yet
+	 * @param graph 
+	 * @param editorComponent 
+	 */
 	function select(graph: mxGraph, editorComponent: EditorComponent){
 		//listener template
 		graph.addListener(mxEvent.SELECT, 

@@ -45,12 +45,13 @@ export class EditorComponent implements AfterViewInit{
 	canvasHeight: number;
     canvasWidth: number;
 
-	toolbarWidth: number = 200;
+	toolbarWidth: number = 212;
+	accentColor: string = '#EFEFEF';
 	
 	@HostListener('window:resize', ['$event'])
 	onResize(event?) {
-	this.canvasHeight = window.innerHeight;
-	this.canvasWidth = window.innerWidth - this.toolbarWidth;
+		this.canvasHeight = window.innerHeight;
+		this.canvasWidth = window.innerWidth - this.toolbarWidth;
 	}
 	/*************************** */
 
@@ -309,7 +310,7 @@ export class EditorComponent implements AfterViewInit{
 		{
 			// Creates a new overlay with an image and a tooltip
 			var overlay = new mxCellOverlay(
-				new mxImage('editors/images/overlays/user3.gif', 16, 16),
+				new mxImage('editors/images/overlays/user3.png', 24, 24),
 				`locked by: ${change.value.id}`);
 
 			// Sets the overlay for the cell in the graph
