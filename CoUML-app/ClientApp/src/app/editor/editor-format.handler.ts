@@ -12,11 +12,13 @@ export function addCellStyles(graph: mxGraph)
 
 	let style = graph.getStylesheet().getDefaultVertexStyle();
 				style[mxConstants.STYLE_FILLCOLOR] = 'none';
-				style[mxConstants.STYLE_STROKECOLOR] = 'gray';
+				style[mxConstants.STYLE_STROKECOLOR] = '#fefefe';
 				style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RECTANGLE;
+				style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_LEFT;
 
 	style = [];
 	style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_SWIMLANE;
+	style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;
 	style[mxConstants.STYLE_STARTSIZE] = HEIGHT;
 	style[mxConstants.STYLE_FILLCOLOR] = '#ffffff';
 	style['childLayout'] = "stackLayout";
@@ -32,22 +34,22 @@ export function addCellStyles(graph: mxGraph)
 
 
 	style[mxConstants.STYLE_STROKECOLOR] = 'red';
-	style[mxConstants.STYLE_FONTSTYLE] = 1;
+	style[mxConstants.STYLE_FONTSTYLE] = mxConstants.FONT_BOLD;
 	graph.getStylesheet().putCellStyle(Class.name, style);
 
 	style = mxUtils.clone(style);
 	style[mxConstants.STYLE_STROKECOLOR] = 'yellow';
-	style[mxConstants.STYLE_FONTSTYLE] = 2;
+	style[mxConstants.STYLE_FONTSTYLE] = mxConstants.FONT_ITALIC;
 	graph.getStylesheet().putCellStyle(AbstractClass.name, style);
 
 	style = mxUtils.clone(style);
 	style[mxConstants.STYLE_STROKECOLOR] = 'green';
-	style[mxConstants.STYLE_FONTSTYLE] = 1;
+	style[mxConstants.STYLE_FONTSTYLE] = mxConstants.FONT_BOLD;
 	graph.getStylesheet().putCellStyle(Interface.name, style);
 
 	style = mxUtils.clone(style);
 	style[mxConstants.STYLE_STROKECOLOR] = 'blue';
-	style[mxConstants.STYLE_FONTSTYLE] = 1;
+	style[mxConstants.STYLE_FONTSTYLE] = mxConstants.FONT_BOLD;
 	graph.getStylesheet().putCellStyle(Enumeration.name, style);
 
 }

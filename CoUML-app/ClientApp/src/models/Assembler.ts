@@ -131,7 +131,7 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 		__operation.name = x.name;
 		__operation.isStatic = x.isStatic;
 		__operation.propertyString = x.propertyString;
-		__operation.type = new DataType(x.type);
+		__operation.type = new DataType(x.type.dataType);
 		assembleAttributeCollection(__operation.parameters, x.parameters);
 		return __operation;
 	}
@@ -149,7 +149,7 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 		__attribute.name = x.name;
 		__attribute.isStatic = x.isStatic;
 		__attribute.propertyString = x.propertyString;
-		__attribute.type =  new DataType(x.type);
+		__attribute.type =  new DataType(x.type.dataType);
 		__attribute.multiplicity = x.multiplicity;
 		__attribute.defaultValue = x.defaultValue;
 		return __attribute;

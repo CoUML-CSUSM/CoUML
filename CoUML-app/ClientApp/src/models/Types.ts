@@ -3,7 +3,7 @@ export enum VisibilityType{
     Public	=	'+',
     Protected =	'#',
     Package	=	'~',
-    LocalScope = ''
+    LocalScope = ' '
 }
 
 export class DataType

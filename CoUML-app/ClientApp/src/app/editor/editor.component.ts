@@ -1,5 +1,5 @@
 import { AfterViewInit, Component as AngularComponent, ElementRef, OnInit, ViewChild, HostListener } from '@angular/core';
-import { Class, AbstractClass, Diagram, DiagramElement, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, ChangeRecord, ActionType, PropertyType, ICollectionIterator, Enumeration, Dimension, DEFUALT_DIMENSION, NullUser } from 'src/models/DiagramModel';
+import { Class, AbstractClass, Diagram, DiagramElement, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, ChangeRecord, ActionType, PropertyType, ICollectionIterator, Enumeration, Dimension, DEFUALT_DIMENSION, NullUser, ComponentProperty } from 'src/models/DiagramModel';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 import * as EditorFormatHandler  from './editor-format.handler';
 import * as EditorEventHandler  from './editor-event.handler';
@@ -61,6 +61,7 @@ export class EditorComponent implements AfterViewInit{
 
 		//init graph div
 		this._graph = new mxGraph(this.graphContainer.nativeElement);
+		this._graph.setDropEnabled(true); // ability to drag elements as groups
 		EditorFormatHandler.addEdgeStyles(this._graph);
 		EditorFormatHandler.addCellStyles(this._graph);
 		EditorFormatHandler.intiLayoutManager(this._graph);
@@ -80,6 +81,7 @@ export class EditorComponent implements AfterViewInit{
 			this
 		);
 		
+		//special context menu on graph
 		mxEvent.disableContextMenu(this.graphContainer.nativeElement);
 		EditorEventHandler.addContextMenu( this._graph, this);
 
@@ -132,7 +134,7 @@ export class EditorComponent implements AfterViewInit{
 				let diagramElement = elementIterator.getNext();
 
 				if(diagramElement instanceof Component){
-					this.insertCell(diagramElement)
+					this.insertComponent(diagramElement)
 				}
 				else if( diagramElement instanceof Relationship){
 						relatioships.push(diagramElement)
@@ -150,7 +152,7 @@ export class EditorComponent implements AfterViewInit{
 		}
 	}
 	
-	private insertCell(component: Component) {
+	public insertComponent(component: Component) {
 
 
 		console.log("this._graph.insertVertex");
@@ -172,17 +174,7 @@ export class EditorComponent implements AfterViewInit{
 			let attributeIterator: ICollectionIterator<Attribute> = component.attributes.iterator();
 
 			while(attributeIterator.hasNext())
-			{
-				let attribute  = attributeIterator.getNext();
-				this._graph.insertVertex(
-					graphComponent,
-					attribute.id,
-					attribute.name,
-					0, 0, 
-					component.dimension.width, 
-					component.dimension.height, 
-				)
-			}
+				this.insertProperty(graphComponent, attributeIterator.getNext()) ;
 		}
 		if(component instanceof AbstractClass 
 			|| component instanceof Class
@@ -191,18 +183,23 @@ export class EditorComponent implements AfterViewInit{
 			let operatorIterator: ICollectionIterator<Operation> = component.operations.iterator();
 
 			while(operatorIterator.hasNext())
-			{
-				let operator  = operatorIterator.getNext();
-				this._graph.insertVertex(
-					graphComponent,
-					operator.id,
-					operator.name,
-					0, 0, 
-					component.dimension.width, 
-					component.dimension.height, 
-				)
-			}
+				this.insertProperty(graphComponent, operatorIterator.getNext()) ;
+				
 		}
+		return graphComponent;
+	}
+
+
+	insertProperty(parent: mxCell, property: ComponentProperty)
+	{
+		this._graph.insertVertex(
+			parent,
+			property.id,
+			property.toString(),
+			0, 0, 
+			parent.geometry.width, 
+			parent.geometry.height, 
+		);
 	}
 
 	private insertEdge(relation: Relationship)
@@ -258,7 +255,7 @@ export class EditorComponent implements AfterViewInit{
 						if(change.value instanceof Relationship)
 							this.insertEdge(change.value);
 						else
-							this.insertCell(change.value);
+							this.insertComponent(change.value);
 						break;
 				}
 				break;

@@ -102,9 +102,12 @@ import { EditorComponent } from "./editor.component";
 		// the graph. The cell argument points to the cell under
 		// the mousepointer if there is one.
 		// floor is used to keep the components to snap to the grid
-		var drop = function(graph, evt, cell, x, y)
+		var drop = function(graph, evt, parentCell, x, y)
 		{
 			graph.stopEditing(false);
+
+			console.log('%c%s', f_alert, "DRAGDROP");
+			console.log(parentCell) //return null if empty space, otherwise cell
 
 			let component = new prototype(); //creates new compnent object of approrate type
 			if(component instanceof Component)
@@ -112,17 +115,8 @@ import { EditorComponent } from "./editor.component";
 				component.dimension.x =   Math.floor(x / 10) * 10;
 				component.dimension.y =   Math.floor(y / 10) * 10;
 
-				let vertex = graph.insertVertex(
-					graph.getDefaultParent(),
-					component.id, 
-					component.name, 
-					component.dimension.x, 
-					component.dimension.y, 
-					component.dimension.width, 
-					component.dimension.height,
-					component.constructor.name
-				);				
-				graph.setSelectionCell(vertex);
+				// graph.setSelectionCell(vertex);
+				editorComponent.insertComponent(component);
 
 				editorComponent.stageChange(new ChangeRecord(
 					null,
@@ -131,9 +125,37 @@ import { EditorComponent } from "./editor.component";
 					component
 				));
 			}
-			else
+			else if(parentCell)
 			{
+				var style = graph.getCellStyle(parentCell) as any[];
+				while(style['childLayout'] != 'stackLayout' )
+				{
+					parentCell = parentCell.parent;
+					style = graph.getCellStyle(parentCell) as any[];
+				}
 				
+				//does this acctualy go here?
+				if((prototype instanceof Attribute 
+					&& (parentCell.style == Class.name 
+						|| parentCell.style == AbstractClass.name 
+						)) ||
+					(prototype instanceof Operation
+					&&(parentCell.style == Class.name 
+						|| parentCell.style == AbstractClass.name 
+						|| parentCell.style == Interface.name 
+						)))
+				{
+					editorComponent.insertProperty(parentCell, component);
+					editorComponent.stageChange(new ChangeRecord(
+						parentCell.id,
+						prototype instanceof Operation? PropertyType.Operations: PropertyType.Attributes,
+						ActionType.Insert,
+						component
+					));
+				} 
+
+				
+
 			}
 		}
 		
