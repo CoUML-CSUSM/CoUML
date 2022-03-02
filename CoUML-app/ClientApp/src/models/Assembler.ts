@@ -4,7 +4,7 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 	{
 		let d = JSON.parse(diagram_DTO);
 
-		let __diagram = new Diagram();
+		let __diagram = new Diagram(d.id);
 		for(let elem of d["elements"]["items"])
 		{
 			__diagram.elements.insert(assembleDiagramElement(elem));

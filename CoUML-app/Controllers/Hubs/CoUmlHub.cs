@@ -199,14 +199,20 @@ namespace CoUML_app.Controllers.Hubs
             var collection = db.GetCollection<BsonDocument>("Diagrams");
             var filter = Builders<BsonDocument>.Filter.Eq("id", dId);
             //this is the stuff we need!!!
-            var diagramText = collection.Distinct<string>("diagram", filter).ToListAsync().Result[0].ToString();
+            //old one for getting string from database
+            //var diagramText = collection.Distinct<string>("diagram", filter).ToListAsync().Result[0].ToString();
+            var diagramText = collection.Find(filter).Project("{_id: 0}").FirstOrDefault().ToString();
             Console.WriteLine(diagramText);//outputs the diagram text
             //^ should change it so this is what gets returned ^
-            */
+
+            /*
+
             return JsonConvert.SerializeObject(testDiagram, Formatting.Indented, new JsonSerializerSettings
                     {
                         TypeNameHandling = TypeNameHandling.Auto
                     });
+            */
+                    return diagramText;
             // return this.OpenSampleFile();
             // return JsonConvert.SerializeObject(testDiagram, Formatting.Indented);
 
@@ -220,6 +226,13 @@ namespace CoUML_app.Controllers.Hubs
 
             //push changes out to other clients
             Dispatch(dId, Context.ConnectionId, changes);
+
+            //add mongodb update code
+
+            //mongodb database
+            var dbClient = new MongoClient("mongodb://localhost:27017");
+            //adds document to the database
+            IMongoDatabase db = dbClient.GetDatabase("CoUML");
 
         }
 
@@ -244,15 +257,27 @@ namespace CoUML_app.Controllers.Hubs
 
             var collection = db.GetCollection<BsonDocument>("Diagrams");
 
-            var doc = new BsonDocument
-            {
-                {"id", Did},
-                {"diagram", JsonConvert.SerializeObject(testDiagram, Formatting.Indented, new JsonSerializerSettings
-                    {
-                        TypeNameHandling = TypeNameHandling.Auto
-                    })}//string that contains all the info of the diagram
+            //old way of sending the doc as a string
+            // var doc = new BsonDocument
+            // {
+            //     {"id", Did},
+            //     {"diagram", JsonConvert.SerializeObject(testDiagram, Formatting.Indented, new JsonSerializerSettings
+            //         {
+            //             TypeNameHandling = TypeNameHandling.Auto
+            //         })}//string that contains all the info of the diagram
                 
-            };
+            // };
+
+            // collection.InsertOne(doc);
+
+            // var doc = new BsonDocument
+            // {
+            //      JsonConvert.SerializeObject(testDiagram)//string that contains all the info of the diagram
+                
+            // };
+
+            //sends diagram as bson doc using the string of the diagram
+            MongoDB.Bson.BsonDocument doc = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonDocument>(JsonConvert.SerializeObject(testDiagram));
 
             collection.InsertOne(doc);
         }
@@ -263,6 +288,16 @@ namespace CoUML_app.Controllers.Hubs
 
             return File.ReadAllText(path);
 
+        }
+
+        public void Send(string Did, String Diagram){
+            var dbClient = new MongoClient("mongodb://localhost:27017");
+            IMongoDatabase db = dbClient.GetDatabase("CoUML");
+            var collection = db.GetCollection<BsonDocument>("Diagrams");
+
+            var filter = Builders<BsonDocument>.Filter.Eq("id", Did);
+            var doc = BsonDocument.Parse(Diagram);
+            collection.ReplaceOne(filter, doc);
         }
     }
 

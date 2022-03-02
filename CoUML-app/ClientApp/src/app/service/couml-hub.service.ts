@@ -3,7 +3,7 @@ import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 import { ProjectManager } from '../controller/project-manager.controller';
 import { environment } from '../../environments/environment';
-import { Assembler, ChangeRecord, User } from 'src/models/DiagramModel';
+import { Assembler, ChangeRecord, User, Diagram } from 'src/models/DiagramModel';
 
 
 @Injectable()
@@ -104,6 +104,12 @@ export class CoUmlHubService{
 	public generate(Did:string)
 	{
 		this._coUmlHubConnection.invoke("Generate",Did);
+	}
+
+	//sends document text over to c#
+	public send(Did:string, projectDiagram: Diagram){
+		let changeDiagram = JSON.stringify(projectDiagram)
+		this._coUmlHubConnection.invoke("Send",Did,changeDiagram);
 	}
 
 }

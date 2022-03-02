@@ -8,8 +8,9 @@ export class Diagram
 
 	public elements: ICollection<DiagramElement>;
 
-	public constructor()
+	public constructor(Did:string)
 	{
+		this.id = Did;
 		this.elements = new GeneralCollection<DiagramElement>([])
 	}
 

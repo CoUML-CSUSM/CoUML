@@ -95,7 +95,8 @@ export class ProjectDeveloper{
 		eval("affectedComponent." + operation);
 
 		console.log("result");
-		console.log(this._projectDiagram);
+		console.log(this._projectDiagram);//i need to send this down to the c#
+		this._coUmlHub.send(this._projectDiagram.id,this._projectDiagram);
 
 	}
 
