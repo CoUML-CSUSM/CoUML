@@ -13,8 +13,9 @@ namespace CoUML_app.Models
 
 		public ICollection<DiagramElement> elements {get;}
 
-		public Diagram()
+		public Diagram(String dId = null)
 		{
+			id = dId == null? Guid.NewGuid().ToString() : dId;
 			this.elements = new GeneralCollection<DiagramElement>();
 		}
 

@@ -122,7 +122,7 @@ namespace CoUML_app.Controllers.Hubs
         /// <returns></returns>
         private readonly static ConnectionMap<string, IUser> _connections = new ConnectionMap<string, IUser>();
 
-        private static Diagram testDiagram = DevUtility.DiagramDefualt(); // test code here
+        private static Diagram testDiagram = DevUtility.DiagramDefualt("test"); // test code here
         //private static Diagram testDiagram = DevUtility.EmptyDiagram();
 
         
@@ -198,10 +198,15 @@ namespace CoUML_app.Controllers.Hubs
 
             var collection = db.GetCollection<BsonDocument>("Diagrams");
             var filter = Builders<BsonDocument>.Filter.Eq("id", dId);
-            //this is the stuff we need!!!
-            //old one for getting string from database
-            //var diagramText = collection.Distinct<string>("diagram", filter).ToListAsync().Result[0].ToString();
-            var diagramText = collection.Find(filter).Project("{_id: 0}").FirstOrDefault().ToString();
+            
+            var diagram = collection.Find(filter).Project("{_id: 0}").FirstOrDefault(); //may return null
+
+            if(diagram == null){
+                Generate(dId);
+                diagram = collection.Find(filter).Project("{_id: 0}").FirstOrDefault();
+            }
+
+            var diagramText = diagram.ToString();
             Console.WriteLine(diagramText);//outputs the diagram text
             //^ should change it so this is what gets returned ^
 
@@ -212,12 +217,7 @@ namespace CoUML_app.Controllers.Hubs
                         TypeNameHandling = TypeNameHandling.Auto
                     });
             */
-                    return diagramText;
-            // return this.OpenSampleFile();
-            // return JsonConvert.SerializeObject(testDiagram, Formatting.Indented);
-
-
-                
+            return diagramText;
         }
 
         public void Push(string dId, string changes)
@@ -257,27 +257,13 @@ namespace CoUML_app.Controllers.Hubs
 
             var collection = db.GetCollection<BsonDocument>("Diagrams");
 
-            //old way of sending the doc as a string
-            // var doc = new BsonDocument
-            // {
-            //     {"id", Did},
-            //     {"diagram", JsonConvert.SerializeObject(testDiagram, Formatting.Indented, new JsonSerializerSettings
-            //         {
-            //             TypeNameHandling = TypeNameHandling.Auto
-            //         })}//string that contains all the info of the diagram
-                
-            // };
-
-            // collection.InsertOne(doc);
-
-            // var doc = new BsonDocument
-            // {
-            //      JsonConvert.SerializeObject(testDiagram)//string that contains all the info of the diagram
-                
-            // };
-
             //sends diagram as bson doc using the string of the diagram
-            MongoDB.Bson.BsonDocument doc = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonDocument>(JsonConvert.SerializeObject(testDiagram));
+            MongoDB.Bson.BsonDocument doc = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonDocument>(
+                JsonConvert.SerializeObject(testDiagram, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.Auto
+                    })
+            );
 
             collection.InsertOne(doc);
         }
@@ -302,9 +288,9 @@ namespace CoUML_app.Controllers.Hubs
     }
 
     static class DevUtility{
-        public static Diagram DiagramDefualt()
+        public static Diagram DiagramDefualt(String dId)
         {
-            Diagram d = new Diagram();
+            Diagram d = new Diagram(dId);
 
 
             // interface
