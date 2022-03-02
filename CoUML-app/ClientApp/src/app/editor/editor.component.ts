@@ -1,8 +1,8 @@
-import { AfterViewInit, Component as AngularComponent, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Class, AbstractClass, Diagram, DiagramElement, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, ChangeRecord, ActionType, PropertyType, ICollectionIterator, Enumeration, Dimension } from 'src/models/DiagramModel';
+import { AfterViewInit, Component as AngularComponent, ElementRef, OnInit, ViewChild, HostListener } from '@angular/core';
+import { Class, AbstractClass, Diagram, DiagramElement, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, ChangeRecord, ActionType, PropertyType, ICollectionIterator, Enumeration, Dimension, DEFUALT_DIMENSION, NullUser, ComponentProperty } from 'src/models/DiagramModel';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
-import { EditorFormatHandler } from './editor-format.handler';
-import { EditorNotificationHandler } from './editor-notification.handler';
+import * as EditorFormatHandler  from './editor-format.handler';
+import * as EditorEventHandler  from './editor-event.handler';
 
 /**
  * https://github.com/typed-mxgraph/typed-mxgraph
@@ -10,43 +10,95 @@ import { EditorNotificationHandler } from './editor-notification.handler';
 @AngularComponent({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
-  providers: [ProjectDeveloper, EditorFormatHandler, EditorNotificationHandler]
+  providers: [ProjectDeveloper]
 })
 export class EditorComponent implements AfterViewInit{
 
-	private _graphContainer: mxGraph;
+	private _graph: mxGraph;
 	diagram_description: string;
 	diagramId: string;
 
-	@ViewChild('container', { read: ElementRef, static: true })
-	public container: ElementRef<HTMLElement>;
+	_currentSelection: mxCell = null;
 
+	@ViewChild('graphContainer', { read: ElementRef, static: true })
+	public graphContainer: ElementRef<HTMLElement>;
+
+	@ViewChild('toolbarContainer', { read: ElementRef, static: true })
+	public toolbarContainer: ElementRef<HTMLElement>;
+
+    private _toolbar: mxToolbar;
+
+	get toolbar(){ return this._toolbar;}
+	get graph(){return this._graph;}
 
 	constructor(
-		private _projectDeveloper: ProjectDeveloper, 
-		private _formatHandler: EditorFormatHandler,
-		private _notificationHandler: EditorNotificationHandler
+		private _projectDeveloper: ProjectDeveloper
 	) {
 		this._projectDeveloper.subscribe(this);
+		this.onResize();
 	}
 
+
+
+	/** frame controls */
+
+	canvasHeight: number;
+    canvasWidth: number;
+
+	toolbarWidth: number = 212;
+	accentColor: string = '#EFEFEF';
+	
+	@HostListener('window:resize', ['$event'])
+	onResize(event?) {
+		this.canvasHeight = window.innerHeight;
+		this.canvasWidth = window.innerWidth - this.toolbarWidth;
+	}
+	/*************************** */
+
+
+
 	ngAfterViewInit(): void {
-		this._graphContainer = new mxGraph(this.container.nativeElement);
-		this._formatHandler.addEdgeStyles(this._graphContainer);
-		this._notificationHandler.addListeners(
+
+		//init graph div
+		this._graph = new mxGraph(this.graphContainer.nativeElement);
+		this._graph.setDropEnabled(true); // ability to drag elements as groups
+		EditorFormatHandler.addEdgeStyles(this._graph);
+		EditorFormatHandler.addCellStyles(this._graph);
+		EditorFormatHandler.intiLayoutManager(this._graph);
+
+		EditorEventHandler.addListeners(
 			[
 				mxEvent.LABEL_CHANGED,
 				mxEvent.CELLS_ADDED,
 				mxEvent.START_EDITING, 
 				mxEvent.CELL_CONNECTED, 
 				mxEvent.EDITING_STOPPED,
-				mxEvent.CELLS_MOVED
+				mxEvent.CELLS_MOVED,
+				mxEvent.CLICK,
+				mxEvent.CONNECT,
 			],
-			this._graphContainer,
+			this._graph,
 			this
 		);
+		
+		//special context menu on graph
+		mxEvent.disableContextMenu(this.graphContainer.nativeElement);
+		EditorEventHandler.addContextMenu( this._graph, this);
+
+		//init toolbar div
+        this._toolbar = new mxToolbar(this.toolbarContainer.nativeElement);
+		EditorEventHandler.addToolbarItems(
+			[Class, AbstractClass, Interface, Enumeration, Attribute, Operation],
+			this
+		);
+
+		//get test diagram
 		setTimeout(()=>	this._projectDeveloper.open(this.diagramId), 500);
 	}
+
+	
+
+	
 
 	stageChange(change: ChangeRecord)
 	{
@@ -55,13 +107,21 @@ export class EditorComponent implements AfterViewInit{
 		this._projectDeveloper.stageChange(change);
 	}
 
+
 	
 	public draw() {
 		//turn off notifications before drawing new graph 
-		this._graphContainer.eventsEnabled = false;
-		this._graphContainer.getModel().beginUpdate();
+		this._graph.eventsEnabled = false;
+		this._graph.setConnectable(true);
+
+		this._graph.isCellLocked = function(cell)
+		{
+			return this.getCellStyle(cell)['selectable'] == 0;
+		}
+
+		// this._graph.iscellS
+		this._graph.getModel().beginUpdate();
 		try {
-			const parent = this._graphContainer.getDefaultParent();
 
 			let elementIterator: ICollectionIterator<DiagramElement> 
 				= this._projectDeveloper._projectDiagram.elements.iterator();
@@ -73,16 +133,9 @@ export class EditorComponent implements AfterViewInit{
 			{
 				let diagramElement = elementIterator.getNext();
 
-				if(diagramElement instanceof Component)
-					this._graphContainer.insertVertex(
-						parent,
-						diagramElement.id, 
-						diagramElement.name, 
-						diagramElement.dimension.x, 
-						diagramElement.dimension.y, 
-						diagramElement.dimension.width, 
-						diagramElement.dimension.height
-					);
+				if(diagramElement instanceof Component){
+					this.insertComponent(diagramElement)
+				}
 				else if( diagramElement instanceof Relationship){
 						relatioships.push(diagramElement)
 				}
@@ -90,27 +143,94 @@ export class EditorComponent implements AfterViewInit{
 
 			for( let relation  of relatioships)
 			{
-				// TODO : figure out how to insert an edge that has no source or target 
-				this._graphContainer.insertEdge(
-					parent, 
-					relation.id, 
-					relation.attributes.toString(), 
-					this._graphContainer.getModel().getCell(relation.source), 
-					this._graphContainer.getModel().getCell(relation.target),
-					RelationshipType[relation.type]
-				);
+				this.insertEdge(relation);
 			}
 					
 		} finally {
-			this._graphContainer.getModel().endUpdate();
-
-			// turn notifications back on
-			this._graphContainer.eventsEnabled = true;
+			this._graph.getModel().endUpdate();
+			this._graph.eventsEnabled = true;
 		}
 	}
 	
+	public insertComponent(component: Component) {
+
+
+		console.log("this._graph.insertVertex");
+
+
+		let graphComponent = this._graph.insertVertex(
+			this._graph.getDefaultParent(),
+			component.id, 
+			component.name, 
+			component.dimension.x, 
+			component.dimension.y, 
+			component.dimension.width, 
+			component.dimension.height,
+			component.constructor.name
+		);
+		
+		if(component instanceof AbstractClass || component instanceof Class)
+		{
+			let attributeIterator: ICollectionIterator<Attribute> = component.attributes.iterator();
+
+			while(attributeIterator.hasNext())
+				this.insertProperty(graphComponent, attributeIterator.getNext()) ;
+		}
+		if(component instanceof AbstractClass 
+			|| component instanceof Class
+			|| component instanceof Interface)
+		{
+			let operatorIterator: ICollectionIterator<Operation> = component.operations.iterator();
+
+			while(operatorIterator.hasNext())
+				this.insertProperty(graphComponent, operatorIterator.getNext()) ;
+				
+		}
+		return graphComponent;
+	}
+
+
+	insertProperty(parent: mxCell, property: ComponentProperty)
+	{
+		this._graph.insertVertex(
+			parent,
+			property.id,
+			property.toString(),
+			0, 0, 
+			parent.geometry.width, 
+			parent.geometry.height, 
+		);
+	}
+
+	private insertEdge(relation: Relationship)
+	{	
+		var edge = new mxCell(
+			relation.attributes.toString(), 
+			new mxGeometry(0, 0, 0, 0), 
+			RelationshipType[relation.type]);
+		edge.edge = true;
+		edge.id = relation.id
+		edge.geometry.relative = true;
+		edge.style = RelationshipType[relation.type];
+		
+		if(relation.source)
+			edge.setTerminal(this._graph.getModel().getCell(relation.source), true);
+		else
+			edge.geometry.setTerminalPoint(new mxPoint(relation.dimension.x, relation.dimension.y), true); //source
+
+		if(relation.target)
+			edge.setTerminal(this._graph.getModel().getCell(relation.target), false);
+		else
+			edge.geometry.setTerminalPoint(new mxPoint(relation.dimension.width, relation.dimension.height), false); //target
+	  
+		edge = this._graph.addCell(edge);
+
+	}
+
+
 	public processChange(change: ChangeRecord){
-		let affectedCell = this._graphContainer.getModel().getCell(change.id[0]);
+		let affectedCell = change.id? this._graph.getModel().getCell(change.id.pop()): null;
+
 		switch(change.action){
 			case ActionType.Change:
 				switch(change.affectedProperty){
@@ -118,19 +238,61 @@ export class EditorComponent implements AfterViewInit{
 					case PropertyType.Dimension: this.updateEdgeGeometry(affectedCell,change); break;
 					case PropertyType.Target:
 						case PropertyType.Source: this.updateEdgeConnections(affectedCell,change); break;
+					case PropertyType.Type:
+						affectedCell.style = RelationshipType[change.value];
+						this._graph.refresh();
+						break;
 				}
 				break;
 
 			case ActionType.Shift:
 				this.updateCellGeometry(affectedCell, change);
 				break;
+			
+			case ActionType.Insert:
+				switch(change.affectedProperty){
+					case PropertyType.Elements:
+						if(change.value instanceof Relationship)
+							this.insertEdge(change.value);
+						else
+							this.insertComponent(change.value);
+						break;
+				}
+				break;
+			case ActionType.Lock:
+			case ActionType.Release:
+				this.updateCellLock(affectedCell,change); break;
 		}
 	}
+
+	private updateCellLock(affectedCell: mxCell, change: ChangeRecord)
+	{
+		let isSelectable = (change.value instanceof NullUser || change.value.id == this._projectDeveloper._editor.id);
+		this._graph.toggleCellStyle('selectable', isSelectable, affectedCell);
+
+		var overlays = this._graph.getCellOverlays(affectedCell);
+						
+		if (!isSelectable)
+		{
+			// Creates a new overlay with an image and a tooltip
+			var overlay = new mxCellOverlay(
+				new mxImage('editors/images/overlays/user3.png', 24, 24),
+				`locked by: ${change.value.id}`);
+
+			// Sets the overlay for the cell in the graph
+			this._graph.addCellOverlay(affectedCell, overlay);
+		}
+		else
+		{
+			this._graph.removeCellOverlays(affectedCell);
+		}
+	}
+
 	private updateCellGeometry(affectedCell: mxCell, change: ChangeRecord) {
-		let newCellGeometry = this._graphContainer.getCellGeometry(affectedCell).clone();
+		let newCellGeometry = this._graph.getCellGeometry(affectedCell).clone();
 		newCellGeometry.x = change.value.x;
 		newCellGeometry.y = change.value.y;
-		this._graphContainer.getModel().setGeometry(affectedCell, newCellGeometry);
+		this._graph.getModel().setGeometry(affectedCell, newCellGeometry);
 	}
 	
 	private updateEdgeGeometry(affectedEdge: mxCell, change: ChangeRecord) {
@@ -143,7 +305,7 @@ export class EditorComponent implements AfterViewInit{
 		let newEdgeGeometry = affectedEdge.getGeometry().clone();
 		newEdgeGeometry.setTerminalPoint(point, isSource);
 
-		this._graphContainer.getModel().setGeometry(affectedEdge, newEdgeGeometry);
+		this._graph.getModel().setGeometry(affectedEdge, newEdgeGeometry);
 	}
 
 	private updateEdgeConnections(affectedEdge: mxCell, change: ChangeRecord) {
@@ -154,18 +316,53 @@ export class EditorComponent implements AfterViewInit{
 
 		}else
 		{// connecting
-			let affectedCell = this._graphContainer.getModel().getCell(change.value);
-			this._graphContainer.getModel().setTerminal( affectedEdge, affectedCell, isSource );
+			let affectedCell = this._graph.getModel().getCell(change.value);
+			this._graph.getModel().setTerminal( affectedEdge, affectedCell, isSource );
 		}
 
 	}
 
 	private updateLabelValue(affectedCell: mxCell, change: ChangeRecord)
 	{
-		this._graphContainer.getModel().setValue(
+		this._graph.getModel().setValue(
 			affectedCell,
 			change.value
 		);
 	}
+
+	releaseLock(newSelection: mxCell)
+	{
+		console.log("-----releaseLock----")
+		console.log(newSelection);
+		// if should release
+		if(this._currentSelection != null) // something is currently locked
+		{
+
+			this.stageChange(new ChangeRecord(
+				[this._currentSelection.id],
+				PropertyType.Editor,
+				ActionType.Release,
+				new NullUser()
+			));
+			this._currentSelection = null;
+		}
+		if(newSelection){
+			if (newSelection.style == undefined)
+				newSelection = newSelection.parent // if attribute lock parent comp
+			this._currentSelection = newSelection;
+			this.stageChange(new ChangeRecord(
+				[this._currentSelection.id],
+				PropertyType.Editor,
+				ActionType.Lock,
+				this._projectDeveloper._editor
+			));
+
+		}
+	}
+
+
+
+
+
 }
 

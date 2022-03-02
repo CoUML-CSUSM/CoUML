@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, ElementRef, Renderer2, ViewChild} from '@angular/core';
 
 import { CoUmlHubService } from '../service/couml-hub.service';
 
@@ -10,21 +10,19 @@ import { CoUmlHubService } from '../service/couml-hub.service';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
 })
 
 export class HomeComponent {
 
-
   ip: string;
+  top:string = "top: 100px;";
 
-	constructor(public _coUmlHub: CoUmlHubService) {}
+	constructor(
+    private _coUmlHub: CoUmlHubService,
+    private _renderer: Renderer2
+    ) {
 
-  break()
-  {
-    this._coUmlHub.triggerBreakPoint();
   }
-
 
 }
 

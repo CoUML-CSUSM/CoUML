@@ -1,1 +1,7 @@
-<p-button label="Create New Diagram" (onClick)="generate()" ></p-button>
+<p-menubar [model]="_menuItems"
+>
+<ng-template pTemplate="start">
+	<span class="text-xl pr-2 pl-2">CoUML</span>
+</ng-template>
+
+</p-menubar>

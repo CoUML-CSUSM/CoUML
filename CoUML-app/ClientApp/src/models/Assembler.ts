@@ -43,13 +43,22 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 				case Attribute.name:
 				element = assembleAttribute(elem);
 				break;
+			case "User":
+				case User.name:
+					element = assembleUser(elem)
+				break;
+
+			case "NullUser":
+				case NullUser.name:
+					element = new NullUser();
+				break;
 			default:
 				console.log("Component is not an object");
 				element = elem;
 				break;
 		}
 		console.log("New Component created");
-		console.log(elem)
+		console.log(element)
 		
 		return element;
 	}
@@ -73,7 +82,7 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 		__class.dimension = assembleDimension(x.dimension);
 		assembleAttributeCollection(__class.attributes, x.attributes);
 		assembleOperationsCollection(__class.operations, x.operations);
-		assembleStringCollection( __class.relations, x.relations);
+		// assembleStringCollection( __class.relations, x.relations);
 		return __class;
 	}
 	function assembleAbstractClass(x: AbstractClass): DiagramElement {
@@ -83,7 +92,7 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 		__abstract.dimension = assembleDimension(x.dimension);
 		assembleAttributeCollection(__abstract.attributes, x.attributes);
 		assembleOperationsCollection(__abstract.operations, x.operations);
-		assembleStringCollection(__abstract.relations, x.relations);
+		// assembleStringCollection(__abstract.relations, x.relations);
 		return __abstract;
 	}
 	function assembleEnumeration(x: Enumeration): DiagramElement {
@@ -97,7 +106,7 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 		__interface.editor = assembleUser(x["editor"]);
 		__interface.dimension = assembleDimension(x["dimension"]);
 		assembleOperationsCollection(__interface.operations, x["operations"]);
-		assembleStringCollection(__interface.relations, x["relations"]);
+		// assembleStringCollection(__interface.relations, x["relations"]);
 		return __interface;
 	}
 
@@ -122,7 +131,7 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 		__operation.name = x.name;
 		__operation.isStatic = x.isStatic;
 		__operation.propertyString = x.propertyString;
-		__operation.type = new DataType(x.type);
+		__operation.type = new DataType(x.type.dataType);
 		assembleAttributeCollection(__operation.parameters, x.parameters);
 		return __operation;
 	}
@@ -140,7 +149,7 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 		__attribute.name = x.name;
 		__attribute.isStatic = x.isStatic;
 		__attribute.propertyString = x.propertyString;
-		__attribute.type =  new DataType(x.type);
+		__attribute.type =  new DataType(x.type.dataType);
 		__attribute.multiplicity = x.multiplicity;
 		__attribute.defaultValue = x.defaultValue;
 		return __attribute;
@@ -169,11 +178,13 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 	 */
 	function getType(element)
 	{
-		console.log("getType")
+		console.log("----- getType")
+		console.log(element)
 		try{
 			console.log(element["$type"]);
 			let regex = /(\w*?),*?(?=,)/g;
 			let type = regex.exec(element["$type"])[0];
+			console.log(`returning "${type}"-----`);
 			return type;
 		}catch(any){
 			console.log("no $type");

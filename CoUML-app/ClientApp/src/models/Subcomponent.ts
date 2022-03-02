@@ -46,15 +46,18 @@ export class Relationship extends DiagramElement implements IGettable
 
 export abstract class ComponentProperty{
 	public id: string;
-	public name: string;
-	public visibility: VisibilityType;
-	public isStatic: boolean;
-	public propertyString: string; 
-	public type: DataType;
+	public name: string = "foo";
+	public visibility: VisibilityType = VisibilityType.Public;
+	public isStatic: boolean = false;
+	public propertyString: string = ""; 
+	public type: DataType = new DataType("any");
 	constructor(type)
 	{
 		this["$type"] = `CoUML_app.Model.${type}, CoUML-app`;
 	}
+
+	abstract toString(): string;
+
 }
 /**
  * describs an attibute of a diagram element
@@ -72,6 +75,11 @@ export class Attribute extends ComponentProperty
 	
 	constructor(){
 		super("Attribute");
+	}
+
+	toString(): string
+	{
+		return `${String.fromCharCode(this.visibility as unknown as number)} ${this.name}: ${this.type.dataType}`;
 	}
 }
 
@@ -95,6 +103,11 @@ export class Attribute extends ComponentProperty
 
 	get(id: string) {
 		return this.parameters.get(id);
+	}
+
+	toString(): string
+	{
+		return `${String.fromCharCode(this.visibility as unknown as number) } ${this.name}(${this.parameters.size>0? this.parameters.toString(): ""}): ${this.type.dataType}`;
 	}
 }
 

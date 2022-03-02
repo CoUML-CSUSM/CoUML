@@ -32,7 +32,7 @@ export enum PropertyType
 	Elements,			//0
 	Operations,			//1
 	Attributes,			//2
-	Relations,			//3
+	// Relations,			//3
 	Enums,				//4
 
 	//class attributes
