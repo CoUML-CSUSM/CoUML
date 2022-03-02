@@ -191,7 +191,7 @@ namespace CoUML_app.Controllers.Hubs
                 Console.WriteLine("not test id");
             }
 
-            /*
+            
             //finds document from database
             var dbClient = new MongoClient("mongodb://localhost:27017");
             IMongoDatabase db = dbClient.GetDatabase("CoUML");
