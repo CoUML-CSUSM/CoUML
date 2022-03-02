@@ -3,7 +3,7 @@ export enum VisibilityType{
     Public	=	'+',
     Protected =	'#',
     Package	=	'~',
-    LocalScope = ''
+    LocalScope = ' '
 }
 
 export class DataType
@@ -20,7 +20,7 @@ export enum RelationshipType
     Dependency, 
     Association,
     Aggregation,
-    Composistion,
+    Composition,
     Generalization,
     Realization
 }

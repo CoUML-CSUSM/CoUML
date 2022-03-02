@@ -2,11 +2,11 @@ namespace CoUML_app.Models
 {
 
 	public enum VisibilityType{//enums cant be strings in c#
-		Private= '-',
-		Public = '+',
-		Protected = '#',
-		Package = '~',
-		LocalScope
+		Private = '-',
+		Public  = '+',
+		Protected  = '#',
+		Package  = '~',
+		LocalScope = ' '
 	}
 
 	public struct DataType{

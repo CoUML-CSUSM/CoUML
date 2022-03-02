@@ -13,13 +13,11 @@ import { DiagramElement, Operation, Attribute, ComponentProperty,  ICollection }
 export abstract class Component extends DiagramElement implements IGettable
 {
     public name:string;
-    public relations:ICollection<string>;
 
     constructor(type: string, name: string)
     {
         super(type);
         this.name = name;
-        this.relations = new GeneralCollection<string> ([]);
     }
 
     abstract get(id);
@@ -32,7 +30,7 @@ export class Enumeration extends Component
 {
     public enums: ICollection<string>;
 
-    public constructor(name: string)
+    public constructor(name: string = "EnumerationComponent")
     {
         super("Enumeration", name);
         this.enums  = new GeneralCollection<string> ([]);
@@ -51,7 +49,7 @@ export class Interface extends Component
 {
     public operations: ICollection<Operation>;
 
-    public constructor(name: string)
+    public constructor(name: string = "InterfaceComponent")
     {
         super("Interface", name);
         this.operations  = new GeneralCollection<Operation> ([]);
@@ -70,7 +68,7 @@ export class AbstractClass extends Component
     public operations:ICollection<Operation>;
     public attributes:ICollection<Attribute>;
 
-    public constructor(name: string)
+    public constructor(name: string = "AbstractClassComponent")
     {
         super("AbstractClass", name);
         this.operations  = new GeneralCollection<Operation> ([]);
@@ -92,7 +90,7 @@ export class Class extends Component
     public operations:ICollection<Operation>;
     public attributes:ICollection<Attribute>;
 
-    public constructor(name: string)
+    public constructor(name: string = "ClassComponent")
     {
         super("Class", name);
         this.operations  = new GeneralCollection<Operation> ([]);

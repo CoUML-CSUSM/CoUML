@@ -29,7 +29,7 @@ export abstract class DiagramElement
 	{
 		this.editor = new NullUser();
 		this.id = Uuid();
-		this.dimension = new Dimension();
+		this.dimension = new Dimension(0, 0, 200,  40);
 		this["$type"] = `CoUML_app.Model.${type}, CoUML_app`;
 	}
 

@@ -34,3 +34,5 @@ export class Dimension implements IDimension {
 	}
 
 }
+
+export const DEFUALT_DIMENSION: IDimension = {x: 0, y: 0, width: 200, height: 20}

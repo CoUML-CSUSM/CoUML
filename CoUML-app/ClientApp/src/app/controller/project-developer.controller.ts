@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CoUmlHubService } from "../service/couml-hub.service";
-import { Diagram, Assembler, ChangeRecord, ActionType, PropertyType, Component, Class, AbstractClass, Interface, Enumeration, IGettable } from 'src/models/DiagramModel';
+import { Diagram, Assembler, ChangeRecord, ActionType, PropertyType, Component, Class, AbstractClass, Interface, Enumeration, IGettable, IUser } from 'src/models/DiagramModel';
 import { EditorComponent } from '../editor/editor.component';
 
 
@@ -9,9 +9,8 @@ export class ProjectDeveloper{
 
 	_projectDiagram: Diagram = null;
 
-	__parentId =  "0b68a108-f685-4e44-9e6e-a325d8d439f3"; // for testing only!!!!
-
 	_diagramEditor: EditorComponent = null;
+	_editor: IUser
 
 	_changes: ChangeRecord[] = [];
 
@@ -19,6 +18,12 @@ export class ProjectDeveloper{
 
 	subscribe(diagramEditor: EditorComponent) {
 		this._diagramEditor = diagramEditor;
+	}
+
+	setEditor(user: IUser) {
+		this._editor = user;
+		console.log("editor set to");
+		console.log(this._editor);
 	}
 
 	public open( id: string )
@@ -46,8 +51,11 @@ export class ProjectDeveloper{
 		console.log(changes);
 		for(let change of changes)
 		{
-			this.applyChange(change);
-			this._diagramEditor.processChange(change);
+			setTimeout(()=>{
+
+				this.applyChange(change);
+				this._diagramEditor.processChange(change);
+			}, 100)
 		}
 		console.log("-------------- Done! ---------------");
 		console.log(this._projectDiagram);
@@ -61,7 +69,7 @@ export class ProjectDeveloper{
 
 		let action = ActionType[change.action].toLowerCase();
 		let affectedProperty = PropertyType[change.affectedProperty].toLowerCase();
-		change.value = Assembler.assembleDiagramElement(change.value);
+			
 		let operation = "";
 
 		let affectedComponent: IGettable = this._projectDiagram.elements;

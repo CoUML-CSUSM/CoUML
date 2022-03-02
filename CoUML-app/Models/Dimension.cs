@@ -9,7 +9,7 @@ namespace CoUML_app.Models
 	}
 	public class Dimension: IDimension
 	{
-		public Dimension( int x = 100, int y = 100, int w = 60,  int h = 40)
+		public Dimension( int x = 100, int y = 100, int w = 200,  int h = 40)
 		{
 			this.x = x;
 			this.y = y;

@@ -23,7 +23,7 @@ namespace CoUML_app.Models
         Elements,
         Operations,
         Attributes,
-        Relations,
+        // Relations,
         Enums,
 
         //class attributes

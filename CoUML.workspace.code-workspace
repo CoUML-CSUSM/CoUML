@@ -10,7 +10,7 @@
 			"path": "../csharp"
 		},
 		{
-			"path": "../mxgraph/javascript/examples"
+			"path": "../mxgraph/mxgraph/javascript/examples"
 		}
 	],
 	"settings": {
