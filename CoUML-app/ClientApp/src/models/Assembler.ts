@@ -96,7 +96,12 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 		return __abstract;
 	}
 	function assembleEnumeration(x: Enumeration): DiagramElement {
-		return new Enumeration(x.name);
+		let __enum = new Enumeration(x.name);
+		__enum.id = x.id;
+		__enum.editor = assembleUser(x.editor);
+		__enum.dimension = assembleDimension(x.dimension);
+		// __enum.enums = assembleStringCollection(e.enums);
+		return __enum;
 	}
 
 	function assembleInterface(x: Interface): DiagramElement

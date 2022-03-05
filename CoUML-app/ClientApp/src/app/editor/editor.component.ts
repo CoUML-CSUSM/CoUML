@@ -64,7 +64,7 @@ export class EditorComponent implements AfterViewInit{
 		this._graph.setDropEnabled(true); // ability to drag elements as groups
 		EditorFormatHandler.addEdgeStyles(this._graph);
 		EditorFormatHandler.addCellStyles(this._graph);
-		EditorFormatHandler.intiLayoutManager(this._graph);
+		EditorFormatHandler.initLayoutManager(this._graph);
 
 		EditorEventHandler.addListeners(
 			[
@@ -143,7 +143,7 @@ export class EditorComponent implements AfterViewInit{
 
 			for( let relation  of relatioships)
 			{
-				this.insertEdge(relation);
+				this.insertRelationship(relation);
 			}
 					
 		} finally {
@@ -152,7 +152,7 @@ export class EditorComponent implements AfterViewInit{
 		}
 	}
 	
-	public insertComponent(component: Component) {
+	public insertComponent(component: Component):mxCell {
 
 
 		console.log("this._graph.insertVertex");
@@ -190,9 +190,9 @@ export class EditorComponent implements AfterViewInit{
 	}
 
 
-	insertProperty(parent: mxCell, property: ComponentProperty)
+	insertProperty(parent: mxCell, property: ComponentProperty): mxCell
 	{
-		this._graph.insertVertex(
+		return this._graph.insertVertex(
 			parent,
 			property.id,
 			property.toString(),
@@ -202,7 +202,7 @@ export class EditorComponent implements AfterViewInit{
 		);
 	}
 
-	private insertEdge(relation: Relationship)
+	private insertRelationship(relation: Relationship): mxCell
 	{	
 		var edge = new mxCell(
 			relation.attributes.toString(), 
@@ -223,7 +223,7 @@ export class EditorComponent implements AfterViewInit{
 		else
 			edge.geometry.setTerminalPoint(new mxPoint(relation.dimension.width, relation.dimension.height), false); //target
 	  
-		edge = this._graph.addCell(edge);
+		return this._graph.addCell(edge);
 
 	}
 
@@ -253,7 +253,7 @@ export class EditorComponent implements AfterViewInit{
 				switch(change.affectedProperty){
 					case PropertyType.Elements:
 						if(change.value instanceof Relationship)
-							this.insertEdge(change.value);
+							this.insertRelationship(change.value);
 						else
 							this.insertComponent(change.value);
 						break;
