@@ -10,12 +10,12 @@ export class ProjectManager{
 
     constructor(private _coUmlHub: CoUmlHubService){}
 
-    public generate(Did:string){
+    public generate(dId:string){
 
         console.log("Creating new diagram")
-        this._coUmlHub.generate(Did);
+        this._coUmlHub.generate(dId);
         
-        (d) => {;
+        (d) => {
             this.newDiagram = Assembler.assembleDiagram(d);
         };
             

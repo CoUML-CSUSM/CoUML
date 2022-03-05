@@ -6,10 +6,10 @@ import { CoUmlHubService } from '../service/couml-hub.service';
 
 @AngularComponent({
     selector: 'app-menu',
-    templateUrl: './menu.component.html',
+    templateUrl: './project-menu.component.html',
     providers: [ProjectManager]
   })
-  export class MenuComponent{
+  export class ProjectMenuComponent{
 
     _menuItems: MenuItem[];
 

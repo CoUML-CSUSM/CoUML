@@ -8,7 +8,7 @@ import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { EditorComponent } from './editor/editor.component';
-import { MenuComponent } from './menu/menu.component';
+import { ProjectMenuComponent } from './menu/project-menu.component';
 
 
 import { CoUmlHubService } from './service/couml-hub.service';
@@ -27,7 +27,7 @@ import {TabViewModule} from 'primeng/tabview';
     AppComponent,
     HomeComponent,
     EditorComponent,
-    MenuComponent,
+    ProjectMenuComponent,
 
 
   ],

@@ -257,6 +257,11 @@ export class EditorComponent implements AfterViewInit{
 						else
 							this.insertComponent(change.value);
 						break;
+					case PropertyType.Attributes:
+					case PropertyType.Operations:
+						this.insertProperty(affectedCell, change.value);
+						this._graph.refresh();
+						break;
 				}
 				break;
 			case ActionType.Lock:

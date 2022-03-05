@@ -10,7 +10,7 @@ import { AbstractClass,
 	Interface, 
 	Relationship, 
 	RelationshipType, 
-	Operation, Attribute } from "src/models/DiagramModel";
+	Operation, Attribute, ComponentProperty } from "src/models/DiagramModel";
 import { EditorComponent } from "./editor.component";
 
 
@@ -127,6 +127,14 @@ import { EditorComponent } from "./editor.component";
 			console.log(parentCell) //return null if empty space, otherwise cell
 
 			let component = new prototype(); //creates new compnent object of approrate type
+			console.log(component);
+			console.log(`
+			component instanceof Component		${component instanceof Component}
+			component instanceof Class			${component instanceof Class}
+			component instanceof Interface		${component instanceof Interface}
+			component instanceof Attribute		${component instanceof Attribute}
+			component instanceof CompProperty	${component instanceof ComponentProperty}
+			`)
 			if(component instanceof Component)
 			{
 				component.dimension.x =   Math.floor(x / 10) * 10;
@@ -151,25 +159,40 @@ import { EditorComponent } from "./editor.component";
 					style = graph.getCellStyle(parentCell) as any[];
 				}
 				
+				console.log(parentCell);
 				//does this acctualy go here?
-				if((prototype instanceof Attribute 
+				console.log(`if((prototype instanceof Attribute			${component instanceof Attribute}
+					&& (parentCell.style == Class.name 					${parentCell.style == Class.name}
+						|| parentCell.style == AbstractClass.name 		${parentCell.style == AbstractClass.name}
+						)) ||
+					(prototype instanceof Operation						${component instanceof Operation}
+					&&(parentCell.style == Class.name 					${parentCell.style == Class.name}
+						|| parentCell.style == AbstractClass.name 		${parentCell.style == AbstractClass.name}
+						|| parentCell.style == Interface.name 			${parentCell.style == Interface.name}
+						)))`);
+				if((component instanceof Attribute 
 					&& (parentCell.style == Class.name 
 						|| parentCell.style == AbstractClass.name 
 						)) ||
-					(prototype instanceof Operation
+					(component instanceof Operation
 					&&(parentCell.style == Class.name 
 						|| parentCell.style == AbstractClass.name 
 						|| parentCell.style == Interface.name 
 						)))
 				{
+					console.log("this goes here")
 					editorComponent.insertProperty(parentCell, component);
+					graph.refresh();
 					editorComponent.stageChange(new ChangeRecord(
 						parentCell.id,
-						prototype instanceof Operation? PropertyType.Operations: PropertyType.Attributes,
+						component instanceof Operation? PropertyType.Operations: PropertyType.Attributes,
 						ActionType.Insert,
 						component
 					));
-				} 
+				} else
+				{
+					console.log("this does NOT go here");
+				}
 			}
 		}
 		
