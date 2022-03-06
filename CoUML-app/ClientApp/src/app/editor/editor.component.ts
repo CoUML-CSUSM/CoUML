@@ -198,9 +198,7 @@ export class EditorComponent implements AfterViewInit{
 			parent,
 			property.id,
 			property.toString(),
-			0, 0, 
-			parent.geometry.width, 
-			parent.geometry.height, 
+			0, 0, 0, 0 
 		);
 	}
 

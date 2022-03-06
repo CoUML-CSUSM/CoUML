@@ -127,7 +127,7 @@ import { EditorComponent } from "./editor.component";
 			console.log(parentCell) //return null if empty space, otherwise cell
 
 			let component = new prototype(); //creates new compnent object of approrate type
-			if(component instanceof Component)
+			if(component instanceof Component) //if adding new component
 			{
 				component.dimension.x =   Math.floor(x / 10) * 10;
 				component.dimension.y =   Math.floor(y / 10) * 10;
@@ -142,7 +142,7 @@ import { EditorComponent } from "./editor.component";
 					component
 				));
 			}
-			else if(parentCell)
+			else if(parentCell)//if adding property to component
 			{
 				var style = graph.getCellStyle(parentCell) as any[];
 				while(style['childLayout'] != 'stackLayout' )
