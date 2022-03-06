@@ -1,6 +1,6 @@
 import { RelationalCollection } from "./Collection";
 import { DiagramElement, GeneralCollection, ICollection, SerializedElement, Component } from "./DiagramModel";
-import { VisibilityType, DataType, RelationshipType } from "./Types";
+import { VisibilityType, DataType, RelationshipType} from "./Types";
 
 /**
  * describ a relationship between a set of diagram elements
@@ -17,6 +17,24 @@ import { VisibilityType, DataType, RelationshipType } from "./Types";
  * implimentation
  *      Comp impliments IComp{}
  */
+
+const VALID_ATTIBUTE = /([\+\-\#\~\s])*\s*(\w+)\s*\:\s*(\w*)/i
+/**
+ * "- _myPrivateAtt: Object"
+ * 1: "-" // if undefined then local
+ * 2: "_myPrivateAtt"
+ * 3: "Object"
+ */
+
+const VALID_OPERATION = /([\+\-\#\~\s])*\s*(\w+)\s*\(\s*((?:\w*\:*\s*\w*\,*\s*)*)\)\:\s*(\w*)/i
+/**
+ * "+ transpose(x: number, y: double): IShape"
+ * 1: "+" // may be undefined, iff undefiend then local
+ * 2: "transpose"
+ * 3: "x: number, y: double"
+ * 4: IShape
+ */
+
 export class Relationship extends DiagramElement implements SerializedElement
 {
 
@@ -48,7 +66,7 @@ export class Relationship extends DiagramElement implements SerializedElement
 export abstract class ComponentProperty extends SerializedElement
 {
 	public name: string = "foo";
-	public visibility: VisibilityType = VisibilityType.Public;
+	public visibility: VisibilityType.VisibilityType = VisibilityType.VisibilityType.Public;
 	public isStatic: boolean = false;
 	public propertyString: string = ""; 
 	public type: DataType = new DataType("any");
@@ -59,9 +77,6 @@ export abstract class ComponentProperty extends SerializedElement
 	}
 
 	abstract toString(): string;
-
-
-
 }
 /**
  * describs an attibute of a diagram element
@@ -90,6 +105,17 @@ export class Attribute extends ComponentProperty
 	{
 		return this.id == id? this: null;
 	}
+
+	label(description: string)
+	{
+		let tokenDescription  = description.match(VALID_ATTIBUTE);
+		if(tokenDescription)
+		{
+			this.visibility = VisibilityType.get(tokenDescription[1]);
+			this.name = tokenDescription[2];
+			this.type = new DataType(tokenDescription[3]);
+		}
+	}
 }
 
 
@@ -102,6 +128,8 @@ export class Attribute extends ComponentProperty
  */
  export class Operation extends ComponentProperty
 {
+
+	// regex for operation 		/([\+\-\#\~\s])\s*(\w+)\s*\(\s*(\w*\:*\s*\w*\,*\s*)*\)\:\s*(\w*)/gi
 	public parameters: ICollection<SerializedElement>;
 
 	constructor()

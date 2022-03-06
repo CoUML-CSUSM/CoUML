@@ -206,10 +206,10 @@ import { EditorComponent } from "./editor.component";
 			// on change label event 
 			function(eventSource, eventObject){
 				console.log('%c%s', f_alert, "LABEL_CHANGED");
-				let affectedCells = eventObject.getProperties();
+				let affectedCells = eventObject.getProperties().cell;
 
 				editorComponent.stageChange( new ChangeRecord(
-					[affectedCells.cell.id],
+					editorComponent.getIdPath(affectedCells),
 					PropertyType.Name, 
 					ActionType.Change,
 					affectedCells.value
@@ -404,6 +404,7 @@ import { EditorComponent } from "./editor.component";
 	 */
 	function click(graph: mxGraph, editorComponent: EditorComponent)
 	{
+		// TODO: need to come up with a better way to lock items.
 		graph.addListener(mxEvent.CLICK, 
 			// click on object to see its makup.
 			function(eventSource, eventObject){
