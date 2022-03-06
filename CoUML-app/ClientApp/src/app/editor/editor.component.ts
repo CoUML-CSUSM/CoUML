@@ -1,5 +1,5 @@
 import { AfterViewInit, Component as AngularComponent, ElementRef, OnInit, ViewChild, HostListener } from '@angular/core';
-import { Class, AbstractClass, Diagram, DiagramElement, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, ChangeRecord, ActionType, PropertyType, ICollectionIterator, Enumeration, Dimension, DEFUALT_DIMENSION, NullUser, ComponentProperty } from 'src/models/DiagramModel';
+import { Class, AbstractClass, Diagram, DiagramElement, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, ChangeRecord, ActionType, PropertyType, ICollectionIterator, Enumeration, Dimension, DEFUALT_DIMENSION, NullUser, ComponentProperty, SerializedElement } from 'src/models/DiagramModel';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 import * as EditorFormatHandler  from './editor-format.handler';
 import * as EditorEventHandler  from './editor-event.handler';
@@ -123,7 +123,7 @@ export class EditorComponent implements AfterViewInit{
 		this._graph.getModel().beginUpdate();
 		try {
 
-			let elementIterator: ICollectionIterator<DiagramElement> 
+			let elementIterator: ICollectionIterator<SerializedElement> 
 				= this._projectDeveloper._projectDiagram.elements.iterator();
 			
 			// relationships will be added after all components are added

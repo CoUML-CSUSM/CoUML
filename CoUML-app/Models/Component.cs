@@ -23,32 +23,32 @@ namespace CoUML_app.Models
 	}
 	
 	public class Interface : Component{
-		public ICollection<Operation> operations { get;set; }
+		public ICollection<SerializedElement> operations { get;set; }
 		public Interface(string name): base(name)
 		{
-			this.operations = new GeneralCollection<Operation> ();
+			this.operations = new RelationalCollection();
 		}
 	}
 
 	public class AbstractClass : Component{
-		public ICollection<Operation>  operations { get;set; }
-		public ICollection<Attribute>  attributes { get;set; }
+		public ICollection<SerializedElement>  operations { get;set; }
+		public ICollection<SerializedElement>  attributes { get;set; }
 		
 		public AbstractClass(string name): base(name)
 		{
-			this.operations = new GeneralCollection<Operation> ();
-			this.attributes = new GeneralCollection<Attribute> ();
+			this.operations = new RelationalCollection();
+			this.attributes = new RelationalCollection();
 		}
 	}
 
 	public class Class : Component{
-		public ICollection<Operation> operations { get;set; }
-		public ICollection<Attribute> attributes { get;set; }
+		public ICollection<SerializedElement> operations { get;set; }
+		public ICollection<SerializedElement> attributes { get;set; }
 
 		public Class(string name): base(name)
 		{
-			this.operations = new GeneralCollection<Operation> ();
-			this.attributes = new GeneralCollection<Attribute> ();
+			this.operations = new RelationalCollection();
+			this.attributes = new RelationalCollection();
 		}
 	}
 }

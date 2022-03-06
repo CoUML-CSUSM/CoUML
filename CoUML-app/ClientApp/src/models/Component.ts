@@ -1,5 +1,5 @@
 import { GeneralCollection } from "./Collection";
-import { IGettable } from "./Diagram";
+import { SerializedElement } from "./Diagram";
 import { DiagramElement, Operation, Attribute, ComponentProperty,  ICollection } from "./DiagramModel";
 
 
@@ -10,7 +10,7 @@ import { DiagramElement, Operation, Attribute, ComponentProperty,  ICollection }
  * AbstractClass
  * Class
  */
-export abstract class Component extends DiagramElement implements IGettable
+export abstract class Component extends DiagramElement 
 {
     public name:string;
 
@@ -36,7 +36,7 @@ export class Enumeration extends Component
         this.enums  = new GeneralCollection<string> ([]);
     }
 
-    get(id: any) {
+    get(id: string) {
         return this.enums.get(id);
     }
     
@@ -55,7 +55,7 @@ export class Interface extends Component
         this.operations  = new GeneralCollection<Operation> ([]);
     }
 
-    get(id: any) {
+    get(id: string) {
         return this.operations.get(id);
     }
 }
@@ -76,7 +76,7 @@ export class AbstractClass extends Component
     }
 
 
-    get(id: any) {
+    get(id: any) : Operation | Attribute{
         return this.operations.get(id) || this.attributes.get(id);
     }
 }

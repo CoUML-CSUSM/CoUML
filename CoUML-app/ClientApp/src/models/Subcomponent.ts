@@ -1,4 +1,5 @@
-import { DiagramElement, GeneralCollection, ICollection, IGettable, Component } from "./DiagramModel";
+import { RelationalCollection } from "./Collection";
+import { DiagramElement, GeneralCollection, ICollection, SerializedElement, Component } from "./DiagramModel";
 import { VisibilityType, DataType, RelationshipType } from "./Types";
 
 /**
@@ -16,7 +17,7 @@ import { VisibilityType, DataType, RelationshipType } from "./Types";
  * implimentation
  *      Comp impliments IComp{}
  */
-export class Relationship extends DiagramElement implements IGettable
+export class Relationship extends DiagramElement implements SerializedElement
 {
 
 	public type: RelationshipType;
@@ -44,8 +45,8 @@ export class Relationship extends DiagramElement implements IGettable
 
 }
 
-export abstract class ComponentProperty{
-	public id: string;
+export abstract class ComponentProperty extends SerializedElement
+{
 	public name: string = "foo";
 	public visibility: VisibilityType = VisibilityType.Public;
 	public isStatic: boolean = false;
@@ -53,10 +54,13 @@ export abstract class ComponentProperty{
 	public type: DataType = new DataType("any");
 	constructor(type)
 	{
+		super();
 		this["$type"] = `CoUML_app.Model.${type}, CoUML-app`;
 	}
 
 	abstract toString(): string;
+
+
 
 }
 /**
@@ -81,6 +85,11 @@ export class Attribute extends ComponentProperty
 	{
 		return `${String.fromCharCode(this.visibility as unknown as number)} ${this.name}: ${this.type.dataType}`;
 	}
+
+	get(id: string)
+	{
+		return this.id == id? this: null;
+	}
 }
 
 
@@ -91,14 +100,14 @@ export class Attribute extends ComponentProperty
  * implimentation: 
  *      public DataType foo( DataType p, DataType q){}
  */
- export class Operation extends ComponentProperty implements IGettable
+ export class Operation extends ComponentProperty
 {
-	public parameters: ICollection<Attribute>;
+	public parameters: ICollection<SerializedElement>;
 
 	constructor()
 	{
 		super("Operation");
-		this.parameters = new GeneralCollection<Attribute> ([]);
+		this.parameters = new RelationalCollection ([]);
 	}
 
 	get(id: string) {

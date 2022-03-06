@@ -18,17 +18,11 @@ namespace CoUML_app.Models
 	}
 
 
-	public abstract class ComponentProperty{
-		public string id { get; }
+	public abstract class ComponentProperty: SerializedElement{
 		public VisibilityType visibility {get; set;}
 		public string name{get; set;}
 		public string propertyString {get; set;}
 		public DataType type{get; set;}
-
-		public ComponentProperty()
-		{
-			this.id = Guid.NewGuid().ToString();
-		}
 	}
 
 	public class Attribute: ComponentProperty{

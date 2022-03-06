@@ -1,41 +1,49 @@
 import {v4 as Uuid} from 'uuid';
-import { GeneralCollection } from './Collection';
+import { GeneralCollection, RelationalCollection } from './Collection';
 import { ICollection, Dimension, IUser, NullUser, Relationship, Interface, Class, AbstractClass, User,  } from './DiagramModel';
 
-export class Diagram
+export  abstract class SerializedElement
 {
 	public id: string;
-
-	public elements: ICollection<DiagramElement>;
-
-	public constructor(Did:string)
+	abstract get(id: string)
+	constructor ()
 	{
-		this.id = Did;
-		this.elements = new GeneralCollection<DiagramElement>([])
+		this.id = Uuid();
 	}
 
 }
 
-export abstract class DiagramElement
+export class Diagram extends SerializedElement
 {
 
-	public editor: IUser;
-	
-	public id: string;
-	
+	public elements: ICollection<SerializedElement>;
+
+	public constructor(Did:string)
+	{
+		super()
+		this.id = Did;
+		this.elements = new RelationalCollection([])
+	}
+	get(id: string)
+	{	
+		return this.elements.get(id);
+	}
+
+}
+
+export abstract class DiagramElement extends SerializedElement
+{
+
+	public editor: IUser;	
 	public dimension: Dimension;
 
 	public constructor(type: string)
 	{
+		super();
 		this.editor = new NullUser();
-		this.id = Uuid();
 		this.dimension = new Dimension(0, 0, 200,  40);
 		this["$type"] = `CoUML_app.Model.${type}, CoUML_app`;
 	}
 
 }
-
-export interface IGettable
-{
-	get(id: string);
-}
+// [did, eleid, propid]

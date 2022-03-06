@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CoUmlHubService } from "../service/couml-hub.service";
-import { Diagram, Assembler, ChangeRecord, ActionType, PropertyType, Component, Class, AbstractClass, Interface, Enumeration, IGettable, IUser } from 'src/models/DiagramModel';
+import { Diagram, Assembler, ChangeRecord, ActionType, PropertyType, Component, Class, AbstractClass, Interface, Enumeration, SerializedElement, IUser, ICollection } from 'src/models/DiagramModel';
 import { EditorComponent } from '../editor/editor.component';
 
 
@@ -72,11 +72,10 @@ export class ProjectDeveloper{
 			
 		let operation = "";
 
-		let affectedComponent: IGettable = this._projectDiagram.elements;
+		let affectedComponent: ICollection<SerializedElement> | SerializedElement= this._projectDiagram.elements;
 		if(change.id)
-			for(let id of change.id){
+			for(let id of change.id) 
 				affectedComponent = affectedComponent.get(id);
-			}
 
 		switch(change.action){
 			case ActionType.Shift:

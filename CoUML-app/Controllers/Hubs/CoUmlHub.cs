@@ -335,7 +335,8 @@ namespace CoUML_app.Controllers.Hubs
                 visibility = VisibilityType.Private,
                 type = new DataType{ dataType = "double" }
             };
-            c1.dimension.y += 300;
+
+            c1.dimension.y = 400;
             c1.attributes.Insert(a1);
 
             // c impliments i
@@ -351,17 +352,10 @@ namespace CoUML_app.Controllers.Hubs
 
             // class2
             Class c2  =  new Class("Trangle");
-            // Models.Attribute a2 = new Models.Attribute
-            // {
-            //     name = "height",
-            //     visibility = VisibilityType.Private,
-            //     type = new DataType{ dataType = "double" }
-            // };
-            c2.dimension.y += 300;
-            c2.dimension.x += 300;
-            // c2.attributes.Insert(a2);
 
-            // c impliments i
+            c2.dimension.y = 400;
+            c2.dimension.x = 400;
+
             Relationship r2 = new Relationship
             {
                 type = RelationshipType.Realization,

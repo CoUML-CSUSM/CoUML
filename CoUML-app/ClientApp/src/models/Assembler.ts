@@ -1,3 +1,4 @@
+import { SerializedElement } from "./Diagram";
 import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Class, Dimension, Operation, Attribute, AbstractClass, Interface, Enumeration, ICollection, IUser, User, NullUser } from "./DiagramModel";
 
 	export function assembleDiagram(diagram_DTO: string): Diagram
@@ -5,7 +6,7 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 		let d = JSON.parse(diagram_DTO);
 
 		let __diagram = new Diagram(d.id);
-		for(let elem of d["elements"]["items"])
+		for(let [id, elem] of Object.entries(d["elements"]["items"]))
 		{
 			__diagram.elements.insert(assembleDiagramElement(elem));
 		}
@@ -125,7 +126,7 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 
 	function assembleOperationsCollection(coll, x)
 	{
-		for(let op of x.items)
+		for(let [id, op] of Object.entries(x.items))
 			coll.insert(assembleOperation(op));
 	}
 
@@ -141,9 +142,9 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 		return __operation;
 	}
 
-	function assembleAttributeCollection(coll: ICollection<Attribute>, x)
+	function assembleAttributeCollection(coll: ICollection<SerializedElement>, x)
 	{
-		for(let at of x.items)
+		for(let [id, at] of Object.entries(x.items))
 			coll.insert(assembleAttribute(at));
 	}
 
