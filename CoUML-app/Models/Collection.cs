@@ -135,16 +135,16 @@ namespace CoUML_app.Models
 		}
 	}
 
-	public class RelationalCollection: ICollection<SerializedElement>
+	public class RelationalCollection<T> : ICollection<T> where T:SerializedElement
 	{
-		private Dictionary<string, SerializedElement> _items;
+		private Dictionary<string, T> _items;
 		// public List<DiagramElement> items{
 		// 	get{
 		// 		return new List<DiagramElement>(this._items.Values);
 		// 	}
 		// }
 
-		public Dictionary<string, SerializedElement> items{
+		public Dictionary<string, T> items{
 			get{
 				return _items;
 			}
@@ -154,10 +154,10 @@ namespace CoUML_app.Models
 		/// constructor
 		/// </summary>
 		/// <param name="collection"> set of diagram Elements</param>
-		public RelationalCollection( SerializedElement[] collection)
+		public RelationalCollection( T[] collection)
 		{
-			this._items = new Dictionary<string, SerializedElement>();
-			foreach (SerializedElement item in collection)
+			this._items = new Dictionary<string, T>();
+			foreach (T item in collection)
 			{
 				this._items.Add(item.id, item);
 			}
@@ -168,39 +168,39 @@ namespace CoUML_app.Models
 		/// </summary>
 		public RelationalCollection()
 		{
-			this._items = new Dictionary<string, SerializedElement>();
+			this._items = new Dictionary<string, T>();
 		}
 
-		public ICollectionIterator<SerializedElement> Iterator()
+		public ICollectionIterator<T> Iterator()
 		{
-			return new CollectionIterator<SerializedElement>(
-				new GeneralCollection<SerializedElement>(
-					(new List<SerializedElement>(this._items.Values)).ToArray()
+			return new CollectionIterator<T>(
+				new GeneralCollection<T>(
+					(new List<T>(this._items.Values)).ToArray()
 				)
 			);
 		}
 		
-		public void Insert( SerializedElement item)
+		public void Insert( T item)
 		{
 			this._items.Add( item.id, item);
 		}
 
-		public SerializedElement Remove(string id)
+		public T Remove(string id)
 		{
-			SerializedElement item = default(SerializedElement);
+			T item = default(T);
 			string guid = new Guid(id).ToString();
 			if(this._items.TryGetValue(guid, out item))
 				this._items.Remove(guid);
 			return item;
 		}
 
-		public SerializedElement Remove(int index)
+		public T Remove(int index)
 		{
-			SerializedElement item = default(SerializedElement);
+			T item = default(T);
 			if(index >= 0 && index < size )
 			{
-				item = (new List<SerializedElement>(this._items.Values)).ToArray()[index];
-				this._items.Remove(((SerializedElement)item).id);
+				item = (new List<T>(this._items.Values)).ToArray()[index];
+				this._items.Remove(((T)item).id);
 			}
 			return item;
 		}

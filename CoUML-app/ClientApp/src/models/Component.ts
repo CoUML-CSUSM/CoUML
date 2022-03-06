@@ -1,4 +1,4 @@
-import { GeneralCollection } from "./Collection";
+import { GeneralCollection, RelationalCollection } from "./Collection";
 import { SerializedElement } from "./Diagram";
 import { DiagramElement, Operation, Attribute, ComponentProperty,  ICollection } from "./DiagramModel";
 
@@ -52,7 +52,7 @@ export class Interface extends Component
     public constructor(name: string = "InterfaceComponent")
     {
         super("Interface", name);
-        this.operations  = new GeneralCollection<Operation> ([]);
+        this.operations  = new RelationalCollection<Operation> ([]);
     }
 
     get(id: string) {
@@ -71,8 +71,8 @@ export class AbstractClass extends Component
     public constructor(name: string = "AbstractClassComponent")
     {
         super("AbstractClass", name);
-        this.operations  = new GeneralCollection<Operation> ([]);
-        this.attributes  = new GeneralCollection<Attribute> ([]);
+        this.operations  = new RelationalCollection<Operation> ([]);
+        this.attributes  = new RelationalCollection<Attribute> ([]);
     }
 
 
@@ -93,12 +93,12 @@ export class Class extends Component
     public constructor(name: string = "ClassComponent")
     {
         super("Class", name);
-        this.operations  = new GeneralCollection<Operation> ([]);
-        this.attributes  = new GeneralCollection<Attribute> ([]);
+        this.operations  = new RelationalCollection<Operation> ([]);
+        this.attributes  = new RelationalCollection<Attribute> ([]);
     }
 
 
-    get(id: any) {
+    get(id: any)  : Operation | Attribute{
         return this.operations.get(id) || this.attributes.get(id);
     }
 }

@@ -1,5 +1,5 @@
 import { Class, Component, Interface } from "./Component";
-import { SerializedElement } from "./Diagram";
+import { SerializedElement, SerializedElement as T } from "./Diagram";
 
 //interface for collections to create iterators
 export interface ICollectionIterator<T>
@@ -117,16 +117,16 @@ export class GeneralCollection<T> implements ICollection<T>{
 /**
  * RelationshipCollection
  */
-export class RelationalCollection implements ICollection<SerializedElement>{
+export class RelationalCollection<T extends SerializedElement> implements ICollection<T>{
 
-	private items: Map<string, SerializedElement> = new Map<string, SerializedElement>();
+	private items: Map<string, T> = new Map<string, T>();
 	toJSON(): any {
 		return {
 			items: Object.fromEntries(this.items),
 		}
 	 }
 
-	constructor(collection: SerializedElement[])
+	constructor(collection: T[])
 	{
 		for(let elem of collection)
 			this.insert(elem);
@@ -134,22 +134,22 @@ export class RelationalCollection implements ICollection<SerializedElement>{
 	}
 
 
-	iterator(): ICollectionIterator<SerializedElement> 
+	iterator(): ICollectionIterator<T> 
 	{
-		return new CollectionIterator<SerializedElement>(
-				new GeneralCollection<SerializedElement>(
+		return new CollectionIterator<T>(
+				new GeneralCollection<T>(
 					Array.from(this.items.values())
 				)
 			);
 	}
 
-	insert(item: SerializedElement): void {
+	insert(item: T): void {
 		console.log("inserting....");
 		console.log(item);
 		this.items.set(item.id, item);
 	}
 
-	remove(signature: string): SerializedElement | null 
+	remove(signature: string): T | null 
 	{
 		let relation = null
 		if(this.items.has(signature))
@@ -160,23 +160,24 @@ export class RelationalCollection implements ICollection<SerializedElement>{
 		return relation;
 	}
 	
-	get(id: string): null | SerializedElement
+	get(id: string): null | T
 	{
 		if(this.items.has(id))
 			return this.items.get(id);
+
 		return this.find(id);
 	}
 
-	private find(key: string): null | SerializedElement
+	private find(key: string): null | T
 	{
-		for(let e of this.items.values())
-		{
-			if(!(e instanceof RelationalCollection)){
-				let de = e as Component;
-				if(key === de.name)
-					return de;
-			}
-		}
+		// for(let e of this.items.values())
+		// {
+		// 	if(!(e instanceof RelationalCollection)){
+		// 		let de = e as Component;
+		// 		if(key === de.name)
+		// 			return de;
+		// 	}
+		// }
 		return null;
 	}
 

@@ -73,12 +73,7 @@ export class ProjectDeveloper{
 		let operation = "";
 
 		let affectedComponent= this._projectDiagram.at(change.id);
-		// if(change.id)
-		// 	for(let id of change.id) 
-		// 		affectedComponent = affectedComponent.get(id);
 
-		console.log("----affectedComponent-----");
-		console.log(affectedComponent);
 
 		switch(change.action){
 			case ActionType.Shift:

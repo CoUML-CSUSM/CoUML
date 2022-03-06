@@ -13,7 +13,7 @@ namespace CoUML_app.Models
 
 		public Relationship()
 		{
-			this.attributes = new GeneralCollection<Attribute> ();
+			this.attributes = new RelationalCollection<Attribute> ();
 		}
 	}
 
@@ -37,7 +37,7 @@ namespace CoUML_app.Models
 
 		public Operation():base()
 		{
-			this.parameters = new GeneralCollection<Attribute> ();
+			this.parameters = new RelationalCollection<Attribute> ();
 		}
 	}
 

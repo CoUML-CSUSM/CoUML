@@ -5,10 +5,12 @@ import { ICollection, Dimension, IUser, NullUser, Relationship, Interface, Class
 export  abstract class SerializedElement
 {
 	public id: string;
+	public editor: IUser;
 	abstract get(id: string)
 	constructor ()
 	{
 		this.id = Uuid();
+		this.editor = new NullUser();
 	}
 
 }
@@ -24,32 +26,32 @@ export class Diagram extends SerializedElement
 		this.id = Did;
 		this.elements = new RelationalCollection([])
 	}
-	get(id: string)
+	get(id: string): SerializedElement
 	{	
-		
 		return this.id == id? this : this.elements.get(id);
 	}
 
 	at(ids: string []): SerializedElement
 	{
-		let comp: SerializedElement  = this;
+
+		let element: SerializedElement  = this;
 		for( let id of ids)
-			comp = comp.get(id);
-		return comp;
+			element = element.get(id);
+		
+		console.log(`returning serilized element at ${ids}\nfound: ${element?.id}`);
+		return element;
 	}
 
 }
 
 export abstract class DiagramElement extends SerializedElement
 {
-
-	public editor: IUser;	
+	
 	public dimension: Dimension;
 
 	public constructor(type: string)
 	{
 		super();
-		this.editor = new NullUser();
 		this.dimension = new Dimension(0, 0, 200,  40);
 		this["$type"] = `CoUML_app.Model.${type}, CoUML_app`;
 	}

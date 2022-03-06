@@ -357,10 +357,10 @@ import { EditorComponent } from "./editor.component";
 		graph.addListener(mxEvent.START_EDITING, 
 			// When double click on cell to change label
 			function(eventSource, eventObject){
-				let affectedCells = eventObject.getProperties();
+				let affectedCells = eventObject.getProperties().cell;
 				console.log('%c%s', f_alert, "START_EDITING");
 
-				console.log(affectedCells.cell.id);
+				console.log(affectedCells);
 			});
 	}
 

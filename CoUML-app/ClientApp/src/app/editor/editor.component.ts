@@ -198,7 +198,8 @@ export class EditorComponent implements AfterViewInit{
 			parent,
 			property.id,
 			property.toString(),
-			0, 0, 0, 0 
+			0, 0, 0, 0,
+			property.constructor.name
 		);
 	}
 
@@ -342,9 +343,8 @@ export class EditorComponent implements AfterViewInit{
 		// if should release
 		if(this._currentSelection != null) // something is currently locked
 		{
-
 			this.stageChange(new ChangeRecord(
-				[this._currentSelection.id],
+				this.getIdPath(this._currentSelection),
 				PropertyType.Editor,
 				ActionType.Release,
 				new NullUser()
@@ -356,18 +356,28 @@ export class EditorComponent implements AfterViewInit{
 				newSelection = newSelection.parent // if attribute lock parent comp
 			this._currentSelection = newSelection;
 			this.stageChange(new ChangeRecord(
-				[this._currentSelection.id],
+				this.getIdPath(this._currentSelection),
 				PropertyType.Editor,
 				ActionType.Lock,
 				this._projectDeveloper._editor
 			));
 
 		}
+
+
 	}
 
+	getIdPath(x: mxCell): string[]
+	{
+		let ids = [];
+		do{
+			ids.unshift(x.id)
+			x = x.parent;
+		}while(x.parent)
 
-
-
+		console.log(`id path =  ${ids}`)
+		return ids;
+	}
 
 }
 
