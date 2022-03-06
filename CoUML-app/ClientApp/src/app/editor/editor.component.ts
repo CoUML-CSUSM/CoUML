@@ -114,6 +114,8 @@ export class EditorComponent implements AfterViewInit{
 		this._graph.eventsEnabled = false;
 		this._graph.setConnectable(true);
 
+		this._graph.getDefaultParent().id = this._projectDeveloper._projectDiagram.id;
+
 		this._graph.isCellLocked = function(cell)
 		{
 			return this.getCellStyle(cell)['selectable'] == 0;

@@ -57,7 +57,7 @@ import { EditorComponent } from "./editor.component";
 		graph.popupMenuHandler.factoryMethod = function(menu, cell, evt)
 		{
 			console.log(cell)
-			if(cell.edge)
+			if(cell?.edge)// menu if user clicks on edge
 			{
 				menu.addItem('Dependency',		'editors/images/uml/Dependency.svg',	()=>setRelationType(cell, RelationshipType.Dependency));
 				menu.addItem('Association',		'editors/images/uml/Association.svg',	 ()=>setRelationType(cell, RelationshipType.Association));
@@ -119,7 +119,7 @@ import { EditorComponent } from "./editor.component";
 		// the graph. The cell argument points to the cell under
 		// the mousepointer if there is one.
 		// floor is used to keep the components to snap to the grid
-		var drop = function(graph, evt, parentCell, x, y)
+		var drop = function(graph: mxGraph, evt, parentCell, x, y)
 		{
 			graph.stopEditing(false);
 
@@ -136,7 +136,7 @@ import { EditorComponent } from "./editor.component";
 				editorComponent.insertComponent(component);
 
 				editorComponent.stageChange(new ChangeRecord(
-					null,
+					[graph.getDefaultParent().id],
 					PropertyType.Elements,
 					ActionType.Insert,
 					component
@@ -455,7 +455,7 @@ import { EditorComponent } from "./editor.component";
 					affectedCells.style = RelationshipType[relation.type]
 
 					editorComponent.stageChange(new ChangeRecord(
-						null,
+						[graph.getDefaultParent().id],
 						PropertyType.Elements,
 						ActionType.Insert,
 						relation

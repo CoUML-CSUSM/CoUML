@@ -26,7 +26,16 @@ export class Diagram extends SerializedElement
 	}
 	get(id: string)
 	{	
-		return this.elements.get(id);
+		
+		return this.id == id? this : this.elements.get(id);
+	}
+
+	at(ids: string []): SerializedElement
+	{
+		let comp: SerializedElement  = this;
+		for( let id of ids)
+			comp = comp.get(id);
+		return comp;
 	}
 
 }
