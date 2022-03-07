@@ -9,11 +9,11 @@ namespace CoUML_app.Models
 		public Component sourceComponent{set{source = value.id;}}
 		public string target {get; set;}
 		public Component targetComponent{set{target = value.id;}}
-		public ICollection<Attribute> attributes{get; set;}
+		public Attribute attributes{get; set;}
 
 		public Relationship()
 		{
-			this.attributes = new RelationalCollection<Attribute> ();
+			// this.attributes = new RelationalCollection<Attribute> ();
 		}
 	}
 

@@ -167,7 +167,7 @@ import { EditorComponent } from "./editor.component";
 					editorComponent.insertProperty(parentCell, component);
 					// graph.refresh();
 					editorComponent.stageChange(new ChangeRecord(
-						[parentCell.id],
+						editorComponent.getIdPath(parentCell),
 						component instanceof Operation? PropertyType.Operations: PropertyType.Attributes,
 						ActionType.Insert,
 						component
@@ -210,7 +210,7 @@ import { EditorComponent } from "./editor.component";
 
 				editorComponent.stageChange( new ChangeRecord(
 					editorComponent.getIdPath(affectedCells),
-					PropertyType.Name, 
+					PropertyType.Label, 
 					ActionType.Change,
 					affectedCells.value
 				));

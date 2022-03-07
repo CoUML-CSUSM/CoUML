@@ -20,7 +20,9 @@ export abstract class Component extends DiagramElement
         this.name = name;
     }
 
-    abstract get(id);
+    toUmlNotation(): string {
+        return this.name;
+    }
 }
 
 /**
@@ -39,7 +41,6 @@ export class Enumeration extends Component
     get(id: string) {
         return this.enums.get(id);
     }
-    
 }
 
 /**

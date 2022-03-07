@@ -1,5 +1,6 @@
 import { SerializedElement } from "./Diagram";
 import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Class, Dimension, Operation, Attribute, AbstractClass, Interface, Enumeration, ICollection, IUser, User, NullUser } from "./DiagramModel";
+import { VisibilityType } from "./Types";
 
 	export function assembleDiagram(diagram_DTO: string): Diagram
 	{
@@ -72,7 +73,7 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 		__relationship.source = x.source;
 		__relationship.target = x.target;
 		__relationship.type = x.type;
-		assembleAttributeCollection(__relationship.attributes, x.attributes)
+		__relationship.attributes = x.attributes? assembleAttribute(x.attributes) : null;
 		return __relationship;
 	}
 	
@@ -133,7 +134,7 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 	function assembleOperation(x: any): Operation {
 		let __operation = new Operation();
 		__operation.id = x.id;
-		__operation.visibility = x.visibility;
+		__operation.visibility = VisibilityType.get(x.visibility);
 		__operation.name = x.name;
 		__operation.isStatic = x.isStatic;
 		__operation.propertyString = x.propertyString;
@@ -151,7 +152,7 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 	function assembleAttribute(x: any): any {
 		let __attribute = new Attribute()
 		__attribute.id = x.id;
-		__attribute.visibility = x.visibility;
+		__attribute.visibility = VisibilityType.get(x.visibility);
 		__attribute.name = x.name;
 		__attribute.isStatic = x.isStatic;
 		__attribute.propertyString = x.propertyString;

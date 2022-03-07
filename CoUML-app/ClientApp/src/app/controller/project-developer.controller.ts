@@ -79,7 +79,7 @@ export class ProjectDeveloper{
 			case ActionType.Shift:
 			case ActionType.Insert:
 			case ActionType.Remove:
-				operation = `${change.id? affectedProperty + ".": ''}${action}(change.value)`;
+				operation = `${affectedProperty}.${action}(change.value)`;
 				break;
 
 			case ActionType.Lock:
@@ -90,6 +90,11 @@ export class ProjectDeveloper{
 		}			
 
 		eval("affectedComponent." + operation);
+
+		//if the label is updated teh whole object is updated,
+		// affter the change hass been applied locally replace the value string with the 
+		// if(PropertyType.Label == change.affectedProperty)
+		// 	change.value = affectedComponent
 
 		console.log("result");
 		console.log(this._projectDiagram);//i need to send this down to the c#

@@ -18,7 +18,7 @@ import { VisibilityType, DataType, RelationshipType} from "./Types";
  *      Comp impliments IComp{}
  */
 
-const VALID_ATTIBUTE = /([\+\-\#\~\s])*\s*(\w+)\s*\:\s*(\w*)/i
+const VALID_ATTIBUTE = /([\+\-\#\~])*\s*(\w+)\s*\:\s*(\w*)/i
 /**
  * "- _myPrivateAtt: Object"
  * 1: "-" // if undefined then local
@@ -26,7 +26,7 @@ const VALID_ATTIBUTE = /([\+\-\#\~\s])*\s*(\w+)\s*\:\s*(\w*)/i
  * 3: "Object"
  */
 
-const VALID_OPERATION = /([\+\-\#\~\s])*\s*(\w+)\s*\(\s*((?:\w*\:*\s*\w*\,*\s*)*)\)\:\s*(\w*)/i
+const VALID_OPERATION = /([\+\-\#\~])*\s*(\w+)\s*\(\s*((?:\w*\:*\s*\w*\,*\s*)*)\)\:\s*(\w*)/i
 /**
  * "+ transpose(x: number, y: double): IShape"
  * 1: "+" // may be undefined, iff undefiend then local
@@ -42,12 +42,11 @@ export class Relationship extends DiagramElement implements SerializedElement
 	public source: string;
 	public target: string;
 
-	public attributes: ICollection<Attribute>;
+	public attributes: Attribute;
 
 	public constructor()
 	{
 		super("Relationship");
-        this.attributes  = new GeneralCollection<Attribute> ([]);
 	}
 
 	get(id: string) {
@@ -61,12 +60,16 @@ export class Relationship extends DiagramElement implements SerializedElement
 		this.target = component?.id
 	}
 
+	toUmlNotation(): string {
+		return this.attributes?.toUmlNotation() || "";
+	}
+
 }
 
 export abstract class ComponentProperty extends SerializedElement
 {
 	public name: string = "foo";
-	public visibility: VisibilityType.VisibilityType = VisibilityType.VisibilityType.Public;
+	public visibility: VisibilityType.VisibilityType = VisibilityType.VisibilityType.LocalScope;
 	public isStatic: boolean = false;
 	public propertyString: string = ""; 
 	public type: DataType = new DataType("any");
@@ -75,8 +78,6 @@ export abstract class ComponentProperty extends SerializedElement
 		super();
 		this["$type"] = `CoUML_app.Model.${type}, CoUML-app`;
 	}
-
-	abstract toString(): string;
 }
 /**
  * describs an attibute of a diagram element
@@ -96,9 +97,9 @@ export class Attribute extends ComponentProperty
 		super("Attribute");
 	}
 
-	toString(): string
+	toUmlNotation(): string
 	{
-		return `${String.fromCharCode(this.visibility as unknown as number)} ${this.name}: ${this.type.dataType}`;
+		return `${this.visibility} ${this.name}: ${this.type.dataType}`;
 	}
 
 	get(id: string)
@@ -106,7 +107,7 @@ export class Attribute extends ComponentProperty
 		return this.id == id? this: null;
 	}
 
-	label(description: string)
+	set label(description: string)
 	{
 		let tokenDescription  = description.match(VALID_ATTIBUTE);
 		if(tokenDescription)
@@ -115,6 +116,10 @@ export class Attribute extends ComponentProperty
 			this.name = tokenDescription[2];
 			this.type = new DataType(tokenDescription[3]);
 		}
+
+
+		console.log(`Attribute.label = ${tokenDescription.toString()}`);
+		console.log(this);
 	}
 }
 
@@ -130,21 +135,21 @@ export class Attribute extends ComponentProperty
 {
 
 	// regex for operation 		/([\+\-\#\~\s])\s*(\w+)\s*\(\s*(\w*\:*\s*\w*\,*\s*)*\)\:\s*(\w*)/gi
-	public parameters: ICollection<SerializedElement>;
+	public parameters: ICollection<Attribute>;
 
 	constructor()
 	{
 		super("Operation");
-		this.parameters = new RelationalCollection ([]);
+		this.parameters = new RelationalCollection<Attribute> ([]);
 	}
 
 	get(id: string) {
 		return this.parameters.get(id);
 	}
 
-	toString(): string
+	toUmlNotation(): string
 	{
-		return `${String.fromCharCode(this.visibility as unknown as number) } ${this.name}(${this.parameters.size>0? this.parameters.toString(): ""}): ${this.type.dataType}`;
+		return `${String.fromCharCode(this.visibility as unknown as number) } ${this.name}(${this.parameters.size>0? this.parameters.toUmlNotation(): ""}): ${this.type.dataType}`;
 	}
 }
 

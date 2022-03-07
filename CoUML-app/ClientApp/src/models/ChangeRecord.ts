@@ -47,6 +47,7 @@ export enum PropertyType
 	Multiplicity,		//13
 	DefaultValue,		//14
 	Dimension,			//15
-	Editor				//16
+	Editor,				//16
+	Label
 }
 

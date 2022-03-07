@@ -12,6 +12,7 @@ export  abstract class SerializedElement
 		this.id = Uuid();
 		this.editor = new NullUser();
 	}
+	abstract toUmlNotation(): string;
 
 }
 
@@ -40,6 +41,10 @@ export class Diagram extends SerializedElement
 		
 		console.log(`returning serilized element at ${ids}\nfound: ${element?.id}`);
 		return element;
+	}
+
+	toUmlNotation(): string {
+		return "UML Diagram";
 	}
 
 }

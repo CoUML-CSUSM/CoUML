@@ -7,15 +7,29 @@ export namespace VisibilityType{
         LocalScope = ' '
     }
 
-    export function get(x: string): VisibilityType
+    export function get(x: string | number): VisibilityType
     {
-        switch(x.charAt(0)){
-            case VisibilityType.Private:    return VisibilityType.Private;
-            case VisibilityType.Public:     return VisibilityType.Public;
-            case VisibilityType.Protected:  return VisibilityType.Protected;
-            case VisibilityType.Package:    return VisibilityType.Package;
+        switch(x){
+            case VisibilityType.Private:
+            case VisibilityType.Private.charCodeAt(0):
+                    return VisibilityType.Private;
+                    
+            case VisibilityType.Public:
+            case VisibilityType.Public.charCodeAt(0):
+                     return VisibilityType.Public;
+
+            case VisibilityType.Protected:
+            case VisibilityType.Protected.charCodeAt(0):
+                  return VisibilityType.Protected;
+
+            case VisibilityType.Package:
+            case VisibilityType.Package.charCodeAt(0):
+                    return VisibilityType.Package;
+
+            case VisibilityType.LocalScope:
+            case VisibilityType.LocalScope.charCodeAt(0):
             default:
-            case VisibilityType.LocalScope: return VisibilityType.LocalScope;
+                 return VisibilityType.LocalScope;
         }
     }
 }

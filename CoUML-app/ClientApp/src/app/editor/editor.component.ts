@@ -197,7 +197,7 @@ export class EditorComponent implements AfterViewInit{
 		return this._graph.insertVertex(
 			parent,
 			property.id,
-			property.toString(),
+			property.toUmlNotation(),
 			0, 0, 0, 0,
 			property.constructor.name
 		);
@@ -206,7 +206,7 @@ export class EditorComponent implements AfterViewInit{
 	private insertRelationship(relation: Relationship): mxCell
 	{	
 		var edge = new mxCell(
-			relation.attributes.toString(), 
+			relation.toUmlNotation(), 
 			new mxGeometry(0, 0, 0, 0), 
 			RelationshipType[relation.type]);
 		edge.edge = true;
@@ -230,12 +230,13 @@ export class EditorComponent implements AfterViewInit{
 
 
 	public processChange(change: ChangeRecord){
-		let affectedCell = change.id? this._graph.getModel().getCell(change.id.pop()): null;
+		let affectedCell = change.id.length>1? this._graph.getModel().getCell(change.id[change.id.length-1]): null;
 
 		switch(change.action){
 			case ActionType.Change:
 				switch(change.affectedProperty){
-					case PropertyType.Name:	this.updateLabelValue(affectedCell, change); break;
+					case PropertyType.Name:
+						case PropertyType.Label:	this.updateLabelValue(affectedCell, change); break;
 					case PropertyType.Dimension: this.updateEdgeGeometry(affectedCell,change); break;
 					case PropertyType.Target:
 						case PropertyType.Source: this.updateEdgeConnections(affectedCell,change); break;
@@ -332,7 +333,7 @@ export class EditorComponent implements AfterViewInit{
 	{
 		this._graph.getModel().setValue(
 			affectedCell,
-			change.value
+			this._projectDeveloper._projectDiagram.at(change.id).toUmlNotation()
 		);
 	}
 

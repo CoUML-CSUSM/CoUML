@@ -17,6 +17,7 @@ export interface ICollection<T>
 	remove(id: any): T | null;
 	get(id: string|number): T | null;
 	size: number;
+	toUmlNotation(): string;
 }
 
 export class GeneralCollection<T> implements ICollection<T>{
@@ -110,7 +111,10 @@ export class GeneralCollection<T> implements ICollection<T>{
 	get(i: number):null | T
 	{
 		return this.validIndex(i)? this.items[i]: null;
-		
+	}
+
+	toUmlNotation(): string {
+		return this.items.toString();
 	}
 }
 
@@ -184,6 +188,16 @@ export class RelationalCollection<T extends SerializedElement> implements IColle
 	get size(): number 
 	{
 		return this.items.size
+	}
+
+	toUmlNotation(): string {
+
+		let uml: string;
+		this.items.forEach((item:T, id: string)=>{
+			uml += (uml ? ", " : "") + item.toUmlNotation();
+		});
+		
+		return uml;
 	}
 
 }
