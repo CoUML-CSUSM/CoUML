@@ -1,5 +1,5 @@
-import { SerializedElement } from "./Diagram";
-import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Class, Dimension, Operation, Attribute, AbstractClass, Interface, Enumeration, ICollection, IUser, User, NullUser } from "./DiagramModel";
+import { UmlElement } from "./Diagram";
+import { DataType, Diagram, Relationship, RelationshipType, Class, Dimension, Operation, Attribute, AbstractClass, Interface, Enumeration, ICollection, IUser, User, NullUser } from "./DiagramModel";
 import { VisibilityType } from "./Types";
 
 	export function assembleDiagram(diagram_DTO: string): Diagram
@@ -9,12 +9,12 @@ import { VisibilityType } from "./Types";
 		let __diagram = new Diagram(d.id);
 		for(let [id, elem] of Object.entries(d["elements"]["items"]))
 		{
-			__diagram.elements.insert(assembleDiagramElement(elem));
+			__diagram.elements.insert(assembleUmlElement(elem));
 		}
 		return __diagram;
 	}
 
-	export function assembleDiagramElement(elem): DiagramElement
+	export function assembleUmlElement(elem): UmlElement
 	{
 		let element;
 		switch(getType(elem)){
@@ -65,7 +65,7 @@ import { VisibilityType } from "./Types";
 		return element;
 	}
 
-	function assembleRelationship(x: Relationship): DiagramElement {
+	function assembleRelationship(x: Relationship): UmlElement {
 		let __relationship = new Relationship();
 		__relationship.id = x.id;
 		__relationship.editor = assembleUser(x["editor"]);
@@ -77,7 +77,7 @@ import { VisibilityType } from "./Types";
 		return __relationship;
 	}
 	
-	function assembleClass(x: Class): DiagramElement {
+	function assembleClass(x: Class): UmlElement {
 		let __class = new Class(x.name);
 		__class.id = x.id;
 		__class.editor = assembleUser(x.editor);
@@ -87,7 +87,7 @@ import { VisibilityType } from "./Types";
 		// assembleStringCollection( __class.relations, x.relations);
 		return __class;
 	}
-	function assembleAbstractClass(x: AbstractClass): DiagramElement {
+	function assembleAbstractClass(x: AbstractClass): UmlElement {
 		let __abstract = new AbstractClass(x.name);
 		__abstract.id = x.id;
 		__abstract.editor = assembleUser(x.editor);
@@ -97,7 +97,7 @@ import { VisibilityType } from "./Types";
 		// assembleStringCollection(__abstract.relations, x.relations);
 		return __abstract;
 	}
-	function assembleEnumeration(x: Enumeration): DiagramElement {
+	function assembleEnumeration(x: Enumeration): UmlElement {
 		let __enum = new Enumeration(x.name);
 		__enum.id = x.id;
 		__enum.editor = assembleUser(x.editor);
@@ -106,7 +106,7 @@ import { VisibilityType } from "./Types";
 		return __enum;
 	}
 
-	function assembleInterface(x: Interface): DiagramElement
+	function assembleInterface(x: Interface): UmlElement
 	{
 		let __interface: Interface = new Interface(x.name);
 		__interface.id = x.id;
@@ -143,7 +143,7 @@ import { VisibilityType } from "./Types";
 		return __operation;
 	}
 
-	function assembleAttributeCollection(coll: ICollection<SerializedElement>, x)
+	function assembleAttributeCollection(coll: ICollection<UmlElement>, x)
 	{
 		for(let [id, at] of Object.entries(x.items))
 			coll.insert(assembleAttribute(at));
@@ -178,7 +178,7 @@ import { VisibilityType } from "./Types";
 
 
 	/**
-	 * takes a JSON string {  "$type": "CoUML_app.Models.Interface, CoUML-app", ...}
+	 * takes a JSON string {  "_$type": "CoUML_app.Models.Interface, CoUML-app", ...}
 	 * returns "Interface"
 	 * @param element 
 	 * @returns 
@@ -188,9 +188,10 @@ import { VisibilityType } from "./Types";
 		console.log("----- getType")
 		console.log(element)
 		try{
-			console.log(element["$type"]);
+			let typeString = element["$type"] || element["_$type"];
+			console.log(typeString);
 			let regex = /(\w*?),*?(?=,)/g;
-			let type = regex.exec(element["$type"])[0];
+			let type = regex.exec(typeString)[0];
 			console.log(`returning "${type}"-----`);
 			return type;
 		}catch(any){

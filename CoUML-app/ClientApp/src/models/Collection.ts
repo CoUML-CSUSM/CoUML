@@ -1,5 +1,5 @@
 import { Class, Component, Interface } from "./Component";
-import { SerializedElement, SerializedElement as T } from "./Diagram";
+import { UmlElement, UmlElement as T } from "./Diagram";
 
 //interface for collections to create iterators
 export interface ICollectionIterator<T>
@@ -32,7 +32,7 @@ export class GeneralCollection<T> implements ICollection<T>{
 	constructor(items: T[])
 	{
 		this.items = items;
-		this["$type"] = `CoUML_app.Models.GeneralCollection\`1[[CoUML_app.Models.${typeof(items)}, CoUML-app]], CoUML-app`;
+		this["_$type"] = `CoUML_app.Models.GeneralCollection\`1[[CoUML_app.Models.${typeof(items)}, CoUML-app]], CoUML-app`;
 	}
 	removeAll(): void {
 		delete this.items;
@@ -126,7 +126,7 @@ export class GeneralCollection<T> implements ICollection<T>{
 /**
  * RelationshipCollection
  */
-export class RelationalCollection<T extends SerializedElement> implements ICollection<T>{
+export class RelationalCollection<T extends UmlElement> implements ICollection<T>{
 
 	private items: Map<string, T> = new Map<string, T>();
 	toJSON(): any {
@@ -139,7 +139,7 @@ export class RelationalCollection<T extends SerializedElement> implements IColle
 	{
 		for(let elem of collection)
 			this.insert(elem);
-		this["$type"] = "CoUML_app.Models.RelationalCollection, CoUML-app";
+		this["_$type"] = "CoUML_app.Models.RelationalCollection, CoUML-app";
 	}
 	removeAll(): void {
 		delete this.items;

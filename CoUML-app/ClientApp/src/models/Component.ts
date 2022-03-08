@@ -1,6 +1,6 @@
 import { GeneralCollection, RelationalCollection } from "./Collection";
-import { SerializedElement } from "./Diagram";
-import { DiagramElement, Operation, Attribute, ComponentProperty,  ICollection } from "./DiagramModel";
+import { UmlElement } from "./Diagram";
+import { Operation, Attribute, ComponentProperty,  ICollection } from "./DiagramModel";
 
 
 /**
@@ -10,7 +10,7 @@ import { DiagramElement, Operation, Attribute, ComponentProperty,  ICollection }
  * AbstractClass
  * Class
  */
-export abstract class Component extends DiagramElement 
+export abstract class Component extends UmlElement 
 {
     public name:string;
 
@@ -24,7 +24,7 @@ export abstract class Component extends DiagramElement
         return this.name;
     }
 
-    set label( newLabel: string)
+    label( newLabel: string)
     {
         this.name = newLabel;
     }

@@ -2,7 +2,7 @@ import { AbstractClass,
 	ActionType, 
 	PropertyType, 
 	ChangeRecord, 
-	DiagramElement,
+	UmlElement,
 	Component,
 	Class, 
 	Dimension, 
@@ -74,7 +74,7 @@ import { EditorComponent } from "./editor.component";
 			graph.refresh();
 
 			editorComponent.stageChange(new ChangeRecord(
-				[edge.id],
+				editorComponent.getIdPath(edge),
 				PropertyType.Type,
 				ActionType.Change,
 				relationType
@@ -211,7 +211,7 @@ import { EditorComponent } from "./editor.component";
 				editorComponent.stageChange( new ChangeRecord(
 					editorComponent.getIdPath(affectedCells),
 					PropertyType.Label, 
-					ActionType.Change,
+					ActionType.Label,
 					affectedCells.value
 				));
 		});
@@ -228,28 +228,21 @@ import { EditorComponent } from "./editor.component";
 		graph.addListener(mxEvent.CELLS_MOVED,
 			// on cell move event
 			function(eventSource, eventObject){
-				let affectedCells = eventObject.getProperties();
-				console.log('%c%s', f_alert, "CELLS_MOVED");
+				let affectedCells: mxCell[] = eventObject.getProperties().cells;
 
+				console.log('%c%s', f_alert, "CELLS_MOVED");
 				console.log(affectedCells);
 
-				let ids = [];
-				affectedCells.cells.forEach(cell=> {
-					console.log(`cell.id = ${cell.id}`);
-					ids.push(cell.id)
-				});
-
-				console.log(affectedCells)
-
-				editorComponent.stageChange(new ChangeRecord(
-					ids,
-					PropertyType.Dimension,
-					ActionType.Shift,
-					{ // new absolute location
-						x: affectedCells.cells[0]?.geometry.x,
-						y: affectedCells.cells[0]?.geometry.y,
-					}
-				));
+				for( let cell of affectedCells)
+					editorComponent.stageChange(new ChangeRecord(
+						editorComponent.getIdPath(cell),
+						PropertyType.Dimension,
+						ActionType.Shift,
+						{ // new absolute location
+							x: cell.geometry.x,
+							y: cell.geometry.y,
+						}
+					));
 			});
 	}
 
@@ -305,7 +298,8 @@ import { EditorComponent } from "./editor.component";
 					{
 						editorComponent.stageChange(
 							new ChangeRecord(
-								[affectedEdge.edge.id],
+								// [affectedEdge.edge.id],
+								editorComponent.getIdPath(affectedEdge.edge),
 								affecedProperty,
 								ActionType.Change,
 								value
@@ -316,7 +310,8 @@ import { EditorComponent } from "./editor.component";
 					// set the location of the disconected end
 					if(isDisconnectioning || isMovingTerminal)
 						editorComponent.stageChange( new ChangeRecord(
-							[affectedEdge.edge.id],
+							// [affectedEdge.edge.id],
+							editorComponent.getIdPath(affectedEdge.edge),
 							PropertyType.Dimension,
 							ActionType.Change,
 							affecedProperty == PropertyType.Source?

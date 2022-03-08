@@ -1,5 +1,5 @@
 import { RelationalCollection } from "./Collection";
-import { DiagramElement, GeneralCollection, ICollection, SerializedElement, Component } from "./DiagramModel";
+import { GeneralCollection, ICollection, UmlElement, Component } from "./DiagramModel";
 import { VisibilityType, DataType, RelationshipType} from "./Types";
 
 /**
@@ -35,7 +35,7 @@ const VALID_OPERATION = /([\+\-\#\~])*\s*(\w+)\s*\(\s*((?:\w*\:*\s*\w*\,*\s*)*)\
  * 4: IShape
  */
 
-export class Relationship extends DiagramElement implements SerializedElement
+export class Relationship extends UmlElement
 {
 	insert(element: any) {
 		throw new Error("Method not implemented.");
@@ -69,12 +69,12 @@ export class Relationship extends DiagramElement implements SerializedElement
 	toUmlNotation(): string {
 		return this.attributes?.name || "";
 	}
-	set label(description: string)
+	public label(description: string)
 	{
 		if( this.type == RelationshipType.Association)
 		{	if(!this.attributes)
 				this.attributes = new Attribute();
-			this.attributes.label = description;
+			this.attributes.label(description);
 		}else
 		{
 			delete this.attributes;
@@ -83,7 +83,7 @@ export class Relationship extends DiagramElement implements SerializedElement
 
 }
 
-export abstract class ComponentProperty extends SerializedElement
+export abstract class ComponentProperty extends UmlElement
 {
 	public name: string = "foo";
 	public visibility: VisibilityType.VisibilityType = VisibilityType.VisibilityType.LocalScope;
@@ -92,8 +92,8 @@ export abstract class ComponentProperty extends SerializedElement
 	public type: DataType = new DataType("any");
 	constructor(type)
 	{
-		super();
-		this["$type"] = `CoUML_app.Model.${type}, CoUML-app`;
+		super(type);
+		// this["_$type"] = `CoUML_app.Model.${type}, CoUML-app`;
 	}
 }
 /**
@@ -130,7 +130,7 @@ export class Attribute extends ComponentProperty
 		return this.id == id? this: null;
 	}
 
-	set label(description: string)
+	public label(description: string)
 	{
 		let tokenDescription  = description.match(VALID_ATTIBUTE);
 		if(tokenDescription)
@@ -178,7 +178,7 @@ export class Attribute extends ComponentProperty
 		return `${this.visibility} ${this.name}(${this.parameters.toUmlNotation()}): ${this.type.dataType}`;
 	}
 
-	set label(description: string)
+	public label(description: string)
 	{
 		let tokenDescription  = description.match(VALID_OPERATION);
 		if(tokenDescription)
@@ -200,7 +200,7 @@ export class Attribute extends ComponentProperty
 		for(let attibute of params.split(', '))
 		{
 			let a =new Attribute();
-			a.label = attibute;
+			a.label(attibute);
 			collection.insert(a);
 		}
 	}
