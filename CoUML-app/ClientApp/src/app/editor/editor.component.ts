@@ -315,7 +315,10 @@ export class EditorComponent implements AfterViewInit{
 		let isSelectable = (change.value instanceof NullUser || change.value.id == this._projectDeveloper._editor.id);
 		this._graph.toggleCellStyle('selectable', isSelectable, affectedCell);
 
-		var overlays = this._graph.getCellOverlays(affectedCell);
+		// var overlays = this._graph.getCellOverlays(affectedCell);
+
+		console.log("updateCellLock")
+		console.log(change);
 						
 		if (!isSelectable)
 		{

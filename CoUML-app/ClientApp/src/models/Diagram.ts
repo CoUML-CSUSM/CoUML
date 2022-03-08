@@ -22,11 +22,11 @@ export  abstract class UmlElement
 		this["_$type"] = `CoUML_app.Model.${type}, CoUML_app`;
 	}
 
-	public lock(editor: User){
+	public lock(editor: IUser){
 		this.editor = editor;
 	}
 
-	public release(editor: User){
+	public release(editor: IUser){
 		this.editor = editor;
 	}
 
