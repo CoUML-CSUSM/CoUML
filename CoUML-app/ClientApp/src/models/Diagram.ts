@@ -13,19 +13,22 @@ export  abstract class SerializedElement
 		this.editor = new NullUser();
 	}
 	abstract toUmlNotation(): string;
+	abstract label: string;
 
 }
 
 export class Diagram extends SerializedElement
 {
 
-	public elements: ICollection<SerializedElement>;
+	public elements: ICollection<DiagramElement>;
+	label = "UML Diagram";
+
 
 	public constructor(Did:string)
 	{
 		super()
 		this.id = Did;
-		this.elements = new RelationalCollection([])
+		this.elements = new RelationalCollection<DiagramElement>([])
 	}
 	get(id: string): SerializedElement
 	{	
@@ -44,7 +47,7 @@ export class Diagram extends SerializedElement
 	}
 
 	toUmlNotation(): string {
-		return "UML Diagram";
+		return this.label;
 	}
 
 }

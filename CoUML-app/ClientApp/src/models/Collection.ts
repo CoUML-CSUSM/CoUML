@@ -15,6 +15,7 @@ export interface ICollection<T>
 	iterator(): ICollectionIterator<T>;
 	insert(item: T): void;
 	remove(id: any): T | null;
+	removeAll(): void
 	get(id: string|number): T | null;
 	size: number;
 	toUmlNotation(): string;
@@ -32,6 +33,10 @@ export class GeneralCollection<T> implements ICollection<T>{
 	{
 		this.items = items;
 		this["$type"] = `CoUML_app.Models.GeneralCollection\`1[[CoUML_app.Models.${typeof(items)}, CoUML-app]], CoUML-app`;
+	}
+	removeAll(): void {
+		delete this.items;
+		this.items = [];
 	}
 
 	/**
@@ -136,6 +141,10 @@ export class RelationalCollection<T extends SerializedElement> implements IColle
 			this.insert(elem);
 		this["$type"] = "CoUML_app.Models.RelationalCollection, CoUML-app";
 	}
+	removeAll(): void {
+		delete this.items;
+		this.items = new Map<string, T>();
+	}
 
 
 	iterator(): ICollectionIterator<T> 
@@ -192,9 +201,9 @@ export class RelationalCollection<T extends SerializedElement> implements IColle
 
 	toUmlNotation(): string {
 
-		let uml: string;
+		let uml: string = "";
 		this.items.forEach((item:T, id: string)=>{
-			uml += (uml ? ", " : "") + item.toUmlNotation();
+			uml += (uml != "" ? ", " : "") + item.toUmlNotation();
 		});
 		
 		return uml;

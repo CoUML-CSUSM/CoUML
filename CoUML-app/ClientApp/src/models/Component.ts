@@ -23,6 +23,11 @@ export abstract class Component extends DiagramElement
     toUmlNotation(): string {
         return this.name;
     }
+
+    set label( newLabel: string)
+    {
+        this.name = newLabel;
+    }
 }
 
 /**

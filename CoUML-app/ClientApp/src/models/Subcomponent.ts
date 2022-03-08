@@ -18,7 +18,7 @@ import { VisibilityType, DataType, RelationshipType} from "./Types";
  *      Comp impliments IComp{}
  */
 
-const VALID_ATTIBUTE = /([\+\-\#\~])*\s*(\w+)\s*\:\s*(\w*)/i
+const VALID_ATTIBUTE = /([\+\-\#\~])*\s*(\w+)\s*\:*\s*(\w*)/i
 /**
  * "- _myPrivateAtt: Object"
  * 1: "-" // if undefined then local
@@ -61,7 +61,18 @@ export class Relationship extends DiagramElement implements SerializedElement
 	}
 
 	toUmlNotation(): string {
-		return this.attributes?.toUmlNotation() || "";
+		return this.attributes?.name || "";
+	}
+	set label(description: string)
+	{
+		if( this.type == RelationshipType.Association)
+		{	if(!this.attributes)
+				this.attributes = new Attribute();
+			this.attributes.label = description;
+		}else
+		{
+			delete this.attributes;
+		}
 	}
 
 }
@@ -116,9 +127,7 @@ export class Attribute extends ComponentProperty
 			this.name = tokenDescription[2];
 			this.type = new DataType(tokenDescription[3]);
 		}
-
-
-		console.log(`Attribute.label = ${tokenDescription.toString()}`);
+		console.log(`Attribute.label = ${tokenDescription}`);
 		console.log(this);
 	}
 }
@@ -134,7 +143,6 @@ export class Attribute extends ComponentProperty
  export class Operation extends ComponentProperty
 {
 
-	// regex for operation 		/([\+\-\#\~\s])\s*(\w+)\s*\(\s*(\w*\:*\s*\w*\,*\s*)*\)\:\s*(\w*)/gi
 	public parameters: ICollection<Attribute>;
 
 	constructor()
@@ -149,7 +157,34 @@ export class Attribute extends ComponentProperty
 
 	toUmlNotation(): string
 	{
-		return `${String.fromCharCode(this.visibility as unknown as number) } ${this.name}(${this.parameters.size>0? this.parameters.toUmlNotation(): ""}): ${this.type.dataType}`;
+		return `${this.visibility} ${this.name}(${this.parameters.toUmlNotation()}): ${this.type.dataType}`;
+	}
+
+	set label(description: string)
+	{
+		let tokenDescription  = description.match(VALID_OPERATION);
+		if(tokenDescription)
+		{
+			this.visibility = VisibilityType.get(tokenDescription[1]);
+			this.name = tokenDescription[2];
+			this.parameterize(tokenDescription[3], this.parameters)
+			this.type = new DataType(tokenDescription[4]);
+		}
+
+
+		console.log(`Operation.label = ${tokenDescription}`);
+		console.log(this);
+	}
+
+	parameterize(params: string, collection: ICollection<Attribute>): void
+	{
+		collection.removeAll();
+		for(let attibute of params.split(', '))
+		{
+			let a =new Attribute();
+			a.label = attibute;
+			collection.insert(a);
+		}
 	}
 }
 
