@@ -37,6 +37,12 @@ const VALID_OPERATION = /([\+\-\#\~])*\s*(\w+)\s*\(\s*((?:\w*\:*\s*\w*\,*\s*)*)\
 
 export class Relationship extends DiagramElement implements SerializedElement
 {
+	insert(element: any) {
+		throw new Error("Method not implemented.");
+	}
+	remove(id: string) {
+		throw new Error("Method not implemented.");
+	}
 
 	public type: RelationshipType;
 	public source: string;
@@ -99,6 +105,12 @@ export abstract class ComponentProperty extends SerializedElement
  */
 export class Attribute extends ComponentProperty
 {
+	insert(element: any) {
+		throw new Error("Method not implemented.");
+	}
+	remove(id: string) {
+		throw new Error("Method not implemented.");
+	}
 
 	multiplicity: Multiplicity; 
 	
@@ -142,6 +154,12 @@ export class Attribute extends ComponentProperty
  */
  export class Operation extends ComponentProperty
 {
+	insert(element: any) {
+		throw new Error("Method not implemented.");
+	}
+	remove(id: string) {
+		throw new Error("Method not implemented.");
+	}
 
 	public parameters: ICollection<Attribute>;
 

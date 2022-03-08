@@ -13,6 +13,9 @@ import { CoUmlHubService } from '../service/couml-hub.service';
 
     _menuItems: MenuItem[];
 
+    // _newDiagramDialog_isVisible = false;
+
+    // input_diagramName:string
 
     constructor(
       private _projectManager: ProjectManager,
@@ -25,6 +28,7 @@ import { CoUmlHubService } from '../service/couml-hub.service';
             {
               label: "New...",
               command: () => this.generate(),
+              // command: ()=> this._newDiagramDialog_isVisible = true,
             },
             {
               label: "Trigger Breakpoint",

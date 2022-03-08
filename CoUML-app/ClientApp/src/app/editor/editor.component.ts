@@ -39,7 +39,6 @@ export class EditorComponent implements AfterViewInit{
 	}
 
 
-
 	/** frame controls */
 
 	canvasHeight: number;
@@ -55,8 +54,12 @@ export class EditorComponent implements AfterViewInit{
 	}
 	/*************************** */
 
+	// key handler
+	_editorKeyHandler: mxKeyHandler;
 
-
+	/**
+	 * configure the graph
+	 */
 	ngAfterViewInit(): void {
 
 		//init graph div
@@ -91,6 +94,35 @@ export class EditorComponent implements AfterViewInit{
 			[Class, AbstractClass, Interface, Enumeration, Attribute, Operation],
 			this
 		);
+
+		// Key binding
+		// Adds handling of return and escape keystrokes for editing
+		this._editorKeyHandler = new mxKeyHandler(this._graph);
+		this._editorKeyHandler.bindKey(46, ()=>{
+			//delete function
+
+			if(this._currentSelection){
+
+				// pointer to item being deleted
+
+				//[ diagram-id, comp-id]
+				let deleteIdPath = this.getIdPath(this._currentSelection); 
+				//property-id
+				let deleteId = deleteIdPath.pop();
+
+
+				this._graph.removeCells([this._currentSelection], false);
+				this.stageChange( new ChangeRecord(
+					deleteIdPath,
+					PropertyType.Elements,	///**** */
+					ActionType.Remove,
+					deleteId
+				));
+
+				this._currentSelection = null;// deselect
+			}
+		});
+
 
 		//get test diagram
 		setTimeout(()=>	this._projectDeveloper.open(this.diagramId), 500);
@@ -266,6 +298,9 @@ export class EditorComponent implements AfterViewInit{
 						break;
 				}
 				break;
+			case ActionType.Remove:
+				affectedCell = this._graph.getModel().getCell(change.value);
+				this._graph.removeCells([affectedCell], false);
 			case ActionType.Lock:
 			case ActionType.Release:
 				this.updateCellLock(affectedCell,change); break;
@@ -337,7 +372,7 @@ export class EditorComponent implements AfterViewInit{
 		);
 	}
 
-	releaseLock(newSelection: mxCell)
+	releaseLock(newSelection?: mxCell)
 	{
 		console.log("-----releaseLock----")
 		console.log(newSelection);

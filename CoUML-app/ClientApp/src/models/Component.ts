@@ -35,6 +35,12 @@ export abstract class Component extends DiagramElement
  */
 export class Enumeration extends Component
 {
+    insert(element: any) {
+        this.enums.insert(element);
+    }
+    remove(id: string) {
+        this.enums.remove(id);
+    }
     public enums: ICollection<string>;
 
     public constructor(name: string = "EnumerationComponent")
@@ -53,6 +59,12 @@ export class Enumeration extends Component
  */
 export class Interface extends Component
 {
+    insert(element: any) {
+        this.operations.insert(element);
+    }
+    remove(id: string) {
+        this.operations.remove(id);
+    }
     public operations: ICollection<Operation>;
 
     public constructor(name: string = "InterfaceComponent")
@@ -71,6 +83,27 @@ export class Interface extends Component
  */
 export class AbstractClass extends Component
 {
+    insert(element: any) {
+        switch(typeof(element))
+        {
+            case Operation.name: this.operations.insert(element);
+            break;
+            case Attribute.name: this.attributes.insert(element);
+            default: break;
+        }
+    }
+    remove(id: string) {
+        let element = this.get(id);
+        switch(typeof(element))
+        {
+            case Operation.name: this.operations.remove(id);
+            break;
+            case Attribute.name: this.attributes.remove(id);
+            default: break;
+        }
+        return element
+    }
+
     public operations:ICollection<Operation>;
     public attributes:ICollection<Attribute>;
 
@@ -92,6 +125,60 @@ export class AbstractClass extends Component
  */
 export class Class extends Component
 {
+    insert(element: any) {
+        
+        console.log(`xxxxxxxxxxxxxxx INSERTING xxxxxxxxxxxxxxx \n${element.name}`);
+
+        console.log(`
+        typeof(element)     ${element.constructor.name}
+        Operation.name      ${Operation.name}
+        Attribute.name      ${Attribute.name}
+        `)
+        console.log(element);
+        if(element.constructor.name == Operation.name){
+            console.log(`
+            element.constructor.name == Operation.name
+            ${element.constructor.name == Operation.name}
+            `);
+            this.operations.insert(element);
+
+        }
+        if(element.constructor.name == Attribute.name){
+            console.log(`
+            element.constructor.name == Attribute.name
+            ${element.constructor.name == Attribute.name}
+            `);
+            this.attributes.insert(element);
+        }
+    }
+    remove(id: string) {
+        console.log(`xxxxxxxxxxxxxxx removing xxxxxxxxxxxxxxx \n${id}`);
+
+        let element = this.get(id);
+        console.log(`
+        typeof(element)     ${element.constructor.name}
+        Operation.name      ${Operation.name}
+        Attribute.name      ${Attribute.name}
+        `)
+        console.log(element);
+        if(element.constructor.name == Operation.name){
+            console.log(`
+            element.constructor.name == Operation.name
+            ${element.constructor.name == Operation.name}
+            `);
+            this.operations.remove(id);
+
+        }
+        if(element.constructor.name == Attribute.name){
+            console.log(`
+            element.constructor.name == Attribute.name
+            ${element.constructor.name == Attribute.name}
+            `);
+            this.attributes.remove(id);
+        }
+        
+        // return element
+    }
 
     public operations:ICollection<Operation>;
     public attributes:ICollection<Attribute>;

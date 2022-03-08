@@ -79,7 +79,8 @@ export class ProjectDeveloper{
 			case ActionType.Shift:
 			case ActionType.Insert:
 			case ActionType.Remove:
-				operation = `${affectedProperty}.${action}(change.value)`;
+				operation = `${action}(change.value)`;
+				// operation = `${affectedProperty}.${action}(change.value)`;
 				break;
 
 			case ActionType.Lock:

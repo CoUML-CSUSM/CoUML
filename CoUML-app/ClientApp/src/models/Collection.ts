@@ -162,15 +162,16 @@ export class RelationalCollection<T extends SerializedElement> implements IColle
 		this.items.set(item.id, item);
 	}
 
-	remove(signature: string): T | null 
+	remove(id: string): T | null 
 	{
-		let relation = null
-		if(this.items.has(signature))
+		console.log(`removing....${id}`);
+		let removedItem = null
+		if(this.items.has(id))
 		{
-			relation = this.items.get(signature);
-			this.items.delete(relation);
+			removedItem = this.items.get(id);
+			this.items.delete(id);
 		}
-		return relation;
+		return removedItem;
 	}
 	
 	get(id: string): null | T

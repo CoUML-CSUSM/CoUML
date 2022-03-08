@@ -6,7 +6,9 @@ export  abstract class SerializedElement
 {
 	public id: string;
 	public editor: IUser;
-	abstract get(id: string)
+	abstract get(id: string);
+	abstract insert(element);
+	abstract remove(id: string);
 	constructor ()
 	{
 		this.id = Uuid();
@@ -19,6 +21,12 @@ export  abstract class SerializedElement
 
 export class Diagram extends SerializedElement
 {
+	insert(element: any) {
+		this.elements.insert(element);
+	}
+	remove(id: string) {
+		this.elements.remove(id);
+	}
 
 	public elements: ICollection<DiagramElement>;
 	label = "UML Diagram";
