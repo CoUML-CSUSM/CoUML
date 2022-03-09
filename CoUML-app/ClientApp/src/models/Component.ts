@@ -84,57 +84,25 @@ export class Interface extends Component
 export class AbstractClass extends Component
 {
     insert(element: any) {
-        
-        console.log(`xxxxxxxxxxxxxxx INSERTING xxxxxxxxxxxxxxx \n${element.name}`);
-
-        console.log(`
-        typeof(element)     ${element.constructor.name}
-        Operation.name      ${Operation.name}
-        Attribute.name      ${Attribute.name}
-        `)
         console.log(element);
         if(element.constructor.name == Operation.name){
-            console.log(`
-            element.constructor.name == Operation.name
-            ${element.constructor.name == Operation.name}
-            `);
             this.operations.insert(element);
-
         }
         if(element.constructor.name == Attribute.name){
-            console.log(`
-            element.constructor.name == Attribute.name
-            ${element.constructor.name == Attribute.name}
-            `);
             this.attributes.insert(element);
         }
     }
     remove(id: string) {
-        console.log(`xxxxxxxxxxxxxxx removing xxxxxxxxxxxxxxx \n${id}`);
-
+       
         let element = this.get(id);
-        console.log(`
-        typeof(element)     ${element.constructor.name}
-        Operation.name      ${Operation.name}
-        Attribute.name      ${Attribute.name}
-        `)
+      
         console.log(element);
         if(element.constructor.name == Operation.name){
-            console.log(`
-            element.constructor.name == Operation.name
-            ${element.constructor.name == Operation.name}
-            `);
             this.operations.remove(id);
-
         }
         if(element.constructor.name == Attribute.name){
-            console.log(`
-            element.constructor.name == Attribute.name
-            ${element.constructor.name == Attribute.name}
-            `);
             this.attributes.remove(id);
         }
-        
         // return element
     }
 
@@ -161,53 +129,22 @@ export class Class extends Component
 {
     insert(element: any) {
         
-        console.log(`xxxxxxxxxxxxxxx INSERTING xxxxxxxxxxxxxxx \n${element.name}`);
-
-        console.log(`
-        typeof(element)     ${element.constructor.name}
-        Operation.name      ${Operation.name}
-        Attribute.name      ${Attribute.name}
-        `)
-        console.log(element);
+        
         if(element.constructor.name == Operation.name){
-            console.log(`
-            element.constructor.name == Operation.name
-            ${element.constructor.name == Operation.name}
-            `);
             this.operations.insert(element);
-
         }
         if(element.constructor.name == Attribute.name){
-            console.log(`
-            element.constructor.name == Attribute.name
-            ${element.constructor.name == Attribute.name}
-            `);
             this.attributes.insert(element);
         }
     }
     remove(id: string) {
-        console.log(`xxxxxxxxxxxxxxx removing xxxxxxxxxxxxxxx \n${id}`);
 
         let element = this.get(id);
-        console.log(`
-        typeof(element)     ${element.constructor.name}
-        Operation.name      ${Operation.name}
-        Attribute.name      ${Attribute.name}
-        `)
         console.log(element);
         if(element.constructor.name == Operation.name){
-            console.log(`
-            element.constructor.name == Operation.name
-            ${element.constructor.name == Operation.name}
-            `);
             this.operations.remove(id);
-
         }
         if(element.constructor.name == Attribute.name){
-            console.log(`
-            element.constructor.name == Attribute.name
-            ${element.constructor.name == Attribute.name}
-            `);
             this.attributes.remove(id);
         }
         
