@@ -294,7 +294,6 @@ export class EditorComponent implements AfterViewInit{
 					case PropertyType.Attributes:
 					case PropertyType.Operations:
 						this.insertProperty(affectedCell, change.value);
-						this._graph.refresh();
 						break;
 				}
 				break;
@@ -307,6 +306,7 @@ export class EditorComponent implements AfterViewInit{
 			case ActionType.Label: this.updateLabelValue(affectedCell, change); break;
 
 		}
+		this._graph.validateCell(affectedCell, this._graph);
 		this._graph.refresh();
 	}
 
@@ -372,10 +372,21 @@ export class EditorComponent implements AfterViewInit{
 
 	private updateLabelValue(affectedCell: mxCell, change: ChangeRecord)
 	{
-		this._graph.getModel().setValue(
+		// this._graph.getModel().setValue(
+		// 	affectedCell,
+		// 	this._projectDeveloper._projectDiagram.at(change.id).toUmlNotation()
+		// );
+
+		this._graph.getModel().valueForCellChanged(
 			affectedCell,
 			this._projectDeveloper._projectDiagram.at(change.id).toUmlNotation()
 		);
+
+		// this._graph.cellLabelChanged(
+		// 		affectedCell,
+		// 		this._projectDeveloper._projectDiagram.at(change.id).toUmlNotation(),
+		// 		true
+		// 	);
 	}
 
 	releaseLock(newSelection?: mxCell)

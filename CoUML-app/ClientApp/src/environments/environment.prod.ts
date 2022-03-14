@@ -1,5 +1,5 @@
 // TODO: change the ip of the apiUrl to the host machines ip/url
 export const environment = {
   production: true,
-  apiUrl: "https://54.215.192.3"
+  apiUrl: "https://54.241.141.63"
 };

@@ -197,11 +197,13 @@ export class Attribute extends ComponentProperty
 	parameterize(params: string, collection: ICollection<Attribute>): void
 	{
 		collection.removeAll();
-		for(let attibute of params.split(', '))
+		for(let attibuteDescription of params.split(', '))
 		{
-			let a =new Attribute();
-			a.label(attibute);
-			collection.insert(a);
+			if(attibuteDescription != ""){
+				let a = new Attribute();
+				a.label(attibuteDescription);
+				collection.insert(a);
+			}
 		}
 	}
 }
