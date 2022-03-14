@@ -1,5 +1,6 @@
 import { UmlElement } from "./Diagram";
 import { DataType, Diagram, Relationship, RelationshipType, Class, Dimension, Operation, Attribute, AbstractClass, Interface, Enumeration, ICollection, IUser, User, NullUser } from "./DiagramModel";
+import { Enumeral } from "./Subcomponent";
 import { VisibilityType } from "./Types";
 
 	export function assembleDiagram(diagram_DTO: string): Diagram
@@ -44,6 +45,10 @@ import { VisibilityType } from "./Types";
 			case "Attribute":
 				case Attribute.name:
 				element = assembleAttribute(elem);
+				break;
+			case "Enumeral":
+				case Enumeral.name:
+				element = assembleEnumeral(elem);
 				break;
 			case "User":
 				case User.name:
@@ -102,7 +107,7 @@ import { VisibilityType } from "./Types";
 		__enum.id = x.id;
 		__enum.editor = assembleUser(x.editor);
 		__enum.dimension = assembleDimension(x.dimension);
-		// __enum.enums = assembleStringCollection(e.enums);
+		assembleEnumerationCollection(__enum.enums, x.enums);
 		return __enum;
 	}
 
@@ -124,6 +129,20 @@ import { VisibilityType } from "./Types";
 			coll.insert(str)
 	}
 
+
+	function assembleEnumerationCollection(coll, x)
+	{
+		for(let [id, op] of Object.entries(x.items))
+			coll.insert(assembleEnumeral(op));
+	}
+
+	function assembleEnumeral(x: any): Enumeral
+	{
+		let __enumeral = new Enumeral();
+		__enumeral.id = x.id;
+		__enumeral.name = x.name
+		return __enumeral;
+	}
 
 	function assembleOperationsCollection(coll, x)
 	{

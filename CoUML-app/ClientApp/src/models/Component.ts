@@ -46,7 +46,7 @@ export class Enumeration extends Component
     public constructor(name: string = "EnumerationComponent")
     {
         super("Enumeration", name);
-        this.enums  = new GeneralCollection<Enumeral> ([]);
+        this.enums  = new RelationalCollection<Enumeral> ([]);
     }
 
     get(id: string) {

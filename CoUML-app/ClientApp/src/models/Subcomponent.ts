@@ -210,7 +210,7 @@ export class Attribute extends ComponentProperty
 
 export class Enumeral extends UmlElement
 {
-	private name: string = "enumeral";
+	public name: string = "enumeral";
 
 	get(id: string) {
 		throw new Error("Method not implemented.");

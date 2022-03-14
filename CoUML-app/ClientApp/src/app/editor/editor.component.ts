@@ -77,7 +77,7 @@ export class EditorComponent implements AfterViewInit{
 				mxEvent.CELL_CONNECTED, 
 				mxEvent.EDITING_STOPPED,
 				mxEvent.CELLS_MOVED,
-				mxEvent.CLICK,
+				// mxEvent.CLICK,
 				mxEvent.CONNECT,
 			],
 			this._graph,
@@ -165,20 +165,16 @@ export class EditorComponent implements AfterViewInit{
 			
 			while(elementIterator.hasNext())
 			{
-				let UmlElement = elementIterator.getNext();
+				let element = elementIterator.getNext();
 
-				if(UmlElement instanceof Component){
-					this.insertComponent(UmlElement)
-				}
-				else if( UmlElement instanceof Relationship){
-						relatioships.push(UmlElement)
-				}
+				if(element instanceof Component)
+					this.insertComponent(element)
+				else if( element instanceof Relationship)
+						relatioships.push(element)
 			}
 
-			for( let relation  of relatioships)
-			{
-				this.insertRelationship(relation);
-			}
+			for( let element  of relatioships)
+				this.insertRelationship(element);
 					
 		} finally {
 			this._graph.getModel().endUpdate();
@@ -220,6 +216,17 @@ export class EditorComponent implements AfterViewInit{
 				this.insertProperty(graphComponent, operatorIterator.getNext()) ;
 				
 		}
+
+		if(component instanceof Enumeration)
+		{
+			let enumIterator: ICollectionIterator<Enumeral> = component.enums.iterator();
+
+			while(enumIterator.hasNext())
+				this.insertProperty(graphComponent, enumIterator.getNext()) ;
+				
+		}
+
+
 		return graphComponent;
 	}
 
@@ -293,6 +300,7 @@ export class EditorComponent implements AfterViewInit{
 						break;
 					case PropertyType.Attributes:
 					case PropertyType.Operations:
+					case PropertyType.Enums:
 						this.insertProperty(affectedCell, change.value);
 						break;
 				}
