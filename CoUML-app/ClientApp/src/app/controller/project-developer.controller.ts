@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CoUmlHubService } from "../service/couml-hub.service";
-import { Diagram, Assembler, ChangeRecord, ActionType, PropertyType, Component, Class, AbstractClass, Interface, Enumeration, IGettable, IUser } from 'src/models/DiagramModel';
+import { Diagram, Assembler, ChangeRecord, ActionType, PropertyType, Component, Class, AbstractClass, Interface, Enumeration, UmlElement, IUser, ICollection } from 'src/models/DiagramModel';
 import { EditorComponent } from '../editor/editor.component';
 
 
@@ -72,27 +72,30 @@ export class ProjectDeveloper{
 			
 		let operation = "";
 
-		let affectedComponent: IGettable = this._projectDiagram.elements;
-		if(change.id)
-			for(let id of change.id){
-				affectedComponent = affectedComponent.get(id);
-			}
+		let affectedComponent= this._projectDiagram.at(change.id);
 
 		switch(change.action){
 			case ActionType.Shift:
 			case ActionType.Insert:
 			case ActionType.Remove:
-				operation = `${change.id? affectedProperty + ".": ''}${action}(change.value)`;
-				break;
-
 			case ActionType.Lock:
 			case ActionType.Release:
+			case ActionType.Label:
+				operation = `${action}(change.value)`;
+				// operation = `${affectedProperty}.${action}(change.value)`;
+				break;
+
 			case ActionType.Change:
 				operation = `${affectedProperty} = change.value`;
 				break;
 		}			
 
 		eval("affectedComponent." + operation);
+
+		//if the label is updated teh whole object is updated,
+		// affter the change hass been applied locally replace the value string with the 
+		// if(PropertyType.Label == change.affectedProperty)
+		// 	change.value = affectedComponent
 
 		console.log("result");
 		console.log(this._projectDiagram);//i need to send this down to the c#

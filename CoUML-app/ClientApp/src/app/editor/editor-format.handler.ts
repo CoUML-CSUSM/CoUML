@@ -8,7 +8,8 @@ const HEIGHT:number = 30;
 export function addCellStyles(graph: mxGraph)
 {
 	// mxConstants.ENTITY_SEGMENT = 20;
-	graph.border = 50;
+	graph.border = 100;
+	graph.autoSizeCellsOnAdd = true;
 
 	let style = graph.getStylesheet().getDefaultVertexStyle();
 				style[mxConstants.STYLE_FILLCOLOR] = 'none';
@@ -54,85 +55,73 @@ export function addCellStyles(graph: mxGraph)
 
 }
 
-export function intiLayoutManager(graph: mxGraph)
+export function initLayoutManager(graph: mxGraph)
 {
 	var layoutManager = new mxLayoutManager(graph);
 	layoutManager.getLayout = function(cell)
 	{
-		var parent = graph.model.getParent(cell);
-		
-		// Executes layouts from top to bottom except for nested layouts where
-		// child layouts are executed before and after the parent layout runs
-		// in case the layout changes the size of the child cell
-		// if (eventName != mxEvent.BEGIN_UPDATE || hasLayout(parent, eventName))
-		// {
-			var style = graph.getCellStyle(cell) as any[];
-	
-			if (style['childLayout'] == 'stackLayout')
-			{
-				var stackLayout = new mxStackLayout(graph, true);
-				stackLayout.resizeParentMax = mxUtils.getValue(style, 'resizeParentMax', '1') == '1';
-				stackLayout.horizontal = mxUtils.getValue(style, 'horizontalStack', '1') == '1';
-				stackLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', '1') == '1';
-				stackLayout.resizeLast = mxUtils.getValue(style, 'resizeLast', '0') == '1';
-				stackLayout.spacing = style['stackSpacing'] || stackLayout.spacing;
-				stackLayout.border = style['stackBorder'] || stackLayout.border;
-				stackLayout.marginLeft = style['marginLeft'] || 0;
-				stackLayout.marginRight = style['marginRight'] || 0;
-				stackLayout.marginTop = style['marginTop'] || 0;
-				stackLayout.marginBottom = style['marginBottom'] || 0;
-				stackLayout.allowGaps = style['allowGaps'] || 0;
-				stackLayout.fill = true;
+		var style = graph.getCellStyle(cell) as any[];
 
-				stackLayout.gridSize = HEIGHT;
-				
-				
-				return stackLayout;
-			}
-			else if (style['childLayout'] == 'treeLayout')
-			{
-				var treeLayout = new mxCompactTreeLayout(graph);
-				treeLayout.horizontal = mxUtils.getValue(style, 'horizontalTree', '1') == '1';
-				treeLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', '1') == '1';
-				treeLayout.groupPadding = mxUtils.getValue(style, 'parentPadding', 20);
-				treeLayout.levelDistance = mxUtils.getValue(style, 'treeLevelDistance', 30);
-				treeLayout.maintainParentLocation = true;
-				treeLayout.edgeRouting = false;
-				treeLayout.resetEdges = false;
-				
-				return treeLayout;
-			}
-			else if (style['childLayout'] == 'flowLayout')
-			{
-				var flowLayout = new mxHierarchicalLayout(graph, mxUtils.getValue(style,
-					'flowOrientation', mxConstants.DIRECTION_EAST));
-				flowLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', '1') == '1';
-				flowLayout.parentBorder = mxUtils.getValue(style, 'parentPadding', 20);
-				flowLayout.maintainParentLocation = true;
-				
-				// Special undocumented styles for changing the hierarchical
-				flowLayout.intraCellSpacing = mxUtils.getValue(style, 'intraCellSpacing',
-					mxHierarchicalLayout.prototype.intraCellSpacing);
-				flowLayout.interRankCellSpacing = mxUtils.getValue(style, 'interRankCellSpacing',
-					mxHierarchicalLayout.prototype.interRankCellSpacing);
-				flowLayout.interHierarchySpacing = mxUtils.getValue(style, 'interHierarchySpacing',
-					mxHierarchicalLayout.prototype.interHierarchySpacing);
-				flowLayout.parallelEdgeSpacing = mxUtils.getValue(style, 'parallelEdgeSpacing',
-					mxHierarchicalLayout.prototype.parallelEdgeSpacing);
-				
-				return flowLayout;
-			}
-			else if (style['childLayout'] == 'organicLayout')
-			{
-				return new mxFastOrganicLayout(graph);
-			}
-		// }
-		
+		if (style['childLayout'] == 'stackLayout')
+		{
+			var stackLayout = new mxStackLayout(graph, true);
+			stackLayout.resizeParentMax = mxUtils.getValue(style, 'resizeParentMax', '1') == '1';
+			stackLayout.horizontal = mxUtils.getValue(style, 'horizontalStack', '1') == '1';
+			stackLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', '1') == '1';
+			stackLayout.resizeLast = mxUtils.getValue(style, 'resizeLast', '0') == '1';
+			stackLayout.spacing = style['stackSpacing'] || stackLayout.spacing;
+			stackLayout.border = style['stackBorder'] || stackLayout.border;
+			stackLayout.marginLeft = style['marginLeft'] || 0;
+			stackLayout.marginRight = style['marginRight'] || 0;
+			stackLayout.marginTop = style['marginTop'] || 0;
+			stackLayout.marginBottom = style['marginBottom'] || 0;
+			stackLayout.allowGaps = style['allowGaps'] || 0;
+			// stackLayout.fill = true;
+			stackLayout.fill = false;
+
+			stackLayout.gridSize = HEIGHT;
+			
+			return stackLayout;
+		}
+		else if (style['childLayout'] == 'treeLayout')
+		{
+			var treeLayout = new mxCompactTreeLayout(graph);
+			treeLayout.horizontal = mxUtils.getValue(style, 'horizontalTree', '1') == '1';
+			treeLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', '1') == '1';
+			treeLayout.groupPadding = mxUtils.getValue(style, 'parentPadding', 20);
+			treeLayout.levelDistance = mxUtils.getValue(style, 'treeLevelDistance', 30);
+			treeLayout.maintainParentLocation = true;
+			treeLayout.edgeRouting = false;
+			treeLayout.resetEdges = false;
+			
+			return treeLayout;
+		}
+		else if (style['childLayout'] == 'flowLayout')
+		{
+			var flowLayout = new mxHierarchicalLayout(graph, mxUtils.getValue(style,
+				'flowOrientation', mxConstants.DIRECTION_EAST));
+			flowLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', '1') == '1';
+			flowLayout.parentBorder = mxUtils.getValue(style, 'parentPadding', 20);
+			flowLayout.maintainParentLocation = true;
+			
+			// Special undocumented styles for changing the hierarchical
+			flowLayout.intraCellSpacing = mxUtils.getValue(style, 'intraCellSpacing',
+				mxHierarchicalLayout.prototype.intraCellSpacing);
+			flowLayout.interRankCellSpacing = mxUtils.getValue(style, 'interRankCellSpacing',
+				mxHierarchicalLayout.prototype.interRankCellSpacing);
+			flowLayout.interHierarchySpacing = mxUtils.getValue(style, 'interHierarchySpacing',
+				mxHierarchicalLayout.prototype.interHierarchySpacing);
+			flowLayout.parallelEdgeSpacing = mxUtils.getValue(style, 'parallelEdgeSpacing',
+				mxHierarchicalLayout.prototype.parallelEdgeSpacing);
+			
+			return flowLayout;
+		}
+		else if (style['childLayout'] == 'organicLayout')
+		{
+			return new mxFastOrganicLayout(graph);
+		}
 		return null;
 	};
-	
-	
-
 }
 
 export function addEdgeStyles(graph: mxGraph)
@@ -151,7 +140,6 @@ export function addEdgeStyles(graph: mxGraph)
 		RelationshipType[RelationshipType.Realization], 
 		realizationStyle
 		);
-	
 
 	// Dependency, - - - >
 	let dependencyStyle = mxUtils.clone(edgeStyleDefualt);
@@ -164,7 +152,7 @@ export function addEdgeStyles(graph: mxGraph)
 		dependencyStyle
 		);
 
-	// Association, -------
+	// Association, 1-------*
 	let associationStyle = mxUtils.clone(edgeStyleDefualt);
 	associationStyle[mxConstants.STYLE_DASHED] = false;
 	associationStyle[mxConstants.STYLE_ENDARROW] = mxConstants.NONE;

@@ -7,10 +7,10 @@ export class User implements IUser {
 	constructor(id: string)
 	{
 		this.id = id
-		this["$type"] = "CoUML_app.Models.User, CoUML-app"
+		this["_$type"] = "CoUML_app.Models.User, CoUML-app"
 	}
 }
 export class NullUser implements IUser {
 	readonly id: string = "N/A";
-	["$type"] = "CoUML_app.Models.NullUser, CoUML-app"
+	["_$type"] = "CoUML_app.Models.NullUser, CoUML-app"
 }

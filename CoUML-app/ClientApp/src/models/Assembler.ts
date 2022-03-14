@@ -1,18 +1,20 @@
-import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Class, Dimension, Operation, Attribute, AbstractClass, Interface, Enumeration, ICollection, IUser, User, NullUser } from "./DiagramModel";
+import { UmlElement } from "./Diagram";
+import { DataType, Diagram, Relationship, RelationshipType, Class, Dimension, Operation, Attribute, AbstractClass, Interface, Enumeration, ICollection, IUser, User, NullUser } from "./DiagramModel";
+import { VisibilityType } from "./Types";
 
 	export function assembleDiagram(diagram_DTO: string): Diagram
 	{
 		let d = JSON.parse(diagram_DTO);
 
 		let __diagram = new Diagram(d.id);
-		for(let elem of d["elements"]["items"])
+		for(let [id, elem] of Object.entries(d["elements"]["items"]))
 		{
-			__diagram.elements.insert(assembleDiagramElement(elem));
+			__diagram.elements.insert(assembleUmlElement(elem));
 		}
 		return __diagram;
 	}
 
-	export function assembleDiagramElement(elem): DiagramElement
+	export function assembleUmlElement(elem): UmlElement
 	{
 		let element;
 		switch(getType(elem)){
@@ -63,7 +65,7 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 		return element;
 	}
 
-	function assembleRelationship(x: Relationship): DiagramElement {
+	function assembleRelationship(x: Relationship): UmlElement {
 		let __relationship = new Relationship();
 		__relationship.id = x.id;
 		__relationship.editor = assembleUser(x["editor"]);
@@ -71,11 +73,11 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 		__relationship.source = x.source;
 		__relationship.target = x.target;
 		__relationship.type = x.type;
-		assembleAttributeCollection(__relationship.attributes, x.attributes)
+		__relationship.attributes = x.attributes? assembleAttribute(x.attributes) : null;
 		return __relationship;
 	}
 	
-	function assembleClass(x: Class): DiagramElement {
+	function assembleClass(x: Class): UmlElement {
 		let __class = new Class(x.name);
 		__class.id = x.id;
 		__class.editor = assembleUser(x.editor);
@@ -85,7 +87,7 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 		// assembleStringCollection( __class.relations, x.relations);
 		return __class;
 	}
-	function assembleAbstractClass(x: AbstractClass): DiagramElement {
+	function assembleAbstractClass(x: AbstractClass): UmlElement {
 		let __abstract = new AbstractClass(x.name);
 		__abstract.id = x.id;
 		__abstract.editor = assembleUser(x.editor);
@@ -95,11 +97,16 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 		// assembleStringCollection(__abstract.relations, x.relations);
 		return __abstract;
 	}
-	function assembleEnumeration(x: Enumeration): DiagramElement {
-		return new Enumeration(x.name);
+	function assembleEnumeration(x: Enumeration): UmlElement {
+		let __enum = new Enumeration(x.name);
+		__enum.id = x.id;
+		__enum.editor = assembleUser(x.editor);
+		__enum.dimension = assembleDimension(x.dimension);
+		// __enum.enums = assembleStringCollection(e.enums);
+		return __enum;
 	}
 
-	function assembleInterface(x: Interface): DiagramElement
+	function assembleInterface(x: Interface): UmlElement
 	{
 		let __interface: Interface = new Interface(x.name);
 		__interface.id = x.id;
@@ -120,14 +127,14 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 
 	function assembleOperationsCollection(coll, x)
 	{
-		for(let op of x.items)
+		for(let [id, op] of Object.entries(x.items))
 			coll.insert(assembleOperation(op));
 	}
 
 	function assembleOperation(x: any): Operation {
 		let __operation = new Operation();
 		__operation.id = x.id;
-		__operation.visibility = x.visibility;
+		__operation.visibility = VisibilityType.get(x.visibility);
 		__operation.name = x.name;
 		__operation.isStatic = x.isStatic;
 		__operation.propertyString = x.propertyString;
@@ -136,16 +143,16 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 		return __operation;
 	}
 
-	function assembleAttributeCollection(coll: ICollection<Attribute>, x)
+	function assembleAttributeCollection(coll: ICollection<UmlElement>, x)
 	{
-		for(let at of x.items)
+		for(let [id, at] of Object.entries(x.items))
 			coll.insert(assembleAttribute(at));
 	}
 
 	function assembleAttribute(x: any): any {
 		let __attribute = new Attribute()
 		__attribute.id = x.id;
-		__attribute.visibility = x.visibility;
+		__attribute.visibility = VisibilityType.get(x.visibility);
 		__attribute.name = x.name;
 		__attribute.isStatic = x.isStatic;
 		__attribute.propertyString = x.propertyString;
@@ -171,7 +178,7 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 
 
 	/**
-	 * takes a JSON string {  "$type": "CoUML_app.Models.Interface, CoUML-app", ...}
+	 * takes a JSON string {  "_$type": "CoUML_app.Models.Interface, CoUML-app", ...}
 	 * returns "Interface"
 	 * @param element 
 	 * @returns 
@@ -181,9 +188,10 @@ import { DataType, Diagram, Relationship, RelationshipType, DiagramElement, Clas
 		console.log("----- getType")
 		console.log(element)
 		try{
-			console.log(element["$type"]);
+			let typeString = element["$type"] || element["_$type"];
+			console.log(typeString);
 			let regex = /(\w*?),*?(?=,)/g;
-			let type = regex.exec(element["$type"])[0];
+			let type = regex.exec(typeString)[0];
 			console.log(`returning "${type}"-----`);
 			return type;
 		}catch(any){

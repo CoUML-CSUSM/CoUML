@@ -86,7 +86,7 @@ export class CoUmlHubService{
 	{
 		if(this._projectDeveloper){
 			changes.forEach((change)=>{
-				change.value = Assembler.assembleDiagramElement(change.value);
+				change.value = Assembler.assembleUmlElement(change.value);
 			});
 			this._projectDeveloper.applyChanges(changes);
 

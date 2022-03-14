@@ -15,7 +15,6 @@ import { CoUmlHubService } from '../service/couml-hub.service';
 export class HomeComponent {
 
   ip: string;
-  top:string = "top: 100px;";
 
 	constructor(
     private _coUmlHub: CoUmlHubService,

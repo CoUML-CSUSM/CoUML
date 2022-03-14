@@ -2,7 +2,7 @@ import { AbstractClass,
 	ActionType, 
 	PropertyType, 
 	ChangeRecord, 
-	DiagramElement,
+	UmlElement,
 	Component,
 	Class, 
 	Dimension, 
@@ -10,7 +10,7 @@ import { AbstractClass,
 	Interface, 
 	Relationship, 
 	RelationshipType, 
-	Operation, Attribute } from "src/models/DiagramModel";
+	Operation, Attribute, ComponentProperty } from "src/models/DiagramModel";
 import { EditorComponent } from "./editor.component";
 
 
@@ -18,22 +18,28 @@ import { EditorComponent } from "./editor.component";
  //	add  listeners from the catalog
  //================================================================================================
 
-	const _listenerCatalog: Map<mxEvent, Function> = new Map();
-		_listenerCatalog.set(mxEvent.LABEL_CHANGED, labelChanged);
-		_listenerCatalog.set(mxEvent.CELLS_ADDED, cellsAdded);
-		_listenerCatalog.set(mxEvent.START_EDITING, startEditing);
-		_listenerCatalog.set(mxEvent.CELL_CONNECTED, cellConnected);
-		_listenerCatalog.set(mxEvent.EDITING_STOPPED, editingStopped);
-		_listenerCatalog.set(mxEvent.CELLS_MOVED, cellsMoved);
-		_listenerCatalog.set(mxEvent.CLICK, click);
-		_listenerCatalog.set(mxEvent.CONNECT, connect);
-		_listenerCatalog.set(mxEvent.START, start);
-		_listenerCatalog.set(mxEvent.SELECT, select);
+	const _eventCatalog: Map<mxEvent, Function> = new Map();
+		_eventCatalog.set(mxEvent.LABEL_CHANGED, labelChanged);
+		_eventCatalog.set(mxEvent.CELLS_ADDED, cellsAdded);
+		_eventCatalog.set(mxEvent.START_EDITING, startEditing);
+		_eventCatalog.set(mxEvent.CELL_CONNECTED, cellConnected);
+		_eventCatalog.set(mxEvent.EDITING_STOPPED, editingStopped);
+		_eventCatalog.set(mxEvent.CELLS_MOVED, cellsMoved);
+		_eventCatalog.set(mxEvent.CLICK, click);
+		_eventCatalog.set(mxEvent.CONNECT, connect);
+		_eventCatalog.set(mxEvent.START, start);
+		_eventCatalog.set(mxEvent.SELECT, select);
 
-	export function addListeners(events: mxEvent[], graph: mxGraph, editorComponent: EditorComponent)
+	/**
+	 * applies the indecated event listerns
+	 * @param events The type of envents that need to be monitored
+	 * @param graph the mxgraph
+	 * @param editorComponent the editor component that will recieve notifications via stageChange function
+	 */
+	export function addListeners(events: mxEvent[], graph: mxGraph, editorComponent: EditorComponent): void
 	{
 		events.forEach(event =>{
-			_listenerCatalog.get(event).call(null, graph, editorComponent)
+			_eventCatalog.get(event).call(null, graph, editorComponent)
 		});
 	}
 
@@ -41,12 +47,17 @@ import { EditorComponent } from "./editor.component";
  //================================================================================================
  //	context menue for Relations
  //================================================================================================
-	export function addContextMenu(graph: mxGraph, editorComponent: EditorComponent)
+	/**
+	 * creates a context menu for setting the relation type of an edge
+	 * @param graph 
+	 * @param editorComponent 
+	 */
+	export function addContextMenu(graph: mxGraph, editorComponent: EditorComponent): void
 	{
 		graph.popupMenuHandler.factoryMethod = function(menu, cell, evt)
 		{
 			console.log(cell)
-			if(cell.edge)
+			if(cell?.edge)// menu if user clicks on edge
 			{
 				menu.addItem('Dependency',		'editors/images/uml/Dependency.svg',	()=>setRelationType(cell, RelationshipType.Dependency));
 				menu.addItem('Association',		'editors/images/uml/Association.svg',	 ()=>setRelationType(cell, RelationshipType.Association));
@@ -63,7 +74,7 @@ import { EditorComponent } from "./editor.component";
 			graph.refresh();
 
 			editorComponent.stageChange(new ChangeRecord(
-				[edge.id],
+				editorComponent.getIdPath(edge),
 				PropertyType.Type,
 				ActionType.Change,
 				relationType
@@ -74,19 +85,24 @@ import { EditorComponent } from "./editor.component";
  //================================================================================================
  //	Toolbar, drag and drop
  //================================================================================================
-	const _itemCatalog: Map<any, string > = new Map();
+	const _prototypeCatalog: Map<any, string > = new Map();
 	//iconCatalog.set(prototype, wwwroot/ <<path>>);
-	_itemCatalog.set( Interface, 'editors/images/uml/Interface.svg', );
-	_itemCatalog.set( AbstractClass, 'editors/images/uml/Abstract.svg');
-	_itemCatalog.set( Class, 'editors/images/uml/Class.svg');
-	_itemCatalog.set( Enumeration, 'editors/images/uml/Enumeration.svg');
-	_itemCatalog.set( Attribute, 'editors/images/uml/Attribute.svg');
-	_itemCatalog.set( Operation, 'editors/images/uml/Operation.svg');
+	_prototypeCatalog.set( Interface, 'editors/images/uml/Interface.svg', );
+	_prototypeCatalog.set( AbstractClass, 'editors/images/uml/Abstract.svg');
+	_prototypeCatalog.set( Class, 'editors/images/uml/Class.svg');
+	_prototypeCatalog.set( Enumeration, 'editors/images/uml/Enumeration.svg');
+	_prototypeCatalog.set( Attribute, 'editors/images/uml/Attribute.svg');
+	_prototypeCatalog.set( Operation, 'editors/images/uml/Operation.svg');
 
-	export function addToolbarItems(items: any[], editorComponent: EditorComponent)
+	/**
+	 * 
+	 * @param items the types of items to be included in the toolbar
+	 * @param editorComponent 
+	 */
+	export function addToolbarItems(items: any[], editorComponent: EditorComponent): void
 	{
 		items.forEach( item =>{
-			dragDrop(item, _itemCatalog.get(item), editorComponent);
+			dragDrop(item, _prototypeCatalog.get(item), editorComponent);
 		});	
 	}
 
@@ -97,12 +113,13 @@ import { EditorComponent } from "./editor.component";
 	 * @param editorComponent 
 	 */
 	function dragDrop(prototype, image:  string, editorComponent: EditorComponent)
+		: HTMLImageElement |HTMLButtonElement
 	{
 		// Function that is executed when the image is dropped on
 		// the graph. The cell argument points to the cell under
 		// the mousepointer if there is one.
 		// floor is used to keep the components to snap to the grid
-		var drop = function(graph, evt, parentCell, x, y)
+		var drop = function(graph: mxGraph, evt, parentCell, x, y)
 		{
 			graph.stopEditing(false);
 
@@ -110,7 +127,7 @@ import { EditorComponent } from "./editor.component";
 			console.log(parentCell) //return null if empty space, otherwise cell
 
 			let component = new prototype(); //creates new compnent object of approrate type
-			if(component instanceof Component)
+			if(component instanceof Component) //if adding new component
 			{
 				component.dimension.x =   Math.floor(x / 10) * 10;
 				component.dimension.y =   Math.floor(y / 10) * 10;
@@ -119,13 +136,13 @@ import { EditorComponent } from "./editor.component";
 				editorComponent.insertComponent(component);
 
 				editorComponent.stageChange(new ChangeRecord(
-					null,
+					[graph.getDefaultParent().id],
 					PropertyType.Elements,
 					ActionType.Insert,
 					component
 				));
 			}
-			else if(parentCell)
+			else if(parentCell)//if adding property to component
 			{
 				var style = graph.getCellStyle(parentCell) as any[];
 				while(style['childLayout'] != 'stackLayout' )
@@ -134,28 +151,32 @@ import { EditorComponent } from "./editor.component";
 					style = graph.getCellStyle(parentCell) as any[];
 				}
 				
+				console.log(parentCell);
 				//does this acctualy go here?
-				if((prototype instanceof Attribute 
+				if((component instanceof Attribute 
 					&& (parentCell.style == Class.name 
 						|| parentCell.style == AbstractClass.name 
 						)) ||
-					(prototype instanceof Operation
+					(component instanceof Operation
 					&&(parentCell.style == Class.name 
 						|| parentCell.style == AbstractClass.name 
 						|| parentCell.style == Interface.name 
 						)))
 				{
+					console.log("this goes here");
+
 					editorComponent.insertProperty(parentCell, component);
+
 					editorComponent.stageChange(new ChangeRecord(
-						parentCell.id,
-						prototype instanceof Operation? PropertyType.Operations: PropertyType.Attributes,
+						editorComponent.getIdPath(parentCell),
+						component instanceof Operation? PropertyType.Operations: PropertyType.Attributes,
 						ActionType.Insert,
 						component
 					));
-				} 
-
-				
-
+				} else
+				{
+					console.log(`${component.constructor.name} type object does NOT go here`);
+				}
 			}
 		}
 		
@@ -180,17 +201,18 @@ import { EditorComponent } from "./editor.component";
 	 * @param graph 
 	 * @param editorComponent 
 	 */
-	function labelChanged(graph: mxGraph, editorComponent: EditorComponent){
+	function labelChanged(graph: mxGraph, editorComponent: EditorComponent)
+	{
 		graph.addListener(mxEvent.LABEL_CHANGED,
 			// on change label event 
 			function(eventSource, eventObject){
 				console.log('%c%s', f_alert, "LABEL_CHANGED");
-				let affectedCells = eventObject.getProperties();
+				let affectedCells = eventObject.getProperties().cell;
 
 				editorComponent.stageChange( new ChangeRecord(
-					[affectedCells.cell.id],
-					PropertyType.Name, 
-					ActionType.Change,
+					editorComponent.getIdPath(affectedCells),
+					PropertyType.Label, 
+					ActionType.Label,
 					affectedCells.value
 				));
 		});
@@ -202,32 +224,26 @@ import { EditorComponent } from "./editor.component";
 	 * @param graph 
 	 * @param editorComponent 
 	 */
-	function cellsMoved(graph: mxGraph, editorComponent: EditorComponent){
+	function cellsMoved(graph: mxGraph, editorComponent: EditorComponent)
+	{
 		graph.addListener(mxEvent.CELLS_MOVED,
 			// on cell move event
 			function(eventSource, eventObject){
-				let affectedCells = eventObject.getProperties();
-				console.log('%c%s', f_alert, "CELLS_MOVED");
+				let affectedCells: mxCell[] = eventObject.getProperties().cells;
 
+				console.log('%c%s', f_alert, "CELLS_MOVED");
 				console.log(affectedCells);
 
-				let ids = [];
-				affectedCells.cells.forEach(cell=> {
-					console.log(`cell.id = ${cell.id}`);
-					ids.push(cell.id)
-				});
-
-				console.log(affectedCells)
-
-				editorComponent.stageChange(new ChangeRecord(
-					ids,
-					PropertyType.Dimension,
-					ActionType.Shift,
-					{ // new absolute location
-						x: affectedCells.cells[0]?.geometry.x,
-						y: affectedCells.cells[0]?.geometry.y,
-					}
-				));
+				for( let cell of affectedCells)
+					editorComponent.stageChange(new ChangeRecord(
+						editorComponent.getIdPath(cell),
+						PropertyType.Dimension,
+						ActionType.Shift,
+						{ // new absolute location
+							x: cell.geometry.x,
+							y: cell.geometry.y,
+						}
+					));
 			});
 	}
 
@@ -236,7 +252,8 @@ import { EditorComponent } from "./editor.component";
 	 * @param graph 
 	 * @param editorComponent 
 	 */
-	function editingStopped(graph: mxGraph, editorComponent: EditorComponent){
+	function editingStopped(graph: mxGraph, editorComponent: EditorComponent)
+	{
 		graph.addListener(mxEvent.EDITING_STOPPED,
 			//
 			function(eventSource, eventObject){
@@ -251,7 +268,8 @@ import { EditorComponent } from "./editor.component";
 	 * @param graph 
 	 * @param editorComponent 
 	 */
-	function cellConnected(graph: mxGraph, editorComponent: EditorComponent){
+	function cellConnected(graph: mxGraph, editorComponent: EditorComponent)
+	{
 		graph.addListener(mxEvent.CELL_CONNECTED, 
 			//event when  edge is connected or disconeccted from a cell
 			function(eventSource, eventObject){
@@ -281,7 +299,8 @@ import { EditorComponent } from "./editor.component";
 					{
 						editorComponent.stageChange(
 							new ChangeRecord(
-								[affectedEdge.edge.id],
+								// [affectedEdge.edge.id],
+								editorComponent.getIdPath(affectedEdge.edge),
 								affecedProperty,
 								ActionType.Change,
 								value
@@ -292,7 +311,8 @@ import { EditorComponent } from "./editor.component";
 					// set the location of the disconected end
 					if(isDisconnectioning || isMovingTerminal)
 						editorComponent.stageChange( new ChangeRecord(
-							[affectedEdge.edge.id],
+							// [affectedEdge.edge.id],
+							editorComponent.getIdPath(affectedEdge.edge),
 							PropertyType.Dimension,
 							ActionType.Change,
 							affecedProperty == PropertyType.Source?
@@ -317,7 +337,8 @@ import { EditorComponent } from "./editor.component";
 	 * @param id 
 	 * @returns 
 	 */
-	function valid(id: string):boolean{ 
+	function valid(id: string):boolean
+	{ 
 		//TODO: better way to validate id
 		return id.length > 5 ;
 	}
@@ -327,16 +348,16 @@ import { EditorComponent } from "./editor.component";
 	 * @param graph 
 	 * @param editorComponent 
 	 */
-	function startEditing(graph: mxGraph, editorComponent: EditorComponent){
+	function startEditing(graph: mxGraph, editorComponent: EditorComponent)
+	{
 		graph.addListener(mxEvent.START_EDITING, 
 			// When double click on cell to change label
 			function(eventSource, eventObject){
-				let affectedCells = eventObject.getProperties();
+				let affectedCells = eventObject.getProperties().cell;
 				console.log('%c%s', f_alert, "START_EDITING");
 
-				console.log(affectedCells.cell.id);
+				console.log(affectedCells);
 			});
-
 	}
 
 	/**
@@ -344,7 +365,8 @@ import { EditorComponent } from "./editor.component";
 	 * @param graph 
 	 * @param editorComponent 
 	 */
-	function start(graph: mxGraph, editorComponent: EditorComponent){
+	function start(graph: mxGraph, editorComponent: EditorComponent)
+	{
 		graph.addListener(mxEvent.START, 
 			// When double click on cell to change label
 			function(eventSource, eventObject){
@@ -353,7 +375,6 @@ import { EditorComponent } from "./editor.component";
 
 				console.log(affectedCells.cell.id);
 			});
-
 	}
 
 	/**
@@ -361,7 +382,8 @@ import { EditorComponent } from "./editor.component";
 	 * @param graph 
 	 * @param editorComponent 
 	 */
-	function cellsAdded(graph: mxGraph, editorComponent: EditorComponent){
+	function cellsAdded(graph: mxGraph, editorComponent: EditorComponent)
+	{
 		graph.addListener(mxEvent.CELLS_ADDED, 
 			// mxEvent.ADD_CELLS
 			function(eventSource, eventObject){
@@ -372,11 +394,13 @@ import { EditorComponent } from "./editor.component";
 	}
 	
 	/**
-	 * 
+	 * used for Lock unlock event
 	 * @param graph 
 	 * @param editorComponent 
 	 */
-	function click(graph: mxGraph, editorComponent: EditorComponent){
+	function click(graph: mxGraph, editorComponent: EditorComponent)
+	{
+		// TODO: need to come up with a better way to lock items.
 		graph.addListener(mxEvent.CLICK, 
 			// click on object to see its makup.
 			function(eventSource, eventObject){
@@ -398,7 +422,8 @@ import { EditorComponent } from "./editor.component";
 	 * @param graph 
 	 * @param editorComponent 
 	 */
-	function connect(graph: mxGraph, editorComponent: EditorComponent){
+	function connect(graph: mxGraph, editorComponent: EditorComponent)
+	{
 		//listener for new connections
 		graph.connectionHandler.addListener(mxEvent.CONNECT, 
 			function(eventSource, eventObject){
@@ -427,15 +452,13 @@ import { EditorComponent } from "./editor.component";
 					affectedCells.style = RelationshipType[relation.type]
 
 					editorComponent.stageChange(new ChangeRecord(
-						null,
+						[graph.getDefaultParent().id],
 						PropertyType.Elements,
 						ActionType.Insert,
 						relation
 					));
 
 				}
-
-
 			});
 	}
 
@@ -445,7 +468,8 @@ import { EditorComponent } from "./editor.component";
 	 * @param graph 
 	 * @param editorComponent 
 	 */
-	function select(graph: mxGraph, editorComponent: EditorComponent){
+	function select(graph: mxGraph, editorComponent: EditorComponent)
+	{
 		//listener template
 		graph.addListener(mxEvent.SELECT, 
 			// NADA

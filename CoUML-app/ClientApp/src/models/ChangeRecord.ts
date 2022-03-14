@@ -1,5 +1,3 @@
-import { DiagramElement } from "./Diagram";
-import { ComponentProperty } from "./Subcomponent";
 
 export class ChangeRecord
 {
@@ -21,6 +19,7 @@ export enum ActionType
 	Insert, // value must be < DiagramElement | ComponenetProperty >
 	Remove, // value must be < string | id>
 	Change, // value must be approprate datatypes of ChangePropertyType
+	Label,
 	Lock,	
 	Release,
 	Shift 
@@ -47,6 +46,7 @@ export enum PropertyType
 	Multiplicity,		//13
 	DefaultValue,		//14
 	Dimension,			//15
-	Editor				//16
+	Editor,				//16
+	Label
 }
 

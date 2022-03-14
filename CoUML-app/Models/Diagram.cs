@@ -8,23 +8,25 @@ namespace CoUML_app.Models
 
 	public class Diagram
 	{
-
-		public string id;
-
+		public string id { get; }
 		public ICollection<DiagramElement> elements {get;}
 
-		public Diagram(String dId = null)
+		public Diagram(String? dId = null)
 		{
-			id = dId == null? Guid.NewGuid().ToString() : dId;
-			this.elements = new GeneralCollection<DiagramElement>();
+			this.id = dId ?? Guid.NewGuid().ToString();
+			this.elements = new RelationalCollection<DiagramElement>();
 		}
 
 	}
 
-	public abstract class DiagramElement
+	public abstract class DiagramElement : SerializedElement
 	{
-		public IUser editor { get; set; } = new NullUser();
-		public string id { get; } = Guid.NewGuid().ToString();
 		public IDimension dimension { get; set; } = new Dimension();
+	}
+
+	public abstract class SerializedElement
+	{
+		public string id { get; } = Guid.NewGuid().ToString();
+		public IUser editor { get; set; } = new NullUser();
 	}
 }

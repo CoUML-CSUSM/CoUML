@@ -1,5 +1,5 @@
 import { Class, Component, Interface } from "./Component";
-import { DiagramElement, IGettable } from "./Diagram";
+import { UmlElement, UmlElement as T } from "./Diagram";
 
 //interface for collections to create iterators
 export interface ICollectionIterator<T>
@@ -10,13 +10,15 @@ export interface ICollectionIterator<T>
 	getPrevious():T;
 }
 
-export interface ICollection<T> extends IGettable
+export interface ICollection<T>
 {
 	iterator(): ICollectionIterator<T>;
 	insert(item: T): void;
 	remove(id: any): T | null;
-	get(id: string): T | null;
+	removeAll(): void
+	get(id: string|number): T | null;
 	size: number;
+	toUmlNotation(): string;
 }
 
 export class GeneralCollection<T> implements ICollection<T>{
@@ -30,6 +32,11 @@ export class GeneralCollection<T> implements ICollection<T>{
 	constructor(items: T[])
 	{
 		this.items = items;
+		this["_$type"] = `CoUML_app.Models.GeneralCollection\`1[[CoUML_app.Models.${typeof(items)}, CoUML-app]], CoUML-app`;
+	}
+	removeAll(): void {
+		delete this.items;
+		this.items = [];
 	}
 
 	/**
@@ -99,85 +106,111 @@ export class GeneralCollection<T> implements ICollection<T>{
 
 
 	// this breaks if it's not a more complex item!!!
-	get(id: string): null | T
+	// get(id: string): null | T
+	// {
+	// 	for(let de of this.items as unknown[] as DiagramElement[])
+	// 		if(id == de?.id)
+	// 				return de as unknown as T;
+	// 	return null;
+	// }
+	get(i: number):null | T
 	{
-		for(let de of this.items as unknown[] as DiagramElement[])
-			if(id == de?.id)
-					return de as unknown as T;
-		return null;
+		return this.validIndex(i)? this.items[i]: null;
+	}
+
+	toUmlNotation(): string {
+		return this.items.toString();
 	}
 }
 
-// /**
-//  * RelationshipCollection
-//  */
-// export class RelationalCollection implements ICollection<DiagramElement>{
+/**
+ * RelationshipCollection
+ */
+export class RelationalCollection<T extends UmlElement> implements ICollection<T>{
+
+	private items: Map<string, T> = new Map<string, T>();
+	toJSON(): any {
+		return {
+			items: Object.fromEntries(this.items),
+		}
+	 }
+
+	constructor(collection: T[])
+	{
+		for(let elem of collection)
+			this.insert(elem);
+		this["_$type"] = "CoUML_app.Models.RelationalCollection, CoUML-app";
+	}
+	removeAll(): void {
+		delete this.items;
+		this.items = new Map<string, T>();
+	}
+
+
+	iterator(): ICollectionIterator<T> 
+	{
+		return new CollectionIterator<T>(
+				new GeneralCollection<T>(
+					Array.from(this.items.values())
+				)
+			);
+	}
+
+	insert(item: T): void {
+		console.log("inserting....");
+		console.log(item);
+		this.items.set(item.id, item);
+	}
+
+	remove(id: string): T | null 
+	{
+		console.log(`removing....${id}`);
+		let removedItem = null
+		if(this.items.has(id))
+		{
+			removedItem = this.items.get(id);
+			this.items.delete(id);
+		}
+		return removedItem;
+	}
 	
-// 	private items: Map<string, DiagramElement> = new Map<string, DiagramElement>();
-// 	toJSON(): any {
-// 		return {
-// 			items: Object.fromEntries(this.items),
-// 		}
-// 	 }
+	get(id: string): null | T
+	{
+		if(this.items.has(id))
+			return this.items.get(id);
 
-// 	constructor(collection: DiagramElement[])
-// 	{
-// 		for(let elem of collection)
-// 			this.insert(elem)
-// 	}
+		return this.find(id);
+	}
 
-// 	iterator(): ICollectionIterator<DiagramElement> 
-// 	{
-// 		return new CollectionIterator<DiagramElement>(
-// 				new GeneralCollection<DiagramElement>(
-// 					Array.from(this.items.values())
-// 				)
-// 			);
-// 	}
+	private find(key: string): null | T
+	{
+		// for(let e of this.items.values())
+		// {
+		// 	if(!(e instanceof RelationalCollection)){
+		// 		let de = e as Component;
+		// 		if(key === de.name)
+		// 			return de;
+		// 	}
+		// }
+		return null;
+	}
 
-// 	insert(item: DiagramElement): void {
-// 		console.log("inserting....");
-// 		console.log(item);
-// 		this.items.set(item.id, item);
-// 	}
+	get size(): number 
+	{
+		return this.items.size
+	}
 
-// 	remove(signature: string): DiagramElement | null 
-// 	{
-// 		let relation = null
-// 		if(this.items.has(signature))
-// 		{
-// 			relation = this.items.get(signature);
-// 			this.items.delete(relation);
-// 		}
-// 		return relation;
-// 	}
-	
-// 	get(key: string): null | DiagramElement
-// 	{
-// 		if(this.items.has(key))
-// 			return this.items.get(key);
-// 		return this.find(key);
-// 	}
+	toUmlNotation(): string {
 
-// 	private find(key: string): null | DiagramElement
-// 	{
-// 		for(let e of this.items.values())
-// 		{
-// 			if(!(e instanceof RelationalCollection)){
-// 				let de = e as Component;
-// 				if(key === de.name)
-// 					return de;
-// 			}
-// 		}
-// 		return null;
-// 	}
+		let uml: string = "";
+		this.items.forEach((item:T, id: string)=>{
+			uml += (uml != "" ? ", " : "") + item.toUmlNotation();
+		});
+		
+		return uml;
+	}
 
-// 	get size(): number 
-// 	{
-// 		return this.items.size
-// 	}
-
-// }
+}
 
 /**
  * AttributeCollectionIterator

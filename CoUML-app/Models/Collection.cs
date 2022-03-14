@@ -22,7 +22,7 @@ namespace CoUML_app.Models
 		public T Remove(string key);
 		public T Remove(int key);
 		public int size { get;}
-		public List<T> items{ get; }
+		// public List<T> items{ get; }
 		
 	}
 	public class GeneralCollection<T> : ICollection<T>
@@ -135,80 +135,86 @@ namespace CoUML_app.Models
 		}
 	}
 
-	// public class RelationalCollection: ICollection<DiagramElement>
-	// {
-	// 	private Dictionary<string, DiagramElement> _items;
-	// 	public List<DiagramElement> items{
-	// 		get{
-	// 			return new List<DiagramElement>(this._items.Values);
-	// 		}
-	// 	}
+	public class RelationalCollection<T> : ICollection<T> where T:SerializedElement
+	{
+		private Dictionary<string, T> _items;
+		// public List<DiagramElement> items{
+		// 	get{
+		// 		return new List<DiagramElement>(this._items.Values);
+		// 	}
+		// }
 
-	// 	/// <summary>
-	// 	/// constructor
-	// 	/// </summary>
-	// 	/// <param name="collection"> set of diagram Elements</param>
-	// 	public RelationalCollection( DiagramElement[] collection)
-	// 	{
-	// 		this._items = new Dictionary<string, DiagramElement>();
-	// 		foreach (DiagramElement item in collection)
-	// 		{
-	// 			this._items.Add(item.id, item);
-	// 		}
-	// 	}
+		public Dictionary<string, T> items{
+			get{
+				return _items;
+			}
+		}
 
-	// 	/// <summary>
-	// 	/// constructor - empty
-	// 	/// </summary>
-	// 	public RelationalCollection()
-	// 	{
-	// 		this._items = new Dictionary<string, DiagramElement>();
-	// 	}
+		/// <summary>
+		/// constructor
+		/// </summary>
+		/// <param name="collection"> set of diagram Elements</param>
+		public RelationalCollection( T[] collection)
+		{
+			this._items = new Dictionary<string, T>();
+			foreach (T item in collection)
+			{
+				this._items.Add(item.id, item);
+			}
+		}
 
-	// 	public ICollectionIterator<DiagramElement> Iterator()
-	// 	{
-	// 		return new CollectionIterator<DiagramElement>(
-	// 			new GeneralCollection<DiagramElement>(
-	// 				(new List<DiagramElement>(this._items.Values)).ToArray()
-	// 			)
-	// 		);
-	// 	}
+		/// <summary>
+		/// constructor - empty
+		/// </summary>
+		public RelationalCollection()
+		{
+			this._items = new Dictionary<string, T>();
+		}
+
+		public ICollectionIterator<T> Iterator()
+		{
+			return new CollectionIterator<T>(
+				new GeneralCollection<T>(
+					(new List<T>(this._items.Values)).ToArray()
+				)
+			);
+		}
 		
-	// 	public void Insert( DiagramElement item)
-	// 	{
-	// 		this._items.Add( item.id, item);
-	// 	}
+		public void Insert( T item)
+		{
+			this._items.Add( item.id, item);
+		}
 
-	// 	public DiagramElement Remove(string id)
-	// 	{
-	// 		DiagramElement item = default(DiagramElement);
-	// 		string guid = new Guid(id).ToString();
-	// 		if(this._items.TryGetValue(guid, out item))
-	// 			this._items.Remove(guid);
-	// 		return item;
-	// 	}
+		public T Remove(string id)
+		{
+			T item = default(T);
+			string guid = new Guid(id).ToString();
+			if(this._items.TryGetValue(guid, out item))
+				this._items.Remove(guid);
+			return item;
+		}
 
-	// 	public DiagramElement Remove(int index)
-	// 	{
-	// 		DiagramElement item = default(DiagramElement);
-	// 		if(index >= 0 && index < size )
-	// 		{
-	// 			item = (new List<DiagramElement>(this._items.Values)).ToArray()[index];
-	// 			this._items.Remove(((DiagramElement)item).id);
-	// 		}
-	// 		return item;
-	// 	}
+		public T Remove(int index)
+		{
+			T item = default(T);
+			if(index >= 0 && index < size )
+			{
+				item = (new List<T>(this._items.Values)).ToArray()[index];
+				this._items.Remove(((T)item).id);
+			}
+			return item;
+		}
 
 
-	// 	public int size
-	// 	{
-	// 		get
-	// 		{
-	// 			return this._items.Count;
-	// 		}
-	// 	}
+		public int size
+		{
+			get
+			{
+				return this._items.Count;
+			}
+		}
 
-	// }
+	}
 
 	public class CollectionIterator<T>: ICollectionIterator<T>
 	{

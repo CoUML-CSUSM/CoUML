@@ -9,26 +9,20 @@ namespace CoUML_app.Models
 		public Component sourceComponent{set{source = value.id;}}
 		public string target {get; set;}
 		public Component targetComponent{set{target = value.id;}}
-		public ICollection<Attribute> attributes{get; set;}
+		public Attribute attributes{get; set;}
 
 		public Relationship()
 		{
-			this.attributes = new GeneralCollection<Attribute> ();
+			// this.attributes = new RelationalCollection<Attribute> ();
 		}
 	}
 
 
-	public abstract class ComponentProperty{
-		public string id { get; }
+	public abstract class ComponentProperty: SerializedElement{
 		public VisibilityType visibility {get; set;}
 		public string name{get; set;}
 		public string propertyString {get; set;}
 		public DataType type{get; set;}
-
-		public ComponentProperty()
-		{
-			this.id = Guid.NewGuid().ToString();
-		}
 	}
 
 	public class Attribute: ComponentProperty{
@@ -43,7 +37,7 @@ namespace CoUML_app.Models
 
 		public Operation():base()
 		{
-			this.parameters = new GeneralCollection<Attribute> ();
+			this.parameters = new RelationalCollection<Attribute> ();
 		}
 	}
 

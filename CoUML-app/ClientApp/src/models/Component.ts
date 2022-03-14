@@ -1,6 +1,6 @@
-import { GeneralCollection } from "./Collection";
-import { IGettable } from "./Diagram";
-import { DiagramElement, Operation, Attribute, ComponentProperty,  ICollection } from "./DiagramModel";
+import { GeneralCollection, RelationalCollection } from "./Collection";
+import { UmlElement } from "./Diagram";
+import { Operation, Attribute, ComponentProperty,  ICollection } from "./DiagramModel";
 
 
 /**
@@ -10,7 +10,7 @@ import { DiagramElement, Operation, Attribute, ComponentProperty,  ICollection }
  * AbstractClass
  * Class
  */
-export abstract class Component extends DiagramElement implements IGettable
+export abstract class Component extends UmlElement 
 {
     public name:string;
 
@@ -20,7 +20,14 @@ export abstract class Component extends DiagramElement implements IGettable
         this.name = name;
     }
 
-    abstract get(id);
+    toUmlNotation(): string {
+        return this.name;
+    }
+
+    label( newLabel: string)
+    {
+        this.name = newLabel;
+    }
 }
 
 /**
@@ -28,6 +35,12 @@ export abstract class Component extends DiagramElement implements IGettable
  */
 export class Enumeration extends Component
 {
+    insert(element: any) {
+        this.enums.insert(element);
+    }
+    remove(id: string) {
+        this.enums.remove(id);
+    }
     public enums: ICollection<string>;
 
     public constructor(name: string = "EnumerationComponent")
@@ -36,10 +49,9 @@ export class Enumeration extends Component
         this.enums  = new GeneralCollection<string> ([]);
     }
 
-    get(id: any) {
+    get(id: string) {
         return this.enums.get(id);
     }
-    
 }
 
 /**
@@ -47,15 +59,21 @@ export class Enumeration extends Component
  */
 export class Interface extends Component
 {
+    insert(element: any) {
+        this.operations.insert(element);
+    }
+    remove(id: string) {
+        this.operations.remove(id);
+    }
     public operations: ICollection<Operation>;
 
     public constructor(name: string = "InterfaceComponent")
     {
         super("Interface", name);
-        this.operations  = new GeneralCollection<Operation> ([]);
+        this.operations  = new RelationalCollection<Operation> ([]);
     }
 
-    get(id: any) {
+    get(id: string) {
         return this.operations.get(id);
     }
 }
@@ -65,18 +83,41 @@ export class Interface extends Component
  */
 export class AbstractClass extends Component
 {
+    insert(element: any) {
+        console.log(element);
+        if(element.constructor.name == Operation.name){
+            this.operations.insert(element);
+        }
+        if(element.constructor.name == Attribute.name){
+            this.attributes.insert(element);
+        }
+    }
+    remove(id: string) {
+       
+        let element = this.get(id);
+      
+        console.log(element);
+        if(element.constructor.name == Operation.name){
+            this.operations.remove(id);
+        }
+        if(element.constructor.name == Attribute.name){
+            this.attributes.remove(id);
+        }
+        // return element
+    }
+
     public operations:ICollection<Operation>;
     public attributes:ICollection<Attribute>;
 
     public constructor(name: string = "AbstractClassComponent")
     {
         super("AbstractClass", name);
-        this.operations  = new GeneralCollection<Operation> ([]);
-        this.attributes  = new GeneralCollection<Attribute> ([]);
+        this.operations  = new RelationalCollection<Operation> ([]);
+        this.attributes  = new RelationalCollection<Attribute> ([]);
     }
 
 
-    get(id: any) {
+    get(id: any) : Operation | Attribute{
         return this.operations.get(id) || this.attributes.get(id);
     }
 }
@@ -86,6 +127,29 @@ export class AbstractClass extends Component
  */
 export class Class extends Component
 {
+    insert(element: any) {
+        
+        
+        if(element.constructor.name == Operation.name){
+            this.operations.insert(element);
+        }
+        if(element.constructor.name == Attribute.name){
+            this.attributes.insert(element);
+        }
+    }
+    remove(id: string) {
+
+        let element = this.get(id);
+        console.log(element);
+        if(element.constructor.name == Operation.name){
+            this.operations.remove(id);
+        }
+        if(element.constructor.name == Attribute.name){
+            this.attributes.remove(id);
+        }
+        
+        // return element
+    }
 
     public operations:ICollection<Operation>;
     public attributes:ICollection<Attribute>;
@@ -93,12 +157,12 @@ export class Class extends Component
     public constructor(name: string = "ClassComponent")
     {
         super("Class", name);
-        this.operations  = new GeneralCollection<Operation> ([]);
-        this.attributes  = new GeneralCollection<Attribute> ([]);
+        this.operations  = new RelationalCollection<Operation> ([]);
+        this.attributes  = new RelationalCollection<Attribute> ([]);
     }
 
 
-    get(id: any) {
+    get(id: any)  : Operation | Attribute{
         return this.operations.get(id) || this.attributes.get(id);
     }
 }

@@ -1,5 +1,6 @@
-import { DiagramElement, GeneralCollection, ICollection, IGettable, Component } from "./DiagramModel";
-import { VisibilityType, DataType, RelationshipType } from "./Types";
+import { RelationalCollection } from "./Collection";
+import { GeneralCollection, ICollection, UmlElement, Component } from "./DiagramModel";
+import { VisibilityType, DataType, RelationshipType} from "./Types";
 
 /**
  * describ a relationship between a set of diagram elements
@@ -16,19 +17,42 @@ import { VisibilityType, DataType, RelationshipType } from "./Types";
  * implimentation
  *      Comp impliments IComp{}
  */
-export class Relationship extends DiagramElement implements IGettable
+
+const VALID_ATTIBUTE = /([\+\-\#\~])*\s*(\w+)\s*\:*\s*(\w*)/i
+/**
+ * "- _myPrivateAtt: Object"
+ * 1: "-" // if undefined then local
+ * 2: "_myPrivateAtt"
+ * 3: "Object"
+ */
+
+const VALID_OPERATION = /([\+\-\#\~])*\s*(\w+)\s*\(\s*((?:\w*\:*\s*\w*\,*\s*)*)\)\:\s*(\w*)/i
+/**
+ * "+ transpose(x: number, y: double): IShape"
+ * 1: "+" // may be undefined, iff undefiend then local
+ * 2: "transpose"
+ * 3: "x: number, y: double"
+ * 4: IShape
+ */
+
+export class Relationship extends UmlElement
 {
+	insert(element: any) {
+		throw new Error("Method not implemented.");
+	}
+	remove(id: string) {
+		throw new Error("Method not implemented.");
+	}
 
 	public type: RelationshipType;
 	public source: string;
 	public target: string;
 
-	public attributes: ICollection<Attribute>;
+	public attributes: Attribute;
 
 	public constructor()
 	{
 		super("Relationship");
-        this.attributes  = new GeneralCollection<Attribute> ([]);
 	}
 
 	get(id: string) {
@@ -42,22 +66,35 @@ export class Relationship extends DiagramElement implements IGettable
 		this.target = component?.id
 	}
 
+	toUmlNotation(): string {
+		return this.attributes?.name || "";
+	}
+	public label(description: string)
+	{
+		if( this.type == RelationshipType.Association)
+		{	if(!this.attributes)
+				this.attributes = new Attribute();
+			this.attributes.label(description);
+		}else
+		{
+			delete this.attributes;
+		}
+	}
+
 }
 
-export abstract class ComponentProperty{
-	public id: string;
+export abstract class ComponentProperty extends UmlElement
+{
 	public name: string = "foo";
-	public visibility: VisibilityType = VisibilityType.Public;
+	public visibility: VisibilityType.VisibilityType = VisibilityType.VisibilityType.LocalScope;
 	public isStatic: boolean = false;
 	public propertyString: string = ""; 
 	public type: DataType = new DataType("any");
 	constructor(type)
 	{
-		this["$type"] = `CoUML_app.Model.${type}, CoUML-app`;
+		super(type);
+		// this["_$type"] = `CoUML_app.Model.${type}, CoUML-app`;
 	}
-
-	abstract toString(): string;
-
 }
 /**
  * describs an attibute of a diagram element
@@ -68,6 +105,12 @@ export abstract class ComponentProperty{
  */
 export class Attribute extends ComponentProperty
 {
+	insert(element: any) {
+		throw new Error("Method not implemented.");
+	}
+	remove(id: string) {
+		throw new Error("Method not implemented.");
+	}
 
 	multiplicity: Multiplicity; 
 	
@@ -77,9 +120,27 @@ export class Attribute extends ComponentProperty
 		super("Attribute");
 	}
 
-	toString(): string
+	toUmlNotation(): string
 	{
-		return `${String.fromCharCode(this.visibility as unknown as number)} ${this.name}: ${this.type.dataType}`;
+		return `${this.visibility} ${this.name}: ${this.type.dataType}`;
+	}
+
+	get(id: string)
+	{
+		return this.id == id? this: null;
+	}
+
+	public label(description: string)
+	{
+		let tokenDescription  = description.match(VALID_ATTIBUTE);
+		if(tokenDescription)
+		{
+			this.visibility = VisibilityType.get(tokenDescription[1]);
+			this.name = tokenDescription[2];
+			this.type = new DataType(tokenDescription[3]);
+		}
+		console.log(`Attribute.label = ${tokenDescription}`);
+		console.log(this);
 	}
 }
 
@@ -91,23 +152,59 @@ export class Attribute extends ComponentProperty
  * implimentation: 
  *      public DataType foo( DataType p, DataType q){}
  */
- export class Operation extends ComponentProperty implements IGettable
+ export class Operation extends ComponentProperty
 {
+	insert(element: any) {
+		throw new Error("Method not implemented.");
+	}
+	remove(id: string) {
+		throw new Error("Method not implemented.");
+	}
+
 	public parameters: ICollection<Attribute>;
 
 	constructor()
 	{
 		super("Operation");
-		this.parameters = new GeneralCollection<Attribute> ([]);
+		this.parameters = new RelationalCollection<Attribute> ([]);
 	}
 
 	get(id: string) {
 		return this.parameters.get(id);
 	}
 
-	toString(): string
+	toUmlNotation(): string
 	{
-		return `${String.fromCharCode(this.visibility as unknown as number) } ${this.name}(${this.parameters.size>0? this.parameters.toString(): ""}): ${this.type.dataType}`;
+		return `${this.visibility} ${this.name}(${this.parameters.toUmlNotation()}): ${this.type.dataType}`;
+	}
+
+	public label(description: string)
+	{
+		let tokenDescription  = description.match(VALID_OPERATION);
+		if(tokenDescription)
+		{
+			this.visibility = VisibilityType.get(tokenDescription[1]);
+			this.name = tokenDescription[2];
+			this.parameterize(tokenDescription[3], this.parameters)
+			this.type = new DataType(tokenDescription[4]);
+		}
+
+
+		console.log(`Operation.label = ${tokenDescription}`);
+		console.log(this);
+	}
+
+	parameterize(params: string, collection: ICollection<Attribute>): void
+	{
+		collection.removeAll();
+		for(let attibuteDescription of params.split(', '))
+		{
+			if(attibuteDescription != ""){
+				let a = new Attribute();
+				a.label(attibuteDescription);
+				collection.insert(a);
+			}
+		}
 	}
 }
 

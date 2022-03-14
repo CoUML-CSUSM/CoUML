@@ -26,18 +26,18 @@ namespace CoUML_app.Models
 		public ICollection<Operation> operations { get;set; }
 		public Interface(string name): base(name)
 		{
-			this.operations = new GeneralCollection<Operation> ();
+			this.operations = new RelationalCollection<Operation>();
 		}
 	}
 
 	public class AbstractClass : Component{
-		public ICollection<Operation>  operations { get;set; }
+		public ICollection<Operation> operations { get;set; }
 		public ICollection<Attribute>  attributes { get;set; }
 		
 		public AbstractClass(string name): base(name)
 		{
-			this.operations = new GeneralCollection<Operation> ();
-			this.attributes = new GeneralCollection<Attribute> ();
+			this.operations = new RelationalCollection<Operation>();
+			this.attributes = new RelationalCollection<Attribute>();
 		}
 	}
 
@@ -47,8 +47,8 @@ namespace CoUML_app.Models
 
 		public Class(string name): base(name)
 		{
-			this.operations = new GeneralCollection<Operation> ();
-			this.attributes = new GeneralCollection<Attribute> ();
+			this.operations = new RelationalCollection<Operation>();
+			this.attributes = new RelationalCollection<Attribute>();
 		}
 	}
 }

@@ -1,6 +1,6 @@
 import { GeneralCollection, ICollection } from './Collection';
 import { Interface, Enumeration, AbstractClass, Class } from './Component';
-import { Diagram, DiagramElement } from './Diagram';
+import { Diagram, UmlElement} from './Diagram';
 import { Dimension } from './Dimension';
 import { Relationship, Operation, Attribute } from './Subcomponent';
 import { User, IUser, NullUser } from './User';

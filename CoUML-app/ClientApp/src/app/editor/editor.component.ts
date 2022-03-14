@@ -1,5 +1,5 @@
 import { AfterViewInit, Component as AngularComponent, ElementRef, OnInit, ViewChild, HostListener } from '@angular/core';
-import { Class, AbstractClass, Diagram, DiagramElement, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, ChangeRecord, ActionType, PropertyType, ICollectionIterator, Enumeration, Dimension, DEFUALT_DIMENSION, NullUser, ComponentProperty } from 'src/models/DiagramModel';
+import { Class, AbstractClass, Diagram,  Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, ChangeRecord, ActionType, PropertyType, ICollectionIterator, Enumeration, Dimension, DEFUALT_DIMENSION, NullUser, ComponentProperty, UmlElement } from 'src/models/DiagramModel';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 import * as EditorFormatHandler  from './editor-format.handler';
 import * as EditorEventHandler  from './editor-event.handler';
@@ -39,7 +39,6 @@ export class EditorComponent implements AfterViewInit{
 	}
 
 
-
 	/** frame controls */
 
 	canvasHeight: number;
@@ -55,8 +54,12 @@ export class EditorComponent implements AfterViewInit{
 	}
 	/*************************** */
 
+	// key handler
+	_editorKeyHandler: mxKeyHandler;
 
-
+	/**
+	 * configure the graph
+	 */
 	ngAfterViewInit(): void {
 
 		//init graph div
@@ -64,7 +67,7 @@ export class EditorComponent implements AfterViewInit{
 		this._graph.setDropEnabled(true); // ability to drag elements as groups
 		EditorFormatHandler.addEdgeStyles(this._graph);
 		EditorFormatHandler.addCellStyles(this._graph);
-		EditorFormatHandler.intiLayoutManager(this._graph);
+		EditorFormatHandler.initLayoutManager(this._graph);
 
 		EditorEventHandler.addListeners(
 			[
@@ -92,6 +95,35 @@ export class EditorComponent implements AfterViewInit{
 			this
 		);
 
+		// Key binding
+		// Adds handling of return and escape keystrokes for editing
+		this._editorKeyHandler = new mxKeyHandler(this._graph);
+		this._editorKeyHandler.bindKey(46, ()=>{
+			//delete function
+
+			if(this._currentSelection){
+
+				// pointer to item being deleted
+
+				//[ diagram-id, comp-id]
+				let deleteIdPath = this.getIdPath(this._currentSelection); 
+				//property-id
+				let deleteId = deleteIdPath.pop();
+
+
+				this._graph.removeCells([this._currentSelection], false);
+				this.stageChange( new ChangeRecord(
+					deleteIdPath,
+					PropertyType.Elements,	///**** */
+					ActionType.Remove,
+					deleteId
+				));
+
+				this._currentSelection = null;// deselect
+			}
+		});
+
+
 		//get test diagram
 		setTimeout(()=>	this._projectDeveloper.open(this.diagramId), 500);
 	}
@@ -114,6 +146,8 @@ export class EditorComponent implements AfterViewInit{
 		this._graph.eventsEnabled = false;
 		this._graph.setConnectable(true);
 
+		this._graph.getDefaultParent().id = this._projectDeveloper._projectDiagram.id;
+
 		this._graph.isCellLocked = function(cell)
 		{
 			return this.getCellStyle(cell)['selectable'] == 0;
@@ -123,7 +157,7 @@ export class EditorComponent implements AfterViewInit{
 		this._graph.getModel().beginUpdate();
 		try {
 
-			let elementIterator: ICollectionIterator<DiagramElement> 
+			let elementIterator: ICollectionIterator<UmlElement> 
 				= this._projectDeveloper._projectDiagram.elements.iterator();
 			
 			// relationships will be added after all components are added
@@ -131,19 +165,19 @@ export class EditorComponent implements AfterViewInit{
 			
 			while(elementIterator.hasNext())
 			{
-				let diagramElement = elementIterator.getNext();
+				let UmlElement = elementIterator.getNext();
 
-				if(diagramElement instanceof Component){
-					this.insertComponent(diagramElement)
+				if(UmlElement instanceof Component){
+					this.insertComponent(UmlElement)
 				}
-				else if( diagramElement instanceof Relationship){
-						relatioships.push(diagramElement)
+				else if( UmlElement instanceof Relationship){
+						relatioships.push(UmlElement)
 				}
 			}
 
 			for( let relation  of relatioships)
 			{
-				this.insertEdge(relation);
+				this.insertRelationship(relation);
 			}
 					
 		} finally {
@@ -152,7 +186,7 @@ export class EditorComponent implements AfterViewInit{
 		}
 	}
 	
-	public insertComponent(component: Component) {
+	public insertComponent(component: Component):mxCell {
 
 
 		console.log("this._graph.insertVertex");
@@ -190,22 +224,21 @@ export class EditorComponent implements AfterViewInit{
 	}
 
 
-	insertProperty(parent: mxCell, property: ComponentProperty)
+	insertProperty(parent: mxCell, property: ComponentProperty): mxCell
 	{
-		this._graph.insertVertex(
+		return this._graph.insertVertex(
 			parent,
 			property.id,
-			property.toString(),
-			0, 0, 
-			parent.geometry.width, 
-			parent.geometry.height, 
+			property.toUmlNotation(),
+			0, 0, 0, 0,
+			property.constructor.name
 		);
 	}
 
-	private insertEdge(relation: Relationship)
+	private insertRelationship(relation: Relationship): mxCell
 	{	
 		var edge = new mxCell(
-			relation.attributes.toString(), 
+			relation.toUmlNotation(), 
 			new mxGeometry(0, 0, 0, 0), 
 			RelationshipType[relation.type]);
 		edge.edge = true;
@@ -223,18 +256,19 @@ export class EditorComponent implements AfterViewInit{
 		else
 			edge.geometry.setTerminalPoint(new mxPoint(relation.dimension.width, relation.dimension.height), false); //target
 	  
-		edge = this._graph.addCell(edge);
+		return this._graph.addCell(edge);
 
 	}
 
 
 	public processChange(change: ChangeRecord){
-		let affectedCell = change.id? this._graph.getModel().getCell(change.id.pop()): null;
+		let affectedCell = change.id.length>1? this._graph.getModel().getCell(change.id[change.id.length-1]): null;
 
 		switch(change.action){
 			case ActionType.Change:
 				switch(change.affectedProperty){
-					case PropertyType.Name:	this.updateLabelValue(affectedCell, change); break;
+					case PropertyType.Name:
+						case PropertyType.Label:	this.updateLabelValue(affectedCell, change); break;
 					case PropertyType.Dimension: this.updateEdgeGeometry(affectedCell,change); break;
 					case PropertyType.Target:
 						case PropertyType.Source: this.updateEdgeConnections(affectedCell,change); break;
@@ -253,16 +287,27 @@ export class EditorComponent implements AfterViewInit{
 				switch(change.affectedProperty){
 					case PropertyType.Elements:
 						if(change.value instanceof Relationship)
-							this.insertEdge(change.value);
+							this.insertRelationship(change.value);
 						else
 							this.insertComponent(change.value);
 						break;
+					case PropertyType.Attributes:
+					case PropertyType.Operations:
+						this.insertProperty(affectedCell, change.value);
+						break;
 				}
 				break;
+			case ActionType.Remove:
+				affectedCell = this._graph.getModel().getCell(change.value);
+				this._graph.removeCells([affectedCell], false);
 			case ActionType.Lock:
 			case ActionType.Release:
 				this.updateCellLock(affectedCell,change); break;
+			case ActionType.Label: this.updateLabelValue(affectedCell, change); break;
+
 		}
+		this._graph.validateCell(affectedCell, this._graph);
+		this._graph.refresh();
 	}
 
 	private updateCellLock(affectedCell: mxCell, change: ChangeRecord)
@@ -270,7 +315,10 @@ export class EditorComponent implements AfterViewInit{
 		let isSelectable = (change.value instanceof NullUser || change.value.id == this._projectDeveloper._editor.id);
 		this._graph.toggleCellStyle('selectable', isSelectable, affectedCell);
 
-		var overlays = this._graph.getCellOverlays(affectedCell);
+		// var overlays = this._graph.getCellOverlays(affectedCell);
+
+		console.log("updateCellLock")
+		console.log(change);
 						
 		if (!isSelectable)
 		{
@@ -324,22 +372,32 @@ export class EditorComponent implements AfterViewInit{
 
 	private updateLabelValue(affectedCell: mxCell, change: ChangeRecord)
 	{
-		this._graph.getModel().setValue(
+		// this._graph.getModel().setValue(
+		// 	affectedCell,
+		// 	this._projectDeveloper._projectDiagram.at(change.id).toUmlNotation()
+		// );
+
+		this._graph.getModel().valueForCellChanged(
 			affectedCell,
-			change.value
+			this._projectDeveloper._projectDiagram.at(change.id).toUmlNotation()
 		);
+
+		// this._graph.cellLabelChanged(
+		// 		affectedCell,
+		// 		this._projectDeveloper._projectDiagram.at(change.id).toUmlNotation(),
+		// 		true
+		// 	);
 	}
 
-	releaseLock(newSelection: mxCell)
+	releaseLock(newSelection?: mxCell)
 	{
 		console.log("-----releaseLock----")
 		console.log(newSelection);
 		// if should release
 		if(this._currentSelection != null) // something is currently locked
 		{
-
 			this.stageChange(new ChangeRecord(
-				[this._currentSelection.id],
+				this.getIdPath(this._currentSelection),
 				PropertyType.Editor,
 				ActionType.Release,
 				new NullUser()
@@ -351,18 +409,28 @@ export class EditorComponent implements AfterViewInit{
 				newSelection = newSelection.parent // if attribute lock parent comp
 			this._currentSelection = newSelection;
 			this.stageChange(new ChangeRecord(
-				[this._currentSelection.id],
+				this.getIdPath(this._currentSelection),
 				PropertyType.Editor,
 				ActionType.Lock,
 				this._projectDeveloper._editor
 			));
 
 		}
+
+
 	}
 
+	getIdPath(x: mxCell): string[]
+	{
+		let ids = [];
+		do{
+			ids.unshift(x.id)
+			x = x.parent;
+		}while(x.parent)
 
-
-
+		console.log(`id path =  ${ids}`)
+		return ids;
+	}
 
 }
 
