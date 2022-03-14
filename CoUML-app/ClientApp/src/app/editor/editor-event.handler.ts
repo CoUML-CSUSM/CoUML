@@ -163,9 +163,10 @@ import { EditorComponent } from "./editor.component";
 						|| parentCell.style == Interface.name 
 						)))
 				{
-					console.log("this goes here")
+					console.log("this goes here");
+
 					editorComponent.insertProperty(parentCell, component);
-					// graph.refresh();
+
 					editorComponent.stageChange(new ChangeRecord(
 						editorComponent.getIdPath(parentCell),
 						component instanceof Operation? PropertyType.Operations: PropertyType.Attributes,
@@ -174,7 +175,7 @@ import { EditorComponent } from "./editor.component";
 					));
 				} else
 				{
-					console.log("this does NOT go here");
+					console.log(`${component.constructor.name} type object does NOT go here`);
 				}
 			}
 		}

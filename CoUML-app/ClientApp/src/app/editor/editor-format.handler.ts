@@ -8,7 +8,8 @@ const HEIGHT:number = 30;
 export function addCellStyles(graph: mxGraph)
 {
 	// mxConstants.ENTITY_SEGMENT = 20;
-	graph.border = 50;
+	graph.border = 100;
+	graph.autoSizeCellsOnAdd = true;
 
 	let style = graph.getStylesheet().getDefaultVertexStyle();
 				style[mxConstants.STYLE_FILLCOLOR] = 'none';
@@ -75,7 +76,8 @@ export function initLayoutManager(graph: mxGraph)
 			stackLayout.marginTop = style['marginTop'] || 0;
 			stackLayout.marginBottom = style['marginBottom'] || 0;
 			stackLayout.allowGaps = style['allowGaps'] || 0;
-			stackLayout.fill = true;
+			// stackLayout.fill = true;
+			stackLayout.fill = false;
 
 			stackLayout.gridSize = HEIGHT;
 			
