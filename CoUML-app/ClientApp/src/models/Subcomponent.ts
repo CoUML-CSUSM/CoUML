@@ -208,6 +208,32 @@ export class Attribute extends ComponentProperty
 	}
 }
 
+export class Enumeral extends UmlElement
+{
+	private name: string = "enumeral";
+
+	get(id: string) {
+		throw new Error("Method not implemented.");
+	}
+	insert(element: any) {
+		throw new Error("Method not implemented.");
+	}
+	remove(id: string) {
+		throw new Error("Method not implemented.");
+	}
+	label(description: string) {
+		this.name = description;
+	}
+	toUmlNotation(): string {
+		return this.name;
+	}
+
+	constructor()
+	{
+		super("Enumeral");
+	}
+}
+
 /**
  * The multiplicity of an attribute
  * types of representation and values:

@@ -1,5 +1,5 @@
 import { AfterViewInit, Component as AngularComponent, ElementRef, OnInit, ViewChild, HostListener } from '@angular/core';
-import { Class, AbstractClass, Diagram,  Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, ChangeRecord, ActionType, PropertyType, ICollectionIterator, Enumeration, Dimension, DEFUALT_DIMENSION, NullUser, ComponentProperty, UmlElement } from 'src/models/DiagramModel';
+import { Class, AbstractClass, Diagram,  Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, ChangeRecord, ActionType, PropertyType, ICollectionIterator, Enumeration, Dimension, DEFUALT_DIMENSION, NullUser, ComponentProperty, UmlElement, Enumeral } from 'src/models/DiagramModel';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 import * as EditorFormatHandler  from './editor-format.handler';
 import * as EditorEventHandler  from './editor-event.handler';
@@ -91,7 +91,7 @@ export class EditorComponent implements AfterViewInit{
 		//init toolbar div
         this._toolbar = new mxToolbar(this.toolbarContainer.nativeElement);
 		EditorEventHandler.addToolbarItems(
-			[Class, AbstractClass, Interface, Enumeration, Attribute, Operation],
+			[Class, AbstractClass, Interface, Enumeration, Attribute, Operation, Enumeral],
 			this
 		);
 
@@ -224,7 +224,7 @@ export class EditorComponent implements AfterViewInit{
 	}
 
 
-	insertProperty(parent: mxCell, property: ComponentProperty): mxCell
+	insertProperty(parent: mxCell, property: UmlElement): mxCell
 	{
 		return this._graph.insertVertex(
 			parent,

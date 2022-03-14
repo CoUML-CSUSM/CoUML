@@ -10,7 +10,7 @@ import { AbstractClass,
 	Interface, 
 	Relationship, 
 	RelationshipType, 
-	Operation, Attribute, ComponentProperty } from "src/models/DiagramModel";
+	Operation, Attribute, ComponentProperty, Enumeral } from "src/models/DiagramModel";
 import { EditorComponent } from "./editor.component";
 
 
@@ -93,6 +93,7 @@ import { EditorComponent } from "./editor.component";
 	_prototypeCatalog.set( Enumeration, 'editors/images/uml/Enumeration.svg');
 	_prototypeCatalog.set( Attribute, 'editors/images/uml/Attribute.svg');
 	_prototypeCatalog.set( Operation, 'editors/images/uml/Operation.svg');
+	_prototypeCatalog.set( Enumeral, 'editors/images/uml/Enumeral.svg');
 
 	/**
 	 * 
@@ -161,7 +162,9 @@ import { EditorComponent } from "./editor.component";
 					&&(parentCell.style == Class.name 
 						|| parentCell.style == AbstractClass.name 
 						|| parentCell.style == Interface.name 
-						)))
+						)) ||
+					( component instanceof Enumeral && parentCell.style == Enumeration.name)
+					)
 				{
 					console.log("this goes here");
 
@@ -169,7 +172,9 @@ import { EditorComponent } from "./editor.component";
 
 					editorComponent.stageChange(new ChangeRecord(
 						editorComponent.getIdPath(parentCell),
-						component instanceof Operation? PropertyType.Operations: PropertyType.Attributes,
+						component instanceof Operation? 
+								PropertyType.Operations: component instanceof Attribute?
+								PropertyType.Attributes: PropertyType.Enums,
 						ActionType.Insert,
 						component
 					));
