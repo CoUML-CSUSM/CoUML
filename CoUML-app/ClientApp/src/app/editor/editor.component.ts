@@ -100,6 +100,7 @@ export class EditorComponent implements AfterViewInit{
 		this._editorKeyHandler = new mxKeyHandler(this._graph);
 		this._editorKeyHandler.bindKey(46, ()=>{
 			//delete function
+			this._currentSelection = this._graph.getSelectionCell();
 
 			if(this._currentSelection){
 

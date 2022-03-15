@@ -9,13 +9,13 @@ export function addCellStyles(graph: mxGraph)
 {
 
 	var mxRectangleShapePaintForeground = mxRectangleShape.prototype.paintForeground;
-	mxRectangleShape.prototype.paintForeground = function(c: mxXmlCanvas2D, x, y, w, h)
+	mxRectangleShape.prototype.paintForeground = function(c: mxSvgCanvas2D, x, y, w, h)
 	{
 		console.log(`\n\n\nrectangle paint forground\n\n\n`);
 		console.log(arguments);
 		if (this.state != null && this.state.cell.geometry != null && !this.state.cell.geometry.relative)
 		{
-			c.setFontColor('#a0a0a0');
+			c.setFontColor('#000000');
 			c.text(x + 2, y, 0, 0, `<<${this.state.cell.style}>>`, 'left', 'top', 'false','stereotype', 'false','false',0, '');
 		}
 		
@@ -37,7 +37,8 @@ export function addCellStyles(graph: mxGraph)
 	style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_SWIMLANE;
 	style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;
 	style[mxConstants.STYLE_STARTSIZE] = HEIGHT;
-	style[mxConstants.STYLE_FILLCOLOR] = '#ffffff';
+	style[mxConstants.STYLE_FILLCOLOR] = 'none';
+	// style[mxConstants.STYLE_FILLCOLOR] = '#ffffff';
 	style['childLayout'] = "stackLayout";
 	style['horizontalStack'] = 0;
 	style['resizeParent'] = 1;
