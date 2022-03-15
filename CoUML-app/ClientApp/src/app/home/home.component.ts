@@ -15,12 +15,21 @@ import { CoUmlHubService } from '../service/couml-hub.service';
 export class HomeComponent {
 
   ip: string;
+  geeks: boolean = false;
+  value1: string;
 
 	constructor(
     private _coUmlHub: CoUmlHubService,
     private _renderer: Renderer2
     ) {
 
+  }
+
+  onOpen(
+    event
+  )
+  {
+    this.geeks = event;
   }
 
 }
