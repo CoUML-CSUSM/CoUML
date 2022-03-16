@@ -141,6 +141,7 @@ export function initLayoutManager(graph: mxGraph)
 	};
 }
 
+
 export function addEdgeStyles(graph: mxGraph)
 {
 	let  edgeStyleDefualt = graph.getStylesheet().getDefaultEdgeStyle();

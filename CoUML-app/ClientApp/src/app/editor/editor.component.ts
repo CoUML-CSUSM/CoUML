@@ -1,8 +1,11 @@
 import { AfterViewInit, Component as AngularComponent, ElementRef, OnInit, ViewChild, HostListener } from '@angular/core';
-import { Class, AbstractClass, Diagram,  Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, ChangeRecord, ActionType, PropertyType, ICollectionIterator, Enumeration, Dimension, DEFUALT_DIMENSION, NullUser, ComponentProperty, UmlElement, Enumeral } from 'src/models/DiagramModel';
+import { User, Class, AbstractClass, Diagram,  Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, ChangeRecord, ActionType, PropertyType, ICollectionIterator, Enumeration, Dimension, DEFUALT_DIMENSION, NullUser, ComponentProperty, UmlElement, Enumeral } from 'src/models/DiagramModel';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 import * as EditorFormatHandler  from './editor-format.handler';
 import * as EditorEventHandler  from './editor-event.handler';
+
+const DELETE = 46;
+const BACKSPACE = 8;
 
 /**
  * https://github.com/typed-mxgraph/typed-mxgraph
@@ -17,6 +20,8 @@ export class EditorComponent implements AfterViewInit{
 	private _graph: mxGraph;
 	diagram_description: string;
 	diagramId: string;
+
+	editorOverlay: mxCellOverlay;
 
 	_currentSelection: mxCell = null;
 
@@ -36,6 +41,10 @@ export class EditorComponent implements AfterViewInit{
 	) {
 		this._projectDeveloper.subscribe(this);
 		this.onResize();
+		this.editorOverlay = new mxCellOverlay(
+			new mxImage('editors/images/overlays/user3.png', 24, 24), "locked by other user");
+			
+		
 	}
 
 
@@ -77,7 +86,8 @@ export class EditorComponent implements AfterViewInit{
 				mxEvent.CELL_CONNECTED, 
 				mxEvent.EDITING_STOPPED,
 				mxEvent.CELLS_MOVED,
-				// mxEvent.CLICK,
+				mxEvent.CLICK,
+				mxEvent.SELECT,
 				mxEvent.CONNECT,
 			],
 			this._graph,
@@ -98,32 +108,8 @@ export class EditorComponent implements AfterViewInit{
 		// Key binding
 		// Adds handling of return and escape keystrokes for editing
 		this._editorKeyHandler = new mxKeyHandler(this._graph);
-		this._editorKeyHandler.bindKey(46, ()=>{
-			//delete function
-			this._currentSelection = this._graph.getSelectionCell();
-
-			if(this._currentSelection){
-
-				// pointer to item being deleted
-
-				//[ diagram-id, comp-id]
-				let deleteIdPath = this.getIdPath(this._currentSelection); 
-				//property-id
-				let deleteId = deleteIdPath.pop();
-
-
-				this._graph.removeCells([this._currentSelection], false);
-				this.stageChange( new ChangeRecord(
-					deleteIdPath,
-					PropertyType.Elements,	///**** */
-					ActionType.Remove,
-					deleteId
-				));
-
-				this._currentSelection = null;// deselect
-			}
-		});
-
+		this._editorKeyHandler.bindKey(DELETE, ()=>this.deleteCell()); 
+		this._editorKeyHandler.bindKey(BACKSPACE, ()=>this.deleteCell()); 
 
 		//get test diagram
 		setTimeout(()=>	this._projectDeveloper.open(this.diagramId), 500);
@@ -149,9 +135,12 @@ export class EditorComponent implements AfterViewInit{
 
 		this._graph.getDefaultParent().id = this._projectDeveloper._projectDiagram.id;
 
-		this._graph.isCellLocked = function(cell)
+		this._graph.isCellLocked = function(cell: mxCell)
 		{
-			return this.getCellStyle(cell)['selectable'] == 0;
+			return cell?.overlays?.length > 0 || false;
+			// return this.getCellStyle(cell)['selectable'] == 0;
+			// throw new Error(`cell locked ${cell}`);
+			
 		}
 
 		// this._graph.iscellS
@@ -168,10 +157,15 @@ export class EditorComponent implements AfterViewInit{
 			{
 				let element = elementIterator.getNext();
 
-				if(element instanceof Component)
-					this.insertComponent(element)
+				if(element instanceof Component){
+					let graphComponent =  this.insertComponent(element);
+					// if(element.editor instanceof User)
+						// this.updateCellLock(graphComponent);
+				}
 				else if( element instanceof Relationship)
-						relatioships.push(element)
+						relatioships.push(element);
+
+				
 			}
 
 			for( let element  of relatioships)
@@ -311,7 +305,7 @@ export class EditorComponent implements AfterViewInit{
 				this._graph.removeCells([affectedCell], false);
 			case ActionType.Lock:
 			case ActionType.Release:
-				this.updateCellLock(affectedCell,change); break;
+				this.updateCellLock(affectedCell); break;
 			case ActionType.Label: this.updateLabelValue(affectedCell, change); break;
 
 		}
@@ -319,25 +313,20 @@ export class EditorComponent implements AfterViewInit{
 		this._graph.refresh();
 	}
 
-	private updateCellLock(affectedCell: mxCell, change: ChangeRecord)
+	private updateCellLock(affectedCell: mxCell)
 	{
-		let isSelectable = (change.value instanceof NullUser || change.value.id == this._projectDeveloper._editor.id);
-		this._graph.toggleCellStyle('selectable', isSelectable, affectedCell);
+		// let isSelectable = (change.value instanceof NullUser || change.value.id == this._projectDeveloper._editor.id);
+		// this._graph.toggleCellStyle('selectable', isSelectable, affectedCell);
 
-		// var overlays = this._graph.getCellOverlays(affectedCell);
+		// // var overlays = this._graph.getCellOverlays(affectedCell);
 
-		console.log("updateCellLock")
-		console.log(change);
+		// console.log("updateCellLock")
+		// console.log(change);
 						
-		if (!isSelectable)
+		if (!this._graph.isCellLocked(affectedCell))
 		{
-			// Creates a new overlay with an image and a tooltip
-			var overlay = new mxCellOverlay(
-				new mxImage('editors/images/overlays/user3.png', 24, 24),
-				`locked by: ${change.value.id}`);
-
 			// Sets the overlay for the cell in the graph
-			this._graph.addCellOverlay(affectedCell, overlay);
+			this._graph.addCellOverlay(affectedCell, this.editorOverlay);
 		}
 		else
 		{
@@ -439,6 +428,32 @@ export class EditorComponent implements AfterViewInit{
 
 		console.log(`id path =  ${ids}`)
 		return ids;
+	}
+
+	deleteCell(){
+		//delete function
+		this._currentSelection = this._graph.getSelectionCell();
+
+		if(this._currentSelection){
+
+			// pointer to item being deleted
+
+			//[ diagram-id, comp-id]
+			let deleteIdPath = this.getIdPath(this._currentSelection); 
+			//property-id
+			let deleteId = deleteIdPath.pop();
+
+
+			this._graph.removeCells([this._currentSelection], false);
+			this.stageChange( new ChangeRecord(
+				deleteIdPath,
+				PropertyType.Elements,	///**** */
+				ActionType.Remove,
+				deleteId
+			));
+
+			this._currentSelection = null;// deselect
+		}
 	}
 
 }

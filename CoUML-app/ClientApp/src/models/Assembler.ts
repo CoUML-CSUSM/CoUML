@@ -67,6 +67,9 @@ import { VisibilityType } from "./Types";
 		console.log("New Component created");
 		console.log(element)
 		
+		if(elem.editor)
+			element.editor = assembleUser(elem.editor);
+		
 		return element;
 	}
 

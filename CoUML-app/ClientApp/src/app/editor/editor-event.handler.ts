@@ -28,7 +28,7 @@ import { EditorComponent } from "./editor.component";
 		_eventCatalog.set(mxEvent.CLICK, click);
 		_eventCatalog.set(mxEvent.CONNECT, connect);
 		_eventCatalog.set(mxEvent.START, start);
-		_eventCatalog.set(mxEvent.SELECT, select);
+		_eventCatalog.set(mxEvent.SELECT, newSelect);
 
 	/**
 	 * applies the indecated event listerns
@@ -422,6 +422,16 @@ import { EditorComponent } from "./editor.component";
 			});
 	}
 
+	function newSelect(graph: mxGraph, editorComponent: EditorComponent)
+	{
+		graph.addListener(mxEvent.SELECT, 
+			function(eventSource, eventObject){
+				console.log(`\n\nmxEvent.SELECT\n ${eventObject}`);
+				console.log(eventObject);
+				
+			});
+	}
+
 	/**
 	 * function that fires when a new relation is drawn between 2 compnents
 	 * @param graph 
@@ -476,7 +486,7 @@ import { EditorComponent } from "./editor.component";
 	function select(graph: mxGraph, editorComponent: EditorComponent)
 	{
 		//listener template
-		graph.addListener(mxEvent.SELECT, 
+		graph.getSelectionModel().addListener(mxEvent.SELECT, 
 			// NADA
 			function(eventSource, eventObject){
 				let affectedCells = eventObject.getProperties();
