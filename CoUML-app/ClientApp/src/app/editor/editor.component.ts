@@ -23,7 +23,7 @@ export class EditorComponent implements AfterViewInit{
 
 	editorOverlay: mxCellOverlay;
 
-	_currentSelection: mxCell = null;
+	_activeEditCell: mxCell = null;
 
 	@ViewChild('graphContainer', { read: ElementRef, static: true })
 	public graphContainer: ElementRef<HTMLElement>;
@@ -83,6 +83,7 @@ export class EditorComponent implements AfterViewInit{
 				mxEvent.LABEL_CHANGED,
 				mxEvent.CELLS_ADDED,
 				mxEvent.START_EDITING, 
+				mxEvent.EDITING_STOPPED,
 				mxEvent.CELL_CONNECTED, 
 				mxEvent.EDITING_STOPPED,
 				mxEvent.CELLS_MOVED,
@@ -137,10 +138,8 @@ export class EditorComponent implements AfterViewInit{
 
 		this._graph.isCellLocked = function(cell: mxCell)
 		{
+			// if* the cell has an overlay *then* somone is using it and the cell is locked
 			return cell?.overlays?.length > 0 || false;
-			// return this.getCellStyle(cell)['selectable'] == 0;
-			// throw new Error(`cell locked ${cell}`);
-			
 		}
 
 		// this._graph.iscellS
@@ -179,9 +178,7 @@ export class EditorComponent implements AfterViewInit{
 	
 	public insertComponent(component: Component):mxCell {
 
-
 		console.log("this._graph.insertVertex");
-
 
 		let graphComponent = this._graph.insertVertex(
 			this._graph.getDefaultParent(),
@@ -315,14 +312,6 @@ export class EditorComponent implements AfterViewInit{
 
 	private updateCellLock(affectedCell: mxCell)
 	{
-		// let isSelectable = (change.value instanceof NullUser || change.value.id == this._projectDeveloper._editor.id);
-		// this._graph.toggleCellStyle('selectable', isSelectable, affectedCell);
-
-		// // var overlays = this._graph.getCellOverlays(affectedCell);
-
-		// console.log("updateCellLock")
-		// console.log(change);
-						
 		if (!this._graph.isCellLocked(affectedCell))
 		{
 			// Sets the overlay for the cell in the graph
@@ -370,51 +359,42 @@ export class EditorComponent implements AfterViewInit{
 
 	private updateLabelValue(affectedCell: mxCell, change: ChangeRecord)
 	{
-		// this._graph.getModel().setValue(
-		// 	affectedCell,
-		// 	this._projectDeveloper._projectDiagram.at(change.id).toUmlNotation()
-		// );
-
 		this._graph.getModel().valueForCellChanged(
 			affectedCell,
 			this._projectDeveloper._projectDiagram.at(change.id).toUmlNotation()
 		);
-
-		// this._graph.cellLabelChanged(
-		// 		affectedCell,
-		// 		this._projectDeveloper._projectDiagram.at(change.id).toUmlNotation(),
-		// 		true
-		// 	);
 	}
 
-	releaseLock(newSelection?: mxCell)
+	release()
 	{
-		console.log("-----releaseLock----")
-		console.log(newSelection);
-		// if should release
-		if(this._currentSelection != null) // something is currently locked
-		{
+
+		console.log("-----release----")
+		console.log(this._activeEditCell);
+
+		if(this._activeEditCell)
 			this.stageChange(new ChangeRecord(
-				this.getIdPath(this._currentSelection),
+				this.getIdPath(this._activeEditCell),
 				PropertyType.Editor,
 				ActionType.Release,
 				new NullUser()
 			));
-			this._currentSelection = null;
-		}
-		if(newSelection){
-			if (newSelection.style == undefined)
-				newSelection = newSelection.parent // if attribute lock parent comp
-			this._currentSelection = newSelection;
-			this.stageChange(new ChangeRecord(
-				this.getIdPath(this._currentSelection),
-				PropertyType.Editor,
-				ActionType.Lock,
-				this._projectDeveloper._editor
-			));
+		this._activeEditCell = null;
+	}
 
-		}
+	lock(cell?: mxCell)
+	{
+		console.log("-----lock----")
+		console.log(cell);
 
+		this.release();
+		this._activeEditCell = cell;
+
+		this.stageChange(new ChangeRecord(
+			this.getIdPath(cell),
+			PropertyType.Editor,
+			ActionType.Lock,
+			this._projectDeveloper._editor
+		));
 
 	}
 
@@ -432,27 +412,25 @@ export class EditorComponent implements AfterViewInit{
 
 	deleteCell(){
 		//delete function
-		this._currentSelection = this._graph.getSelectionCell();
+		let currentSelection = this._graph.getSelectionCell();
 
-		if(this._currentSelection){
+		if(currentSelection){
 
 			// pointer to item being deleted
 
 			//[ diagram-id, comp-id]
-			let deleteIdPath = this.getIdPath(this._currentSelection); 
+			let deleteIdPath = this.getIdPath(currentSelection); 
 			//property-id
 			let deleteId = deleteIdPath.pop();
 
 
-			this._graph.removeCells([this._currentSelection], false);
+			this._graph.removeCells([currentSelection], false);
 			this.stageChange( new ChangeRecord(
 				deleteIdPath,
 				PropertyType.Elements,	///**** */
 				ActionType.Remove,
 				deleteId
 			));
-
-			this._currentSelection = null;// deselect
 		}
 	}
 

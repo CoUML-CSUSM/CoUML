@@ -10,7 +10,7 @@ import { AbstractClass,
 	Interface, 
 	Relationship, 
 	RelationshipType, 
-	Operation, Attribute, ComponentProperty, Enumeral } from "src/models/DiagramModel";
+	Operation, Attribute, ComponentProperty, Enumeral, NullUser } from "src/models/DiagramModel";
 import { EditorComponent } from "./editor.component";
 
 
@@ -22,6 +22,7 @@ import { EditorComponent } from "./editor.component";
 		_eventCatalog.set(mxEvent.LABEL_CHANGED, labelChanged);
 		_eventCatalog.set(mxEvent.CELLS_ADDED, cellsAdded);
 		_eventCatalog.set(mxEvent.START_EDITING, startEditing);
+		// _eventCatalog.set(mxEvent.END_EDIT, endEditing);
 		_eventCatalog.set(mxEvent.CELL_CONNECTED, cellConnected);
 		_eventCatalog.set(mxEvent.EDITING_STOPPED, editingStopped);
 		_eventCatalog.set(mxEvent.CELLS_MOVED, cellsMoved);
@@ -262,9 +263,9 @@ import { EditorComponent } from "./editor.component";
 		graph.addListener(mxEvent.EDITING_STOPPED,
 			//
 			function(eventSource, eventObject){
-				let affectedCells = eventObject.getProperties();
 				console.log('%c%s', f_alert, "EDITING_STOPPED");
-				console.log(affectedCells);
+
+				editorComponent.release();
 			});
 	}
 
@@ -362,8 +363,43 @@ import { EditorComponent } from "./editor.component";
 				console.log('%c%s', f_alert, "START_EDITING");
 
 				console.log(affectedCells);
+				editorComponent.lock(affectedCells);
+				
+				// stageChange(new ChangeRecord(
+				// 	editorComponent.getIdPath(affectedCells),
+				// 	PropertyType.Editor,
+				// 	ActionType.Lock,
+				// 	editorComponent._projectDeveloper._editor
+				// ));
 			});
 	}
+
+	// /**
+	//  * 
+	//  * @param graph 
+	//  * @param graph end
+	//  * @param editorComponent 
+	//  */
+	//  function endEditing(graph: mxGraph, editorComponent: EditorComponent)
+	//  {
+	// 	 graph.addListener(mxEvent.END_EDIT, 
+	// 		 // When double click on cell to change label
+	// 		 function(eventSource, eventObject){
+	// 			 let affectedCells = eventObject.getProperties().cell;
+	// 			 console.log('%c%s', f_alert, "END_EDIT");
+ 
+	// 			 console.log(affectedCells);
+	// 			 editorComponent.release(affectedCells);
+
+	// 			//  stageChange(new ChangeRecord(
+	// 			// 	editorComponent.getIdPath(affectedCells),
+	// 			// 	PropertyType.Editor,
+	// 			// 	ActionType.Release,
+	// 			// 	new NullUser()
+	// 			// ));
+	// 		 });
+	//  }
+
 
 	/**
 	 * 
@@ -418,7 +454,7 @@ import { EditorComponent } from "./editor.component";
 				if(affectedCells == undefined )
 					graph.clearSelection();
 				
-				editorComponent.releaseLock(affectedCells);
+				// editorComponent.releaseLock(affectedCells);
 			});
 	}
 
