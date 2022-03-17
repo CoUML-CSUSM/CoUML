@@ -5,24 +5,11 @@ const DASH_PATTERN: string  = '12 4';
 const MARGIN: number = 5;
 const HEIGHT:number = 30;
 
+
+
 export function addCellStyles(graph: mxGraph)
 {
 
-	var mxRectangleShapePaintForeground = mxRectangleShape.prototype.paintForeground;
-	mxRectangleShape.prototype.paintForeground = function(c: mxSvgCanvas2D, x, y, w, h)
-	{
-		console.log(`\n\n\nrectangle paint forground\n\n\n`);
-		console.log(arguments);
-		if (this.state != null && this.state.cell.geometry != null && !this.state.cell.geometry.relative)
-		{
-			c.setFontColor('#000000');
-			c.text(x + 2, y, 0, 0, `<<${this.state.cell.style}>>`, 'left', 'top', 'false','stereotype', 'false','false',0, '');
-		}
-		
-		mxRectangleShapePaintForeground.apply(this, arguments);
-	};
-
-	
 	// mxConstants.ENTITY_SEGMENT = 20;
 	graph.border = 100;
 	graph.autoSizeCellsOnAdd = true;

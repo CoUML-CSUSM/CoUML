@@ -22,7 +22,6 @@ import { EditorComponent } from "./editor.component";
 		_eventCatalog.set(mxEvent.LABEL_CHANGED, labelChanged);
 		_eventCatalog.set(mxEvent.CELLS_ADDED, cellsAdded);
 		_eventCatalog.set(mxEvent.START_EDITING, startEditing);
-		// _eventCatalog.set(mxEvent.END_EDIT, endEditing);
 		_eventCatalog.set(mxEvent.CELL_CONNECTED, cellConnected);
 		_eventCatalog.set(mxEvent.EDITING_STOPPED, editingStopped);
 		_eventCatalog.set(mxEvent.CELLS_MOVED, cellsMoved);
@@ -364,41 +363,9 @@ import { EditorComponent } from "./editor.component";
 
 				console.log(affectedCells);
 				editorComponent.lock(affectedCells);
-				
-				// stageChange(new ChangeRecord(
-				// 	editorComponent.getIdPath(affectedCells),
-				// 	PropertyType.Editor,
-				// 	ActionType.Lock,
-				// 	editorComponent._projectDeveloper._editor
-				// ));
+
 			});
 	}
-
-	// /**
-	//  * 
-	//  * @param graph 
-	//  * @param graph end
-	//  * @param editorComponent 
-	//  */
-	//  function endEditing(graph: mxGraph, editorComponent: EditorComponent)
-	//  {
-	// 	 graph.addListener(mxEvent.END_EDIT, 
-	// 		 // When double click on cell to change label
-	// 		 function(eventSource, eventObject){
-	// 			 let affectedCells = eventObject.getProperties().cell;
-	// 			 console.log('%c%s', f_alert, "END_EDIT");
- 
-	// 			 console.log(affectedCells);
-	// 			 editorComponent.release(affectedCells);
-
-	// 			//  stageChange(new ChangeRecord(
-	// 			// 	editorComponent.getIdPath(affectedCells),
-	// 			// 	PropertyType.Editor,
-	// 			// 	ActionType.Release,
-	// 			// 	new NullUser()
-	// 			// ));
-	// 		 });
-	//  }
 
 
 	/**
@@ -453,17 +420,6 @@ import { EditorComponent } from "./editor.component";
 					affectedCells = undefined;
 				if(affectedCells == undefined )
 					graph.clearSelection();
-				
-				// editorComponent.releaseLock(affectedCells);
-			});
-	}
-
-	function newSelect(graph: mxGraph, editorComponent: EditorComponent)
-	{
-		graph.addListener(mxEvent.SELECT, 
-			function(eventSource, eventObject){
-				console.log(`\n\nmxEvent.SELECT\n ${eventObject}`);
-				console.log(eventObject);
 				
 			});
 	}
@@ -528,6 +484,16 @@ import { EditorComponent } from "./editor.component";
 				let affectedCells = eventObject.getProperties();
 				console.log('%c%s', f_alert, "mxEvent.SELECT");
 				console.log(affectedCells);
+			});
+	}
+
+	function newSelect(graph: mxGraph, editorComponent: EditorComponent)
+	{
+		graph.addListener(mxEvent.SELECT, 
+			function(eventSource, eventObject){
+				console.log(`\n\nmxEvent.SELECT\n ${eventObject}`);
+				console.log(eventObject);
+				
 			});
 	}
 
