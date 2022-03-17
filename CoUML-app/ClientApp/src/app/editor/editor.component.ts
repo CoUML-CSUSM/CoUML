@@ -7,28 +7,8 @@ import * as EditorEventHandler  from './editor-event.handler';
 const DELETE = 46;
 const BACKSPACE = 8;
 
-(function(){
-	var base_mxRectangleShapePaintForeground = mxRectangleShape.prototype.paintForeground;
-	console.log(mxRectangleShape.prototype.paintForeground);
-	mxRectangleShape.prototype.paintForeground = function(c: mxSvgCanvas2D, x, y, w, h)
-	{
-		
-		console.log(`paint`);
-		console.log(this);
-		console.log(`
-		this.state != null 					${this.state != null}
-	&&	this.state.cell.geometry != null 	${this.state?.cell?.geometry != null}
-	&&	!this.state.cell.geometry.relative	${!this.state?.cell?.geometry?.relative}
-		`);
-		// if (this.state != null && this.state.cell.geometry != null && !this.state.cell.geometry.relative)
-		// {
-			console.log(`\n\n\nrectangle paint forground\n\n\n`);
-			c.setFontColor('#a0a0a0');
-			c.text(x + 2, y, 0, 0, `<<SOMETHING>>`, 'left', 'top', 'false','stereotype', 'false','false',0, '');
-		// }
-		
-		base_mxRectangleShapePaintForeground.apply(this, arguments);
-	}})();
+// (function(){
+// 	})();
 
 
 /**
