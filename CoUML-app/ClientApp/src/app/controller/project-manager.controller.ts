@@ -12,6 +12,8 @@ export class ProjectManager{
 
     public generate(dId:string){
 
+        console.log("manager");
+        console.log(dId);
         console.log("Creating new diagram")
         this._coUmlHub.generate(dId);
         

@@ -103,6 +103,8 @@ export class CoUmlHubService{
 
 	public generate(Did:string)
 	{
+		console.log("hub");
+    	console.log(Did);
 		this._coUmlHubConnection.invoke("Generate",Did);
 	}
 
