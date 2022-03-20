@@ -87,14 +87,15 @@ import { EditorComponent } from "./editor.component";
  //================================================================================================
 	const _prototypeCatalog: Map<any, string > = new Map();
 	//iconCatalog.set(prototype, wwwroot/ <<path>>);
-	_prototypeCatalog.set( Interface, 'editors/images/uml/Interface.svg', );
-	_prototypeCatalog.set( AbstractClass, 'editors/images/uml/Abstract.svg');
-	_prototypeCatalog.set( Class, 'editors/images/uml/Class.svg');
-	_prototypeCatalog.set( Enumeration, 'editors/images/uml/Enumeration.svg');
-	_prototypeCatalog.set( Attribute, 'editors/images/uml/Attribute.svg');
-	_prototypeCatalog.set( Operation, 'editors/images/uml/Operation.svg');
-	_prototypeCatalog.set( Enumeral, 'editors/images/uml/Enumeral.svg');
+	_prototypeCatalog.set( Interface, 'Interface', );
+	_prototypeCatalog.set( AbstractClass, 'Abstract');
+	_prototypeCatalog.set( Class, 'Class');
+	_prototypeCatalog.set( Enumeration, 'Enumeration');
+	_prototypeCatalog.set( Attribute, 'Attribute');
+	_prototypeCatalog.set( Operation, 'Operation');
+	_prototypeCatalog.set( Enumeral, 'Enumeral');
 
+	const EDITOR_IMAGES_UML_PAPTH = (name: string )=> {return `editors/images/uml/${name}.svg`};
 	/**
 	 * 
 	 * @param items the types of items to be included in the toolbar
@@ -190,12 +191,12 @@ import { EditorComponent } from "./editor.component";
 		}
 		
 		// Creates the image which is used as the drag icon (preview)
-		var img = editorComponent.toolbar.addMode("Drag", image, function(evt, cell)
+		var img = editorComponent.toolbar.addMode("Drag", EDITOR_IMAGES_UML_PAPTH(image), function(evt, cell)
 		{
 			var pt = editorComponent.graph.getPointForEvent(evt, true);
 			drop(editorComponent.graph, evt, cell, pt.x, pt.y);
 		});
-		
+		img.id = image;
 		mxUtils.makeDraggable(img, editorComponent.graph, drop);
 		
 		return img;
