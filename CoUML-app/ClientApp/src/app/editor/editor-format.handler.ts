@@ -12,6 +12,7 @@ const BLACK: string = '#000000';
 export function addCellStyles(graph: mxGraph)
 {
 
+
 	//cell styles for diagram component with stereotype
 	// <<interface>>, <<enumerations>>
 	var base_mxSwimlanePaint = mxSwimlane.prototype.paintSwimlane;

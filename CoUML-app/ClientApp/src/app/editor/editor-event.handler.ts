@@ -173,6 +173,7 @@ import { EditorComponent } from "./editor.component";
 					editorComponent.insertProperty(parentCell, component);
 
 				// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
+
 					editorComponent.stageChange(new ChangeRecord(
 						editorComponent.getIdPath(parentCell),
 						component instanceof Operation? 

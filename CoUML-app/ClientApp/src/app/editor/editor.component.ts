@@ -400,12 +400,13 @@ export class EditorComponent implements AfterViewInit{
 	}
 
 	/**
-	 * change the valuse of a lable
+	 * change the value of a label
 	 * @param affectedCell 
 	 * @param change 
 	 */
 	private updateLabelValue(affectedCell: mxCell, change: ChangeRecord)
 	{
+
 		this._graph.getModel().valueForCellChanged(
 			affectedCell,
 			this._projectDeveloper._projectDiagram.at(change.id).toUmlNotation()
