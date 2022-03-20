@@ -12,13 +12,14 @@ const BLACK: string = '#000000';
 export function addCellStyles(graph: mxGraph)
 {
 
+	//cell styles for diagram component with stereotype
+	// <<interface>>, <<enumerations>>
 	var base_mxSwimlanePaint = mxSwimlane.prototype.paintSwimlane;
 	mxSwimlane.prototype.paintSwimlane = function(c: mxSvgCanvas2D, x, y, w, h)
 	{
 		base_mxSwimlanePaint.apply(this, arguments);
 		if (this.state != null && this.state.cell.style != null && this.state.style['stereotype'])
 		{
-
 			c.setStrokeColor(BLACK);
 			c.text(w/2, MARGIN, w, h, `<<${this.state.style['stereotype']}>>`, 'center', 'top', '','', '', '', 0, '');
 		}
@@ -54,21 +55,22 @@ export function addCellStyles(graph: mxGraph)
 	style[mxConstants.STYLE_STROKECOLOR] = BLACK;
 
 	style = mxUtils.clone(style);
-	style[mxConstants.STYLE_FONTSTYLE] = 3;//bold italic  mxConstants.FONT_ITALIC;
+	style[mxConstants.STYLE_FONTSTYLE] = mxConstants.FONT_ITALIC;
 	graph.getStylesheet().putCellStyle(AbstractClass.name, style);
 
-	style[mxConstants.STYLE_FONTSTYLE] = mxConstants.FONT_BOLD;
+	style = mxUtils.clone(style);
+	style[mxConstants.STYLE_FONTSTYLE] = mxConstants.DEFAULT_FONTSTYLE;
 	graph.getStylesheet().putCellStyle(Class.name, style);
 
 	//styles with stereotypes
 	style = mxUtils.clone(style);
-	style[mxConstants.STYLE_FONTSTYLE] = mxConstants.FONT_BOLD;
+	style[mxConstants.STYLE_FONTSTYLE] = mxConstants.DEFAULT_FONTSTYLE;
 	style[mxConstants.STYLE_STARTSIZE] = HEIGHT * 4/3;
 	style['stereotype'] = 'interface';
 	graph.getStylesheet().putCellStyle(Interface.name, style);
 
 	style = mxUtils.clone(style);
-	style[mxConstants.STYLE_FONTSTYLE] = mxConstants.FONT_BOLD;
+	style[mxConstants.STYLE_FONTSTYLE] = mxConstants.DEFAULT_FONTSTYLE;
 	style['stereotype'] = 'enumeration';
 	graph.getStylesheet().putCellStyle(Enumeration.name, style);
 

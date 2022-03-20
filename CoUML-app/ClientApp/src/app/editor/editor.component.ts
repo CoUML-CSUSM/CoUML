@@ -7,10 +7,6 @@ import * as EditorEventHandler  from './editor-event.handler';
 const DELETE = 46;
 const BACKSPACE = 8;
 
-// (function(){
-// 	})();
-
-
 /**
  * https://github.com/typed-mxgraph/typed-mxgraph
  */
@@ -45,14 +41,9 @@ export class EditorComponent implements AfterViewInit{
 	) {
 		this._projectDeveloper.subscribe(this);
 		this.onResize();
-		this.editorOverlay = new mxCellOverlay(
-			new mxImage('editors/images/overlays/user3.png', 24, 24), "locked by other user");
 			
 
 	}
-
-	
-
 
 	/** frame controls */
 
@@ -81,13 +72,12 @@ export class EditorComponent implements AfterViewInit{
 		this._graph = new mxGraph(this.graphContainer.nativeElement);
 		this._graph.setDropEnabled(true); // ability to drag elements as groups
 	
-
-
-
+		// UML styles
 		EditorFormatHandler.addEdgeStyles(this._graph);
 		EditorFormatHandler.addCellStyles(this._graph);
 		EditorFormatHandler.initLayoutManager(this._graph);
 
+		//user events
 		EditorEventHandler.addListeners(
 			[
 				mxEvent.LABEL_CHANGED,
@@ -124,13 +114,20 @@ export class EditorComponent implements AfterViewInit{
 
 		//get test diagram
 		setTimeout(()=>	this._projectDeveloper.open(this.diagramId), 500);
+
+
+		this.editorOverlay = new mxCellOverlay(
+			new mxImage('editors/images/overlays/user3.png', 24, 24), "locked by other user");
 	}
 
 	
 
 	
-
-	stageChange(change: ChangeRecord)
+	/**
+	 * stage the change initiated by the user
+	 * @param change 
+	 */
+	public stageChange(change: ChangeRecord): void
 	{
 		console.log("change staged")
 		console.log(change);
@@ -235,7 +232,7 @@ export class EditorComponent implements AfterViewInit{
 	}
 
 
-	insertProperty(parent: mxCell, property: UmlElement): mxCell
+	public insertProperty(parent: mxCell, property: UmlElement): mxCell
 	{
 		return this._graph.insertVertex(
 			parent,
@@ -246,7 +243,7 @@ export class EditorComponent implements AfterViewInit{
 		);
 	}
 
-	private insertRelationship(relation: Relationship): mxCell
+	public insertRelationship(relation: Relationship): mxCell
 	{	
 		var edge = new mxCell(
 			relation.toUmlNotation(), 

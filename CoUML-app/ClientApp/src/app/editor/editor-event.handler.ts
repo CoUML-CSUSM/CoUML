@@ -18,7 +18,7 @@ import { EditorComponent } from "./editor.component";
  //	add  listeners from the catalog
  //================================================================================================
 
-	const _eventCatalog: Map<mxEvent, Function> = new Map();
+	const _eventCatalog: Map<mxEvent, (...args: any[]) => any > = new Map();
 		_eventCatalog.set(mxEvent.LABEL_CHANGED, labelChanged);
 		_eventCatalog.set(mxEvent.CELLS_ADDED, cellsAdded);
 		_eventCatalog.set(mxEvent.START_EDITING, startEditing);
@@ -32,7 +32,7 @@ import { EditorComponent } from "./editor.component";
 
 	/**
 	 * applies the indecated event listerns
-	 * @param events The type of envents that need to be monitored
+	 * @param events The type of envents that need to be monitored using mxEvent
 	 * @param graph the mxgraph
 	 * @param editorComponent the editor component that will recieve notifications via stageChange function
 	 */
@@ -136,12 +136,14 @@ import { EditorComponent } from "./editor.component";
 				// graph.setSelectionCell(vertex);
 				editorComponent.insertComponent(component);
 
+			// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
 				editorComponent.stageChange(new ChangeRecord(
 					[graph.getDefaultParent().id],
 					PropertyType.Elements,
 					ActionType.Insert,
 					component
 				));
+			// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 			}
 			else if(parentCell)//if adding property to component
 			{
@@ -170,6 +172,7 @@ import { EditorComponent } from "./editor.component";
 
 					editorComponent.insertProperty(parentCell, component);
 
+				// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
 					editorComponent.stageChange(new ChangeRecord(
 						editorComponent.getIdPath(parentCell),
 						component instanceof Operation? 
@@ -178,6 +181,7 @@ import { EditorComponent } from "./editor.component";
 						ActionType.Insert,
 						component
 					));
+				// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 				} else
 				{
 					console.log(`${component.constructor.name} type object does NOT go here`);
@@ -214,12 +218,14 @@ import { EditorComponent } from "./editor.component";
 				console.log('%c%s', f_alert, "LABEL_CHANGED");
 				let affectedCells = eventObject.getProperties().cell;
 
+				// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
 				editorComponent.stageChange( new ChangeRecord(
 					editorComponent.getIdPath(affectedCells),
 					PropertyType.Label, 
 					ActionType.Label,
 					affectedCells.value
 				));
+				// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 		});
 	}
 
@@ -240,6 +246,7 @@ import { EditorComponent } from "./editor.component";
 				console.log(affectedCells);
 
 				for( let cell of affectedCells)
+				// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
 					editorComponent.stageChange(new ChangeRecord(
 						editorComponent.getIdPath(cell),
 						PropertyType.Dimension,
@@ -249,6 +256,7 @@ import { EditorComponent } from "./editor.component";
 							y: cell.geometry.y,
 						}
 					));
+				// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 			});
 	}
 
@@ -269,7 +277,7 @@ import { EditorComponent } from "./editor.component";
 	}
 
 	/**
-	 * 
+	 * triggers when users make changes to existing edges/relations
 	 * @param graph 
 	 * @param editorComponent 
 	 */
@@ -282,12 +290,9 @@ import { EditorComponent } from "./editor.component";
 				
 				
 				console.log('%c%s', f_alert, "CELL_CONNECTED");
-				console.log(affectedEdge);
-				console.log(`edge: ${affectedEdge.edge.id}`);
-				console.log(`source(from): ${affectedEdge.edge.source?.id}`);
-				console.log(`target(to): ${affectedEdge.edge.target?.id}`);
+				console.log(`edge: ${affectedEdge.edge.id}\nsource(from): ${affectedEdge.edge.source?.id}\ntarget(to): ${affectedEdge.edge.target?.id}`);
 
-				if( valid(affectedEdge.edge.id)){
+				if( isUuid(affectedEdge.edge.id)){
 					//disconnect action --> previous
 					//connect action --> terminal
 					let isConnectioning = affectedEdge.terminal? true: false;
@@ -301,22 +306,20 @@ import { EditorComponent } from "./editor.component";
 					// relation - connect | dissconnect
 					// sets the source|target to componentId if connect and null if disconnect
 					if(isConnectioning || isDisconnectioning)
-					{
-						editorComponent.stageChange(
-							new ChangeRecord(
-								// [affectedEdge.edge.id],
+					// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
+						editorComponent.stageChange(new ChangeRecord(
 								editorComponent.getIdPath(affectedEdge.edge),
 								affecedProperty,
 								ActionType.Change,
 								value
-							) );
-					}
+							));
+					// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 					// move edge point if disconnected
 					// set the location of the disconected end
 					if(isDisconnectioning || isMovingTerminal)
+					// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
 						editorComponent.stageChange( new ChangeRecord(
-							// [affectedEdge.edge.id],
 							editorComponent.getIdPath(affectedEdge.edge),
 							PropertyType.Dimension,
 							ActionType.Change,
@@ -331,7 +334,8 @@ import { EditorComponent } from "./editor.component";
 									affectedEdge.edge.geometry.targetPoint?.x,
 									affectedEdge.edge.geometry.targetPoint?.y
 								)
-						) );
+						));
+					// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 				}
 		});
 			
@@ -342,10 +346,11 @@ import { EditorComponent } from "./editor.component";
 	 * @param id 
 	 * @returns 
 	 */
-	function valid(id: string):boolean
+	function isUuid(id: string):boolean
 	{ 
 		//TODO: better way to validate id
-		return id.length > 5 ;
+		let uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+		return uuidRegex.test(id);
 	}
 
 	/**
@@ -378,7 +383,7 @@ import { EditorComponent } from "./editor.component";
 		graph.addListener(mxEvent.START, 
 			// When double click on cell to change label
 			function(eventSource, eventObject){
-				let affectedCells = eventObject.getProperties();
+				let affectedCells = eventObject.getProperties().cell;
 				console.log('%c%s', f_alert, "START");
 
 				console.log(affectedCells.cell.id);
@@ -395,7 +400,7 @@ import { EditorComponent } from "./editor.component";
 		graph.addListener(mxEvent.CELLS_ADDED, 
 			// mxEvent.ADD_CELLS
 			function(eventSource, eventObject){
-				let affectedCells = eventObject.getProperties();
+				let affectedCells = eventObject.getProperties().cells;
 				console.log('%c%s', f_alert, "CELLS_ADDED ");
 				console.log(affectedCells);
 			});
@@ -425,7 +430,7 @@ import { EditorComponent } from "./editor.component";
 	}
 
 	/**
-	 * function that fires when a new relation is drawn between 2 compnents
+	 * function that fires when a new edge/relation is drawn between 2 compnents
 	 * @param graph 
 	 * @param editorComponent 
 	 */
@@ -458,12 +463,14 @@ import { EditorComponent } from "./editor.component";
 					affectedCells.value = relation.attributes;
 					affectedCells.style = RelationshipType[relation.type]
 
+				// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
 					editorComponent.stageChange(new ChangeRecord(
 						[graph.getDefaultParent().id],
 						PropertyType.Elements,
 						ActionType.Insert,
 						relation
 					));
+				// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 				}
 			});
@@ -481,7 +488,7 @@ import { EditorComponent } from "./editor.component";
 		graph.getSelectionModel().addListener(mxEvent.SELECT, 
 			// NADA
 			function(eventSource, eventObject){
-				let affectedCells = eventObject.getProperties();
+				let affectedCells = eventObject.getProperties().cell;
 				console.log('%c%s', f_alert, "mxEvent.SELECT");
 				console.log(affectedCells);
 			});
@@ -503,7 +510,7 @@ import { EditorComponent } from "./editor.component";
 		graph.addListener(mxEvent.FIRED, 
 			// NADA
 			function(eventSource, eventObject){
-				let affectedCells = eventObject.getProperties();
+				let affectedCells = eventObject.getProperties().cell;
 				console.log('%c%s', f_alert, "");
 				console.log(affectedCells);
 			});
