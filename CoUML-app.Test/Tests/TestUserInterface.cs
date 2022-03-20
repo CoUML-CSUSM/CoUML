@@ -51,7 +51,7 @@ namespace CoUML_app.Test.Tests
             new DriverManager().SetUpDriver(new ChromeConfig());
             ChromeOptions options = new ChromeOptions();
             options.AddArguments("--auto-open-devtools-for-tabs");
-            this._chromeDriver = new ChromeDriver();
+            _chromeDriver = new ChromeDriver();
             _chromeDriver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
         }
         
@@ -104,7 +104,6 @@ namespace CoUML_app.Test.Tests
                 Console.WriteLine("X = "+interfaceTool.Location.X+"=>"+destingationOffset.X);
             var action = new Actions(_chromeDriver);
             action
-                // .DragAndDropToOffset(interfaceTool, destingationOffset.X, destingationOffset.Y)
                 .MoveToElement(interfaceTool)
                 .ClickAndHold()
                 .MoveByOffset(destingationOffset.X, destingationOffset.Y)
