@@ -4,53 +4,75 @@ import { AbstractClass, ActionType, ChangeRecord, Class, Dimension, Enumeration,
 const DASH_PATTERN: string  = '12 4';
 const MARGIN: number = 5;
 const HEIGHT:number = 30;
+const WHITE: string = '#ffffff';
+const BLACK: string = '#000000';
+
+
 
 export function addCellStyles(graph: mxGraph)
 {
-	// mxConstants.ENTITY_SEGMENT = 20;
+
+
+	//cell styles for diagram component with stereotype
+	// <<interface>>, <<enumerations>>
+	var base_mxSwimlanePaint = mxSwimlane.prototype.paintSwimlane;
+	mxSwimlane.prototype.paintSwimlane = function(c: mxSvgCanvas2D, x, y, w, h)
+	{
+		base_mxSwimlanePaint.apply(this, arguments);
+		if (this.state != null && this.state.cell.style != null && this.state.style['stereotype'])
+		{
+			c.setStrokeColor(BLACK);
+			c.text(w/2, MARGIN, w, h, `<<${this.state.style['stereotype']}>>`, 'center', 'top', '','', '', '', 0, '');
+		}
+		
+	}
+
 	graph.border = 100;
 	graph.autoSizeCellsOnAdd = true;
 
 	let style = graph.getStylesheet().getDefaultVertexStyle();
 				style[mxConstants.STYLE_FILLCOLOR] = 'none';
-				style[mxConstants.STYLE_STROKECOLOR] = '#fefefe';
 				style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RECTANGLE;
 				style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_LEFT;
+				style[mxConstants.STYLE_FONTCOLOR] = BLACK;
 
 	style = [];
 	style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_SWIMLANE;
 	style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;
 	style[mxConstants.STYLE_STARTSIZE] = HEIGHT;
-	style[mxConstants.STYLE_FILLCOLOR] = '#ffffff';
+	style[mxConstants.STYLE_FILLCOLOR] = WHITE;
 	style['childLayout'] = "stackLayout";
 	style['horizontalStack'] = 0;
 	style['resizeParent'] = 1;
 	style[mxConstants.STYLE_RESIZABLE] = '0';
+	style[mxConstants.STYLE_SPACING_BOTTOM] = MARGIN;
+	style[mxConstants.STYLE_VERTICAL_ALIGN] =  mxConstants.ALIGN_BOTTOM;
 	
 	style['marginLeft'] = MARGIN;
 	style['marginRight'] = MARGIN;
 	style['marginTop'] = MARGIN;
 	style['marginBottom'] = MARGIN;
 	style['selectable'] = 1;
-
-
-	style[mxConstants.STYLE_STROKECOLOR] = 'red';
-	style[mxConstants.STYLE_FONTSTYLE] = mxConstants.FONT_BOLD;
-	graph.getStylesheet().putCellStyle(Class.name, style);
+	style[mxConstants.STYLE_STROKECOLOR] = BLACK;
 
 	style = mxUtils.clone(style);
-	style[mxConstants.STYLE_STROKECOLOR] = 'yellow';
 	style[mxConstants.STYLE_FONTSTYLE] = mxConstants.FONT_ITALIC;
 	graph.getStylesheet().putCellStyle(AbstractClass.name, style);
 
 	style = mxUtils.clone(style);
-	style[mxConstants.STYLE_STROKECOLOR] = 'green';
-	style[mxConstants.STYLE_FONTSTYLE] = mxConstants.FONT_BOLD;
+	style[mxConstants.STYLE_FONTSTYLE] = mxConstants.DEFAULT_FONTSTYLE;
+	graph.getStylesheet().putCellStyle(Class.name, style);
+
+	//styles with stereotypes
+	style = mxUtils.clone(style);
+	style[mxConstants.STYLE_FONTSTYLE] = mxConstants.DEFAULT_FONTSTYLE;
+	style[mxConstants.STYLE_STARTSIZE] = HEIGHT * 4/3;
+	style['stereotype'] = 'interface';
 	graph.getStylesheet().putCellStyle(Interface.name, style);
 
 	style = mxUtils.clone(style);
-	style[mxConstants.STYLE_STROKECOLOR] = 'blue';
-	style[mxConstants.STYLE_FONTSTYLE] = mxConstants.FONT_BOLD;
+	style[mxConstants.STYLE_FONTSTYLE] = mxConstants.DEFAULT_FONTSTYLE;
+	style['stereotype'] = 'enumeration';
 	graph.getStylesheet().putCellStyle(Enumeration.name, style);
 
 }
@@ -123,6 +145,7 @@ export function initLayoutManager(graph: mxGraph)
 		return null;
 	};
 }
+
 
 export function addEdgeStyles(graph: mxGraph)
 {
