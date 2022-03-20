@@ -66,8 +66,8 @@ export class EditorComponent implements AfterViewInit{
 	/**
 	 * configure the graph
 	 */
-	ngAfterViewInit(): void {
-
+	ngAfterViewInit(): void 
+	{
 		//init graph div
 		this._graph = new mxGraph(this.graphContainer.nativeElement);
 		this._graph.setDropEnabled(true); // ability to drag elements as groups
@@ -135,14 +135,25 @@ export class EditorComponent implements AfterViewInit{
 	}
 
 
-	
-	public draw() {
+	/**
+	 * template to draw diagram
+	 * @param projectDiagram  Diagram to be drawn
+	 */
+	public draw(projectDiagram: Diagram) 
+	{
 		//turn off notifications before drawing new graph 
 		this._graph.eventsEnabled = false;
+
+		//enable green edge creationsion function
 		this._graph.setConnectable(true);
 
-		this._graph.getDefaultParent().id = this._projectDeveloper._projectDiagram.id;
+		//set defualt parrent id to diagram id
+		this._graph.getDefaultParent().id = projectDiagram.id;
 
+		/**
+		 * set callback that a cell is locked if it has an ovelay,
+		 * a cell has an overlau if it has an user
+		 */
 		this._graph.isCellLocked = function(cell: mxCell)
 		{
 			// if* the cell has an overlay *then* somone is using it and the cell is locked
@@ -154,7 +165,7 @@ export class EditorComponent implements AfterViewInit{
 		try {
 
 			let elementIterator: ICollectionIterator<UmlElement> 
-				= this._projectDeveloper._projectDiagram.elements.iterator();
+				= projectDiagram.elements.iterator();
 			
 			// relationships will be added after all components are added
 			let relatioships = []; 
@@ -163,16 +174,15 @@ export class EditorComponent implements AfterViewInit{
 			{
 				let element = elementIterator.getNext();
 
-				if(element instanceof Component){
+				if( element instanceof Relationship)
+						relatioships.push(element);
+				else if(element instanceof Component){
 					let graphComponent =  this.insertComponent(element);
 
 					//todo: lock cells on draw & release on close
 					// if(element.editor instanceof User)
 						// this.updateCellLock(graphComponent);
 				}
-				else if( element instanceof Relationship)
-						relatioships.push(element);
-
 				
 			}
 
@@ -185,7 +195,8 @@ export class EditorComponent implements AfterViewInit{
 		}
 	}
 	
-	public insertComponent(component: Component):mxCell {
+	public insertComponent(component: Component):mxCell 
+	{
 
 		console.log("this._graph.insertVertex");
 
@@ -269,7 +280,8 @@ export class EditorComponent implements AfterViewInit{
 	}
 
 
-	public processChange(change: ChangeRecord){
+	public processChange(change: ChangeRecord)
+	{
 		let affectedCell = change.id.length>1? this._graph.getModel().getCell(change.id[change.id.length-1]): null;
 
 		switch(change.action){
@@ -307,11 +319,10 @@ export class EditorComponent implements AfterViewInit{
 				}
 				break;
 			case ActionType.Remove:
-				affectedCell = this._graph.getModel().getCell(change.value);
-				this._graph.removeCells([affectedCell], false);
+				this.removeCell(affectedCell);
 			case ActionType.Lock:
 			case ActionType.Release:
-				this.updateCellLock(affectedCell); break;
+				this.updateCellLockOverlay(affectedCell, change.action); break;
 			case ActionType.Label: this.updateLabelValue(affectedCell, change); break;
 
 		}
@@ -319,27 +330,43 @@ export class EditorComponent implements AfterViewInit{
 		this._graph.refresh();
 	}
 
-	private updateCellLock(affectedCell: mxCell)
+	/**
+	 * place or remove overlay lock on cell
+	 * @param affectedCell 
+	 * @param change change.actiorn is Lock or Release
+	 */
+	private updateCellLockOverlay(affectedCell: mxCell, action: ActionType)
 	{
-		if (!this._graph.isCellLocked(affectedCell))
-		{
-			// Sets the overlay for the cell in the graph
-			this._graph.addCellOverlay(affectedCell, this.editorOverlay);
-		}
-		else
-		{
-			this._graph.removeCellOverlays(affectedCell);
+		switch(action){
+			case ActionType.Lock:
+				this._graph.addCellOverlay(affectedCell, this.editorOverlay);
+				break;
+			case ActionType.Release:
+				this._graph.removeCellOverlays(affectedCell);
+			default:	break;
 		}
 	}
 
-	private updateCellGeometry(affectedCell: mxCell, change: ChangeRecord) {
+	/**
+	 * change the shape of a cell
+	 * @param affectedCell 
+	 * @param change 
+	 */
+	private updateCellGeometry(affectedCell: mxCell, change: ChangeRecord) 
+	{
 		let newCellGeometry = this._graph.getCellGeometry(affectedCell).clone();
 		newCellGeometry.x = change.value.x;
 		newCellGeometry.y = change.value.y;
 		this._graph.getModel().setGeometry(affectedCell, newCellGeometry);
 	}
 	
-	private updateEdgeGeometry(affectedEdge: mxCell, change: ChangeRecord) {
+	/**
+	 * change the shape of an edge
+	 * @param affectedEdge 
+	 * @param change 
+	 */
+	private updateEdgeGeometry(affectedEdge: mxCell, change: ChangeRecord) 
+	{
 		let isSource = !(change.value.height);
 		
 		let point = isSource?
@@ -352,7 +379,13 @@ export class EditorComponent implements AfterViewInit{
 		this._graph.getModel().setGeometry(affectedEdge, newEdgeGeometry);
 	}
 
-	private updateEdgeConnections(affectedEdge: mxCell, change: ChangeRecord) {
+	/**
+	 * change the edge connection ponts
+	 * @param affectedEdge 
+	 * @param change 
+	 */
+	private updateEdgeConnections(affectedEdge: mxCell, change: ChangeRecord) 
+	{
 		let isSource = change.affectedProperty == PropertyType.Source;
 		if(!change.value)	
 		{// disconnecting
@@ -366,6 +399,11 @@ export class EditorComponent implements AfterViewInit{
 
 	}
 
+	/**
+	 * change the valuse of a lable
+	 * @param affectedCell 
+	 * @param change 
+	 */
 	private updateLabelValue(affectedCell: mxCell, change: ChangeRecord)
 	{
 		this._graph.getModel().valueForCellChanged(
@@ -374,9 +412,20 @@ export class EditorComponent implements AfterViewInit{
 		);
 	}
 
+	private removeCell(cellToBeRemoved: mxCell)
+	{
+		this._graph.removeCells([cellToBeRemoved], false);
+	}
+
+// ============================================================================================
+// user actiorn controls lock, release, delete ================================================
+// ============================================================================================
+
+	/**
+	 * fires a cell release change record for the cell of the current active cell
+	 */
 	release()
 	{
-
 		console.log("-----release----")
 		console.log(this._activeEditCell);
 
@@ -390,6 +439,10 @@ export class EditorComponent implements AfterViewInit{
 		this._activeEditCell = null;
 	}
 
+	/**
+	 * fires a cell lock change record, release the current active cell, and sets the current active cell
+	 * @param cell the cell that the user would like to lock
+	 */
 	lock(cell?: mxCell)
 	{
 		console.log("-----lock----")
@@ -407,18 +460,9 @@ export class EditorComponent implements AfterViewInit{
 
 	}
 
-	getIdPath(x: mxCell): string[]
-	{
-		let ids = [];
-		do{
-			ids.unshift(x.id)
-			x = x.parent;
-		}while(x.parent)
-
-		console.log(`id path =  ${ids}`)
-		return ids;
-	}
-
+	/**
+	 * fires a delete action for the current active cell
+	 */
 	deleteCell(){
 		//delete function
 		let currentSelection = this._graph.getSelectionCell();
@@ -433,7 +477,7 @@ export class EditorComponent implements AfterViewInit{
 			let deleteId = deleteIdPath.pop();
 
 
-			this._graph.removeCells([currentSelection], false);
+			this.removeCell(currentSelection);
 			this.stageChange( new ChangeRecord(
 				deleteIdPath,
 				PropertyType.Elements,	///**** */
@@ -441,6 +485,21 @@ export class EditorComponent implements AfterViewInit{
 				deleteId
 			));
 		}
+	}
+
+	/**
+	 * friend function to get the full path from the root parent to the cell
+	 */
+	getIdPath(x: mxCell): string[]
+	{
+		let ids = [];
+		do{
+			ids.unshift(x.id)
+			x = x.parent;
+		}while(x.parent)
+
+		console.log(`id path =  ${ids}`)
+		return ids;
 	}
 
 }
