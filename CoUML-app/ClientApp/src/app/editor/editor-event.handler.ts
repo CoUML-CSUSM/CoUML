@@ -1,3 +1,4 @@
+import { stringify } from "querystring";
 import { AbstractClass, 
 	ActionType, 
 	PropertyType, 
@@ -47,6 +48,15 @@ import { EditorComponent } from "./editor.component";
  //================================================================================================
  //	context menue for Relations
  //================================================================================================
+	const _relationtypeCatolog: Map<RelationshipType, string> = new Map();
+	_relationtypeCatolog.set(RelationshipType.Dependency, 'Dependency');
+	_relationtypeCatolog.set(RelationshipType.Association, 'Association');	
+	_relationtypeCatolog.set(RelationshipType.Aggregation, 'Aggregation'); 
+	_relationtypeCatolog.set(RelationshipType.Composition, 'Composition');	
+	_relationtypeCatolog.set(RelationshipType.Generalization, 'Generalization');
+	_relationtypeCatolog.set(RelationshipType.Realization, 'Realization');
+	
+   
 	/**
 	 * creates a context menu for setting the relation type of an edge
 	 * @param graph 
@@ -59,12 +69,9 @@ import { EditorComponent } from "./editor.component";
 			console.log(cell)
 			if(cell?.edge)// menu if user clicks on edge
 			{
-				menu.addItem('Dependency',		'editors/images/uml/Dependency.svg',	()=>setRelationType(cell, RelationshipType.Dependency));
-				menu.addItem('Association',		'editors/images/uml/Association.svg',	 ()=>setRelationType(cell, RelationshipType.Association));
-				menu.addItem('Aggregation', 	'editors/images/uml/Aggregation.svg',	 ()=>setRelationType(cell, RelationshipType.Aggregation));
-				menu.addItem('Composition',		'editors/images/uml/Composition.svg',	()=>setRelationType(cell, RelationshipType.Composition));
-				menu.addItem('Generalization',	'editors/images/uml/Generalization.svg',	()=>setRelationType(cell, RelationshipType.Generalization));
-				menu.addItem('Realization',		'editors/images/uml/Realization.svg',	()=>setRelationType(cell, RelationshipType.Realization));
+				_relationtypeCatolog.forEach((title: string, relationshipType: RelationshipType)=>{
+					menu.addItem(title,		EDITOR_IMAGES_UML_PAPTH(title),	()=>setRelationType(cell, relationshipType)).id = title;
+				})
 			}
 		};
 

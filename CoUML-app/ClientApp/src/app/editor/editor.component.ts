@@ -319,7 +319,7 @@ export class EditorComponent implements AfterViewInit{
 				}
 				break;
 			case ActionType.Remove:
-				this.removeCell(affectedCell);
+				this.removeCell(this._graph.getModel().getCell(change.value)); break;
 			case ActionType.Lock:
 			case ActionType.Release:
 				this.updateCellLockOverlay(affectedCell, change.action); break;

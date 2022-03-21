@@ -65,7 +65,7 @@ export function addCellStyles(graph: mxGraph)
 	//styles with stereotypes
 	style = mxUtils.clone(style);
 	style[mxConstants.STYLE_FONTSTYLE] = mxConstants.DEFAULT_FONTSTYLE;
-	style[mxConstants.STYLE_STARTSIZE] = HEIGHT * 4/3;
+	style[mxConstants.STYLE_STARTSIZE] = HEIGHT * 7/6;
 	style['stereotype'] = 'interface';
 	graph.getStylesheet().putCellStyle(Interface.name, style);
 
