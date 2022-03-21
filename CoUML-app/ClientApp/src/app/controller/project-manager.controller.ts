@@ -8,7 +8,9 @@ import {  User, UmlElement } from 'src/models/DiagramModel';
 export class ProjectManager{
     newDiagram: Diagram;
 
-    constructor(private _coUmlHub: CoUmlHubService){}
+    constructor(private _coUmlHub: CoUmlHubService){
+        this._coUmlHub.subscribe(this);
+    }
 
     public generate(dId:string){
 
@@ -17,9 +19,9 @@ export class ProjectManager{
         console.log("Creating new diagram")
         this._coUmlHub.generate(dId);
         
-        (d) => {
-            this.newDiagram = Assembler.assembleDiagram(d);
-        };
+        // (d) => {
+        //     this.newDiagram = Assembler.assembleDiagram(d);
+        // };
             
     }
 }

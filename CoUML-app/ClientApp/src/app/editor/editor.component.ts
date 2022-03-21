@@ -126,7 +126,7 @@ export class EditorComponent implements AfterViewInit{
 
 		//get test diagram
 		//setTimeout(()=>	this._projectDeveloper.open(this.diagramId), 500);
-		setTimeout(()=>	this._projectDeveloper.open("test"), 500);
+		// setTimeout(()=>	this._projectDeveloper.open("test"), 500);
 	}
 
 	

@@ -14,7 +14,9 @@ export class ProjectDeveloper{
 
 	_changes: ChangeRecord[] = [];
 
-	constructor(private _coUmlHub: CoUmlHubService)	{}
+	constructor(private _coUmlHub: CoUmlHubService)	{
+		this._coUmlHub.subscribe(this);
+	}
 
 	subscribe(diagramEditor: EditorComponent) {
 		this._diagramEditor = diagramEditor;
@@ -31,9 +33,9 @@ export class ProjectDeveloper{
 		
 		this._coUmlHub.fetch( id ) //get diagram from server
 			.then( (d) => {
-				this._coUmlHub.subscribe(this);
 				console.log(d);
 				this._projectDiagram = Assembler.assembleDiagram(d);
+
 				console.log(this._projectDiagram);
 				this._diagramEditor.draw();
 			} ); 

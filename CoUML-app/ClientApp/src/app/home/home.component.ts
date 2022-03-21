@@ -21,10 +21,8 @@ import { CoUmlHubService } from '../service/couml-hub.service';
 @AngularComponent({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  providers: [ProjectManager, ProjectDeveloper],
+  // providers: [ProjectManager, ProjectDeveloper],
 })
-
-
 export class HomeComponent {
 
   ip: string;
@@ -35,8 +33,8 @@ export class HomeComponent {
 	constructor(
     private _coUmlHub: CoUmlHubService,
     private _renderer: Renderer2,
-    private _projectManager: ProjectManager,
-    private _projectDeveloper: ProjectDeveloper,
+    // private _projectManager: ProjectManager,
+    // private _projectDeveloper: ProjectDeveloper,
      //private _projectDiagram: Diagram, //idk
     // private _diagramEditor: EditorComponent//idk
     ) {
@@ -53,12 +51,12 @@ export class HomeComponent {
   public create(dId:string){
     console.log("home");
     console.log(dId);
-    this._projectManager.generate(dId);
+    this._coUmlHub._projectManager.generate(dId);
     console.log("generated");
     //this._coUmlHub.fetch(dId);
     //somethign to cler the diagram here or something
     console.log("opeining");
-    this._projectDeveloper.open(dId);
+    this._coUmlHub._projectDeveloper.open(dId);
     
     // this._coUmlHub.fetch( dId ) //get diagram from server
 		// 	.then( (d) => {
