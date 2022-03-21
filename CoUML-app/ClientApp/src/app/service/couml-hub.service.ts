@@ -64,8 +64,8 @@ export class CoUmlHubService{
 	public fetch(dId: string ): Promise<string>
 	{
 		// calling function : public string Fetch(string dId)
-		return this._coUmlHubConnection.invoke<string>('Fetch','test'); // test diagram
-		// return this._coUmlHubConnection.invoke<Diagram>('Fetch',dId); 
+		//return this._coUmlHubConnection.invoke<string>('Fetch','test'); // test diagram
+		return this._coUmlHubConnection.invoke<string>('Fetch',dId); 
 	}
 
 	/**

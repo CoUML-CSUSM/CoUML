@@ -1,6 +1,9 @@
 import { AfterViewChecked, AfterViewInit, Component as AngularComponent, ElementRef, Renderer2, ViewChild} from '@angular/core';
+import { Diagram } from 'src/models/Diagram';//idk
+import { Assembler } from 'src/models/DiagramModel';//idk
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 import { ProjectManager } from '../controller/project-manager.controller';
+import { EditorComponent } from '../editor/editor.component';
 
 import { CoUmlHubService } from '../service/couml-hub.service';
 
@@ -33,7 +36,9 @@ export class HomeComponent {
     private _coUmlHub: CoUmlHubService,
     private _renderer: Renderer2,
     private _projectManager: ProjectManager,
-    private _projectDeveloper: ProjectDeveloper
+    private _projectDeveloper: ProjectDeveloper,
+     //private _projectDiagram: Diagram, //idk
+    // private _diagramEditor: EditorComponent//idk
     ) {
 
   }
@@ -49,8 +54,21 @@ export class HomeComponent {
     console.log("home");
     console.log(dId);
     this._projectManager.generate(dId);
+    console.log("generated");
+    //this._coUmlHub.fetch(dId);
     //somethign to cler the diagram here or something
-    //this._projectDeveloper.open(dId);
+    console.log("opeining");
+    this._projectDeveloper.open(dId);
+    
+    // this._coUmlHub.fetch( dId ) //get diagram from server
+		// 	.then( (d) => {
+		// 		//this._coUmlHub.subscribe(this);
+		// 		console.log(d);
+		// 		this._projectDiagram = Assembler.assembleDiagram(d);
+		// 		console.log(this._projectDiagram);
+		// 		this._diagramEditor.draw();
+		// 	} ); 
+     console.log("opened");
   }
   
   public test(){
