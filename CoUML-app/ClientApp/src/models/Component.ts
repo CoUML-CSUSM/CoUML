@@ -1,6 +1,6 @@
 import { GeneralCollection, RelationalCollection } from "./Collection";
 import { UmlElement } from "./Diagram";
-import { Operation, Attribute, ComponentProperty,  ICollection } from "./DiagramModel";
+import { Operation, Attribute, ComponentProperty,  ICollection, Enumeral } from "./DiagramModel";
 
 
 /**
@@ -41,12 +41,12 @@ export class Enumeration extends Component
     remove(id: string) {
         this.enums.remove(id);
     }
-    public enums: ICollection<string>;
+    public enums: ICollection<Enumeral>;
 
     public constructor(name: string = "EnumerationComponent")
     {
         super("Enumeration", name);
-        this.enums  = new GeneralCollection<string> ([]);
+        this.enums  = new RelationalCollection<Enumeral> ([]);
     }
 
     get(id: string) {

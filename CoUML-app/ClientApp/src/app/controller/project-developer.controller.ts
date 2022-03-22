@@ -37,7 +37,7 @@ export class ProjectDeveloper{
 				this._projectDiagram = Assembler.assembleDiagram(d);
 
 				console.log(this._projectDiagram);
-				this._diagramEditor.draw();
+				this._diagramEditor.draw(this._projectDiagram);
 			} ); 
 	}
 
