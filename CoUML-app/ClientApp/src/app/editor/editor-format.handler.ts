@@ -35,6 +35,11 @@ export function addCellStyles(graph: mxGraph)
 				style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_LEFT;
 				style[mxConstants.STYLE_FONTCOLOR] = BLACK;
 
+				
+	style = mxUtils.clone(style);
+	style[mxConstants.STYLE_FILLCOLOR] = '#FF0000';
+	graph.getStylesheet().putCellStyle("ClickHere", style);
+
 	style = [];
 	style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_SWIMLANE;
 	style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;

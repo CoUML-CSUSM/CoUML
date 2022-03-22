@@ -55,7 +55,7 @@ namespace CoUML_app.Test.Tests
 
         public const string Reference = "CoUML_app";
 
-        public const int Grid = 40;
+        public const int Grid = 30;
 
         public const int Std_Width = 200;
         public const int Std_Heght = 30;
@@ -118,29 +118,51 @@ namespace CoUML_app.Test.Tests
                 LoadToolbarItems();
 
                 // create IPet interface
-                Coords c_IPet = new Coords(245, 115);
-                DragAndDrop(_toolBarItems[Tool.Interface], c_IPet);
+                Coords c_IPet = new Coords(200, 200);
+                DragAndDrop(_toolBarItems[Tool.Interface], c_IPet, false);
                 ChangeLabel(c_IPet, "IPet");
+                
+                // for(int y = 0; y<9; y++){
+                //     for(int x = 0; x<4; x++){
+                //         DragAndDropLabel(_toolBarItems[Tool.Interface], new Coords(100+200*x, 100+50*y));
+                //     }
+                // }
+                // for(int y = 0; y<9; y++){
+                //     for(int x = 0; x<4; x++){
+                //         ChangeLabel(new Coords(100+150*x, 100+50*y));
+                //     }
+                // }
 
-                // //add Operation
-                // Coords c_IPet_Opp1 = new Coords(
-                //     c_IPet.X + 5, c_IPet.Y + 10
-                // );
-                // DragAndDrop(_toolBarItems[Tool.Operation], c_IPet_Opp1);
-                // c_IPet_Opp1.Y += Tool.Grid * 1;
+                // NewActionsAtCoords(c_IPet).Click().Build().Perform();
+ 
+
+                // DragAndDrop(_toolBarItems[Tool.Operation], c_IPet, true);
+                // DragAndDrop(_toolBarItems[Tool.Operation], c_IPet, true);
+                // DragAndDrop(_toolBarItems[Tool.Operation], c_IPet, true);
+                // DragAndDrop(_toolBarItems[Tool.Operation], c_IPet, true);
+                // DragAndDrop(_toolBarItems[Tool.Operation], c_IPet, true);
+                // DragAndDrop(_toolBarItems[Tool.Operation], c_IPet, true);
+                // DragAndDrop(_toolBarItems[Tool.Operation], c_IPet, true);
+                // DragAndDrop(_toolBarItems[Tool.Operation], c_IPet, true);
+                // DragAndDrop(_toolBarItems[Tool.Operation], c_IPet, true);
+                // DragAndDrop(_toolBarItems[Tool.Operation], c_IPet, true);
                 // ChangeLabel(c_IPet_Opp1, "+ play(toy: Exersize, duration: number): boolean");
-                // Thread.Sleep(TimeSpan.FromSeconds(1));
+                // for(int y = 0; y<25; y++){
+                //     for(int x = 0; x<9; x++){
+                //         ChangeLabel(new Coords(100+18*x, 100+7*y));
+                //     }
+                // }
 
-                // //add Operation
-                // Coords c_IPet_Opp2 = new Coords(
-                //     c_IPet.X + 5, c_IPet.Y + 10
-                // );
-                // DragAndDrop(_toolBarItems[Tool.Operation], c_IPet_Opp2);
-                // c_IPet_Opp2.Y += Tool.Grid * 2;
-                // ChangeLabel(c_IPet_Opp2, "+ feed(chow: Kibble, amount: number): boolean");
+                // add Operation
+                Coords c_IPet_Opp1 = new Coords(
+                    c_IPet.X, c_IPet.Y + 10 + Tool.Grid * 1
+                );
+                DragAndDrop(_toolBarItems[Tool.Operation], c_IPet, true);
+                Thread.Sleep(TimeSpan.FromSeconds(1));
+                ChangeLabel(c_IPet_Opp1, "+ feed(chow: Kibble, amount: number): boolean");
 
                 // //add abstracClass
-                // Coords c_SiCat = new Coords(245, 405);
+                // Coords c_SiCat = new Coords(145, 405);
                 // DragAndDrop(_toolBarItems[Tool.AbstractClass], c_SiCat);
                 // ChangeLabel(c_SiCat, "StandarIssueCat");
 
@@ -150,9 +172,11 @@ namespace CoUML_app.Test.Tests
             // }catch(Exception e ){
             //     Console.WriteLine(e);
             // }finally{
-            //     Thread.Sleep(TimeSpan.FromSeconds(13));
-            //    this._chromeDriver.Close();
+            //     Thread.Sleep(TimeSpan.FromSeconds(25));
+            //    _chromeDriver.Close();
             // }
+            
+            Assert.Fail();
             
 
         }
@@ -181,31 +205,64 @@ namespace CoUML_app.Test.Tests
                         
             
         }
-        public void DragAndDrop(IWebElement source, Coords componentDestination)
+        public void DragAndDrop(IWebElement source, Coords componentDestination, Boolean childOffset)
         {
 
             var destinationOffset  =  CalculateOffset(source, componentDestination);
 
-            var action = new Actions(_chromeDriver);
+
+            var action = NewActionsAtCoords(componentDestination);
             action
+                .MoveByOffset((destinationOffset.X + (childOffset? 5:0))*-1, (destinationOffset.Y+ (childOffset? 15:0))*-1)
                 .MoveToElement(source)
                 .ClickAndHold()
-                .MoveByOffset(destinationOffset.X, destinationOffset.Y)
+                .MoveByOffset(destinationOffset.X + (childOffset? 5:0), destinationOffset.Y+ (childOffset? 15:0))
                 .Release()
+                .MoveToElement(_toolBarItems[Tool.Reference]).Click()
                 .Build()
                 .Perform();
             
         }
+        // public void DragAndDropLabel(IWebElement source, Coords point,  Boolean childOffset)
+        // {
+
+        //     var destinationOffset  =  CalculateOffset(source, point);
+
+        //     var action = new Actions(_chromeDriver);
+        //     action
+        //         .MoveToElement(source)
+        //         .ClickAndHold()
+        //         .MoveByOffset(destinationOffset.X + (childOffset? 5:0), destinationOffset.Y+ (childOffset? 15:0))
+        //         .Release()
+        //         .DoubleClick()
+        //         .SendKeys($"({point.X}, {point.Y})")
+        //         .MoveByOffset(222, 35)
+        //         .Click()
+        //         .Build()
+        //         .Perform();
+        // }
 
         public void ChangeLabel(Coords component, string label)
         {
             var action = NewActionsAtCoords(component);
             action
-                // .MoveByOffset(8, 8)
+                .MoveByOffset(85, 25)
+                .Click()
+                .Release()
                 .DoubleClick()
-                .SendKeys("label")
-                // .MoveByOffset(20, -50)
-                // .Click()
+                .SendKeys(label)
+                .MoveByOffset(212, 64).Click()
+                .Build().Perform();
+        }
+
+        public void ChangeLabel(Coords point)
+        {
+            NewActionsAtCoords(point)
+                .DoubleClick()
+                // .SendKeys(Keys.ArrowRight)
+                .SendKeys($"**({point.X}, {point.Y})**")
+                .MoveToElement(_toolBarItems[Tool.Reference])
+                .Click()
                 .Build()
                 .Perform();
         }
@@ -231,11 +288,14 @@ namespace CoUML_app.Test.Tests
         public Actions NewActionsAtCoords(Coords here)
         {
             var source = _toolBarItems[Tool.Reference];
+            Console.WriteLine(source);
             var offset = CalculateOffset(source, here);
 
             return new Actions(_chromeDriver)
                 .MoveToElement(source)
-                .MoveByOffset(offset.X, offset.Y);
+                .MoveByOffset(offset.X, offset.Y)
+                .Click();
+                // .MoveByOffset(offset.X+212, offset.Y+64);
         }
     }
 
@@ -251,8 +311,8 @@ namespace CoUML_app.Test.Tests
             Console.WriteLine(
                 "Calculating Offset\n"
                 +   "Source +-> Delta ==> Target\n"
-                +   $"X {source.X:n} +-> {delta.X:n} ==> {target.X:n}\n"
-                +   $"Y {source.Y:n} +-> {delta.Y:n} ==> {target.Y:n}\n"
+                +   $"X {source.X} +-> {delta.X} ==> {target.X}\n"
+                +   $"Y {source.Y} +-> {delta.Y} ==> {target.Y}\n"
             );
             return delta;
         }
