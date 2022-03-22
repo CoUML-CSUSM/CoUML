@@ -4,11 +4,12 @@ import { Class, Diagram, Component, Attribute, Interface, Operation, Relationshi
 import { ProjectManager } from '../controller/project-manager.controller';
 import { CoUmlHubService } from '../service/couml-hub.service';
 import { PrimeNGConfig } from "primeng/api";
+import { ProjectDeveloper } from '../controller/project-developer.controller';
 
 @AngularComponent({
     selector: 'app-menu',
     templateUrl: './project-menu.component.html',
-    providers: [ProjectManager]
+    providers: [ProjectManager, ProjectDeveloper]
   })
   export class ProjectMenuComponent{
 
@@ -22,6 +23,7 @@ import { PrimeNGConfig } from "primeng/api";
     constructor(
       private _projectManager: ProjectManager,
       private _coUmlHub: CoUmlHubService,
+      private _projectDeveloper: ProjectDeveloper,
       private primengConfig: PrimeNGConfig
       ){
       this._menuItems = [
@@ -37,6 +39,12 @@ import { PrimeNGConfig } from "primeng/api";
             {
               label: "Trigger Breakpoint",
               command: ()=> this._coUmlHub.triggerBreakPoint(),
+            },
+            {
+              label: "Fetch Test",
+              //command: () => this.generate(),
+              command: () => this._coUmlHub._projectDeveloper.open("test"),
+              // command: ()=> this._newDiagramDialog_isVisible = true,
             }
           ]
         },
