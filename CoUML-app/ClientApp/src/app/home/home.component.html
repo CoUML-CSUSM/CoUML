@@ -1,3 +1,18 @@
-<app-menu class="sticky"></app-menu>
+
+
+<app-menu class="sticky"  (open)="onOpen($event)"></app-menu>
 <app-editor class="relative"></app-editor>
 
+
+
+<p-dialog header="New Diagram" [(visible)]="geeks">
+    
+    <p>Input diagram name:</p>
+    <!--<h5>Basic</h5>-->
+    <input type="text" pInputText [(ngModel)]="value1"> 
+    
+    <!--<span class="ml-2">{{value1}}</span>-->
+    
+    <p-button icon="pi pi-check" class="pl-2" (click)="create(value1)"></p-button>
+    </p-dialog>
+    
