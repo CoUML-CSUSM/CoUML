@@ -23,7 +23,6 @@ import { ProjectDeveloper } from '../controller/project-developer.controller';
     constructor(
       private _projectManager: ProjectManager,
       private _coUmlHub: CoUmlHubService,
-      private _projectDeveloper: ProjectDeveloper,
       private primengConfig: PrimeNGConfig
       ){
       this._menuItems = [
@@ -32,9 +31,7 @@ import { ProjectDeveloper } from '../controller/project-developer.controller';
           items: [
             {
               label: "New...",
-              //command: () => this.generate(),
               command: () => this.gfg(),
-              // command: ()=> this._newDiagramDialog_isVisible = true,
             },
             {
               label: "Trigger Breakpoint",
@@ -42,9 +39,7 @@ import { ProjectDeveloper } from '../controller/project-developer.controller';
             },
             {
               label: "Fetch Test",
-              //command: () => this.generate(),
               command: () => this._coUmlHub._projectDeveloper.open("test"),
-              // command: ()=> this._newDiagramDialog_isVisible = true,
             }
           ]
         },

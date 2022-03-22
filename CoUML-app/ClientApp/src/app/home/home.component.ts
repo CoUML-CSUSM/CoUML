@@ -32,11 +32,7 @@ export class HomeComponent {
 
 	constructor(
     private _coUmlHub: CoUmlHubService,
-    private _renderer: Renderer2,
-    // private _projectManager: ProjectManager,
-    // private _projectDeveloper: ProjectDeveloper,
-     //private _projectDiagram: Diagram, //idk
-    // private _diagramEditor: EditorComponent//idk
+    private _renderer: Renderer2
     ) {
 
   }
@@ -53,19 +49,8 @@ export class HomeComponent {
     console.log(dId);
     this._coUmlHub._projectManager.generate(dId);
     console.log("generated");
-    //this._coUmlHub.fetch(dId);
-    //somethign to cler the diagram here or something
     console.log("opeining");
     this._coUmlHub._projectDeveloper.open(dId);
-    
-    // this._coUmlHub.fetch( dId ) //get diagram from server
-		// 	.then( (d) => {
-		// 		//this._coUmlHub.subscribe(this);
-		// 		console.log(d);
-		// 		this._projectDiagram = Assembler.assembleDiagram(d);
-		// 		console.log(this._projectDiagram);
-		// 		this._diagramEditor.draw();
-		// 	} ); 
      console.log("opened");
   }
   
