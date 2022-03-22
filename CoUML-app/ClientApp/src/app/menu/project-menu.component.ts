@@ -16,9 +16,6 @@ import { ProjectDeveloper } from '../controller/project-developer.controller';
     _menuItems: MenuItem[];
     @Output() open: EventEmitter<boolean> = new EventEmitter();
 
-    // _newDiagramDialog_isVisible = false;
-
-    // input_diagramName:string
 
     constructor(
       private _projectManager: ProjectManager,
@@ -31,7 +28,7 @@ import { ProjectDeveloper } from '../controller/project-developer.controller';
           items: [
             {
               label: "New...",
-              command: () => this.gfg(),
+              command: () => this.showNewDiagramDialog(),
             },
             {
               label: "Trigger Breakpoint",
@@ -46,24 +43,30 @@ import { ProjectDeveloper } from '../controller/project-developer.controller';
         {
           label: "Edit",
           items: []
+        },
+        {
+          label: "User",
+          items: [
+            {
+              label: "Login...",
+
+            }
+          ]
         }
       ];
 
     }
 
-    public generate(){
-        this._projectManager.generate("null");
-    }
+    // public generate(){
+    //     this._projectManager.generate("null");
+    // }
     
     //pop up
     ngOnInit() {
       this.primengConfig.ripple = true;
     }
     
-    geeks: boolean;
-    
-    gfg() {
-      this.geeks = true;
-      this.open.emit(this.geeks);
+    showNewDiagramDialog() {
+      this.open.emit(true);
     }
   }

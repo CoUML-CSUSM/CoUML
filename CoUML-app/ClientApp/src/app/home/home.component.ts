@@ -26,7 +26,7 @@ import { CoUmlHubService } from '../service/couml-hub.service';
 export class HomeComponent {
 
   ip: string;
-  geeks: boolean = false;
+  showNewDiagramDialog: boolean = false;
   value1: string;
 
 
@@ -41,7 +41,7 @@ export class HomeComponent {
     event
   )
   {
-    this.geeks = event;
+    this.showNewDiagramDialog = event;
   }
 
   public create(dId:string){
@@ -52,6 +52,7 @@ export class HomeComponent {
     console.log("opeining");
     this._coUmlHub._projectDeveloper.open(dId);
      console.log("opened");
+     this.showNewDiagramDialog = false;
   }
   
   public test(){
