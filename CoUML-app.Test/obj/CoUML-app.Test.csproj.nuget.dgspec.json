@@ -33,6 +33,7 @@
           }
         },
         "warningProperties": {
+          "allWarningsAsErrors": true,
           "warnAsError": [
             "NU1605"
           ]
@@ -53,6 +54,14 @@
             "Microsoft.NET.Test.Sdk": {
               "target": "Package",
               "version": "[17.0.0, )"
+            },
+            "Selenium.WebDriver": {
+              "target": "Package",
+              "version": "[3.10.0, )"
+            },
+            "WebDriverManager": {
+              "target": "Package",
+              "version": "[2.12.3, )"
             }
           },
           "imports": [
@@ -115,6 +124,10 @@
             "Microsoft.AspNetCore.SpaServices.Extensions": {
               "target": "Package",
               "version": "[5.0.11, )"
+            },
+            "MongoDB.Driver": {
+              "target": "Package",
+              "version": "[2.14.1, )"
             },
             "Newtonsoft.Json": {
               "target": "Package",

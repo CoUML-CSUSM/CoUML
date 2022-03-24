@@ -1,3 +1,4 @@
+import { stringify } from "querystring";
 import { AbstractClass, 
 	ActionType, 
 	PropertyType, 
@@ -47,6 +48,15 @@ import { EditorComponent } from "./editor.component";
  //================================================================================================
  //	context menue for Relations
  //================================================================================================
+	const _relationtypeCatolog: Map<RelationshipType, string> = new Map();
+	_relationtypeCatolog.set(RelationshipType.Dependency, 'Dependency');
+	_relationtypeCatolog.set(RelationshipType.Association, 'Association');	
+	_relationtypeCatolog.set(RelationshipType.Aggregation, 'Aggregation'); 
+	_relationtypeCatolog.set(RelationshipType.Composition, 'Composition');	
+	_relationtypeCatolog.set(RelationshipType.Generalization, 'Generalization');
+	_relationtypeCatolog.set(RelationshipType.Realization, 'Realization');
+	
+   
 	/**
 	 * creates a context menu for setting the relation type of an edge
 	 * @param graph 
@@ -59,12 +69,9 @@ import { EditorComponent } from "./editor.component";
 			console.log(cell)
 			if(cell?.edge)// menu if user clicks on edge
 			{
-				menu.addItem('Dependency',		'editors/images/uml/Dependency.svg',	()=>setRelationType(cell, RelationshipType.Dependency));
-				menu.addItem('Association',		'editors/images/uml/Association.svg',	 ()=>setRelationType(cell, RelationshipType.Association));
-				menu.addItem('Aggregation', 	'editors/images/uml/Aggregation.svg',	 ()=>setRelationType(cell, RelationshipType.Aggregation));
-				menu.addItem('Composition',		'editors/images/uml/Composition.svg',	()=>setRelationType(cell, RelationshipType.Composition));
-				menu.addItem('Generalization',	'editors/images/uml/Generalization.svg',	()=>setRelationType(cell, RelationshipType.Generalization));
-				menu.addItem('Realization',		'editors/images/uml/Realization.svg',	()=>setRelationType(cell, RelationshipType.Realization));
+				_relationtypeCatolog.forEach((title: string, relationshipType: RelationshipType)=>{
+					menu.addItem(title,		EDITOR_IMAGES_UML_PAPTH(title),	()=>setRelationType(cell, relationshipType)).id = title;
+				})
 			}
 		};
 
@@ -87,14 +94,15 @@ import { EditorComponent } from "./editor.component";
  //================================================================================================
 	const _prototypeCatalog: Map<any, string > = new Map();
 	//iconCatalog.set(prototype, wwwroot/ <<path>>);
-	_prototypeCatalog.set( Interface, 'editors/images/uml/Interface.svg', );
-	_prototypeCatalog.set( AbstractClass, 'editors/images/uml/Abstract.svg');
-	_prototypeCatalog.set( Class, 'editors/images/uml/Class.svg');
-	_prototypeCatalog.set( Enumeration, 'editors/images/uml/Enumeration.svg');
-	_prototypeCatalog.set( Attribute, 'editors/images/uml/Attribute.svg');
-	_prototypeCatalog.set( Operation, 'editors/images/uml/Operation.svg');
-	_prototypeCatalog.set( Enumeral, 'editors/images/uml/Enumeral.svg');
+	_prototypeCatalog.set( Interface, 'Interface', );
+	_prototypeCatalog.set( AbstractClass, 'Abstract');
+	_prototypeCatalog.set( Class, 'Class');
+	_prototypeCatalog.set( Enumeration, 'Enumeration');
+	_prototypeCatalog.set( Attribute, 'Attribute');
+	_prototypeCatalog.set( Operation, 'Operation');
+	_prototypeCatalog.set( Enumeral, 'Enumeral');
 
+	const EDITOR_IMAGES_UML_PAPTH = (name: string )=> {return `editors/images/uml/${name}.svg`};
 	/**
 	 * 
 	 * @param items the types of items to be included in the toolbar
@@ -191,12 +199,12 @@ import { EditorComponent } from "./editor.component";
 		}
 		
 		// Creates the image which is used as the drag icon (preview)
-		var img = editorComponent.toolbar.addMode("Drag", image, function(evt, cell)
+		var img = editorComponent.toolbar.addMode("Drag", EDITOR_IMAGES_UML_PAPTH(image), function(evt, cell)
 		{
 			var pt = editorComponent.graph.getPointForEvent(evt, true);
 			drop(editorComponent.graph, evt, cell, pt.x, pt.y);
 		});
-		
+		img.id = image;
 		mxUtils.makeDraggable(img, editorComponent.graph, drop);
 		
 		return img;
@@ -414,6 +422,7 @@ import { EditorComponent } from "./editor.component";
 	 */
 	function click(graph: mxGraph, editorComponent: EditorComponent)
 	{
+		var click = 0;
 		// TODO: need to come up with a better way to lock items.
 		graph.addListener(mxEvent.CLICK, 
 			// click on object to see its makup.
@@ -421,7 +430,13 @@ import { EditorComponent } from "./editor.component";
 				let affectedCells = eventObject.getProperties().cell;
 				console.log('%c%s',f_alert, "mxCell description");
 				console.log(affectedCells);
-
+				if(eventSource.lastMouseX){	
+					let x = eventSource.lastMouseX;
+					let y = eventSource.lastMouseY;
+					let coords = `${click++}:\t(${x},${y})`
+					console.log('%c%s',f_info, coords);
+					graph.insertVertex(graph.getDefaultParent(), null, coords, x-212, y-64, 10, 10, 'ClickHere');
+				}
 				if(graph.isCellLocked(affectedCells))
 					affectedCells = undefined;
 				if(affectedCells == undefined )

@@ -259,7 +259,7 @@ namespace CoUML_app.Controllers.Hubs
 
             //sends diagram as bson doc using the string of the diagram
             MongoDB.Bson.BsonDocument doc = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonDocument>(
-                JsonConvert.SerializeObject(testDiagram, Formatting.Indented, new JsonSerializerSettings
+                JsonConvert.SerializeObject(new Diagram(Did), Formatting.Indented, new JsonSerializerSettings
                     {
                         TypeNameHandling = TypeNameHandling.Auto
                     })
