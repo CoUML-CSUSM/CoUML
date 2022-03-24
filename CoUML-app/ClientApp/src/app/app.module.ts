@@ -23,6 +23,8 @@ import {MenubarModule} from 'primeng/menubar';
 
 import {TabViewModule} from 'primeng/tabview';
 import {DialogModule} from 'primeng/dialog';
+import {MessagesModule} from 'primeng/messages';
+import {MessageModule} from 'primeng/message';
 
 @NgModule({
   declarations: [
@@ -52,7 +54,8 @@ import {DialogModule} from 'primeng/dialog';
     MenubarModule,
     TabViewModule,
     DialogModule,
-    
+    MessagesModule,
+    MessageModule,
     BrowserAnimationsModule
   ],
   providers: [

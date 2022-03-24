@@ -21,6 +21,8 @@ export class EditorComponent implements AfterViewInit{
 	diagram_description: string;
 	diagramId: string;
 
+	showGraph = false;
+
 	editorOverlay: mxCellOverlay;
 
 	_activeEditCell: mxCell = null;
@@ -41,8 +43,6 @@ export class EditorComponent implements AfterViewInit{
 	) {
 		this._projectDeveloper.subscribe(this);
 		this.onResize();
-			
-
 	}
 
 	/** frame controls */
@@ -68,10 +68,15 @@ export class EditorComponent implements AfterViewInit{
 	 */
 	ngAfterViewInit(): void 
 	{
-		//init graph div
+		this.initToolbar();
+	}
+	initGraph()
+	{
+
+		this.showGraph = true;
 		this._graph = new mxGraph(this.graphContainer.nativeElement);
 		this._graph.setDropEnabled(true); // ability to drag elements as groups
-	
+
 		// UML styles
 		EditorFormatHandler.addEdgeStyles(this._graph);
 		EditorFormatHandler.addCellStyles(this._graph);
@@ -94,17 +99,10 @@ export class EditorComponent implements AfterViewInit{
 			this._graph,
 			this
 		);
-		
+
 		//special context menu on graph
 		mxEvent.disableContextMenu(this.graphContainer.nativeElement);
 		EditorEventHandler.addContextMenu( this._graph, this);
-
-		//init toolbar div
-        this._toolbar = new mxToolbar(this.toolbarContainer.nativeElement);
-		EditorEventHandler.addToolbarItems(
-			[Class, AbstractClass, Interface, Enumeration, Attribute, Operation, Enumeral],
-			this
-		);
 
 		// Key binding
 		// Adds handling of return and escape keystrokes for editing
@@ -118,9 +116,18 @@ export class EditorComponent implements AfterViewInit{
 
 	}
 
-	
+	initToolbar()
+	{
 
-	
+		//init toolbar div
+		this._toolbar = new mxToolbar(this.toolbarContainer.nativeElement);
+		EditorEventHandler.addToolbarItems(
+			[Class, AbstractClass, Interface, Enumeration, Attribute, Operation, Enumeral],
+			this
+		);
+
+	}
+		
 	/**
 	 * stage the change initiated by the user
 	 * @param change 
@@ -139,6 +146,11 @@ export class EditorComponent implements AfterViewInit{
 	 */
 	public draw(projectDiagram: Diagram) 
 	{
+		if(!this.showGraph)
+		{
+			this.initGraph();
+		}
+		this.clearGraph();
 		//turn off notifications before drawing new graph 
 		this._graph.eventsEnabled = false;
 
@@ -484,6 +496,11 @@ export class EditorComponent implements AfterViewInit{
 				deleteId
 			));
 		}
+	}
+	clearGraph()
+	{
+		this._graph.selectAll(this._graph.getDefaultParent(), true);
+		this._graph.removeCells(this._graph.getSelectionCells(), true);
 	}
 
 	/**
