@@ -4,7 +4,7 @@ using CoUML_app.Models;
 
 namespace CoUML_app.Models
 {
-	public abstract class Component : DiagramElement{
+	public abstract class Component : UmlElement{
 		public string name { get;set; }
 
 		public Component(string name)

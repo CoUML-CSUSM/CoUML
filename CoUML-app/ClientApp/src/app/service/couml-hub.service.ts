@@ -12,8 +12,8 @@ export class CoUmlHubService{
 	
 	private _url = environment.apiUrl + "/couml";
 
-	private _projectDeveloper: ProjectDeveloper = null;
-	private _projectManager: ProjectManager = null;
+	public _projectDeveloper: ProjectDeveloper = null;
+	public _projectManager: ProjectManager = null;
 
 	constructor(){
 		this._coUmlHubConnection = new HubConnectionBuilder()
@@ -24,15 +24,20 @@ export class CoUmlHubService{
 
 	/**
 	 * 2 way comunication between hub and  developer
-	 * @param projectDeveloper 
+	 * @param subscriber 
 	 */
-	public subscribe(projectDeveloper: ProjectDeveloper): void
+	public subscribe(subscriber: any): void
 	{
-		if(!this._projectDeveloper)
-			this._projectDeveloper = projectDeveloper;
-			this._projectDeveloper.setEditor(new User(this._coUmlHubConnection.connectionId));
-			
+		if(subscriber instanceof ProjectDeveloper){
+
+			this._projectDeveloper = subscriber;
+		}
+		else if(subscriber instanceof ProjectManager)
+			this._projectManager  = subscriber;
+		
+		
 	}
+
 
 	private startConnection()
 	{
@@ -63,9 +68,11 @@ export class CoUmlHubService{
 	 */
 	public fetch(dId: string ): Promise<string>
 	{
+
 		// calling function : public string Fetch(string dId)
-		return this._coUmlHubConnection.invoke<string>('Fetch','test'); // test diagram
-		// return this._coUmlHubConnection.invoke<Diagram>('Fetch',dId); 
+		//return this._coUmlHubConnection.invoke<string>('Fetch','test'); // test diagram
+		this._projectDeveloper.setEditor(new User(this._coUmlHubConnection.connectionId));
+		return this._coUmlHubConnection.invoke<string>('Fetch',dId); 
 	}
 
 	/**
@@ -103,6 +110,8 @@ export class CoUmlHubService{
 
 	public generate(Did:string)
 	{
+		console.log("hub");
+    	console.log(Did);
 		this._coUmlHubConnection.invoke("Generate",Did);
 	}
 

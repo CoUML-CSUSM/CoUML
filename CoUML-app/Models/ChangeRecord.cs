@@ -10,7 +10,7 @@ namespace CoUML_app.Models
 
     public enum ActionType
     {
-        Insert, // value must be < DiagramElement | ComponenetProperty >
+        Insert, // value must be < UmlElement | ComponenetProperty >
         Remove, // value must be < string | id>
         Change, // value must be approprate datatypes of ChangePropertyType
         Lock,	

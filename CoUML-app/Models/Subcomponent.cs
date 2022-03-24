@@ -3,7 +3,7 @@ using System.Collections.Generic;
 namespace CoUML_app.Models
 {
 
-	public class Relationship : DiagramElement{
+	public class Relationship : UmlElement{
 		public RelationshipType type {get; set;}
 		public string source {get; set;}
 		public Component sourceComponent{set{source = value.id;}}
@@ -18,7 +18,7 @@ namespace CoUML_app.Models
 	}
 
 
-	public abstract class ComponentProperty: SerializedElement{
+	public abstract class ComponentProperty: UmlElement{
 		public VisibilityType visibility {get; set;}
 		public string name{get; set;}
 		public string propertyString {get; set;}

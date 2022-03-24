@@ -112,12 +112,10 @@ export class EditorComponent implements AfterViewInit{
 		this._editorKeyHandler.bindKey(DELETE, ()=>this.deleteCell()); 
 		this._editorKeyHandler.bindKey(BACKSPACE, ()=>this.deleteCell()); 
 
-		//get test diagram
-		setTimeout(()=>	this._projectDeveloper.open(this.diagramId), 500);
-
 
 		this.editorOverlay = new mxCellOverlay(
 			new mxImage('editors/images/overlays/user3.png', 24, 24), "locked by other user");
+
 	}
 
 	

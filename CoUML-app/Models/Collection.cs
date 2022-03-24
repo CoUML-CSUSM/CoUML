@@ -135,12 +135,12 @@ namespace CoUML_app.Models
 		}
 	}
 
-	public class RelationalCollection<T> : ICollection<T> where T:SerializedElement
+	public class RelationalCollection<T> : ICollection<T> where T:UmlElement
 	{
 		private Dictionary<string, T> _items;
-		// public List<DiagramElement> items{
+		// public List<UmlElement> items{
 		// 	get{
-		// 		return new List<DiagramElement>(this._items.Values);
+		// 		return new List<UmlElement>(this._items.Values);
 		// 	}
 		// }
 
