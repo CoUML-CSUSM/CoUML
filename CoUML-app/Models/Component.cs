@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using CoUML_app.Models;
+using CoUML_app.Controllers.Generators;
 
 namespace CoUML_app.Models
 {
@@ -10,6 +11,10 @@ namespace CoUML_app.Models
 		public Component(string name)
 		{
 			this.name = name;
+		}
+		override public void GenerateCode(ISourceCodeGenerator codeGenerator)
+		{
+			codeGenerator.Parse(this);
 		}
 	}
 
@@ -28,6 +33,7 @@ namespace CoUML_app.Models
 		{
 			this.operations = new RelationalCollection<Operation>();
 		}
+		
 	}
 
 	public class AbstractClass : Component{
@@ -39,6 +45,7 @@ namespace CoUML_app.Models
 			this.operations = new RelationalCollection<Operation>();
 			this.attributes = new RelationalCollection<Attribute>();
 		}
+
 	}
 
 	public class Class : Component{
@@ -50,6 +57,7 @@ namespace CoUML_app.Models
 			this.operations = new RelationalCollection<Operation>();
 			this.attributes = new RelationalCollection<Attribute>();
 		}
+
 	}
 }
 

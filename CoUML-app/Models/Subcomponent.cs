@@ -1,5 +1,6 @@
 using  System;
 using System.Collections.Generic;
+using CoUML_app.Controllers.Generators;
 namespace CoUML_app.Models
 {
 
@@ -13,7 +14,10 @@ namespace CoUML_app.Models
 
 		public Relationship()
 		{
-			// this.attributes = new RelationalCollection<Attribute> ();
+		}
+		override public void GenerateCode(ISourceCodeGenerator codeGenerator)
+		{
+			codeGenerator.Parse(this);
 		}
 	}
 
@@ -23,6 +27,10 @@ namespace CoUML_app.Models
 		public string name{get; set;}
 		public string propertyString {get; set;}
 		public DataType type{get; set;}
+		override public void GenerateCode(ISourceCodeGenerator codeGenerator)
+		{
+			codeGenerator.Parse(this);
+		}
 	}
 
 	public class Attribute: ComponentProperty{
@@ -47,6 +55,4 @@ namespace CoUML_app.Models
 		public int max {get; set;}
 
 	}
-
-
 }

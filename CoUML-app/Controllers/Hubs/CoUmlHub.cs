@@ -17,6 +17,7 @@ using Attribute = CoUML_app.Models.Attribute;
 //mongodb stuff
 using MongoDB.Driver;
 using MongoDB.Bson;
+using CoUML_app.Controllers.Generators;
 
 /**
 https://docs.microsoft.com/en-us/aspnet/signalr/overview/guide-to-the-api/working-with-groups
@@ -284,6 +285,13 @@ namespace CoUML_app.Controllers.Hubs
             var filter = Builders<BsonDocument>.Filter.Eq("id", Did);
             var doc = BsonDocument.Parse(Diagram);
             collection.ReplaceOne(filter, doc);
+        }
+
+        public void GenerateCode( string dId, int language = 0)
+        {
+            ISourceCodeGenerator codeGenerator = new JavaCodeGenerator();
+            var testDiagram = DevUtility.DiagramDefualt(dId);
+            testDiagram.GenerateCode(codeGenerator);
         }
     }
 
