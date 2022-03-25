@@ -1,27 +1,10 @@
 import { AfterViewChecked, AfterViewInit, Component as AngularComponent, ElementRef, Renderer2, ViewChild} from '@angular/core';
-import { Diagram } from 'src/models/Diagram';//idk
-import { Assembler } from 'src/models/DiagramModel';//idk
-import { ProjectDeveloper } from '../controller/project-developer.controller';
-import { ProjectManager } from '../controller/project-manager.controller';
-import { EditorComponent } from '../editor/editor.component';
-
 import { CoUmlHubService } from '../service/couml-hub.service';
-
-
-
-// /**
-//  * https://github.com/typed-mxgraph/typed-mxgraph
-//  */
-// @Component({
-//   selector: 'app-home',
-//   templateUrl: './home.component.html',
-// })
 
 
 @AngularComponent({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  // providers: [ProjectManager, ProjectDeveloper],
 })
 export class HomeComponent {
 
@@ -29,17 +12,12 @@ export class HomeComponent {
   showNewDiagramDialog: boolean = false;
   value1: string;
 
-
 	constructor(
     private _coUmlHub: CoUmlHubService,
     private _renderer: Renderer2
-    ) {
+  ) { }
 
-  }
-
-  onOpen(
-    event
-  )
+  onOpen(event)
   {
     this.showNewDiagramDialog = event;
   }

@@ -3,6 +3,7 @@ import { User, Class, AbstractClass, Diagram,  Component, Attribute, Interface, 
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 import * as EditorFormatHandler  from './editor-format.handler';
 import * as EditorEventHandler  from './editor-event.handler';
+import { Event } from 'jquery';
 
 const DELETE = 46;
 const BACKSPACE = 8;
@@ -21,8 +22,6 @@ export class EditorComponent implements AfterViewInit{
 	diagram_description: string;
 	diagramId: string;
 
-	showGraph = false;
-
 	editorOverlay: mxCellOverlay;
 
 	_activeEditCell: mxCell = null;
@@ -34,6 +33,10 @@ export class EditorComponent implements AfterViewInit{
 	public toolbarContainer: ElementRef<HTMLElement>;
 
     private _toolbar: mxToolbar;
+	get isDiagramSet()
+	{
+		return this._projectDeveloper.isDiagramSet();
+	}
 
 	get toolbar(){ return this._toolbar;}
 	get graph(){return this._graph;}
@@ -68,12 +71,13 @@ export class EditorComponent implements AfterViewInit{
 	 */
 	ngAfterViewInit(): void 
 	{
+		this.initGraph();
 		this.initToolbar();
 	}
+
 	initGraph()
 	{
 
-		this.showGraph = true;
 		this._graph = new mxGraph(this.graphContainer.nativeElement);
 		this._graph.setDropEnabled(true); // ability to drag elements as groups
 
@@ -110,22 +114,35 @@ export class EditorComponent implements AfterViewInit{
 		this._editorKeyHandler.bindKey(DELETE, ()=>this.deleteCell()); 
 		this._editorKeyHandler.bindKey(BACKSPACE, ()=>this.deleteCell()); 
 
+		/**
+		 * set callback that a cell is locked if it has an ovelay,
+		 * a cell has an overlau if it has an user
+		 */
+		// let baseIsCellLocked = this._graph.isCellLocked;
+		this._graph.isCellLocked = function(cell: mxCell)
+		{
+			// if* the cell has an overlay *then* somone is using it and the cell is locked
+			return cell?.overlays?.length > 0 || false;
+		}
 
 		this.editorOverlay = new mxCellOverlay(
 			new mxImage('editors/images/overlays/user3.png', 24, 24), "locked by other user");
-
+		
+		let baseIsValidDropTarget = this._graph.isValidDropTarget;
+		this._graph.isValidDropTarget = function (cell: mxCell, cells: mxCell[], evt: Event){
+			return this.isDiagramSet? baseIsValidDropTarget(cell, cells, evt): false;
+		}
+		
 	}
 
 	initToolbar()
 	{
-
 		//init toolbar div
 		this._toolbar = new mxToolbar(this.toolbarContainer.nativeElement);
 		EditorEventHandler.addToolbarItems(
 			[Class, AbstractClass, Interface, Enumeration, Attribute, Operation, Enumeral],
 			this
 		);
-
 	}
 		
 	/**
@@ -134,9 +151,12 @@ export class EditorComponent implements AfterViewInit{
 	 */
 	public stageChange(change: ChangeRecord): void
 	{
-		console.log("change staged")
-		console.log(change);
-		this._projectDeveloper.stageChange(change);
+		if(this.isDiagramSet)
+		{
+			console.log("change staged")
+			console.log(change);
+			this._projectDeveloper.stageChange(change);
+		}
 	}
 
 
@@ -146,10 +166,6 @@ export class EditorComponent implements AfterViewInit{
 	 */
 	public draw(projectDiagram: Diagram) 
 	{
-		if(!this.showGraph)
-		{
-			this.initGraph();
-		}
 		this.clearGraph();
 		//turn off notifications before drawing new graph 
 		this._graph.eventsEnabled = false;
@@ -160,15 +176,7 @@ export class EditorComponent implements AfterViewInit{
 		//set defualt parrent id to diagram id
 		this._graph.getDefaultParent().id = projectDiagram.id;
 
-		/**
-		 * set callback that a cell is locked if it has an ovelay,
-		 * a cell has an overlau if it has an user
-		 */
-		this._graph.isCellLocked = function(cell: mxCell)
-		{
-			// if* the cell has an overlay *then* somone is using it and the cell is locked
-			return cell?.overlays?.length > 0 || false;
-		}
+		
 
 		// this._graph.iscellS
 		this._graph.getModel().beginUpdate();
@@ -352,7 +360,7 @@ export class EditorComponent implements AfterViewInit{
 				this._graph.addCellOverlay(affectedCell, this.editorOverlay);
 				break;
 			case ActionType.Release:
-				this._graph.removeCellOverlays(affectedCell);
+				this._graph.removeCellOverlay(affectedCell, this.editorOverlay);
 			default:	break;
 		}
 	}
