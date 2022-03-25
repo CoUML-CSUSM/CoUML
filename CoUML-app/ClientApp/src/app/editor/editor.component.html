@@ -6,16 +6,14 @@
     [style.height.px]="canvasHeight"
     >
 
-      <p-dialog header="Welcome to CoUML" [(visible)]="!showGraph" [closable]="false" >
+      <p-dialog header="Welcome to CoUML" [visible]="!isDiagramSet" [closable]="false" >
         Please fetch existing diagram or create new diagram to start. 
     </p-dialog>
 
       <div #graphContainer id="graphContainer" 
-      class="overflow-scroll"
       style=" background:url('editors/images/grid.gif'); height: -webkit-fill-available;" 
+      class="overflow-scroll"
       ></div>
-
-
 
   </div>
 
@@ -24,4 +22,4 @@
     <div #toolbarContainer class="h-screen" [style.background]="accentColor" > </div>
   </div>
 
-  
+  <!--    -->

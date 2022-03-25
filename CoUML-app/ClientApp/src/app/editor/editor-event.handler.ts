@@ -134,66 +134,68 @@ import { EditorComponent } from "./editor.component";
 
 			console.log('%c%s', f_alert, "DRAGDROP");
 			console.log(parentCell) //return null if empty space, otherwise cell
-
-			let component = new prototype(); //creates new compnent object of approrate type
-			if(component instanceof Component) //if adding new component
+			if(editorComponent.isDiagramSet)
 			{
-				component.dimension.x =   Math.floor(x / 10) * 10;
-				component.dimension.y =   Math.floor(y / 10) * 10;
-
-				// graph.setSelectionCell(vertex);
-				editorComponent.insertComponent(component);
-
-			// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
-				editorComponent.stageChange(new ChangeRecord(
-					[graph.getDefaultParent().id],
-					PropertyType.Elements,
-					ActionType.Insert,
-					component
-				));
-			// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-			}
-			else if(parentCell)//if adding property to component
-			{
-				var style = graph.getCellStyle(parentCell) as any[];
-				while(style['childLayout'] != 'stackLayout' )
+				let component = new prototype(); //creates new compnent object of approrate type
+				if(component instanceof Component) //if adding new component
 				{
-					parentCell = parentCell.parent;
-					style = graph.getCellStyle(parentCell) as any[];
-				}
-				
-				console.log(parentCell);
-				//does this acctualy go here?
-				if((component instanceof Attribute 
-					&& (parentCell.style == Class.name 
-						|| parentCell.style == AbstractClass.name 
-						)) ||
-					(component instanceof Operation
-					&&(parentCell.style == Class.name 
-						|| parentCell.style == AbstractClass.name 
-						|| parentCell.style == Interface.name 
-						)) ||
-					( component instanceof Enumeral && parentCell.style == Enumeration.name)
-					)
-				{
-					console.log("this goes here");
+					component.dimension.x =   Math.floor(x / 10) * 10;
+					component.dimension.y =   Math.floor(y / 10) * 10;
 
-					editorComponent.insertProperty(parentCell, component);
+					// graph.setSelectionCell(vertex);
+					editorComponent.insertComponent(component);
 
 				// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
-
 					editorComponent.stageChange(new ChangeRecord(
-						editorComponent.getIdPath(parentCell),
-						component instanceof Operation? 
-								PropertyType.Operations: component instanceof Attribute?
-								PropertyType.Attributes: PropertyType.Enums,
+						[graph.getDefaultParent().id],
+						PropertyType.Elements,
 						ActionType.Insert,
 						component
 					));
 				// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-				} else
+				}
+				else if(parentCell)//if adding property to component
 				{
-					console.log(`${component.constructor.name} type object does NOT go here`);
+					var style = graph.getCellStyle(parentCell) as any[];
+					while(style['childLayout'] != 'stackLayout' )
+					{
+						parentCell = parentCell.parent;
+						style = graph.getCellStyle(parentCell) as any[];
+					}
+					
+					console.log(parentCell);
+					//does this acctualy go here?
+					if((component instanceof Attribute 
+						&& (parentCell.style == Class.name 
+							|| parentCell.style == AbstractClass.name 
+							)) ||
+						(component instanceof Operation
+						&&(parentCell.style == Class.name 
+							|| parentCell.style == AbstractClass.name 
+							|| parentCell.style == Interface.name 
+							)) ||
+						( component instanceof Enumeral && parentCell.style == Enumeration.name)
+						)
+					{
+						console.log("this goes here");
+
+						editorComponent.insertProperty(parentCell, component);
+
+					// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
+
+						editorComponent.stageChange(new ChangeRecord(
+							editorComponent.getIdPath(parentCell),
+							component instanceof Operation? 
+									PropertyType.Operations: component instanceof Attribute?
+									PropertyType.Attributes: PropertyType.Enums,
+							ActionType.Insert,
+							component
+						));
+					// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+					} else
+					{
+						console.log(`${component.constructor.name} type object does NOT go here`);
+					}
 				}
 			}
 		}
@@ -202,11 +204,10 @@ import { EditorComponent } from "./editor.component";
 		var img = editorComponent.toolbar.addMode("Drag", EDITOR_IMAGES_UML_PAPTH(image), function(evt, cell)
 		{
 			var pt = editorComponent.graph.getPointForEvent(evt, true);
-			drop(editorComponent.graph, evt, cell, pt.x, pt.y);
+				drop(editorComponent.graph, evt, cell, pt.x, pt.y);
 		});
 		img.id = image;
 		mxUtils.makeDraggable(img, editorComponent.graph, drop);
-		
 		return img;
 	}
 

@@ -27,6 +27,10 @@ export class ProjectDeveloper{
 		console.log("editor set to");
 		console.log(this._editor);
 	}
+	isDiagramSet()
+	{
+		return this._projectDiagram != null;
+	}
 
 	public open( id: string )
 	{
@@ -43,7 +47,8 @@ export class ProjectDeveloper{
 
 	public close ()
 	{
-		//TODO: close the project and remove yourself from the group
+		this._projectDiagram = null;
+		this._diagramEditor.clearGraph();
 	}
 	
 	public applyChanges(changes: ChangeRecord[])
