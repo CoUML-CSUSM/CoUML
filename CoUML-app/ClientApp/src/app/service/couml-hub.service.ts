@@ -8,6 +8,7 @@ import { Assembler, ChangeRecord, User, Diagram } from 'src/models/DiagramModel'
 
 @Injectable()
 export class CoUmlHubService{
+
 	private _coUmlHubConnection: HubConnection;
 	
 	private _url = environment.apiUrl + "/couml";
@@ -79,10 +80,10 @@ export class CoUmlHubService{
 	 * Changes are commited from client to server
 	 * @param changes 
 	 */
-	public commit(changes: ChangeRecord[])
+	public commit(dId: string, changes: ChangeRecord[])
 	{
 		let changesDTO = JSON.stringify(changes)
-		this._coUmlHubConnection.invoke("Push", 'test', changesDTO);
+		this._coUmlHubConnection.invoke("Push", dId, changesDTO);
 	}
 
 	/**
@@ -98,6 +99,11 @@ export class CoUmlHubService{
 			this._projectDeveloper.applyChanges(changes);
 
 		}
+	}
+
+	generateSourceCode(dId: string, language: number = 0): void {
+		// TODO: language number should be enum | lang.Java = 0
+		this._coUmlHubConnection.invoke("GenerateSourceCode", dId, language);
 	}
 
 

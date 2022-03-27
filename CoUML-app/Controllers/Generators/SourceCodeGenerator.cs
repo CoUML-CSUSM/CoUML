@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using Microsoft.AspNetCore.SignalR;
@@ -24,12 +23,14 @@ namespace CoUML_app.Controllers.Generators
 
     public class JavaCodeGenerator: ISourceCodeGenerator
     {
-        string packageDirectory = null;
+        string _packageDirectory = null;
+        FileStreamWriter _sourceCodeFileStream  = null;
+        
         public void CreatePackage(Diagram diagram)
         {
             string rootDirectory =  Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Java/");
-            packageDirectory = Path.Combine(rootDirectory, diagram.id);
-            System.IO.Directory.CreateDirectory(packageDirectory);
+            _packageDirectory = Path.Combine(rootDirectory, diagram.id);
+            System.IO.Directory.CreateDirectory(_packageDirectory);
         }
         public void ClosePackage()
         {
@@ -48,22 +49,61 @@ namespace CoUML_app.Controllers.Generators
 
         public void ParseClass(Class classModel)
         {
-            string sourceCodeFile = Path.Combine(packageDirectory, classModel.name+".java");
+            string sourceCodeFile = Path.Combine(_packageDirectory, classModel.name+".java");
             if(!System.IO.File.Exists(sourceCodeFile))
             {
-                FileStreamWriter sourceCodeFileStream = new FileStreamWriter(sourceCodeFile);
-                sourceCodeFileStream.Write($"public class {classModel.name}");
-                sourceCodeFileStream.Close();
+                _sourceCodeFileStream = new FileStreamWriter(sourceCodeFile);
 
+                _sourceCodeFileStream.Write($"public class {classModel.name} {{");
+                Iterate(classModel.attributes.Iterator() as Models.ICollectionIterator<ComponentProperty>);
+                Iterate(classModel.operations.Iterator() as Models.ICollectionIterator<ComponentProperty>);
+
+                _sourceCodeFileStream.Write($"}}");
+                _sourceCodeFileStream.Close();
+                _sourceCodeFileStream = null;
             }
             else
             {
                 Console.WriteLine("File \"{0}\" already exists.", sourceCodeFile);
                 return;
             }
-
         }
 
+        public void ParseAttribute(Models.Attribute attribute)
+        {
+            if(IsWritng())
+            {
+                _sourceCodeFileStream.Write(
+                    ( attribute.visibility==null? "" : $"{GetVisibility(attribute.visibility)} " )+
+                    $"{attribute.type.dataType}" +
+                    $"{attribute.name}" +
+                    $"// {attribute.propertyString}");
+            }
+        }
+
+        public void Iterate(Models.ICollectionIterator<ComponentProperty> iterator)
+        {
+            while(iterator.HasNext())
+                iterator.GetNext().GenerateCode(this);
+        }
+
+        private Boolean IsWritng()
+        {
+            return !(_sourceCodeFileStream == null);
+        }
+
+        private String GetVisibility(VisibilityType type)
+        {
+            switch(type)
+            {
+                case VisibilityType.Package:    return "package";
+                case VisibilityType.Private:    return "private";
+                case VisibilityType.Protected:  return "protected";
+                case VisibilityType.Public:     return "public";
+                case VisibilityType.LocalScope:
+                default:                        return "";
+            }
+        }
 
     }
 }

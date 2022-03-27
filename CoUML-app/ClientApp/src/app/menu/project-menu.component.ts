@@ -37,7 +37,20 @@ import { ProjectDeveloper } from '../controller/project-developer.controller';
             {
               label: "Fetch Test",
               command: () => this._coUmlHub._projectDeveloper.open("test"),
-            }
+            },
+            {
+              separator:true
+            },
+            {
+              label: "Export",
+              items: [
+                {
+                  label: "Generate Source Code...('test')",
+                  command: () => this._coUmlHub.generateSourceCode("test")
+                }
+              ]
+            },
+
           ]
         },
         {

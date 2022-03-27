@@ -5,3 +5,5 @@ CoUML-app.Test/obj/Debug/net5.0/CoUML-app.Test.csproj.AssemblyReference.cache
 *.dll
 *.cache
 CoUML-app.Test/obj/Debug/*
+*.dll
+*.dll

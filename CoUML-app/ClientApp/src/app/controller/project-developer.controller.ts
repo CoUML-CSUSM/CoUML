@@ -124,7 +124,7 @@ export class ProjectDeveloper{
 		if(!this.shouldDelay)
 		{
 			this.shouldDelay = true;
-			this._coUmlHub.commit(this._changes);
+			this._coUmlHub.commit(this._projectDiagram.id, this._changes);
 			this._changes = [];
 			//artificial delay that prevents the program from updating too offten, but submits any last added elements
 			setTimeout(()=>{

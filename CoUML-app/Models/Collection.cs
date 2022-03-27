@@ -1,8 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Converters;
 
 namespace CoUML_app.Models
 {
@@ -21,8 +18,7 @@ namespace CoUML_app.Models
 		public void Insert(T item);
 		public T Remove(string key);
 		public T Remove(int key);
-		public int size { get;}
-		// public List<T> items{ get; }
+		public int Size { get;}
 		
 	}
 	public class GeneralCollection<T> : ICollection<T>
@@ -108,7 +104,7 @@ namespace CoUML_app.Models
 		/// Size of the collecion
 		/// </summary>
 		/// <value>size</value>
-		public int size
+		public int Size
 		{
 			get
 			{
@@ -124,7 +120,7 @@ namespace CoUML_app.Models
 		/// <returns>true if valid</returns>
 		private bool ValidIndex(int i)
 		{
-			return i>=0 && i < size;
+			return i>=0 && i < Size;
 		}
 
 		public T this[int i]
@@ -197,7 +193,7 @@ namespace CoUML_app.Models
 		public T Remove(int index)
 		{
 			T item = default(T);
-			if(index >= 0 && index < size )
+			if(index >= 0 && index < Size )
 			{
 				item = (new List<T>(this._items.Values)).ToArray()[index];
 				this._items.Remove(((T)item).id);
@@ -206,7 +202,7 @@ namespace CoUML_app.Models
 		}
 
 
-		public int size
+		public int Size
 		{
 			get
 			{
@@ -228,13 +224,13 @@ namespace CoUML_app.Models
 
 		public bool HasNext()
 		{
-			return _position < _collection.size;
+			return _position < _collection.Size;
 		}
 		public T GetNext()
 		{
 			if(HasNext())
 				return this._collection[_position++];
-			throw new CollectionException("{size, position} = {" + this._collection.size + ", " + this._position + "}");
+			throw new CollectionException($"(size, position) = ({this._collection.Size}, {this._position})");
 		}
 		public bool HasPrevious()
 		{
@@ -244,7 +240,7 @@ namespace CoUML_app.Models
 		{
 			if( HasPrevious())
 				return this._collection[_position--];
-			throw new CollectionException("{size, position} = {" + this._collection.size + ", " + this._position + "}");
+			throw new CollectionException($"(size, position) = ({this._collection.Size}, {this._position})");
 		}
 	}
 
