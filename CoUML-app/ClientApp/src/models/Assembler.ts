@@ -1,5 +1,5 @@
 import { UmlElement } from "./Diagram";
-import { DataType, Diagram, Relationship, RelationshipType, Class, Dimension, Operation, Attribute, AbstractClass, Interface, Enumeration, ICollection, IUser, User, NullUser } from "./DiagramModel";
+import { TYPE, DataType, Diagram, Relationship, RelationshipType, Class, Dimension, Operation, Attribute, AbstractClass, Interface, Enumeration, ICollection, IUser, User, NullUser } from "./DiagramModel";
 import { Enumeral } from "./Subcomponent";
 import { VisibilityType } from "./Types";
 
@@ -210,7 +210,7 @@ import { VisibilityType } from "./Types";
 		console.log("----- getType")
 		console.log(element)
 		try{
-			let typeString = element["$type"] || element["_$type"];
+			let typeString = element["$type"] || element[TYPE];
 			console.log(typeString);
 			let regex = /(\w*?),*?(?=,)/g;
 			let type = regex.exec(typeString)[0];

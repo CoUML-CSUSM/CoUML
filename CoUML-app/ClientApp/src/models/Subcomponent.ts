@@ -93,7 +93,6 @@ export abstract class ComponentProperty extends UmlElement
 	constructor(type)
 	{
 		super(type);
-		// this["_$type"] = `CoUML_app.Model.${type}, CoUML-app`;
 	}
 }
 /**

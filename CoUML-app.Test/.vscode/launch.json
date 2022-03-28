@@ -5,10 +5,11 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"command": "dotnet test CoUML-app.Test.csproj --configuration Release",
+			"command": "dotnet test CoUML-app.Test.csproj",
 			"name": "[Unit Test] .NET CoUML-app.Test ",
 			"request": "launch",
-			"type": "node-terminal"
+			"type": "coreclr",
+			"request": "attach"
 		}
 	]
 }

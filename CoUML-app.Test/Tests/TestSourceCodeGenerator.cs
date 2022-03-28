@@ -1,6 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using CoUML_app.Controllers.Hubs;
+using CoUML_app.Controllers.Project;
 using CoUML_app.Models;
 using CoUML_app.Test.Tests.Samples;
 
@@ -10,18 +11,24 @@ namespace CoUML_app.Test.Tests
     public class TestSourceCodeGenerator
     {
         // Diagram testDiagram = null;
-        CoUmlHub hub;
+        protected ProjectController _pc;
         public TestSourceCodeGenerator()
         {
-            hub = new CoUmlHub();
+            _pc= new ProjectController();
         }
 
         [TestMethod]
-        public void pullTestDiagram()
+        public void PullTestDiagram()
         {
-            var d = hub.LookUp("test");
-            Console.WriteLine(d);
-            ;
+            var controlDId= "msTestSampler";
+            // _pc.Generate(controlDId);
+            var controlD = TestSamples.DiagramDefualt(controlDId);
+            _pc.Overwrite(controlDId, DTO.FromDiagram(controlD));
+            var testD = _pc.LookUp(controlDId);
+
+            Assert.AreEqual(controlD, testD);
+            
+            // Assert.Fail();
         }
         
     }

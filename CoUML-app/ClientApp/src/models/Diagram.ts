@@ -1,7 +1,8 @@
 import {v4 as Uuid} from 'uuid';
 import { GeneralCollection, RelationalCollection } from './Collection';
-import { ICollection, Dimension, IUser, NullUser, Relationship, Interface, Class, AbstractClass, User,  } from './DiagramModel';
+import { ICollection, Dimension, IUser, NullUser, Relationship, Interface, Class, AbstractClass, User} from './DiagramModel';
 
+export const TYPE ='typeName';
 export  abstract class UmlElement
 {
 	public id: string;
@@ -19,7 +20,7 @@ export  abstract class UmlElement
 		this.id = Uuid();
 		this.editor = new NullUser();
 		this.dimension = new Dimension(0, 0, 200,  40);
-		this["_$type"] = `CoUML_app.Model.${type}, CoUML_app`;
+		this[TYPE] = `CoUML_app.Model.${type}, CoUML_app`;
 	}
 
 	public lock(editor: IUser){

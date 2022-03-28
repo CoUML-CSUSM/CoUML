@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 
 using CoUML_app.Models;
+using CoUML_app.Controllers.Project;
 
 //mongodb stuff
 using MongoDB.Driver;
@@ -124,15 +125,9 @@ namespace CoUML_app.Controllers.Hubs
         private readonly static ConnectionMap<string, IUser> _connections = new ConnectionMap<string, IUser>();
 
         private static Diagram testDiagram = DevUtility.DiagramDefualt("test"); // test code here
-        //private static Diagram testDiagram = DevUtility.EmptyDiagram();
 
-        
-
-        // public CoUmlHub()
-        // {
-        // }
-
-        
+        private static ProjectController _projectController = new ProjectController();
+       
         
         /// <summary>
         /// when a new user attemps to connect their connection id gets logged in the connection repo
@@ -182,7 +177,7 @@ namespace CoUML_app.Controllers.Hubs
         public string Fetch(string dId)
         {
             //attacha as a listener to this diagram
-            Groups.AddToGroupAsync(Context.ConnectionId,dId);
+            Groups.AddToGroupAsync(Context.ConnectionId, dId);
 
             if( dId != "test")
             {
@@ -190,54 +185,27 @@ namespace CoUML_app.Controllers.Hubs
                 Console.WriteLine("not test id");
             }
 
-            var diagram = LookUp(dId);
+            // string diagram = _projectController.LookUp(dId);
+            var diagram = _projectController.LookUp(dId);
             
 
             if(diagram == null){
-                Generate(dId);
-                diagram = LookUp(dId);
+                _projectController.Generate(dId);
+                diagram = _projectController.LookUp(dId);
             }
 
             var diagramText = diagram.ToString();
             Console.WriteLine(diagramText);//outputs the diagram text
-            //^ should change it so this is what gets returned ^
 
-            /*
-            return JsonConvert.SerializeObject(testDiagram, Formatting.Indented, new JsonSerializerSettings
-                    {
-                        TypeNameHandling = TypeNameHandling.Auto
-                    });
-            */
             return diagramText;
+            // return DTO.FromDiagram(diagram);
+            //TODO: Change _projectController.LookUp to accomidate for Diagram return type
         }
 
-        // public Diagram? LookUp(string dId)
-        public BsonDocument? LookUp(string dId)
-        {
-            //finds document from database
-            var dbClient = new MongoClient("mongodb://localhost:27017");
-            IMongoDatabase db = dbClient.GetDatabase("CoUML");
-
-            var collection = db.GetCollection<BsonDocument>("Diagrams");
-            var filter = Builders<BsonDocument>.Filter.Eq("id", dId);
-            
-            var diagramBSON = collection.Find(filter).Project("{_id: 0}").FirstOrDefault(); //may return null
-            return diagramBSON;
-            // if(diagramBSON != null)
-            // {
-            //     JsonConverter[] converters = { new UmlElementJsonConverter()};
-            //     var d = JsonConvert.DeserializeObject<Diagram>(diagramBSON.ToString(), new JsonSerializerSettings
-            //     {
-            //         TypeNameHandling = TypeNameHandling.Auto,
-            //         Converters = converters
-            //     });
-
-            //     Console.WriteLine(d);
-            //       ;
-            //       return d;
-            // }
-            // return null;
+        public void Generate(string dId){
+            _projectController.Generate(dId);
         }
+
 
         public void Push(string dId, string changes)
         {
@@ -265,44 +233,8 @@ namespace CoUML_app.Controllers.Hubs
             ;
         }
 
-
-        //creates a diagram string that gets sent to the database
-        public void Generate(string Did){
-
-            //mongodb database
-            var dbClient = new MongoClient("mongodb://localhost:27017");
-            //adds document to the database
-            IMongoDatabase db = dbClient.GetDatabase("CoUML");
-
-            var collection = db.GetCollection<BsonDocument>("Diagrams");
-
-            //sends diagram as bson doc using the string of the diagram
-            MongoDB.Bson.BsonDocument doc = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonDocument>(
-                JsonConvert.SerializeObject(new Diagram(Did), Formatting.Indented, new JsonSerializerSettings
-                    {
-                        TypeNameHandling = TypeNameHandling.Auto
-                    })
-            );
-
-            collection.InsertOne(doc);
-        }
-
-        public string OpenSampleFile()
-        {
-            string path = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Samples/"))[0];
-
-            return File.ReadAllText(path);
-
-        }
-
-        public void Send(string Did, String Diagram){
-            var dbClient = new MongoClient("mongodb://localhost:27017");
-            IMongoDatabase db = dbClient.GetDatabase("CoUML");
-            var collection = db.GetCollection<BsonDocument>("Diagrams");
-
-            var filter = Builders<BsonDocument>.Filter.Eq("id", Did);
-            var doc = BsonDocument.Parse(Diagram);
-            collection.ReplaceOne(filter, doc);
+        public void Send(string dId, String diagramDTO){
+            _projectController.Overwrite(dId, diagramDTO);
         }
 
         public void GenerateSourceCode( string dId, int language)
@@ -324,40 +256,6 @@ namespace CoUML_app.Controllers.Hubs
 //=======================================================================================
 //=======================================================================================
 
-public class UmlElementJsonConverter: JsonConverter
-{    public override bool CanConvert(Type objectType)
-    {
-        return objectType == typeof(UmlElement);
-    }
-
-    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-    {
-        //https://blog.codeinside.eu/2015/03/30/json-dotnet-deserialize-to-abstract-class-or-interface/
-        JObject jo = JObject.Load(reader);
-        switch(jo["$type"].Value<string>() ?? jo["_$type"].Value<string>())
-        {
-            case "CoUML_app.Models.Diagram, CoUML-app": return jo.ToObject<Diagram>(serializer); break;
-            case "CoUML_app.Models.Interface, CoUML-app": return jo.ToObject<Interface>(serializer); break;
-            case "CoUML_app.Models.AbstractClass, CoUML-app": return jo.ToObject<AbstractClass>(serializer); break;
-            case "CoUML_app.Models.Class, CoUML-app": return jo.ToObject<Class>(serializer); break;
-            case "CoUML_app.Models.Enumeration, CoUML-app": return jo.ToObject<Enumeration>(serializer); break;
-            case "CoUML_app.Models.Relationship, CoUML-app": return jo.ToObject<Relationship>(serializer); break;
-            case "CoUML_app.Models.Operation, CoUML-app": return jo.ToObject<Operation>(serializer); break;
-            case "CoUML_app.Models.Attribute, CoUML-app": return jo.ToObject<Models.Attribute>(serializer); break;
-        }
-        return null;
-    }
-
-    public override bool CanWrite
-    {
-        get { return false; }
-    }
-
-    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-    {
-        serializer.Serialize(writer, value);
-    }
-}
 //=======================================================================================
 //=======================================================================================
 //=======================================================================================
@@ -454,6 +352,14 @@ public class UmlElementJsonConverter: JsonConverter
         public static Diagram EmptyDiagram(){
             return new Diagram();
         }      
+
+
+        public static string OpenSampleFile()
+        {
+            string path = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Samples/"))[0];
+            return File.ReadAllText(path);
+
+        }
 
     }
 }
