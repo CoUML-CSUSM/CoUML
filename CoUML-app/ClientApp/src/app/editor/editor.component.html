@@ -4,6 +4,7 @@
     [style.marginLeft.px]="toolbarWidth"
     [style.width.px]="canvasWidth"
     [style.height.px]="canvasHeight"
+    [style.pointer-events]="isDiagramSet? 'auto': 'none'"
     >
 
       <p-dialog header="Welcome to CoUML" [visible]="!isDiagramSet" [closable]="false" >
@@ -22,4 +23,4 @@
     <div #toolbarContainer class="h-screen" [style.background]="accentColor" > </div>
   </div>
 
-  <!--    -->
+  <!--  style={{ pointerEvents: this.props.disabled ? 'none' : 'auto' }}  -->
