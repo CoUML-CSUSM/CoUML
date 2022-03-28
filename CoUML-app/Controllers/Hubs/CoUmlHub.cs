@@ -211,7 +211,8 @@ namespace CoUML_app.Controllers.Hubs
             return diagramText;
         }
 
-        public Diagram? LookUp(string dId)
+        // public Diagram? LookUp(string dId)
+        public BsonDocument? LookUp(string dId)
         {
             //finds document from database
             var dbClient = new MongoClient("mongodb://localhost:27017");
@@ -221,20 +222,21 @@ namespace CoUML_app.Controllers.Hubs
             var filter = Builders<BsonDocument>.Filter.Eq("id", dId);
             
             var diagramBSON = collection.Find(filter).Project("{_id: 0}").FirstOrDefault(); //may return null
-            if(diagramBSON != null)
-            {
-                JsonConverter[] converters = { new UmlElementJsonConverter()};
-                var d = JsonConvert.DeserializeObject<Diagram>(diagramBSON.ToString(), new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.Auto,
-                    Converters = converters
-                });
+            return diagramBSON;
+            // if(diagramBSON != null)
+            // {
+            //     JsonConverter[] converters = { new UmlElementJsonConverter()};
+            //     var d = JsonConvert.DeserializeObject<Diagram>(diagramBSON.ToString(), new JsonSerializerSettings
+            //     {
+            //         TypeNameHandling = TypeNameHandling.Auto,
+            //         Converters = converters
+            //     });
 
-                Console.WriteLine(d);
-                  ;
-                  return d;
-            }
-            return null;
+            //     Console.WriteLine(d);
+            //       ;
+            //       return d;
+            // }
+            // return null;
         }
 
         public void Push(string dId, string changes)
@@ -315,8 +317,8 @@ namespace CoUML_app.Controllers.Hubs
                     codeGenerator = new JavaCodeGenerator(); break;
             }
 
-            var testDiagram = LookUp(dId);
-            testDiagram.GenerateCode(codeGenerator);
+            // var testDiagram = LookUp(dId);
+            // testDiagram.GenerateCode(codeGenerator);
         }
     }
 //=======================================================================================
