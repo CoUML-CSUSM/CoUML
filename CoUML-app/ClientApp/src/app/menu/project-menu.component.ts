@@ -6,6 +6,12 @@ import { CoUmlHubService } from '../service/couml-hub.service';
 import { PrimeNGConfig } from "primeng/api";
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 
+//client id
+//174000524733-gq2vagupknm77i794hll3kbs3iupm6fu.apps.googleusercontent.com
+
+//client secret
+//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
+
 @AngularComponent({
     selector: 'app-menu',
     templateUrl: './project-menu.component.html',
