@@ -134,68 +134,66 @@ import { EditorComponent } from "./editor.component";
 
 			console.log('%c%s', f_alert, "DRAGDROP");
 			console.log(parentCell) //return null if empty space, otherwise cell
-			if(editorComponent.isDiagramSet)
-			{
-				let component = new prototype(); //creates new compnent object of approrate type
-				if(component instanceof Component) //if adding new component
-				{
-					component.dimension.x =   Math.floor(x / 10) * 10;
-					component.dimension.y =   Math.floor(y / 10) * 10;
 
-					// graph.setSelectionCell(vertex);
-					editorComponent.insertComponent(component);
+			let component = new prototype(); //creates new compnent object of approrate type
+			if(component instanceof Component) //if adding new component
+			{
+				component.dimension.x =   Math.floor(x / 10) * 10;
+				component.dimension.y =   Math.floor(y / 10) * 10;
+
+				// graph.setSelectionCell(vertex);
+				editorComponent.insertComponent(component);
+
+			// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
+				editorComponent.stageChange(new ChangeRecord(
+					[graph.getDefaultParent().id],
+					PropertyType.Elements,
+					ActionType.Insert,
+					component
+				));
+			// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+			}
+			else if(parentCell)//if adding property to component
+			{
+				var style = graph.getCellStyle(parentCell) as any[];
+				while(style['childLayout'] != 'stackLayout' )
+				{
+					parentCell = parentCell.parent;
+					style = graph.getCellStyle(parentCell) as any[];
+				}
+				
+				console.log(parentCell);
+				//does this acctualy go here?
+				if((component instanceof Attribute 
+					&& (parentCell.style == Class.name 
+						|| parentCell.style == AbstractClass.name 
+						)) ||
+					(component instanceof Operation
+					&&(parentCell.style == Class.name 
+						|| parentCell.style == AbstractClass.name 
+						|| parentCell.style == Interface.name 
+						)) ||
+					( component instanceof Enumeral && parentCell.style == Enumeration.name)
+					)
+				{
+					console.log("this goes here");
+
+					editorComponent.insertProperty(parentCell, component);
 
 				// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
+
 					editorComponent.stageChange(new ChangeRecord(
-						[graph.getDefaultParent().id],
-						PropertyType.Elements,
+						editorComponent.getIdPath(parentCell),
+						component instanceof Operation? 
+								PropertyType.Operations: component instanceof Attribute?
+								PropertyType.Attributes: PropertyType.Enums,
 						ActionType.Insert,
 						component
 					));
 				// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-				}
-				else if(parentCell)//if adding property to component
+				} else
 				{
-					var style = graph.getCellStyle(parentCell) as any[];
-					while(style['childLayout'] != 'stackLayout' )
-					{
-						parentCell = parentCell.parent;
-						style = graph.getCellStyle(parentCell) as any[];
-					}
-					
-					console.log(parentCell);
-					//does this acctualy go here?
-					if((component instanceof Attribute 
-						&& (parentCell.style == Class.name 
-							|| parentCell.style == AbstractClass.name 
-							)) ||
-						(component instanceof Operation
-						&&(parentCell.style == Class.name 
-							|| parentCell.style == AbstractClass.name 
-							|| parentCell.style == Interface.name 
-							)) ||
-						( component instanceof Enumeral && parentCell.style == Enumeration.name)
-						)
-					{
-						console.log("this goes here");
-
-						editorComponent.insertProperty(parentCell, component);
-
-					// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
-
-						editorComponent.stageChange(new ChangeRecord(
-							editorComponent.getIdPath(parentCell),
-							component instanceof Operation? 
-									PropertyType.Operations: component instanceof Attribute?
-									PropertyType.Attributes: PropertyType.Enums,
-							ActionType.Insert,
-							component
-						));
-					// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-					} else
-					{
-						console.log(`${component.constructor.name} type object does NOT go here`);
-					}
+					console.log(`${component.constructor.name} type object does NOT go here`);
 				}
 			}
 		}
