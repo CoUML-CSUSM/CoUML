@@ -2,11 +2,14 @@ using  System;
 using System.Collections.Generic;
 using CoUML_app.Controllers.Generators;
 using CoUML_app.Models;
-
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using CoUML_app.Controllers.Project;
 
 namespace CoUML_app.Models
 {
 
+	[JsonConverter(typeof(UmlElementJsonConverter))]
 	public abstract class UmlElement
 	{
 		public string id { get; protected set;} = Guid.NewGuid().ToString();

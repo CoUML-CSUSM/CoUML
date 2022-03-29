@@ -186,12 +186,12 @@ namespace CoUML_app.Controllers.Hubs
             }
 
             // string diagram = _projectController.LookUp(dId);
-            var diagram = _projectController.LookUp(dId);
+            var diagram = _projectController.Find(dId);
             
 
             if(diagram == null){
                 _projectController.Generate(dId);
-                diagram = _projectController.LookUp(dId);
+                diagram = _projectController.Find(dId);
             }
 
             var diagramText = diagram.ToString();
