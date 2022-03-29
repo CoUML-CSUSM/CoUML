@@ -29,7 +29,6 @@ import { SocialLoginModule, SocialAuthServiceConfig } from 'angularx-social-logi
 import {
   GoogleLoginProvider
 } from 'angularx-social-login';
- import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +36,6 @@ import {
     HomeComponent,
     EditorComponent,
     ProjectMenuComponent,
-    LoginComponent
 
 
   ],

@@ -162,6 +162,7 @@ namespace CoUML_app.Controllers.Hubs
             
             // Groups.RemoveFromGroupAsync(connectionId)
             _connections.Remove(connectionId);
+            //same stuff but for sign out
             return base.OnDisconnectedAsync(exception);
         }
 
