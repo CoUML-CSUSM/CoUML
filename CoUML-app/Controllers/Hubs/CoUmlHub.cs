@@ -145,6 +145,8 @@ namespace CoUML_app.Controllers.Hubs
             _connections.Add(connectionId, name);
 
             IssueUser(connectionId);
+            //can be removed make this happend when they login
+            //connectionID can be like email or sum shit
 
             return base.OnConnectedAsync();
         }
@@ -167,6 +169,7 @@ namespace CoUML_app.Controllers.Hubs
         /// test server to client communication
         /// </summary>
         /// <param name="connectionId">connectionId of client being called</param>
+        //make login changes here
         public void IssueUser(string connectionId)
         {
             Clients.Client(connectionId).issueUser(connectionId);

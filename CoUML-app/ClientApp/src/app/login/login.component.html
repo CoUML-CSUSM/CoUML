@@ -1,3 +1,15 @@
-<button (click)="signInWithGoogle()" mat-raised-button class="google-login-btn">
+<!-- <button (click)="signInWithGoogle()" mat-raised-button class="google-login-btn">
+    Google
+  </button> -->
+
+  <button (click)="signInWithGoogle()" mat-raised-button class="google-login-btn">
     Google
   </button>
+
+  <!-- <div *ngIf="socialAuthServive.authState | async as socialUser">
+    <p>Hello, {{socialUser.name}}!</p>
+    <p>Your email: {{socialUser.email}}</p>
+    <button mat-raised-button (click)="signOut()">Logout</button>
+  </div> -->
+
+  <button mat-raised-button (click)="signOut()">Logout</button>

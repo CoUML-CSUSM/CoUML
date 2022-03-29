@@ -24,12 +24,12 @@ import {MenubarModule} from 'primeng/menubar';
 import {TabViewModule} from 'primeng/tabview';
 import {DialogModule} from 'primeng/dialog';
 
-//social login
+// social login
 import { SocialLoginModule, SocialAuthServiceConfig } from 'angularx-social-login';
 import {
   GoogleLoginProvider
 } from 'angularx-social-login';
-import { LoginComponent } from './login/login.component';
+ import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
@@ -72,16 +72,16 @@ import { LoginComponent } from './login/login.component';
     {
       provide: 'SocialAuthServiceConfig',
       useValue: {
-        autoLogin: false, //keeps the user signed in
+        autoLogin: true, //keeps the user signed in
         providers: [
           {
             id: GoogleLoginProvider.PROVIDER_ID,
             provider: new GoogleLoginProvider('174000524733-gq2vagupknm77i794hll3kbs3iupm6fu.apps.googleusercontent.com') // your client id
-          }
-        ]
-      }
-    }
-    
+          },
+        ],
+      } as SocialAuthServiceConfig,
+    },
+
   ],
   bootstrap: [AppComponent],
 
