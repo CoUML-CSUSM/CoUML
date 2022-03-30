@@ -223,6 +223,11 @@ namespace CoUML_app.Controllers.Hubs
 
         }
 
+        public void ApplyChange(ChangeRecord change)
+        {
+            
+        }
+
         public void Dispatch(string dId, string callerId, string changes)
         {
             Clients.GroupExcept(dId, new List<string>(){callerId}.AsReadOnly()).Dispatch(changes);
@@ -249,8 +254,9 @@ namespace CoUML_app.Controllers.Hubs
                     codeGenerator = new JavaCodeGenerator(); break;
             }
 
-            // var testDiagram = LookUp(dId);
-            // testDiagram.GenerateCode(codeGenerator);
+            Diagram testDiagram = _projectController.FindDiagram(dId);
+            if(testDiagram != null)
+                testDiagram.GenerateCode(codeGenerator);
         }
     }
 //=======================================================================================

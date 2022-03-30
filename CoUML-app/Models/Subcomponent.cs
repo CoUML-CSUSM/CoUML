@@ -41,11 +41,11 @@ namespace CoUML_app.Models
 	}
 
 	public class Operation: ComponentProperty{
-		public ICollection<Attribute> parameters{get; set;}
+		public ICollection<Attribute> parameters{get; set;} = new RelationalCollection<Attribute> ();
 
 		public Operation():base()
 		{
-			this.parameters = new RelationalCollection<Attribute> ();
+			this.parameters 
 		}
 	}
 

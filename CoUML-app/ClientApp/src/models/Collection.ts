@@ -1,5 +1,7 @@
+import { Attribute } from "@angular/core";
 import { Class, Component, Interface } from "./Component";
 import { UmlElement, UmlElement as T , TYPE} from "./DiagramModel";
+import { Operation } from "./Subcomponent";
 
 //interface for collections to create iterators
 export interface ICollectionIterator<T>
@@ -129,8 +131,16 @@ export class GeneralCollection<T> implements ICollection<T>{
 export class RelationalCollection<T extends UmlElement> implements ICollection<T>{
 
 	private items: Map<string, T> = new Map<string, T>();
+	// get $type() {
+	// 	let ttype = T.name == Operation.name ? "Operation": 
+	// 		T.name == Attribute.name ? "Attribute": "UmlElement";
+			
+	// 	// (this.size>0? this.items.values().next().value[TYPE]:"CoUML_app.Models.UmlElement, CoUML-app")
+	// 	// return `CoUML_app.Models.RelationalCollection\`1[["CoUML_app.Models.UmlElement, CoUML-app"]], CoUML-app`
+	// };
 	toJSON(): any {
 		return {
+			typeName: "CoUML_app.Models.RelationalCollection\`1[[CoUML_app.Models.UmlElement, CoUML-app]], CoUML-app",
 			items: Object.fromEntries(this.items),
 		}
 	 }
@@ -139,7 +149,7 @@ export class RelationalCollection<T extends UmlElement> implements ICollection<T
 	{
 		for(let elem of collection)
 			this.insert(elem);
-		this[TYPE] = "CoUML_app.Models.RelationalCollection, CoUML-app";
+		// this[TYPE] = "CoUML_app.Models.RelationalCollection, CoUML-app";
 	}
 	removeAll(): void {
 		delete this.items;

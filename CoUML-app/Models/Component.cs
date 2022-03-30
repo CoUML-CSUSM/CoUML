@@ -19,43 +19,37 @@ namespace CoUML_app.Models
 	}
 
 	public class Enumeration : Component{
-		public ICollection<string> enums { get;set; }
+		public ICollection<string> enums { get;set; }= new GeneralCollection<string>();
 
 		public Enumeration(string name): base(name)
 		{
-			this.enums = new GeneralCollection<string>();
 		}
 	}
 	
 	public class Interface : Component{
-		public ICollection<Operation> operations { get;set; }
+		public ICollection<Operation> operations { get;set; }= new RelationalCollection<Operation>();
 		public Interface(string name): base(name)
 		{
-			this.operations = new RelationalCollection<Operation>();
 		}
 		
 	}
 
 	public class AbstractClass : Component{
-		public ICollection<Operation> operations { get;set; }
-		public ICollection<Attribute>  attributes { get;set; }
+		public ICollection<Operation> operations { get;set; }= new RelationalCollection<Operation>();
+		public ICollection<Attribute>  attributes { get;set; }= new RelationalCollection<Attribute>();
 		
 		public AbstractClass(string name): base(name)
 		{
-			this.operations = new RelationalCollection<Operation>();
-			this.attributes = new RelationalCollection<Attribute>();
 		}
 
 	}
 
 	public class Class : Component{
-		public ICollection<Operation> operations { get;set; }
-		public ICollection<Attribute> attributes { get;set; }
+		public ICollection<Operation> operations { get;set; }= new RelationalCollection<Operation>();
+		public ICollection<Attribute> attributes { get;set; }= new RelationalCollection<Attribute>();
 
 		public Class(string name): base(name)
 		{
-			this.operations = new RelationalCollection<Operation>();
-			this.attributes = new RelationalCollection<Attribute>();
 		}
 
 	}

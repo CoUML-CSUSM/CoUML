@@ -1,26 +1,17 @@
 using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
-using Microsoft.AspNetCore.SignalR;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Logging;
-
 using CoUML_app.Models;
-
+using CoUML_app.Controllers.Hubs;
 //mongodb stuff
 using MongoDB.Driver;
 using MongoDB.Bson;
-using CoUML_app.Controllers.Generators;
 
-namespace CoUML_app.Controllers.Project{
+namespace CoUML_app.Controllers.Project
+{
 
 	public class ProjectController
 	{
@@ -59,9 +50,12 @@ namespace CoUML_app.Controllers.Project{
 
             var collection = GetCollection("Diagrams");
 
+            var dto = DTO.FromDiagram(DevUtility.DiagramDefualt("test"));
+
             //sends diagram as bson doc using the string of the diagram
             MongoDB.Bson.BsonDocument doc = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonDocument>(
-                DTO.FromDiagram(new Diagram(dId))
+                dto
+                // DTO.FromDiagram(new Diagram(dId))
             );
 
             collection.InsertOne(doc);
@@ -95,11 +89,9 @@ namespace CoUML_app.Controllers.Project{
 
         public static Diagram ToDiagram(BsonDocument bd)
         {
-            // JsonConverter[] converters = { new UmlElementJsonConverter()};
             return JsonConvert.DeserializeObject<Diagram>(bd.ToString(), new JsonSerializerSettings
                     {
                         TypeNameHandling = TypeNameHandling.Auto,
-                        // Converters = converters
                     });
         }
     }
@@ -121,15 +113,7 @@ namespace CoUML_app.Controllers.Project{
 
         public override bool CanConvert(Type objectType)
         {
-            // Console.Write(
-            //     $"\t {typeof(UmlElement).IsAssignableFrom(objectType) && !objectType.IsAbstract}" +
-            //     $"\t{objectType} ---|> {typeof(UmlElement)}" +
-            //     "\n"
-            // );
-
             return objectType == typeof(UmlElement);
-            // return typeof(UmlElement).IsAssignableFrom(objectType) && !objectType.IsAbstract;
-            // return objectType.ToString().Contains("CoUML_app.Models.");
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
@@ -139,7 +123,6 @@ namespace CoUML_app.Controllers.Project{
 
             Console.WriteLine($"Type:\t{objectType}\t{jo["$type"] ?? jo["typeName"]}");
             Console.WriteLine(jo);
-            // switch((jo["$type"]?? jo["typeName"]).ToString())
             switch(objectType.ToString())
             {
                 case "CoUML_app.Models.Diagram":        return jo.ToObject<Diagram>(serializer);

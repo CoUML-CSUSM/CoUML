@@ -55,8 +55,12 @@ namespace CoUML_app.Controllers.Generators
                 _sourceCodeFileStream = new FileStreamWriter(sourceCodeFile);
 
                 _sourceCodeFileStream.Write($"public class {classModel.name} {{");
-                Iterate(classModel.attributes.Iterator() as Models.ICollectionIterator<ComponentProperty>);
-                Iterate(classModel.operations.Iterator() as Models.ICollectionIterator<ComponentProperty>);
+                var ats = classModel.attributes.Iterator();
+                while(ats.HasNext())
+                    ats.GetNext().GenerateCode(this);
+                var ops = classModel.operations.Iterator();
+                while(ops.HasNext())
+                    ops.GetNext().GenerateCode(this);
 
                 _sourceCodeFileStream.Write($"}}");
                 _sourceCodeFileStream.Close();

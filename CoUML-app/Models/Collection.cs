@@ -134,11 +134,6 @@ namespace CoUML_app.Models
 	public class RelationalCollection<T> : ICollection<T> where T:UmlElement
 	{
 		private Dictionary<string, T> _items;
-		// public List<UmlElement> items{
-		// 	get{
-		// 		return new List<UmlElement>(this._items.Values);
-		// 	}
-		// }
 
 		public Dictionary<string, T> items{
 			get{
