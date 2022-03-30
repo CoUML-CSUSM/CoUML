@@ -1,6 +1,6 @@
 import { AfterViewInit, Component as AngularComponent, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { MenuItem } from 'primeng/api';
-import { Class, Diagram, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType as VisibilityType } from 'src/models/DiagramModel';
+import { Class, Diagram, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType as VisibilityType, User } from 'src/models/DiagramModel';
 import { ProjectManager } from '../controller/project-manager.controller';
 import { CoUmlHubService } from '../service/couml-hub.service';
 import { PrimeNGConfig } from "primeng/api";
@@ -86,13 +86,12 @@ import {GoogleLoginProvider } from "angularx-social-login";
 
     //login stuff
     signInWithGoogle(): void {
-      console.log("sign in test");
-      let int = "hello";
-      console.log(`${int}`);
+      console.log("sign in");
   
       this.authService.signIn(GoogleLoginProvider.PROVIDER_ID)
       .then((socialUser)=>{//store email here nd send it to databse
         console.log(socialUser.email);
+        this._coUmlHub._projectDeveloper.setEditor(new User(socialUser.email));
       });
   
       //console.log(`${GoogleLoginProvider.PROVIDER_ID}`);
@@ -100,7 +99,7 @@ import {GoogleLoginProvider } from "angularx-social-login";
   
   
     signOut(): void {
-      console.log("sign out test");
+      console.log("sign out");
       this.authService.signOut();
     }
   

@@ -50,7 +50,7 @@ export class CoUmlHubService{
 
 		// listen for *test*
 		this._coUmlHubConnection.on("issueUser", (userId: string)=>{
-			console.log(`New User ID issued ${userId}`);
+			//console.log(`New User ID issued ${userId}`);
 		});
 
 		// listen for changes
@@ -71,7 +71,9 @@ export class CoUmlHubService{
 
 		// calling function : public string Fetch(string dId)
 		//return this._coUmlHubConnection.invoke<string>('Fetch','test'); // test diagram
-		this._projectDeveloper.setEditor(new User(this._coUmlHubConnection.connectionId));
+
+		//move this line and change new user to email adress
+		//this._projectDeveloper.setEditor(new User(this._coUmlHubConnection.connectionId));
 		return this._coUmlHubConnection.invoke<string>('Fetch',dId); 
 	}
 
