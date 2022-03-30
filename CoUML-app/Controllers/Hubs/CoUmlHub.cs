@@ -176,6 +176,7 @@ namespace CoUML_app.Controllers.Hubs
         /// <returns>the diagram requested</returns>
         public string Fetch(string dId)
         {
+            
             //attacha as a listener to this diagram
             Groups.AddToGroupAsync(Context.ConnectionId, dId);
 
@@ -223,9 +224,9 @@ namespace CoUML_app.Controllers.Hubs
 
         }
 
-        public void ApplyChange(ChangeRecord change)
+        public void ApplyChange(string dId, ChangeRecord[] change)
         {
-            
+            _projectController.Write(dId, change);
         }
 
         public void Dispatch(string dId, string callerId, string changes)

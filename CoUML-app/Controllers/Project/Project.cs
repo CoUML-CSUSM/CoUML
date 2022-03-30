@@ -70,6 +70,11 @@ namespace CoUML_app.Controllers.Project
             collection.ReplaceOne(filter, doc);
         }
 
+        public void Write(string dId, ChangeRecord[] change)
+        {
+            
+        }
+
         private IMongoCollection<BsonDocument> GetCollection(string collectionName)
         {
             IMongoDatabase db = _dbClient.GetDatabase(COUMLDB_NAME);
