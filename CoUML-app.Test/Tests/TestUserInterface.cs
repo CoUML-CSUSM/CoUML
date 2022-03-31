@@ -104,7 +104,6 @@ namespace CoUML_app.Test.Tests
         
         private void LoadToolbarItems()
         {
-            Console.WriteLine("Loading Toolbar Items");
             _toolBarItems = new Dictionary<string, IWebElement>();
             foreach (string tool in Tool.All){
                 try{
@@ -118,7 +117,7 @@ namespace CoUML_app.Test.Tests
         private  void OpenClientConnection()
         {
             _chromeDriver.Navigate().GoToUrl("https://localhost:5001");
-            Thread.Sleep(TimeSpan.FromSeconds(8));
+            Thread.Sleep(TimeSpan.FromSeconds(1));
         }
 
 
@@ -131,14 +130,14 @@ namespace CoUML_app.Test.Tests
 
 
                 Coords iPet = Build(
-                    new Coords(200, 200), 
+                    new Coords(300, 200), 
                     new DiagramComponent[]{
                         new (_toolBarItems[Tool.Interface], "IPet"),
                         new (_toolBarItems[Tool.Operation], "+ feed(chow: Kibble, amount: number): boolean"),
                         new (_toolBarItems[Tool.Operation], "+ play(): void"),
                     });
 
-                 Coords dog = Build(
+                Coords dog = Build(
                     new Coords(200, 450), 
                     new DiagramComponent[]{
                         new (_toolBarItems[Tool.AbstractClass], "Dog"),
@@ -147,16 +146,25 @@ namespace CoUML_app.Test.Tests
                         new (_toolBarItems[Tool.Operation], "- scratch( spot: Spot): void"),
                     });
 
-                DrawEdge(dog, iPet, Tool.Generalization);
-                // Delete(c_IPet);
+                DrawEdge(dog, iPet, Tool.Realization, 5);
 
+                Coords cat = Build(
+                    new Coords(500, 450), 
+                    new DiagramComponent[]{
+                        new (_toolBarItems[Tool.AbstractClass], "cat"),
+                        new (_toolBarItems[Tool.Attribute], "- name: string"),
+                        new (_toolBarItems[Tool.Attribute], "- furLength: number"),
+                        new (_toolBarItems[Tool.Operation], "+ purr():void"),
+                        new (_toolBarItems[Tool.Operation], "+ scratch(): Damage"),
+                    });
 
+                DrawEdge(cat, iPet, Tool.Realization, 5);
 
             }catch(Exception e ){
                 Console.WriteLine(e);
             }finally{
-            //     Thread.Sleep(TimeSpan.FromSeconds(25));
-            //    _chromeDriver.Close();
+                Thread.Sleep(TimeSpan.FromSeconds(25));
+               _chromeDriver.Close();
             }
             Assert.Fail();
         }
@@ -176,20 +184,34 @@ namespace CoUML_app.Test.Tests
             return root;
         }
 
-        private void DrawEdge( Coords source, Coords target, string edgeType)
+        private void DrawEdge( Coords source, Coords target, string edgeType, int targetExtra)
         {
             var offsetTo_Target = CalculateOffset(source, target);
 
-            var midpoint = TestHelper.CalculateMidPoint(source, target);
-
-
-            var action  = NewActionsAtCoords(source);
-            action
+            NewActionsAtCoords(source)
                 .Click()
                 .MoveByOffset(160, 40)
                 .ClickAndHold()
                 .MoveByOffset(offsetTo_Target.X, offsetTo_Target.Y)
                 .Release()
+                .MoveByOffset(offsetTo_Target.X*-1, offsetTo_Target.Y*-1)
+                .Click()
+                .Build().Perform();
+            Thread.Sleep(TestHelper.DELAY_TIME);
+
+            Coords midPoint = CalculateMidPoint(source, target, targetExtra);
+            new Actions(_chromeDriver)
+                .MoveByOffset(midPoint.X, midPoint.Y)
+                .Click()
+                .ContextClick()
+                .Build().Perform();
+            Thread.Sleep(TestHelper.DELAY_TIME);
+
+            new Actions(_chromeDriver)
+                .MoveToElement(_chromeDriver.FindElement(By.Id(edgeType)))
+                .Click()
+                .MoveByOffset(5,5)
+                .Click()
                 .Build().Perform();
                         
         }
@@ -239,28 +261,27 @@ namespace CoUML_app.Test.Tests
                 .Build().Perform();
         }
 
-        private Coords CalculateOffset(IWebElement source, Coords componentTarget)
+        private static Coords CalculateOffset(IWebElement source, Coords componentTarget)
         {
             return TestHelper.CalculateOffset(
                 new Coords(source.Location.X, source.Location.Y), componentTarget);
         }
-        public Coords CalculateOffset(Coords source, Coords target)
+        public static Coords CalculateOffset(Coords source, Coords target)
         {
             return TestHelper.CalculateOffset(source, target);
         }
 
-        public Coords ConnectableCenter(Coords elem)
+        private static Coords CalculateMidPoint( Coords source, Coords target, int targetExtras)
         {
+            var y = -30;
             return new Coords(
-                elem.X + Tool.Std_Width/2,
-                elem.Y + Tool.Std_Heght/2
+                y*(target.X - source.X)/(target.Y + (Tool.Grid*targetExtras) - source.Y), 
+                y // *(source.Y>target.Y? -1:1)
             );
         }
-
         public Actions NewActionsAtCoords(Coords here)
         {
             var source = _toolBarItems[Tool.Reference];
-            Console.WriteLine(source);
             var offset = CalculateOffset(source, here);
 
             return new Actions(_chromeDriver)
@@ -272,7 +293,7 @@ namespace CoUML_app.Test.Tests
 
     static class TestHelper
     {
-        public static System.TimeSpan DELAY_TIME = TimeSpan.FromMilliseconds(100);
+        public static System.TimeSpan DELAY_TIME = TimeSpan.FromMilliseconds(50);
         public static Coords CalculateOffset(Coords source, Coords target)
         {
             var delta = new Coords(

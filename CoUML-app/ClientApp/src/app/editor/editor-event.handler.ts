@@ -422,27 +422,29 @@ import { EditorComponent } from "./editor.component";
 	function click(graph: mxGraph, editorComponent: EditorComponent)
 	{
 		var click = 0;
-		// TODO: need to come up with a better way to lock items.
 		graph.addListener(mxEvent.CLICK, 
 			// click on object to see its makup.
 			function(eventSource, eventObject){
 				let affectedCells = eventObject.getProperties().cell;
 				console.log('%c%s',f_alert, "mxCell description");
 				console.log(affectedCells);
-				if(eventSource.lastMouseX){	
-					let x = eventSource.lastMouseX;
-					let y = eventSource.lastMouseY;
-					let coords = `${click++}:\t(${x},${y})`
-					console.log('%c%s',f_info, coords);
-					// graph.insertVertex(graph.getDefaultParent(), null, coords, x-212, y-64, 10, 10, 'ClickHere');
-				}
 				if(graph.isCellLocked(affectedCells))
 					affectedCells = undefined;
 				if(affectedCells == undefined )
 					graph.clearSelection();
 				
+
+				// if(eventSource.lastMouseX){	
+				// 	let x = eventSource.lastMouseX;
+				// 	let y = eventSource.lastMouseY;
+				// 	let coords = `${click++}:\t(${x},${y})`
+				// 	console.log('Location Point %c%s',f_info, coords);
+				// 	if(affectedCells == undefined)
+				// 		graph.insertVertex(graph.getDefaultParent(), null, coords, x-215, y-65, 5, 5, 'ClickHere');
+				// }
 			});
 	}
+
 
 	/**
 	 * function that fires when a new edge/relation is drawn between 2 compnents
