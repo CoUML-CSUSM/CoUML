@@ -7,3 +7,17 @@ CoUML-app.Test/obj/Debug/net5.0/CoUML-app.Test.csproj.AssemblyReference.cache
 CoUML-app.Test/obj/Debug/*
 *.dll
 *.dll
+*.dll
+# Build results
+[Dd]ebug/**
+[Dd]ebugPublic/**
+[Rr]elease/**
+[Rr]eleases/**
+x64/**
+x86/**
+build/**
+bld/**
+bin/**
+Bin/**
+obj/**
+Obj/**
