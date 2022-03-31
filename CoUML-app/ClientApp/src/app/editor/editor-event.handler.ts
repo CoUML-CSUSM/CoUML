@@ -434,7 +434,7 @@ import { EditorComponent } from "./editor.component";
 					let y = eventSource.lastMouseY;
 					let coords = `${click++}:\t(${x},${y})`
 					console.log('%c%s',f_info, coords);
-					graph.insertVertex(graph.getDefaultParent(), null, coords, x-212, y-64, 10, 10, 'ClickHere');
+					// graph.insertVertex(graph.getDefaultParent(), null, coords, x-212, y-64, 10, 10, 'ClickHere');
 				}
 				if(graph.isCellLocked(affectedCells))
 					affectedCells = undefined;
