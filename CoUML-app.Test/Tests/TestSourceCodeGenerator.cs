@@ -24,7 +24,7 @@ namespace CoUML_app.Test.Tests
             // _pc.Generate(controlDId);
             var controlD = TestSamples.DiagramDefualt(controlDId);
             _pc.Overwrite(controlDId, DTO.FromDiagram(controlD));
-            var testD = _pc.LookUp(controlDId);
+            var testD = _pc.FindDiagram(controlDId);
 
             Assert.AreEqual(controlD, testD);
             

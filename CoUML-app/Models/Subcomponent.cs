@@ -45,7 +45,6 @@ namespace CoUML_app.Models
 
 		public Operation():base()
 		{
-			this.parameters 
 		}
 	}
 
