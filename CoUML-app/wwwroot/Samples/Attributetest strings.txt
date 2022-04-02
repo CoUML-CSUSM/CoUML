@@ -1,0 +1,801 @@
+(\+\-\#\~)*\s*(\w+)\s*(\:\s*(\w+))*\s*(\[[\*\d](\.\.[\*\d])*\])*\s*(\=\s*[wd"w"])*\s*(\{\w\})*
++ get: AtributeType[1..*] = null
++ get: AtributeType[1..*] = 5
++ get: AtributeType[1..*] = "string"
++ get: AtributeType[1..*]
++ get: AtributeType[10] = null
++ get: AtributeType[10] = 5
++ get: AtributeType[10] = "string"
++ get: AtributeType[10]
++ get: AtributeType[*] = null
++ get: AtributeType[*] = 5
++ get: AtributeType[*] = "string"
++ get: AtributeType[*]
++ get: AtributeType[5..10] = null
++ get: AtributeType[5..10] = 5
++ get: AtributeType[5..10] = "string"
++ get: AtributeType[5..10]
++ get: AtributeType = null
++ get: AtributeType = 5
++ get: AtributeType = "string"
++ get: AtributeType
++ get: boolean[1..*] = null
++ get: boolean[1..*] = 5
++ get: boolean[1..*] = "string"
++ get: boolean[1..*]
++ get: boolean[10] = null
++ get: boolean[10] = 5
++ get: boolean[10] = "string"
++ get: boolean[10]
++ get: boolean[*] = null
++ get: boolean[*] = 5
++ get: boolean[*] = "string"
++ get: boolean[*]
++ get: boolean[5..10] = null
++ get: boolean[5..10] = 5
++ get: boolean[5..10] = "string"
++ get: boolean[5..10]
++ get: boolean = null
++ get: boolean = 5
++ get: boolean = "string"
++ get: boolean
++ get: Object[1..*] = null
++ get: Object[1..*] = 5
++ get: Object[1..*] = "string"
++ get: Object[1..*]
++ get: Object[10] = null
++ get: Object[10] = 5
++ get: Object[10] = "string"
++ get: Object[10]
++ get: Object[*] = null
++ get: Object[*] = 5
++ get: Object[*] = "string"
++ get: Object[*]
++ get: Object[5..10] = null
++ get: Object[5..10] = 5
++ get: Object[5..10] = "string"
++ get: Object[5..10]
++ get: Object = null
++ get: Object = 5
++ get: Object = "string"
++ get: Object
++ get [1..*] = null
++ get [1..*] = 5
++ get [1..*] = "string"
++ get [1..*]
++ get [10] = null
++ get [10] = 5
++ get [10] = "string"
++ get [10]
++ get [*] = null
++ get [*] = 5
++ get [*] = "string"
++ get [*]
++ get [5..10] = null
++ get [5..10] = 5
++ get [5..10] = "string"
++ get [5..10]
++ get = null
++ get = 5
++ get = "string"
++ get
++ get: AtributeType[1..*] = null { uniqe, ordered}
++ get: AtributeType[1..*] = 5 { uniqe, ordered}
++ get: AtributeType[1..*] = "string" { uniqe, ordered}
++ get: AtributeType[1..*] { uniqe, ordered}
++ get: AtributeType[10] = null { uniqe, ordered}
++ get: AtributeType[10] = 5 { uniqe, ordered}
++ get: AtributeType[10] = "string" { uniqe, ordered}
++ get: AtributeType[10] { uniqe, ordered}
++ get: AtributeType[*] = null { uniqe, ordered}
++ get: AtributeType[*] = 5 { uniqe, ordered}
++ get: AtributeType[*] = "string" { uniqe, ordered}
++ get: AtributeType[*] { uniqe, ordered}
++ get: AtributeType[5..10] = null { uniqe, ordered}
++ get: AtributeType[5..10] = 5 { uniqe, ordered}
++ get: AtributeType[5..10] = "string" { uniqe, ordered}
++ get: AtributeType[5..10] { uniqe, ordered}
++ get: AtributeType = null { uniqe, ordered}
++ get: AtributeType = 5 { uniqe, ordered}
++ get: AtributeType = "string" { uniqe, ordered}
++ get: AtributeType { uniqe, ordered}
++ get: boolean[1..*] = null { uniqe, ordered}
++ get: boolean[1..*] = 5 { uniqe, ordered}
++ get: boolean[1..*] = "string" { uniqe, ordered}
++ get: boolean[1..*] { uniqe, ordered}
++ get: boolean[10] = null { uniqe, ordered}
++ get: boolean[10] = 5 { uniqe, ordered}
++ get: boolean[10] = "string" { uniqe, ordered}
++ get: boolean[10] { uniqe, ordered}
++ get: boolean[*] = null { uniqe, ordered}
++ get: boolean[*] = 5 { uniqe, ordered}
++ get: boolean[*] = "string" { uniqe, ordered}
++ get: boolean[*] { uniqe, ordered}
++ get: boolean[5..10] = null { uniqe, ordered}
++ get: boolean[5..10] = 5 { uniqe, ordered}
++ get: boolean[5..10] = "string" { uniqe, ordered}
++ get: boolean[5..10] { uniqe, ordered}
++ get: boolean = null { uniqe, ordered}
++ get: boolean = 5 { uniqe, ordered}
++ get: boolean = "string" { uniqe, ordered}
++ get: boolean { uniqe, ordered}
++ get: Object[1..*] = null { uniqe, ordered}
++ get: Object[1..*] = 5 { uniqe, ordered}
++ get: Object[1..*] = "string" { uniqe, ordered}
++ get: Object[1..*] { uniqe, ordered}
++ get: Object[10] = null { uniqe, ordered}
++ get: Object[10] = 5 { uniqe, ordered}
++ get: Object[10] = "string" { uniqe, ordered}
++ get: Object[10] { uniqe, ordered}
++ get: Object[*] = null { uniqe, ordered}
++ get: Object[*] = 5 { uniqe, ordered}
++ get: Object[*] = "string" { uniqe, ordered}
++ get: Object[*] { uniqe, ordered}
++ get: Object[5..10] = null { uniqe, ordered}
++ get: Object[5..10] = 5 { uniqe, ordered}
++ get: Object[5..10] = "string" { uniqe, ordered}
++ get: Object[5..10] { uniqe, ordered}
++ get: Object = null { uniqe, ordered}
++ get: Object = 5 { uniqe, ordered}
++ get: Object = "string" { uniqe, ordered}
++ get: Object { uniqe, ordered}
++ get [1..*] = null { uniqe, ordered}
++ get [1..*] = 5 { uniqe, ordered}
++ get [1..*] = "string" { uniqe, ordered}
++ get [1..*] { uniqe, ordered}
++ get [10] = null { uniqe, ordered}
++ get [10] = 5 { uniqe, ordered}
++ get [10] = "string" { uniqe, ordered}
++ get [10] { uniqe, ordered}
++ get [*] = null { uniqe, ordered}
++ get [*] = 5 { uniqe, ordered}
++ get [*] = "string" { uniqe, ordered}
++ get [*] { uniqe, ordered}
++ get [5..10] = null { uniqe, ordered}
++ get [5..10] = 5 { uniqe, ordered}
++ get [5..10] = "string" { uniqe, ordered}
++ get [5..10] { uniqe, ordered}
++ get = null { uniqe, ordered}
++ get = 5 { uniqe, ordered}
++ get = "string" { uniqe, ordered}
++ get { uniqe, ordered}
+- isEqual: AtributeType[1..*] = null
+- isEqual: AtributeType[1..*] = 5
+- isEqual: AtributeType[1..*] = "string"
+- isEqual: AtributeType[1..*]
+- isEqual: AtributeType[10] = null
+- isEqual: AtributeType[10] = 5
+- isEqual: AtributeType[10] = "string"
+- isEqual: AtributeType[10]
+- isEqual: AtributeType[*] = null
+- isEqual: AtributeType[*] = 5
+- isEqual: AtributeType[*] = "string"
+- isEqual: AtributeType[*]
+- isEqual: AtributeType[5..10] = null
+- isEqual: AtributeType[5..10] = 5
+- isEqual: AtributeType[5..10] = "string"
+- isEqual: AtributeType[5..10]
+- isEqual: AtributeType = null
+- isEqual: AtributeType = 5
+- isEqual: AtributeType = "string"
+- isEqual: AtributeType
+- isEqual: boolean[1..*] = null
+- isEqual: boolean[1..*] = 5
+- isEqual: boolean[1..*] = "string"
+- isEqual: boolean[1..*]
+- isEqual: boolean[10] = null
+- isEqual: boolean[10] = 5
+- isEqual: boolean[10] = "string"
+- isEqual: boolean[10]
+- isEqual: boolean[*] = null
+- isEqual: boolean[*] = 5
+- isEqual: boolean[*] = "string"
+- isEqual: boolean[*]
+- isEqual: boolean[5..10] = null
+- isEqual: boolean[5..10] = 5
+- isEqual: boolean[5..10] = "string"
+- isEqual: boolean[5..10]
+- isEqual: boolean = null
+- isEqual: boolean = 5
+- isEqual: boolean = "string"
+- isEqual: boolean
+- isEqual: Object[1..*] = null
+- isEqual: Object[1..*] = 5
+- isEqual: Object[1..*] = "string"
+- isEqual: Object[1..*]
+- isEqual: Object[10] = null
+- isEqual: Object[10] = 5
+- isEqual: Object[10] = "string"
+- isEqual: Object[10]
+- isEqual: Object[*] = null
+- isEqual: Object[*] = 5
+- isEqual: Object[*] = "string"
+- isEqual: Object[*]
+- isEqual: Object[5..10] = null
+- isEqual: Object[5..10] = 5
+- isEqual: Object[5..10] = "string"
+- isEqual: Object[5..10]
+- isEqual: Object = null
+- isEqual: Object = 5
+- isEqual: Object = "string"
+- isEqual: Object
+- isEqual [1..*] = null
+- isEqual [1..*] = 5
+- isEqual [1..*] = "string"
+- isEqual [1..*]
+- isEqual [10] = null
+- isEqual [10] = 5
+- isEqual [10] = "string"
+- isEqual [10]
+- isEqual [*] = null
+- isEqual [*] = 5
+- isEqual [*] = "string"
+- isEqual [*]
+- isEqual [5..10] = null
+- isEqual [5..10] = 5
+- isEqual [5..10] = "string"
+- isEqual [5..10]
+- isEqual = null
+- isEqual = 5
+- isEqual = "string"
+- isEqual
+- isEqual: AtributeType[1..*] = null { uniqe, ordered}
+- isEqual: AtributeType[1..*] = 5 { uniqe, ordered}
+- isEqual: AtributeType[1..*] = "string" { uniqe, ordered}
+- isEqual: AtributeType[1..*] { uniqe, ordered}
+- isEqual: AtributeType[10] = null { uniqe, ordered}
+- isEqual: AtributeType[10] = 5 { uniqe, ordered}
+- isEqual: AtributeType[10] = "string" { uniqe, ordered}
+- isEqual: AtributeType[10] { uniqe, ordered}
+- isEqual: AtributeType[*] = null { uniqe, ordered}
+- isEqual: AtributeType[*] = 5 { uniqe, ordered}
+- isEqual: AtributeType[*] = "string" { uniqe, ordered}
+- isEqual: AtributeType[*] { uniqe, ordered}
+- isEqual: AtributeType[5..10] = null { uniqe, ordered}
+- isEqual: AtributeType[5..10] = 5 { uniqe, ordered}
+- isEqual: AtributeType[5..10] = "string" { uniqe, ordered}
+- isEqual: AtributeType[5..10] { uniqe, ordered}
+- isEqual: AtributeType = null { uniqe, ordered}
+- isEqual: AtributeType = 5 { uniqe, ordered}
+- isEqual: AtributeType = "string" { uniqe, ordered}
+- isEqual: AtributeType { uniqe, ordered}
+- isEqual: boolean[1..*] = null { uniqe, ordered}
+- isEqual: boolean[1..*] = 5 { uniqe, ordered}
+- isEqual: boolean[1..*] = "string" { uniqe, ordered}
+- isEqual: boolean[1..*] { uniqe, ordered}
+- isEqual: boolean[10] = null { uniqe, ordered}
+- isEqual: boolean[10] = 5 { uniqe, ordered}
+- isEqual: boolean[10] = "string" { uniqe, ordered}
+- isEqual: boolean[10] { uniqe, ordered}
+- isEqual: boolean[*] = null { uniqe, ordered}
+- isEqual: boolean[*] = 5 { uniqe, ordered}
+- isEqual: boolean[*] = "string" { uniqe, ordered}
+- isEqual: boolean[*] { uniqe, ordered}
+- isEqual: boolean[5..10] = null { uniqe, ordered}
+- isEqual: boolean[5..10] = 5 { uniqe, ordered}
+- isEqual: boolean[5..10] = "string" { uniqe, ordered}
+- isEqual: boolean[5..10] { uniqe, ordered}
+- isEqual: boolean = null { uniqe, ordered}
+- isEqual: boolean = 5 { uniqe, ordered}
+- isEqual: boolean = "string" { uniqe, ordered}
+- isEqual: boolean { uniqe, ordered}
+- isEqual: Object[1..*] = null { uniqe, ordered}
+- isEqual: Object[1..*] = 5 { uniqe, ordered}
+- isEqual: Object[1..*] = "string" { uniqe, ordered}
+- isEqual: Object[1..*] { uniqe, ordered}
+- isEqual: Object[10] = null { uniqe, ordered}
+- isEqual: Object[10] = 5 { uniqe, ordered}
+- isEqual: Object[10] = "string" { uniqe, ordered}
+- isEqual: Object[10] { uniqe, ordered}
+- isEqual: Object[*] = null { uniqe, ordered}
+- isEqual: Object[*] = 5 { uniqe, ordered}
+- isEqual: Object[*] = "string" { uniqe, ordered}
+- isEqual: Object[*] { uniqe, ordered}
+- isEqual: Object[5..10] = null { uniqe, ordered}
+- isEqual: Object[5..10] = 5 { uniqe, ordered}
+- isEqual: Object[5..10] = "string" { uniqe, ordered}
+- isEqual: Object[5..10] { uniqe, ordered}
+- isEqual: Object = null { uniqe, ordered}
+- isEqual: Object = 5 { uniqe, ordered}
+- isEqual: Object = "string" { uniqe, ordered}
+- isEqual: Object { uniqe, ordered}
+- isEqual [1..*] = null { uniqe, ordered}
+- isEqual [1..*] = 5 { uniqe, ordered}
+- isEqual [1..*] = "string" { uniqe, ordered}
+- isEqual [1..*] { uniqe, ordered}
+- isEqual [10] = null { uniqe, ordered}
+- isEqual [10] = 5 { uniqe, ordered}
+- isEqual [10] = "string" { uniqe, ordered}
+- isEqual [10] { uniqe, ordered}
+- isEqual [*] = null { uniqe, ordered}
+- isEqual [*] = 5 { uniqe, ordered}
+- isEqual [*] = "string" { uniqe, ordered}
+- isEqual [*] { uniqe, ordered}
+- isEqual [5..10] = null { uniqe, ordered}
+- isEqual [5..10] = 5 { uniqe, ordered}
+- isEqual [5..10] = "string" { uniqe, ordered}
+- isEqual [5..10] { uniqe, ordered}
+- isEqual = null { uniqe, ordered}
+- isEqual = 5 { uniqe, ordered}
+- isEqual = "string" { uniqe, ordered}
+- isEqual { uniqe, ordered}
+# snake_case: AtributeType[1..*] = null
+# snake_case: AtributeType[1..*] = 5
+# snake_case: AtributeType[1..*] = "string"
+# snake_case: AtributeType[1..*]
+# snake_case: AtributeType[10] = null
+# snake_case: AtributeType[10] = 5
+# snake_case: AtributeType[10] = "string"
+# snake_case: AtributeType[10]
+# snake_case: AtributeType[*] = null
+# snake_case: AtributeType[*] = 5
+# snake_case: AtributeType[*] = "string"
+# snake_case: AtributeType[*]
+# snake_case: AtributeType[5..10] = null
+# snake_case: AtributeType[5..10] = 5
+# snake_case: AtributeType[5..10] = "string"
+# snake_case: AtributeType[5..10]
+# snake_case: AtributeType = null
+# snake_case: AtributeType = 5
+# snake_case: AtributeType = "string"
+# snake_case: AtributeType
+# snake_case: boolean[1..*] = null
+# snake_case: boolean[1..*] = 5
+# snake_case: boolean[1..*] = "string"
+# snake_case: boolean[1..*]
+# snake_case: boolean[10] = null
+# snake_case: boolean[10] = 5
+# snake_case: boolean[10] = "string"
+# snake_case: boolean[10]
+# snake_case: boolean[*] = null
+# snake_case: boolean[*] = 5
+# snake_case: boolean[*] = "string"
+# snake_case: boolean[*]
+# snake_case: boolean[5..10] = null
+# snake_case: boolean[5..10] = 5
+# snake_case: boolean[5..10] = "string"
+# snake_case: boolean[5..10]
+# snake_case: boolean = null
+# snake_case: boolean = 5
+# snake_case: boolean = "string"
+# snake_case: boolean
+# snake_case: Object[1..*] = null
+# snake_case: Object[1..*] = 5
+# snake_case: Object[1..*] = "string"
+# snake_case: Object[1..*]
+# snake_case: Object[10] = null
+# snake_case: Object[10] = 5
+# snake_case: Object[10] = "string"
+# snake_case: Object[10]
+# snake_case: Object[*] = null
+# snake_case: Object[*] = 5
+# snake_case: Object[*] = "string"
+# snake_case: Object[*]
+# snake_case: Object[5..10] = null
+# snake_case: Object[5..10] = 5
+# snake_case: Object[5..10] = "string"
+# snake_case: Object[5..10]
+# snake_case: Object = null
+# snake_case: Object = 5
+# snake_case: Object = "string"
+# snake_case: Object
+# snake_case [1..*] = null
+# snake_case [1..*] = 5
+# snake_case [1..*] = "string"
+# snake_case [1..*]
+# snake_case [10] = null
+# snake_case [10] = 5
+# snake_case [10] = "string"
+# snake_case [10]
+# snake_case [*] = null
+# snake_case [*] = 5
+# snake_case [*] = "string"
+# snake_case [*]
+# snake_case [5..10] = null
+# snake_case [5..10] = 5
+# snake_case [5..10] = "string"
+# snake_case [5..10]
+# snake_case = null
+# snake_case = 5
+# snake_case = "string"
+# snake_case
+# snake_case: AtributeType[1..*] = null { uniqe, ordered}
+# snake_case: AtributeType[1..*] = 5 { uniqe, ordered}
+# snake_case: AtributeType[1..*] = "string" { uniqe, ordered}
+# snake_case: AtributeType[1..*] { uniqe, ordered}
+# snake_case: AtributeType[10] = null { uniqe, ordered}
+# snake_case: AtributeType[10] = 5 { uniqe, ordered}
+# snake_case: AtributeType[10] = "string" { uniqe, ordered}
+# snake_case: AtributeType[10] { uniqe, ordered}
+# snake_case: AtributeType[*] = null { uniqe, ordered}
+# snake_case: AtributeType[*] = 5 { uniqe, ordered}
+# snake_case: AtributeType[*] = "string" { uniqe, ordered}
+# snake_case: AtributeType[*] { uniqe, ordered}
+# snake_case: AtributeType[5..10] = null { uniqe, ordered}
+# snake_case: AtributeType[5..10] = 5 { uniqe, ordered}
+# snake_case: AtributeType[5..10] = "string" { uniqe, ordered}
+# snake_case: AtributeType[5..10] { uniqe, ordered}
+# snake_case: AtributeType = null { uniqe, ordered}
+# snake_case: AtributeType = 5 { uniqe, ordered}
+# snake_case: AtributeType = "string" { uniqe, ordered}
+# snake_case: AtributeType { uniqe, ordered}
+# snake_case: boolean[1..*] = null { uniqe, ordered}
+# snake_case: boolean[1..*] = 5 { uniqe, ordered}
+# snake_case: boolean[1..*] = "string" { uniqe, ordered}
+# snake_case: boolean[1..*] { uniqe, ordered}
+# snake_case: boolean[10] = null { uniqe, ordered}
+# snake_case: boolean[10] = 5 { uniqe, ordered}
+# snake_case: boolean[10] = "string" { uniqe, ordered}
+# snake_case: boolean[10] { uniqe, ordered}
+# snake_case: boolean[*] = null { uniqe, ordered}
+# snake_case: boolean[*] = 5 { uniqe, ordered}
+# snake_case: boolean[*] = "string" { uniqe, ordered}
+# snake_case: boolean[*] { uniqe, ordered}
+# snake_case: boolean[5..10] = null { uniqe, ordered}
+# snake_case: boolean[5..10] = 5 { uniqe, ordered}
+# snake_case: boolean[5..10] = "string" { uniqe, ordered}
+# snake_case: boolean[5..10] { uniqe, ordered}
+# snake_case: boolean = null { uniqe, ordered}
+# snake_case: boolean = 5 { uniqe, ordered}
+# snake_case: boolean = "string" { uniqe, ordered}
+# snake_case: boolean { uniqe, ordered}
+# snake_case: Object[1..*] = null { uniqe, ordered}
+# snake_case: Object[1..*] = 5 { uniqe, ordered}
+# snake_case: Object[1..*] = "string" { uniqe, ordered}
+# snake_case: Object[1..*] { uniqe, ordered}
+# snake_case: Object[10] = null { uniqe, ordered}
+# snake_case: Object[10] = 5 { uniqe, ordered}
+# snake_case: Object[10] = "string" { uniqe, ordered}
+# snake_case: Object[10] { uniqe, ordered}
+# snake_case: Object[*] = null { uniqe, ordered}
+# snake_case: Object[*] = 5 { uniqe, ordered}
+# snake_case: Object[*] = "string" { uniqe, ordered}
+# snake_case: Object[*] { uniqe, ordered}
+# snake_case: Object[5..10] = null { uniqe, ordered}
+# snake_case: Object[5..10] = 5 { uniqe, ordered}
+# snake_case: Object[5..10] = "string" { uniqe, ordered}
+# snake_case: Object[5..10] { uniqe, ordered}
+# snake_case: Object = null { uniqe, ordered}
+# snake_case: Object = 5 { uniqe, ordered}
+# snake_case: Object = "string" { uniqe, ordered}
+# snake_case: Object { uniqe, ordered}
+# snake_case [1..*] = null { uniqe, ordered}
+# snake_case [1..*] = 5 { uniqe, ordered}
+# snake_case [1..*] = "string" { uniqe, ordered}
+# snake_case [1..*] { uniqe, ordered}
+# snake_case [10] = null { uniqe, ordered}
+# snake_case [10] = 5 { uniqe, ordered}
+# snake_case [10] = "string" { uniqe, ordered}
+# snake_case [10] { uniqe, ordered}
+# snake_case [*] = null { uniqe, ordered}
+# snake_case [*] = 5 { uniqe, ordered}
+# snake_case [*] = "string" { uniqe, ordered}
+# snake_case [*] { uniqe, ordered}
+# snake_case [5..10] = null { uniqe, ordered}
+# snake_case [5..10] = 5 { uniqe, ordered}
+# snake_case [5..10] = "string" { uniqe, ordered}
+# snake_case [5..10] { uniqe, ordered}
+# snake_case = null { uniqe, ordered}
+# snake_case = 5 { uniqe, ordered}
+# snake_case = "string" { uniqe, ordered}
+# snake_case { uniqe, ordered}
+~ _secretItem: AtributeType[1..*] = null
+~ _secretItem: AtributeType[1..*] = 5
+~ _secretItem: AtributeType[1..*] = "string"
+~ _secretItem: AtributeType[1..*]
+~ _secretItem: AtributeType[10] = null
+~ _secretItem: AtributeType[10] = 5
+~ _secretItem: AtributeType[10] = "string"
+~ _secretItem: AtributeType[10]
+~ _secretItem: AtributeType[*] = null
+~ _secretItem: AtributeType[*] = 5
+~ _secretItem: AtributeType[*] = "string"
+~ _secretItem: AtributeType[*]
+~ _secretItem: AtributeType[5..10] = null
+~ _secretItem: AtributeType[5..10] = 5
+~ _secretItem: AtributeType[5..10] = "string"
+~ _secretItem: AtributeType[5..10]
+~ _secretItem: AtributeType = null
+~ _secretItem: AtributeType = 5
+~ _secretItem: AtributeType = "string"
+~ _secretItem: AtributeType
+~ _secretItem: boolean[1..*] = null
+~ _secretItem: boolean[1..*] = 5
+~ _secretItem: boolean[1..*] = "string"
+~ _secretItem: boolean[1..*]
+~ _secretItem: boolean[10] = null
+~ _secretItem: boolean[10] = 5
+~ _secretItem: boolean[10] = "string"
+~ _secretItem: boolean[10]
+~ _secretItem: boolean[*] = null
+~ _secretItem: boolean[*] = 5
+~ _secretItem: boolean[*] = "string"
+~ _secretItem: boolean[*]
+~ _secretItem: boolean[5..10] = null
+~ _secretItem: boolean[5..10] = 5
+~ _secretItem: boolean[5..10] = "string"
+~ _secretItem: boolean[5..10]
+~ _secretItem: boolean = null
+~ _secretItem: boolean = 5
+~ _secretItem: boolean = "string"
+~ _secretItem: boolean
+~ _secretItem: Object[1..*] = null
+~ _secretItem: Object[1..*] = 5
+~ _secretItem: Object[1..*] = "string"
+~ _secretItem: Object[1..*]
+~ _secretItem: Object[10] = null
+~ _secretItem: Object[10] = 5
+~ _secretItem: Object[10] = "string"
+~ _secretItem: Object[10]
+~ _secretItem: Object[*] = null
+~ _secretItem: Object[*] = 5
+~ _secretItem: Object[*] = "string"
+~ _secretItem: Object[*]
+~ _secretItem: Object[5..10] = null
+~ _secretItem: Object[5..10] = 5
+~ _secretItem: Object[5..10] = "string"
+~ _secretItem: Object[5..10]
+~ _secretItem: Object = null
+~ _secretItem: Object = 5
+~ _secretItem: Object = "string"
+~ _secretItem: Object
+~ _secretItem [1..*] = null
+~ _secretItem [1..*] = 5
+~ _secretItem [1..*] = "string"
+~ _secretItem [1..*]
+~ _secretItem [10] = null
+~ _secretItem [10] = 5
+~ _secretItem [10] = "string"
+~ _secretItem [10]
+~ _secretItem [*] = null
+~ _secretItem [*] = 5
+~ _secretItem [*] = "string"
+~ _secretItem [*]
+~ _secretItem [5..10] = null
+~ _secretItem [5..10] = 5
+~ _secretItem [5..10] = "string"
+~ _secretItem [5..10]
+~ _secretItem = null
+~ _secretItem = 5
+~ _secretItem = "string"
+~ _secretItem
+~ _secretItem: AtributeType[1..*] = null { uniqe, ordered}
+~ _secretItem: AtributeType[1..*] = 5 { uniqe, ordered}
+~ _secretItem: AtributeType[1..*] = "string" { uniqe, ordered}
+~ _secretItem: AtributeType[1..*] { uniqe, ordered}
+~ _secretItem: AtributeType[10] = null { uniqe, ordered}
+~ _secretItem: AtributeType[10] = 5 { uniqe, ordered}
+~ _secretItem: AtributeType[10] = "string" { uniqe, ordered}
+~ _secretItem: AtributeType[10] { uniqe, ordered}
+~ _secretItem: AtributeType[*] = null { uniqe, ordered}
+~ _secretItem: AtributeType[*] = 5 { uniqe, ordered}
+~ _secretItem: AtributeType[*] = "string" { uniqe, ordered}
+~ _secretItem: AtributeType[*] { uniqe, ordered}
+~ _secretItem: AtributeType[5..10] = null { uniqe, ordered}
+~ _secretItem: AtributeType[5..10] = 5 { uniqe, ordered}
+~ _secretItem: AtributeType[5..10] = "string" { uniqe, ordered}
+~ _secretItem: AtributeType[5..10] { uniqe, ordered}
+~ _secretItem: AtributeType = null { uniqe, ordered}
+~ _secretItem: AtributeType = 5 { uniqe, ordered}
+~ _secretItem: AtributeType = "string" { uniqe, ordered}
+~ _secretItem: AtributeType { uniqe, ordered}
+~ _secretItem: boolean[1..*] = null { uniqe, ordered}
+~ _secretItem: boolean[1..*] = 5 { uniqe, ordered}
+~ _secretItem: boolean[1..*] = "string" { uniqe, ordered}
+~ _secretItem: boolean[1..*] { uniqe, ordered}
+~ _secretItem: boolean[10] = null { uniqe, ordered}
+~ _secretItem: boolean[10] = 5 { uniqe, ordered}
+~ _secretItem: boolean[10] = "string" { uniqe, ordered}
+~ _secretItem: boolean[10] { uniqe, ordered}
+~ _secretItem: boolean[*] = null { uniqe, ordered}
+~ _secretItem: boolean[*] = 5 { uniqe, ordered}
+~ _secretItem: boolean[*] = "string" { uniqe, ordered}
+~ _secretItem: boolean[*] { uniqe, ordered}
+~ _secretItem: boolean[5..10] = null { uniqe, ordered}
+~ _secretItem: boolean[5..10] = 5 { uniqe, ordered}
+~ _secretItem: boolean[5..10] = "string" { uniqe, ordered}
+~ _secretItem: boolean[5..10] { uniqe, ordered}
+~ _secretItem: boolean = null { uniqe, ordered}
+~ _secretItem: boolean = 5 { uniqe, ordered}
+~ _secretItem: boolean = "string" { uniqe, ordered}
+~ _secretItem: boolean { uniqe, ordered}
+~ _secretItem: Object[1..*] = null { uniqe, ordered}
+~ _secretItem: Object[1..*] = 5 { uniqe, ordered}
+~ _secretItem: Object[1..*] = "string" { uniqe, ordered}
+~ _secretItem: Object[1..*] { uniqe, ordered}
+~ _secretItem: Object[10] = null { uniqe, ordered}
+~ _secretItem: Object[10] = 5 { uniqe, ordered}
+~ _secretItem: Object[10] = "string" { uniqe, ordered}
+~ _secretItem: Object[10] { uniqe, ordered}
+~ _secretItem: Object[*] = null { uniqe, ordered}
+~ _secretItem: Object[*] = 5 { uniqe, ordered}
+~ _secretItem: Object[*] = "string" { uniqe, ordered}
+~ _secretItem: Object[*] { uniqe, ordered}
+~ _secretItem: Object[5..10] = null { uniqe, ordered}
+~ _secretItem: Object[5..10] = 5 { uniqe, ordered}
+~ _secretItem: Object[5..10] = "string" { uniqe, ordered}
+~ _secretItem: Object[5..10] { uniqe, ordered}
+~ _secretItem: Object = null { uniqe, ordered}
+~ _secretItem: Object = 5 { uniqe, ordered}
+~ _secretItem: Object = "string" { uniqe, ordered}
+~ _secretItem: Object { uniqe, ordered}
+~ _secretItem [1..*] = null { uniqe, ordered}
+~ _secretItem [1..*] = 5 { uniqe, ordered}
+~ _secretItem [1..*] = "string" { uniqe, ordered}
+~ _secretItem [1..*] { uniqe, ordered}
+~ _secretItem [10] = null { uniqe, ordered}
+~ _secretItem [10] = 5 { uniqe, ordered}
+~ _secretItem [10] = "string" { uniqe, ordered}
+~ _secretItem [10] { uniqe, ordered}
+~ _secretItem [*] = null { uniqe, ordered}
+~ _secretItem [*] = 5 { uniqe, ordered}
+~ _secretItem [*] = "string" { uniqe, ordered}
+~ _secretItem [*] { uniqe, ordered}
+~ _secretItem [5..10] = null { uniqe, ordered}
+~ _secretItem [5..10] = 5 { uniqe, ordered}
+~ _secretItem [5..10] = "string" { uniqe, ordered}
+~ _secretItem [5..10] { uniqe, ordered}
+~ _secretItem = null { uniqe, ordered}
+~ _secretItem = 5 { uniqe, ordered}
+~ _secretItem = "string" { uniqe, ordered}
+~ _secretItem { uniqe, ordered}
+HELLOWORLD: AtributeType[1..*] = null
+HELLOWORLD: AtributeType[1..*] = 5
+HELLOWORLD: AtributeType[1..*] = "string"
+HELLOWORLD: AtributeType[1..*]
+HELLOWORLD: AtributeType[10] = null
+HELLOWORLD: AtributeType[10] = 5
+HELLOWORLD: AtributeType[10] = "string"
+HELLOWORLD: AtributeType[10]
+HELLOWORLD: AtributeType[*] = null
+HELLOWORLD: AtributeType[*] = 5
+HELLOWORLD: AtributeType[*] = "string"
+HELLOWORLD: AtributeType[*]
+HELLOWORLD: AtributeType[5..10] = null
+HELLOWORLD: AtributeType[5..10] = 5
+HELLOWORLD: AtributeType[5..10] = "string"
+HELLOWORLD: AtributeType[5..10]
+HELLOWORLD: AtributeType = null
+HELLOWORLD: AtributeType = 5
+HELLOWORLD: AtributeType = "string"
+HELLOWORLD: AtributeType
+HELLOWORLD: boolean[1..*] = null
+HELLOWORLD: boolean[1..*] = 5
+HELLOWORLD: boolean[1..*] = "string"
+HELLOWORLD: boolean[1..*]
+HELLOWORLD: boolean[10] = null
+HELLOWORLD: boolean[10] = 5
+HELLOWORLD: boolean[10] = "string"
+HELLOWORLD: boolean[10]
+HELLOWORLD: boolean[*] = null
+HELLOWORLD: boolean[*] = 5
+HELLOWORLD: boolean[*] = "string"
+HELLOWORLD: boolean[*]
+HELLOWORLD: boolean[5..10] = null
+HELLOWORLD: boolean[5..10] = 5
+HELLOWORLD: boolean[5..10] = "string"
+HELLOWORLD: boolean[5..10]
+HELLOWORLD: boolean = null
+HELLOWORLD: boolean = 5
+HELLOWORLD: boolean = "string"
+HELLOWORLD: boolean
+HELLOWORLD: Object[1..*] = null
+HELLOWORLD: Object[1..*] = 5
+HELLOWORLD: Object[1..*] = "string"
+HELLOWORLD: Object[1..*]
+HELLOWORLD: Object[10] = null
+HELLOWORLD: Object[10] = 5
+HELLOWORLD: Object[10] = "string"
+HELLOWORLD: Object[10]
+HELLOWORLD: Object[*] = null
+HELLOWORLD: Object[*] = 5
+HELLOWORLD: Object[*] = "string"
+HELLOWORLD: Object[*]
+HELLOWORLD: Object[5..10] = null
+HELLOWORLD: Object[5..10] = 5
+HELLOWORLD: Object[5..10] = "string"
+HELLOWORLD: Object[5..10]
+HELLOWORLD: Object = null
+HELLOWORLD: Object = 5
+HELLOWORLD: Object = "string"
+HELLOWORLD: Object
+HELLOWORLD [1..*] = null
+HELLOWORLD [1..*] = 5
+HELLOWORLD [1..*] = "string"
+HELLOWORLD [1..*]
+HELLOWORLD [10] = null
+HELLOWORLD [10] = 5
+HELLOWORLD [10] = "string"
+HELLOWORLD [10]
+HELLOWORLD [*] = null
+HELLOWORLD [*] = 5
+HELLOWORLD [*] = "string"
+HELLOWORLD [*]
+HELLOWORLD [5..10] = null
+HELLOWORLD [5..10] = 5
+HELLOWORLD [5..10] = "string"
+HELLOWORLD [5..10]
+HELLOWORLD = null
+HELLOWORLD = 5
+HELLOWORLD = "string"
+HELLOWORLD
+HELLOWORLD: AtributeType[1..*] = null { uniqe, ordered}
+HELLOWORLD: AtributeType[1..*] = 5 { uniqe, ordered}
+HELLOWORLD: AtributeType[1..*] = "string" { uniqe, ordered}
+HELLOWORLD: AtributeType[1..*] { uniqe, ordered}
+HELLOWORLD: AtributeType[10] = null { uniqe, ordered}
+HELLOWORLD: AtributeType[10] = 5 { uniqe, ordered}
+HELLOWORLD: AtributeType[10] = "string" { uniqe, ordered}
+HELLOWORLD: AtributeType[10] { uniqe, ordered}
+HELLOWORLD: AtributeType[*] = null { uniqe, ordered}
+HELLOWORLD: AtributeType[*] = 5 { uniqe, ordered}
+HELLOWORLD: AtributeType[*] = "string" { uniqe, ordered}
+HELLOWORLD: AtributeType[*] { uniqe, ordered}
+HELLOWORLD: AtributeType[5..10] = null { uniqe, ordered}
+HELLOWORLD: AtributeType[5..10] = 5 { uniqe, ordered}
+HELLOWORLD: AtributeType[5..10] = "string" { uniqe, ordered}
+HELLOWORLD: AtributeType[5..10] { uniqe, ordered}
+HELLOWORLD: AtributeType = null { uniqe, ordered}
+HELLOWORLD: AtributeType = 5 { uniqe, ordered}
+HELLOWORLD: AtributeType = "string" { uniqe, ordered}
+HELLOWORLD: AtributeType { uniqe, ordered}
+HELLOWORLD: boolean[1..*] = null { uniqe, ordered}
+HELLOWORLD: boolean[1..*] = 5 { uniqe, ordered}
+HELLOWORLD: boolean[1..*] = "string" { uniqe, ordered}
+HELLOWORLD: boolean[1..*] { uniqe, ordered}
+HELLOWORLD: boolean[10] = null { uniqe, ordered}
+HELLOWORLD: boolean[10] = 5 { uniqe, ordered}
+HELLOWORLD: boolean[10] = "string" { uniqe, ordered}
+HELLOWORLD: boolean[10] { uniqe, ordered}
+HELLOWORLD: boolean[*] = null { uniqe, ordered}
+HELLOWORLD: boolean[*] = 5 { uniqe, ordered}
+HELLOWORLD: boolean[*] = "string" { uniqe, ordered}
+HELLOWORLD: boolean[*] { uniqe, ordered}
+HELLOWORLD: boolean[5..10] = null { uniqe, ordered}
+HELLOWORLD: boolean[5..10] = 5 { uniqe, ordered}
+HELLOWORLD: boolean[5..10] = "string" { uniqe, ordered}
+HELLOWORLD: boolean[5..10] { uniqe, ordered}
+HELLOWORLD: boolean = null { uniqe, ordered}
+HELLOWORLD: boolean = 5 { uniqe, ordered}
+HELLOWORLD: boolean = "string" { uniqe, ordered}
+HELLOWORLD: boolean { uniqe, ordered}
+HELLOWORLD: Object[1..*] = null { uniqe, ordered}
+HELLOWORLD: Object[1..*] = 5 { uniqe, ordered}
+HELLOWORLD: Object[1..*] = "string" { uniqe, ordered}
+HELLOWORLD: Object[1..*] { uniqe, ordered}
+HELLOWORLD: Object[10] = null { uniqe, ordered}
+HELLOWORLD: Object[10] = 5 { uniqe, ordered}
+HELLOWORLD: Object[10] = "string" { uniqe, ordered}
+HELLOWORLD: Object[10] { uniqe, ordered}
+HELLOWORLD: Object[*] = null { uniqe, ordered}
+HELLOWORLD: Object[*] = 5 { uniqe, ordered}
+HELLOWORLD: Object[*] = "string" { uniqe, ordered}
+HELLOWORLD: Object[*] { uniqe, ordered}
+HELLOWORLD: Object[5..10] = null { uniqe, ordered}
+HELLOWORLD: Object[5..10] = 5 { uniqe, ordered}
+HELLOWORLD: Object[5..10] = "string" { uniqe, ordered}
+HELLOWORLD: Object[5..10] { uniqe, ordered}
+HELLOWORLD: Object = null { uniqe, ordered}
+HELLOWORLD: Object = 5 { uniqe, ordered}
+HELLOWORLD: Object = "string" { uniqe, ordered}
+HELLOWORLD: Object { uniqe, ordered}
+HELLOWORLD [1..*] = null { uniqe, ordered}
+HELLOWORLD [1..*] = 5 { uniqe, ordered}
+HELLOWORLD [1..*] = "string" { uniqe, ordered}
+HELLOWORLD [1..*] { uniqe, ordered}
+HELLOWORLD [10] = null { uniqe, ordered}
+HELLOWORLD [10] = 5 { uniqe, ordered}
+HELLOWORLD [10] = "string" { uniqe, ordered}
+HELLOWORLD [10] { uniqe, ordered}
+HELLOWORLD [*] = null { uniqe, ordered}
+HELLOWORLD [*] = 5 { uniqe, ordered}
+HELLOWORLD [*] = "string" { uniqe, ordered}
+HELLOWORLD [*] { uniqe, ordered}
+HELLOWORLD [5..10] = null { uniqe, ordered}
+HELLOWORLD [5..10] = 5 { uniqe, ordered}
+HELLOWORLD [5..10] = "string" { uniqe, ordered}
+HELLOWORLD [5..10] { uniqe, ordered}
+HELLOWORLD = null { uniqe, ordered}
+HELLOWORLD = 5 { uniqe, ordered}
+HELLOWORLD = "string" { uniqe, ordered}
+HELLOWORLD { uniqe, ordered}

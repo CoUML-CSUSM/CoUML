@@ -36,9 +36,13 @@ export namespace VisibilityType{
 export class DataType
 {
 	dataType: string;
-    constructor(type: string)
+    constructor(type: string = "")
     {
         this.dataType = type;
+    }
+    public toUmlNotation(): string
+    {
+        return `: ${this.dataType}`;
     }
 }
 
