@@ -71,8 +71,10 @@ export class ProjectDeveloper{
 
 	private applyChange(change: ChangeRecord)
 	{
-		console.log("applyChange");
-		console.log(change);
+		console.log(`developer---------Change applying-------
+		${ActionType[change.action]} . ${PropertyType[change.affectedProperty]}
+		${change.id}
+		value-> ${change.value}`);
 
 		let action = ActionType[change.action].toLowerCase();
 		let affectedProperty = PropertyType[change.affectedProperty].toLowerCase();
@@ -99,24 +101,22 @@ export class ProjectDeveloper{
 
 		eval("affectedComponent." + operation);
 
-		//if the label is updated teh whole object is updated,
-		// affter the change hass been applied locally replace the value string with the 
-		// if(PropertyType.Label == change.affectedProperty)
-		// 	change.value = affectedComponent
-
 		console.log("result");
 		console.log(this._projectDiagram);//i need to send this down to the c#
 		this._coUmlHub.send(this._projectDiagram.id,this._projectDiagram);
 
 	}
 
-	stageChange(change: ChangeRecord) {
+	stageChange(change: ChangeRecord, updateSelf: boolean = false) {
 		// apply change locally
 		this.applyChange(change);
 		this._changes.push(change);
 
 		//apply globally
 		this.commitStagedChanges();
+
+		if(updateSelf)
+			this._diagramEditor.processChange(change);
 	}
 
 	private async commitStagedChanges()
@@ -124,6 +124,9 @@ export class ProjectDeveloper{
 		if(!this.shouldDelay)
 		{
 			this.shouldDelay = true;
+			console.log(`committing changes`)
+			this._changes.forEach(change=>console.log(change.toString()));
+
 			this._coUmlHub.commit(this._changes);
 			this._changes = [];
 			//artificial delay that prevents the program from updating too offten, but submits any last added elements

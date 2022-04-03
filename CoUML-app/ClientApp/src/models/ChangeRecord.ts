@@ -12,6 +12,14 @@ export class ChangeRecord
 		this.action = action;
 		this.value = value;
 	}
+	toString()
+	{
+		return `CHANGE RECORDED: 
+		at ${this.id}
+		${ActionType[this.action]} to ${PropertyType[this.affectedProperty]}
+		${this.value}
+		`
+	}
 }
 
 export enum ActionType

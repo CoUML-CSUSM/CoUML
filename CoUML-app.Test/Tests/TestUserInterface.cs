@@ -183,10 +183,33 @@ namespace CoUML_app.Test.Tests
             Random random = new Random();
             for(int i = 0; i < 10; i++)
             {
-                dc.Add(new DiagramComponent(_toolBarItems[Tool.Attribute], InlineAttribute.ATTRIBUTES[random.Next(InlineAttribute.ATTRIBUTES.Length-1)]));
+                dc.Add(new DiagramComponent(_toolBarItems[Tool.Attribute], Inline.ATTRIBUTES[random.Next(Inline.ATTRIBUTES.Length-1)]));
             }
 
             Coords atClass = Build( new Coords(300, 120), dc.ToArray() );
+
+            Thread.Sleep(TimeSpan.FromSeconds(25));
+            _chromeDriver.Close();
+
+        }
+
+
+        [TestMethod]
+        public void TestOpperationDescription()
+        {
+            OpenClientConnection();
+            LoadToolbarItems();
+            OpenTest();
+            // make list of attributes
+            List<DiagramComponent> dc = new List<DiagramComponent>();
+            dc.Add(new (_toolBarItems[Tool.Interface], "OperationsTest"));
+            Random random = new Random();
+            for(int i = 0; i < 10; i++)
+            {
+                dc.Add(new DiagramComponent(_toolBarItems[Tool.Operation], Inline.OPPERATION[random.Next(Inline.OPPERATION.Length-1)]));
+            }
+
+            Coords opInterf = Build( new Coords(500, 120), dc.ToArray() );
 
             Thread.Sleep(TimeSpan.FromSeconds(25));
             _chromeDriver.Close();

@@ -94,7 +94,6 @@ export class EditorComponent implements AfterViewInit{
 				mxEvent.START_EDITING, 
 				mxEvent.EDITING_STOPPED,
 				mxEvent.CELL_CONNECTED, 
-				mxEvent.EDITING_STOPPED,
 				mxEvent.CELLS_MOVED,
 				mxEvent.CLICK,
 				mxEvent.SELECT,
@@ -149,14 +148,11 @@ export class EditorComponent implements AfterViewInit{
 	 * stage the change initiated by the user
 	 * @param change 
 	 */
-	public stageChange(change: ChangeRecord): void
+	public stageChange(change: ChangeRecord, updateSelf: boolean = false): void
 	{
-		if(this.isDiagramSet)
-		{
-			console.log("change staged")
-			console.log(change);
-			this._projectDeveloper.stageChange(change);
-		}
+		console.log(`GRAPH EVENT---------Change Staged-------\n${change.toString()}`);
+
+		this._projectDeveloper.stageChange(change, updateSelf);
 	}
 
 
@@ -300,7 +296,12 @@ export class EditorComponent implements AfterViewInit{
 
 	public processChange(change: ChangeRecord)
 	{
-		let affectedCell = change.id.length>1? this._graph.getModel().getCell(change.id[change.id.length-1]): null;
+		let affectedCell = this._graph.getModel().getCell(change.id[change.id.length-1]);
+		console.log(`---------PROCESSINGCHANGE-------
+		${ActionType[change.action]} . ${PropertyType[change.affectedProperty]}
+		${change.id}
+		value-> ${change.value}`);
+		console.log(affectedCell);
 
 		switch(change.action){
 			case ActionType.Change:
@@ -424,7 +425,8 @@ export class EditorComponent implements AfterViewInit{
 	 */
 	private updateLabelValue(affectedCell: mxCell, change: ChangeRecord)
 	{
-
+		console.log("-----UPDATELABEL----")
+		console.log(affectedCell);
 		this._graph.getModel().valueForCellChanged(
 			affectedCell,
 			this._projectDeveloper._projectDiagram.at(change.id).toUmlNotation()

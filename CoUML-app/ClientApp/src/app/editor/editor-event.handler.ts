@@ -221,7 +221,6 @@ import { EditorComponent } from "./editor.component";
 	function labelChanged(graph: mxGraph, editorComponent: EditorComponent)
 	{
 		graph.addListener(mxEvent.LABEL_CHANGED,
-			// on change label event 
 			function(eventSource, eventObject){
 				console.log('%c%s', f_alert, "LABEL_CHANGED");
 				let affectedCells = eventObject.getProperties().cell;
@@ -232,7 +231,7 @@ import { EditorComponent } from "./editor.component";
 					PropertyType.Label, 
 					ActionType.Label,
 					affectedCells.value
-				));
+				), true);
 				// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 		});
 	}
@@ -268,21 +267,6 @@ import { EditorComponent } from "./editor.component";
 			});
 	}
 
-	/**
-	 * 
-	 * @param graph 
-	 * @param editorComponent 
-	 */
-	function editingStopped(graph: mxGraph, editorComponent: EditorComponent)
-	{
-		graph.addListener(mxEvent.EDITING_STOPPED,
-			//
-			function(eventSource, eventObject){
-				console.log('%c%s', f_alert, "EDITING_STOPPED");
-
-				editorComponent.release();
-			});
-	}
 
 	/**
 	 * triggers when users make changes to existing edges/relations
@@ -301,6 +285,7 @@ import { EditorComponent } from "./editor.component";
 				console.log(`edge: ${affectedEdge.edge.id}\nsource(from): ${affectedEdge.edge.source?.id}\ntarget(to): ${affectedEdge.edge.target?.id}`);
 
 				if( isUuid(affectedEdge.edge.id)){
+					console.log(`update edge`)
 					//disconnect action --> previous
 					//connect action --> terminal
 					let isConnectioning = affectedEdge.terminal? true: false;
@@ -356,7 +341,6 @@ import { EditorComponent } from "./editor.component";
 	 */
 	function isUuid(id: string):boolean
 	{ 
-		//TODO: better way to validate id
 		let uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 		return uuidRegex.test(id);
 	}
@@ -379,6 +363,23 @@ import { EditorComponent } from "./editor.component";
 
 			});
 	}
+
+	/**
+	 * 
+	 * @param graph 
+	 * @param editorComponent 
+	 */
+	function editingStopped(graph: mxGraph, editorComponent: EditorComponent)
+	{
+		graph.addListener(mxEvent.EDITING_STOPPED,
+			//TODO: error on change lable on relations prevents release
+			function(eventSource, eventObject){
+				console.log('%c%s', f_alert, "EDITING_STOPPED");
+
+				editorComponent.release();
+			});
+	}
+
 
 
 	/**
@@ -476,9 +477,10 @@ import { EditorComponent } from "./editor.component";
 
 					relation.type = affectedCells.style | RelationshipType.Association;
 
-					affectedCells.id = relation.id;
-					affectedCells.value = relation.attributes;
-					affectedCells.style = RelationshipType[relation.type]
+					// affectedCells.id = relation.id;
+					// affectedCells.value = relation.toUmlNotation();
+					// affectedCells.style = RelationshipType[relation.type]
+					graph.removeCells([affectedCells],true);
 
 				// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
 					editorComponent.stageChange(new ChangeRecord(
@@ -486,7 +488,7 @@ import { EditorComponent } from "./editor.component";
 						PropertyType.Elements,
 						ActionType.Insert,
 						relation
-					));
+					), true);
 				// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 				}

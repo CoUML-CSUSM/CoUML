@@ -81,7 +81,8 @@ export class CoUmlHubService{
 	 */
 	public commit(changes: ChangeRecord[])
 	{
-		let changesDTO = JSON.stringify(changes)
+		let changesDTO = JSON.stringify(changes);
+		console.log(`hub.commit`)
 		this._coUmlHubConnection.invoke("Push", 'test', changesDTO);
 	}
 
