@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 using AngleSharp.Common;
+using CoUML_app.Test.TestSamples;
 /*
 FindElement(By.__("<somthing>"));
 https://www.toolsqa.com/selenium-webdriver/c-sharp/findelement-and-findelements-commands-in-c/
@@ -126,6 +127,7 @@ namespace CoUML_app.Test.Tests
         {
             try{
                 OpenClientConnection();
+                GenerateNewDiagram("Animals");
                 LoadToolbarItems();
 
 
@@ -163,12 +165,40 @@ namespace CoUML_app.Test.Tests
             }catch(Exception e ){
                 Console.WriteLine(e);
             }finally{
-                Thread.Sleep(TimeSpan.FromSeconds(25));
+                Thread.Sleep(TimeSpan.FromSeconds(2));
                _chromeDriver.Close();
             }
             Assert.Fail();
         }
 
+        [TestMethod]
+        public void TestAtributeDescription()
+        {
+            OpenClientConnection();
+            LoadToolbarItems();
+            OpenTest();
+            // make list of attributes
+            List<DiagramComponent> dc = new List<DiagramComponent>();
+            dc.Add(new (_toolBarItems[Tool.AbstractClass], "AttributeTest"));
+            Random random = new Random();
+            for(int i = 0; i < 10; i++)
+            {
+                dc.Add(new DiagramComponent(_toolBarItems[Tool.Attribute], InlineAttribute.ATTRIBUTES[random.Next(InlineAttribute.ATTRIBUTES.Length-1)]));
+            }
+
+            Coords atClass = Build( new Coords(300, 120), dc.ToArray() );
+
+            Thread.Sleep(TimeSpan.FromSeconds(25));
+            _chromeDriver.Close();
+
+        }
+
+        /// <summary>
+        /// builds a single component 
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="pieces"></param>
+        /// <returns></returns>
         private Coords Build(Coords root, DiagramComponent[] pieces)
         {
 
@@ -184,6 +214,48 @@ namespace CoUML_app.Test.Tests
             return root;
         }
 
+        /// <summary>
+        /// open test diagram
+        /// </summary>
+        private void OpenTest()
+        {
+            new Actions(_chromeDriver)
+                .MoveToElement(_chromeDriver.FindElement(By.Id("menuFile")))
+                .Click().Build().Perform();
+            new Actions(_chromeDriver)
+                .MoveToElement(_chromeDriver.FindElement(By.Id("menuFileFetchTest")))
+                .Click().Build().Perform();
+        }
+
+        private void GenerateNewDiagram(string name)
+        {
+            new Actions(_chromeDriver)
+                .MoveToElement(_chromeDriver.FindElement(By.Id("menuFile")))
+                .Click().Build().Perform();
+            new Actions(_chromeDriver)
+                .MoveToElement(_chromeDriver.FindElement(By.Id("menuFileNew")))
+                .Click().Build().Perform();
+            new Actions(_chromeDriver)
+                .MoveToElement(_chromeDriver.FindElement(By.Id("inputDiagramName")))
+                .Click().Build().Perform();
+
+            new Actions(_chromeDriver)
+                .SendKeys(name)
+                .Click().Build().Perform();
+
+            new Actions(_chromeDriver)
+                .MoveToElement(_chromeDriver.FindElement(By.Id("submitDiagramName")))
+                .Click().Build().Perform();
+            Thread.Sleep(TestHelper.DELAY_TIME);
+        }
+
+        /// <summary>
+        /// try to draw a relation between 2 comps
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
+        /// <param name="edgeType"></param>
+        /// <param name="targetExtra"></param>
         private void DrawEdge( Coords source, Coords target, string edgeType, int targetExtra)
         {
             var offsetTo_Target = CalculateOffset(source, target);

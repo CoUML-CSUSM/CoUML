@@ -127,7 +127,7 @@ export class Attribute extends ComponentProperty
 		throw new Error("Method not implemented.");
 	}
 
-	multiplicity: Multiplicity; 
+	multiplicity: Multiplicity = new Multiplicity(); 
 	
 	defaultValue: string; 
 	
@@ -283,6 +283,7 @@ export class Multiplicity
 
 	public constructor( description: string = "1")
 	{
+		this["_$type"] = `CoUML_app.Model.${Multiplicity}, CoUML_app`;
 		let tokenDescription  = description.match(VALID_MULTIPLICITY);
 		if(tokenDescription)
 		{
@@ -291,8 +292,10 @@ export class Multiplicity
 		}
 	}
 
-	toUmlNotation(): string
+	public toUmlNotation(): string
 	{
+		if(this.min == 1 && this.max == 1)
+			return "";
 		return `[${this.min != this.max ? this.min+"..": ""}${this.max<0? "*":this.max}]`;
 	}
 }

@@ -179,7 +179,8 @@ import { VisibilityType } from "./Types";
 		__attribute.isStatic = x.isStatic;
 		__attribute.propertyString = x.propertyString;
 		__attribute.type =  new DataType(x.type.dataType);
-		__attribute.multiplicity = x.multiplicity;
+		__attribute.multiplicity.max = x.multiplicity.max;
+		__attribute.multiplicity.min = x.multiplicity.min;
 		__attribute.defaultValue = x.defaultValue;
 		return __attribute;
 	}

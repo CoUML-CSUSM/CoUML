@@ -177,7 +177,7 @@ import { EditorComponent } from "./editor.component";
 					)
 				{
 					console.log("this goes here");
-
+					console.log(component);
 					editorComponent.insertProperty(parentCell, component);
 
 				// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
