@@ -20,6 +20,7 @@ https://www.toolsqa.com/selenium-webdriver/c-sharp/findelement-and-findelements-
 
 namespace CoUML_app.Test.Tests
 {
+    
 
     public struct Coords
     {
@@ -36,7 +37,6 @@ namespace CoUML_app.Test.Tests
     }
 
     public static class Tool{
-
         public const string Class = "Class"; 
         public const string AbstractClass = "Abstract";
         public const string Interface = "Interface";
@@ -73,6 +73,17 @@ namespace CoUML_app.Test.Tests
         };
     }
 
+    public struct DiagramComponent
+    {
+        public IWebElement Tool{ get; set; }
+        public string Description{ get; set; }
+        public DiagramComponent(IWebElement tool, string description)
+        {
+            Tool = tool;
+            Description = description;
+        }
+    }
+
     [TestClass]
     public class TestUserInterface
     {
@@ -84,15 +95,15 @@ namespace CoUML_app.Test.Tests
         public TestUserInterface()
         {
             new DriverManager().SetUpDriver(new ChromeConfig());
-            ChromeOptions options = new ChromeOptions();
+            ChromeOptions options = new ChromeOptions{Proxy = null};
             options.AddArguments("--auto-open-devtools-for-tabs");
-            _chromeDriver = new ChromeDriver();
+            _chromeDriver = new ChromeDriver(options);
             _chromeDriver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            _chromeDriver.Manage().Window.Maximize();
         }
         
         private void LoadToolbarItems()
         {
-            Console.WriteLine("Loading Toolbar Items");
             _toolBarItems = new Dictionary<string, IWebElement>();
             foreach (string tool in Tool.All){
                 try{
@@ -106,110 +117,108 @@ namespace CoUML_app.Test.Tests
         private  void OpenClientConnection()
         {
             _chromeDriver.Navigate().GoToUrl("https://localhost:5001");
+            Thread.Sleep(TimeSpan.FromSeconds(1));
         }
 
 
         [TestMethod]
         public void IntegrationTest_1()
         {
-            // try{
+            try{
                 OpenClientConnection();
-                Thread.Sleep(TimeSpan.FromSeconds(1));
                 LoadToolbarItems();
 
-                // create IPet interface
-                Coords c_IPet = new Coords(200, 200);
-                DragAndDrop(_toolBarItems[Tool.Interface], c_IPet, false);
-                ChangeLabel(c_IPet, "IPet");
-                
-                // for(int y = 0; y<9; y++){
-                //     for(int x = 0; x<4; x++){
-                //         DragAndDropLabel(_toolBarItems[Tool.Interface], new Coords(100+200*x, 100+50*y));
-                //     }
-                // }
-                // for(int y = 0; y<9; y++){
-                //     for(int x = 0; x<4; x++){
-                //         ChangeLabel(new Coords(100+150*x, 100+50*y));
-                //     }
-                // }
 
-                // NewActionsAtCoords(c_IPet).Click().Build().Perform();
- 
+                Coords iPet = Build(
+                    new Coords(300, 200), 
+                    new DiagramComponent[]{
+                        new (_toolBarItems[Tool.Interface], "IPet"),
+                        new (_toolBarItems[Tool.Operation], "+ feed(chow: Kibble, amount: number): boolean"),
+                        new (_toolBarItems[Tool.Operation], "+ play(): void"),
+                    });
 
-                // DragAndDrop(_toolBarItems[Tool.Operation], c_IPet, true);
-                // DragAndDrop(_toolBarItems[Tool.Operation], c_IPet, true);
-                // DragAndDrop(_toolBarItems[Tool.Operation], c_IPet, true);
-                // DragAndDrop(_toolBarItems[Tool.Operation], c_IPet, true);
-                // DragAndDrop(_toolBarItems[Tool.Operation], c_IPet, true);
-                // DragAndDrop(_toolBarItems[Tool.Operation], c_IPet, true);
-                // DragAndDrop(_toolBarItems[Tool.Operation], c_IPet, true);
-                // DragAndDrop(_toolBarItems[Tool.Operation], c_IPet, true);
-                // DragAndDrop(_toolBarItems[Tool.Operation], c_IPet, true);
-                // DragAndDrop(_toolBarItems[Tool.Operation], c_IPet, true);
-                // ChangeLabel(c_IPet_Opp1, "+ play(toy: Exersize, duration: number): boolean");
-                // for(int y = 0; y<25; y++){
-                //     for(int x = 0; x<9; x++){
-                //         ChangeLabel(new Coords(100+18*x, 100+7*y));
-                //     }
-                // }
+                Coords dog = Build(
+                    new Coords(200, 450), 
+                    new DiagramComponent[]{
+                        new (_toolBarItems[Tool.AbstractClass], "Dog"),
+                        new (_toolBarItems[Tool.Attribute], "- name: string"),
+                        new (_toolBarItems[Tool.Operation], "+ speak():void"),
+                        new (_toolBarItems[Tool.Operation], "- scratch( spot: Spot): void"),
+                    });
 
-                // add Operation
-                Coords c_IPet_Opp1 = new Coords(
-                    c_IPet.X, c_IPet.Y + 10 + Tool.Grid * 1
-                );
-                DragAndDrop(_toolBarItems[Tool.Operation], c_IPet, true);
-                Thread.Sleep(TimeSpan.FromSeconds(1));
-                ChangeLabel(c_IPet_Opp1, "+ feed(chow: Kibble, amount: number): boolean");
+                DrawEdge(dog, iPet, Tool.Realization, 5);
 
-                // //add abstracClass
-                // Coords c_SiCat = new Coords(145, 405);
-                // DragAndDrop(_toolBarItems[Tool.AbstractClass], c_SiCat);
-                // ChangeLabel(c_SiCat, "StandarIssueCat");
+                Coords cat = Build(
+                    new Coords(500, 450), 
+                    new DiagramComponent[]{
+                        new (_toolBarItems[Tool.AbstractClass], "cat"),
+                        new (_toolBarItems[Tool.Attribute], "- name: string"),
+                        new (_toolBarItems[Tool.Attribute], "- furLength: number"),
+                        new (_toolBarItems[Tool.Operation], "+ purr():void"),
+                        new (_toolBarItems[Tool.Operation], "+ scratch(): Damage"),
+                    });
 
-                // DrawEdge(c_SiCat, c_IPet, Tool.Generalization);
+                DrawEdge(cat, iPet, Tool.Realization, 5);
 
-
-            // }catch(Exception e ){
-            //     Console.WriteLine(e);
-            // }finally{
-            //     Thread.Sleep(TimeSpan.FromSeconds(25));
-            //    _chromeDriver.Close();
-            // }
-            
+            }catch(Exception e ){
+                Console.WriteLine(e);
+            }finally{
+                Thread.Sleep(TimeSpan.FromSeconds(25));
+               _chromeDriver.Close();
+            }
             Assert.Fail();
-            
-
         }
 
-        private void DrawEdge( Coords source, Coords target, string edgeType)
+        private Coords Build(Coords root, DiagramComponent[] pieces)
         {
-            source = ConnectableCenter(source);
-            target = ConnectableCenter(target);
+
+            for(int i = 0; i < pieces.Length; i ++)
+            {
+                DragAndDrop(pieces[i].Tool, root, i>0);
+                ChangeLabel((i>0? 
+                    new Coords(
+                        root.X, root.Y + 13 + Tool.Grid * i
+                    )
+                :root), pieces[i].Description);
+            }
+            return root;
+        }
+
+        private void DrawEdge( Coords source, Coords target, string edgeType, int targetExtra)
+        {
             var offsetTo_Target = CalculateOffset(source, target);
 
-            var midpoint = TestHelper.CalculateMidPoint(source, target);
-            var offsetTo_midpoint = CalculateOffset(target, midpoint);
-
-
-            var action  = NewActionsAtCoords(source);
-            action
+            NewActionsAtCoords(source)
+                .Click()
+                .MoveByOffset(160, 40)
                 .ClickAndHold()
                 .MoveByOffset(offsetTo_Target.X, offsetTo_Target.Y)
                 .Release()
-                .MoveByOffset(offsetTo_midpoint.X, offsetTo_midpoint.Y)
+                .MoveByOffset(offsetTo_Target.X*-1, offsetTo_Target.Y*-1)
+                .Click()
+                .Build().Perform();
+            Thread.Sleep(TestHelper.DELAY_TIME);
+
+            Coords midPoint = CalculateMidPoint(source, target, targetExtra);
+            new Actions(_chromeDriver)
+                .MoveByOffset(midPoint.X, midPoint.Y)
+                .Click()
                 .ContextClick()
+                .Build().Perform();
+            Thread.Sleep(TestHelper.DELAY_TIME);
+
+            new Actions(_chromeDriver)
                 .MoveToElement(_chromeDriver.FindElement(By.Id(edgeType)))
                 .Click()
-                .Build()
-                .Perform();
+                .MoveByOffset(5,5)
+                .Click()
+                .Build().Perform();
                         
-            
         }
         public void DragAndDrop(IWebElement source, Coords componentDestination, Boolean childOffset)
         {
 
             var destinationOffset  =  CalculateOffset(source, componentDestination);
-
 
             var action = NewActionsAtCoords(componentDestination);
             action
@@ -221,98 +230,75 @@ namespace CoUML_app.Test.Tests
                 .MoveToElement(_toolBarItems[Tool.Reference]).Click()
                 .Build()
                 .Perform();
-            
+            Thread.Sleep(TestHelper.DELAY_TIME);
         }
-        // public void DragAndDropLabel(IWebElement source, Coords point,  Boolean childOffset)
-        // {
-
-        //     var destinationOffset  =  CalculateOffset(source, point);
-
-        //     var action = new Actions(_chromeDriver);
-        //     action
-        //         .MoveToElement(source)
-        //         .ClickAndHold()
-        //         .MoveByOffset(destinationOffset.X + (childOffset? 5:0), destinationOffset.Y+ (childOffset? 15:0))
-        //         .Release()
-        //         .DoubleClick()
-        //         .SendKeys($"({point.X}, {point.Y})")
-        //         .MoveByOffset(222, 35)
-        //         .Click()
-        //         .Build()
-        //         .Perform();
-        // }
 
         public void ChangeLabel(Coords component, string label)
         {
             var action = NewActionsAtCoords(component);
             action
-                .MoveByOffset(85, 25)
+                .MoveByOffset(85, 32)
                 .Click()
-                .Release()
+                .Release().Build().Perform();
+            Thread.Sleep(TimeSpan.FromMilliseconds(100));
+            action = new Actions(_chromeDriver);
+            action
                 .DoubleClick()
                 .SendKeys(label)
                 .MoveByOffset(212, 64).Click()
                 .Build().Perform();
+            Thread.Sleep(TestHelper.DELAY_TIME);
         }
 
-        public void ChangeLabel(Coords point)
+        public void Delete (Coords component)
         {
-            NewActionsAtCoords(point)
-                .DoubleClick()
-                // .SendKeys(Keys.ArrowRight)
-                .SendKeys($"**({point.X}, {point.Y})**")
-                .MoveToElement(_toolBarItems[Tool.Reference])
+            Thread.Sleep(TestHelper.DELAY_TIME);
+            var action = NewActionsAtCoords(component);
+            action
+                .MoveByOffset(85, 25)
                 .Click()
-                .Build()
-                .Perform();
+                .SendKeys(Keys.Delete)
+                .Build().Perform();
         }
 
-        private Coords CalculateOffset(IWebElement source, Coords componentTarget)
+        private static Coords CalculateOffset(IWebElement source, Coords componentTarget)
         {
             return TestHelper.CalculateOffset(
                 new Coords(source.Location.X, source.Location.Y), componentTarget);
         }
-        public Coords CalculateOffset(Coords source, Coords target)
+        public static Coords CalculateOffset(Coords source, Coords target)
         {
             return TestHelper.CalculateOffset(source, target);
         }
 
-        public Coords ConnectableCenter(Coords elem)
+        private static Coords CalculateMidPoint( Coords source, Coords target, int targetExtras)
         {
+            var y = -30;
             return new Coords(
-                elem.X + Tool.Std_Width/2,
-                elem.Y + Tool.Std_Heght/2
+                y*(target.X - source.X)/(target.Y + (Tool.Grid*targetExtras) - source.Y), 
+                y // *(source.Y>target.Y? -1:1)
             );
         }
-
         public Actions NewActionsAtCoords(Coords here)
         {
             var source = _toolBarItems[Tool.Reference];
-            Console.WriteLine(source);
             var offset = CalculateOffset(source, here);
 
             return new Actions(_chromeDriver)
                 .MoveToElement(source)
                 .MoveByOffset(offset.X, offset.Y)
                 .Click();
-                // .MoveByOffset(offset.X+212, offset.Y+64);
         }
     }
 
     static class TestHelper
     {
+        public static System.TimeSpan DELAY_TIME = TimeSpan.FromMilliseconds(50);
         public static Coords CalculateOffset(Coords source, Coords target)
         {
             var delta = new Coords(
                 target.X - source.X, 
                 target.Y - source.Y
-            );
-
-            Console.WriteLine(
-                "Calculating Offset\n"
-                +   "Source +-> Delta ==> Target\n"
-                +   $"X {source.X} +-> {delta.X} ==> {target.X}\n"
-                +   $"Y {source.Y} +-> {delta.Y} ==> {target.Y}\n"
             );
             return delta;
         }
