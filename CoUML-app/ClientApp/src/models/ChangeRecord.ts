@@ -22,6 +22,7 @@ export class ChangeRecord
 	}
 }
 
+
 export enum ActionType
 {
 	Insert, // value must be < DiagramElement | ComponenetProperty >

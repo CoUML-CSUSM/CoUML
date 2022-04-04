@@ -15,8 +15,10 @@ import { VisibilityType } from "./Types";
 		return __diagram;
 	}
 
-	export function assembleUmlElement(elem): UmlElement
+	export function assembleUmlElement(elem): UmlElement | null
 	{
+		if (elem == null)
+			return null;
 		let element;
 		switch(getType(elem)){
 			case "Relationship":
@@ -60,12 +62,12 @@ import { VisibilityType } from "./Types";
 					element = new NullUser();
 				break;
 			default:
-				console.log("Component is not an object");
+				// console.log("Component is not an object");
 				element = elem;
 				break;
 		}
-		console.log("New Component created");
-		console.log(element)
+		// console.log("New Component created");
+		// console.log(element)
 		
 		if(elem.editor)
 			element.editor = assembleUser(elem.editor);
@@ -208,17 +210,17 @@ import { VisibilityType } from "./Types";
 	 */
 	function getType(element)
 	{
-		console.log("----- getType")
-		console.log(element)
+		// console.log("----- getType")
+		// console.log(element)
 		try{
 			let typeString = element["$type"] || element["_$type"];
-			console.log(typeString);
+			// console.log(typeString);
 			let regex = /(\w*?),*?(?=,)/g;
 			let type = regex.exec(typeString)[0];
-			console.log(`returning "${type}"-----`);
+			// console.log(`returning "${type}"-----`);
 			return type;
 		}catch(any){
-			console.log("no $type");
+			// console.log("no $type");
 			return null;
 		}
 	}

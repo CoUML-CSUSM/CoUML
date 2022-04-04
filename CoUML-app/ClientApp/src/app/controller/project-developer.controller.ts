@@ -50,16 +50,20 @@ export class ProjectDeveloper{
 		this._projectDiagram = null;
 		this._diagramEditor.clearGraph();
 	}
-	
+	private _awaitingChanges: ChangeRecord[] = [];
 	public applyChanges(changes: ChangeRecord[])
 	{
-
-		console.log("-------------- apply changes ---------------");
-		console.log(changes);
 		for(let change of changes)
-		{
+			this._awaitingChanges.unshift(change);
+		this.merge();
+	}
+	private merge()
+	{	console.log("-------------- apply changes ---------------");
+		// console.log(changes);
+		// for(let change of changes)
+		while(this._awaitingChanges.length>0){
+			let change = this._awaitingChanges.pop();
 			setTimeout(()=>{
-
 				this.applyChange(change);
 				this._diagramEditor.processChange(change);
 			}, 100)
@@ -76,30 +80,31 @@ export class ProjectDeveloper{
 		${change.id}
 		value-> ${change.value}`);
 
-		let action = ActionType[change.action].toLowerCase();
-		let affectedProperty = PropertyType[change.affectedProperty].toLowerCase();
+		// let action = ActionType[change.action].toLowerCase();
+		// let affectedProperty = PropertyType[change.affectedProperty].toLowerCase();
 			
-		let operation = "";
+		// let operation = "";
 
 		let affectedComponent= this._projectDiagram.at(change.id);
 
 		switch(change.action){
-			case ActionType.Shift:
-			case ActionType.Insert:
-			case ActionType.Remove:
-			case ActionType.Lock:
-			case ActionType.Release:
-			case ActionType.Label:
-				operation = `${action}(change.value)`;
-				// operation = `${affectedProperty}.${action}(change.value)`;
-				break;
+			case ActionType.Shift:	affectedComponent.shift(change.value); break;
+			case ActionType.Insert:	affectedComponent.insert(change.value); break;
+			case ActionType.Remove:	affectedComponent.remove(change.value); break;
+			case ActionType.Lock:	affectedComponent.lock(change.value); break;
+			case ActionType.Release:	affectedComponent.release(change.value); break;
+			case ActionType.Label:	affectedComponent.label(change.value); break;
+				// operation = `${action}(change.value)`;
+				// // operation = `${affectedProperty}.${action}(change.value)`;
+				// break;
 
 			case ActionType.Change:
-				operation = `${affectedProperty} = change.value`;
-				break;
+				// operation = `${affectedProperty} = change.value`;
+				// break;
+				affectedComponent.change(change); break;
 		}			
 
-		eval("affectedComponent." + operation);
+		// eval("affectedComponent." + operation);
 
 		console.log("result");
 		console.log(this._projectDiagram);//i need to send this down to the c#

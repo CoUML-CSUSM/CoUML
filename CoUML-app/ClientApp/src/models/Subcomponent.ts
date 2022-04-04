@@ -1,3 +1,4 @@
+import { ChangeRecord, PropertyType } from "./ChangeRecord";
 import { RelationalCollection } from "./Collection";
 import { GeneralCollection, ICollection, UmlElement, Component } from "./DiagramModel";
 import { VisibilityType, DataType, RelationshipType} from "./Types";
@@ -29,7 +30,7 @@ const VALID_ATTIBUTE = /([\+\-\#\~])*\s*(\w+)\s*(?:\:\s*(\w+))*\s*(?:\[([\*0-9]+
  * 6: Property Sting
  */
 
-const VALID_OPERATION = /([\+\-\#\~])*\s*(\w+)\s*(?:\(*\s*(.*)\)*)\s*(?:\:\s*(\w*))*\s*(\{.*\})*/i
+const VALID_OPERATION = /([\+\-\#\~])*\s*(\w+)\s*(?:\(\s*(.*)\))*\s*(?:\:\s*(\w*))*\s*(\{.*\})*/i
 /**
  * 1: Visisbility
  * 2: Name
@@ -54,9 +55,9 @@ const DEFUALT_DATATYPE_ATTRIBUTE = "any";
 export class Relationship extends UmlElement
 {
 	public type: RelationshipType;
-	public source: string;
-	public target: string;
-	public attributes: Attribute;
+	public source: string | null;
+	public target: string | null;
+	public attributes: Attribute | null;
 
 	public constructor()
 	{
@@ -87,6 +88,32 @@ export class Relationship extends UmlElement
 	toUmlNotation(): string 
 	{
 		return this.attributes?.name || "";
+	}
+
+	change(change: ChangeRecord) {
+		console.log(`
+		Relation.change(changeRecord)
+		${change.toString()}
+		`);
+
+		switch(change.affectedProperty)
+		{
+			case PropertyType.Attributes:
+				this.attributes = change.value;
+				break;
+			case PropertyType.Target:
+				this.target = change.value;
+				break;
+			case PropertyType.Source:
+				this.source = change.value;
+				break;
+			case PropertyType.Dimension:
+				this.dimension = change.value;
+				break;
+			case PropertyType.Type:
+				this.type = change.value;
+				break;
+		}
 	}
 
 	public label(description: string)
@@ -125,6 +152,9 @@ export abstract class ComponentProperty extends UmlElement
  */
 export class Attribute extends ComponentProperty
 {
+	change(change: ChangeRecord) {
+		throw new Error("Method not implemented.");
+	}
 	public multiplicity: Multiplicity = new Multiplicity();
 	public name: string = "attribute"
 	public type: DataType = new DataType(DEFUALT_DATATYPE_ATTRIBUTE);
@@ -193,6 +223,9 @@ export class Attribute extends ComponentProperty
  */
  export class Operation extends ComponentProperty
 {
+	change(change: ChangeRecord) {
+		throw new Error("Method not implemented.");
+	}
 
 	public parameters: ICollection<Attribute>;
 	public name: string = "operation"
@@ -227,7 +260,7 @@ export class Attribute extends ComponentProperty
 		{
 			this.visibility = VisibilityType.get(tokenDescription[1]) || VisibilityType.VisibilityType.LocalScope;
 			this.name = tokenDescription[2] || "operation";
-			this.parameterize(tokenDescription[3], this.parameters);
+			this.parameterize(tokenDescription[3]);
 			this.type = new DataType(tokenDescription[4] || DEFUALT_DATATYPE_OPPERATION);
 			this.propertyString = tokenDescription[5] || "";
 		}
@@ -244,15 +277,16 @@ export class Attribute extends ComponentProperty
 		throw new Error("Method not implemented.");
 	}
 
-	parameterize(params: string, collection: ICollection<Attribute>): void
+	parameterize(params: string): void
 	{
-		collection.removeAll();
+		this.parameters.removeAll();
+		if(params)
 		for(let attibuteDescription of params.split(', '))
 		{
 			if(attibuteDescription != ""){
 				let a = new Attribute();
 				a.label(attibuteDescription);
-				collection.insert(a);
+				this.parameters.insert(a);
 			}
 		}
 	}
@@ -260,6 +294,9 @@ export class Attribute extends ComponentProperty
 
 export class Enumeral extends UmlElement
 {
+	change(change: ChangeRecord) {
+		throw new Error("Method not implemented.");
+	}
 	public name: string = "enumeral";
 
 	get(id: string) {
