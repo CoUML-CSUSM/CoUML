@@ -50,7 +50,7 @@ export class CoUmlHubService{
 
 		// listen for *test*
 		this._coUmlHubConnection.on("issueUser", (userId: string)=>{
-			//console.log(`New User ID issued ${userId}`);
+			console.log(`New User ID issued ${userId}`);
 		});
 
 		// listen for changes

@@ -141,7 +141,7 @@ namespace CoUML_app.Controllers.Hubs
         public override Task OnConnectedAsync()
         {
             string connectionId = Context.ConnectionId;
-            IUser name = new User(connectionId);
+            IUser name = new User(connectionId);//this needs to become email
             _connections.Add(connectionId, name);
 
             IssueUser(connectionId);
@@ -255,11 +255,11 @@ namespace CoUML_app.Controllers.Hubs
         public void Generate(string Did){
 
 
-//
-Console.WriteLine($"user test {Context.ConnectionId}");
-Console.WriteLine($"{_connections.GetUser(Context.ConnectionId).ToString()}");
+            //
+            Console.WriteLine($"user test {Context.ConnectionId}");
+            Console.WriteLine($"{_connections.GetUser(Context.ConnectionId).ToString()}");
 
-//
+            //
             //mongodb database
             var dbClient = new MongoClient("mongodb://localhost:27017");
             //adds document to the database
