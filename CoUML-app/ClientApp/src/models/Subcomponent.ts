@@ -1,5 +1,6 @@
 import { ChangeRecord, PropertyType } from "./ChangeRecord";
 import { RelationalCollection } from "./Collection";
+import { TYPE } from "./Diagram";
 import { GeneralCollection, ICollection, UmlElement, Component } from "./DiagramModel";
 import { VisibilityType, DataType, RelationshipType} from "./Types";
 
@@ -341,7 +342,7 @@ export class Multiplicity
 
 	public constructor( description: string = "1")
 	{
-		this["_$type"] = `CoUML_app.Model.${Multiplicity}, CoUML_app`;
+		this[TYPE] = `CoUML_app.Model.Multiplicity, CoUML_app`;
 		let tokenDescription  = description.match(VALID_MULTIPLICITY);
 		if(tokenDescription)
 		{
