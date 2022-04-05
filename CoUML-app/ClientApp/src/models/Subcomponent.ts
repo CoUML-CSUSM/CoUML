@@ -59,6 +59,8 @@ export class Relationship extends UmlElement
 	public target: string | null;
 	public attributes: Attribute | null;
 
+	get attSet(){return this.attributes != null}
+
 	public constructor()
 	{
 		super("Relationship");
@@ -87,7 +89,7 @@ export class Relationship extends UmlElement
 
 	toUmlNotation(): string 
 	{
-		return this.attributes?.name || "";
+		return this.attributes? `${this.attributes?.visibility} ${this.attributes?.name}`: "";
 	}
 
 	change(change: ChangeRecord) {
@@ -118,7 +120,7 @@ export class Relationship extends UmlElement
 
 	public label(description: string)
 	{
-		if( this.type == RelationshipType.Association)
+		if( this.type == RelationshipType.Association && description != "")
 		{	if(!this.attributes)
 				this.attributes = new Attribute();
 			this.attributes.label(description);
@@ -167,7 +169,9 @@ export class Attribute extends ComponentProperty
 
 	toUmlNotation(): string
 	{
-		return `${this.visibility} ${this.name}${this.type.toUmlNotation()}${this.multiplicity.toUmlNotation()} ${this.defaultValue? " = "+this.defaultValue: ""}${this.propertyString}`;
+		return `${this.visibility} ${this.name}${this.type.toUmlNotation()}`+
+		(this.multiplicity.isSingle() ? "": `[${this.multiplicity.toUmlNotation()}]` )+
+		` ${this.defaultValue? " = "+this.defaultValue: ""}${this.propertyString}`;
 	}
 
 	get(id: string)
@@ -349,9 +353,14 @@ export class Multiplicity
 
 	public toUmlNotation(): string
 	{
-		if(this.min == 1 && this.max == 1)
-			return "";
-		return `[${this.min != this.max ? this.min+"..": ""}${this.max<0? "*":this.max}]`;
+		// if(this.isSingle)
+		// 	return "";
+		return `${this.min != this.max ? this.min+"..": ""}${this.max == -1? "*":this.max}`;
+	}
+
+	isSingle():boolean
+	{
+		return this.min == 1 && this.max == 1;
 	}
 }
 

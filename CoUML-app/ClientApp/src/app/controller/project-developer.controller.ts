@@ -75,10 +75,10 @@ export class ProjectDeveloper{
 
 	private applyChange(change: ChangeRecord)
 	{
-		console.log(`developer---------Change applying-------
-		${ActionType[change.action]} . ${PropertyType[change.affectedProperty]}
-		${change.id}
-		value-> ${change.value}`);
+		// console.log(`developer---------Change applying-------
+		// ${ActionType[change.action]} . ${PropertyType[change.affectedProperty]}
+		// ${change.id}
+		// value-> ${change.value}`);
 
 		// let action = ActionType[change.action].toLowerCase();
 		// let affectedProperty = PropertyType[change.affectedProperty].toLowerCase();
@@ -129,8 +129,6 @@ export class ProjectDeveloper{
 		if(!this.shouldDelay)
 		{
 			this.shouldDelay = true;
-			console.log(`committing changes`)
-			this._changes.forEach(change=>console.log(change.toString()));
 
 			this._coUmlHub.commit(this._changes);
 			this._changes = [];
