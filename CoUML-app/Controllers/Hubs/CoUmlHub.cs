@@ -254,6 +254,12 @@ namespace CoUML_app.Controllers.Hubs
         //creates a diagram string that gets sent to the database
         public void Generate(string Did){
 
+
+//
+Console.WriteLine($"user test {Context.ConnectionId}");
+Console.WriteLine($"{_connections.GetUser(Context.ConnectionId).ToString()}");
+
+//
             //mongodb database
             var dbClient = new MongoClient("mongodb://localhost:27017");
             //adds document to the database
