@@ -45,9 +45,14 @@ export class HomeComponent {
   }
 
   public create(dId:string){
+
+		console.log("test editor");
+        console.log(this._coUmlHub._projectDeveloper._editor.id);
+        console.log("test done");
+
     console.log("home");
     console.log(dId);
-    this._coUmlHub._projectManager.generate(dId);
+    this._coUmlHub._projectManager.generate(dId,this._coUmlHub._projectDeveloper._editor.id);
     console.log("generated");
     console.log("opeining");
     this._coUmlHub._projectDeveloper.open(dId);

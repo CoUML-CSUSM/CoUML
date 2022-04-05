@@ -92,6 +92,7 @@ import {GoogleLoginProvider } from "angularx-social-login";
       .then((socialUser)=>{//store email here nd send it to databse
         console.log(socialUser.email);
         this._coUmlHub._projectDeveloper.setEditor(new User(socialUser.email));
+        //this._coUmlHub.generate("111");
       });
   
       //console.log(`${GoogleLoginProvider.PROVIDER_ID}`);

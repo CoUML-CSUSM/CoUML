@@ -206,7 +206,7 @@ namespace CoUML_app.Controllers.Hubs
             var diagram = collection.Find(filter).Project("{_id: 0}").FirstOrDefault(); //may return null
 
             if(diagram == null){
-                Generate(dId);
+                Generate(dId,"");//change later to match email
                 diagram = collection.Find(filter).Project("{_id: 0}").FirstOrDefault();
             }
 
@@ -252,7 +252,7 @@ namespace CoUML_app.Controllers.Hubs
 
 
         //creates a diagram string that gets sent to the database
-        public void Generate(string Did){
+        public void Generate(string dId, string uId){
 
 
             //
@@ -267,9 +267,12 @@ namespace CoUML_app.Controllers.Hubs
 
             var collection = db.GetCollection<BsonDocument>("Diagrams");
 
+            Diagram d = new Diagram(dId);
+            d.editor = new User(uId);
+
             //sends diagram as bson doc using the string of the diagram
             MongoDB.Bson.BsonDocument doc = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonDocument>(
-                JsonConvert.SerializeObject(new Diagram(Did), Formatting.Indented, new JsonSerializerSettings
+                JsonConvert.SerializeObject(d, Formatting.Indented, new JsonSerializerSettings
                     {
                         TypeNameHandling = TypeNameHandling.Auto
                     })
