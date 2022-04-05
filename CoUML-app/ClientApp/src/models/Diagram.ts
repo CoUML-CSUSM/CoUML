@@ -1,4 +1,5 @@
 import {v4 as Uuid} from 'uuid';
+import { ChangeRecord } from './ChangeRecord';
 import { GeneralCollection, RelationalCollection } from './Collection';
 import { ICollection, Dimension, IUser, NullUser, Relationship, Interface, Class, AbstractClass, User} from './DiagramModel';
 
@@ -12,6 +13,7 @@ export  abstract class UmlElement
 	abstract get(id: string);
 	abstract insert(element);
 	abstract remove(id: string);
+	abstract change(change: ChangeRecord);
 	abstract label(description: string)
 	abstract toUmlNotation(): string;
 
@@ -40,6 +42,9 @@ export  abstract class UmlElement
 
 export class Diagram extends UmlElement
 {
+	change(change: ChangeRecord) {
+		throw new Error('Method not implemented.');
+	}
 	shift(point: any) {
 		throw new Error('shift Method not implemented.');
 	}

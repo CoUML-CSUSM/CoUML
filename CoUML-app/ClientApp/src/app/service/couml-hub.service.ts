@@ -56,8 +56,11 @@ export class CoUmlHubService{
 
 		// listen for changes
 		this._coUmlHubConnection.on("Dispatch", (changesDTO)=>{
-			let changes = JSON.parse(changesDTO);
-			console.log(changes);
+			console.log(`
+			hub.dispathch(changes)
+				${changesDTO}
+				`);
+			let changes: ChangeRecord[] = JSON.parse(changesDTO);
 			this.dispatch(changes);
 		});
 	}
@@ -92,12 +95,14 @@ export class CoUmlHubService{
 	 */
 	public dispatch(changes: ChangeRecord[])
 	{
+		
 		if(this._projectDeveloper){
 			changes.forEach((change)=>{
 				change.value = Assembler.assembleUmlElement(change.value);
+				console.log("assembled change");
+				console.log(change);
 			});
 			this._projectDeveloper.applyChanges(changes);
-
 		}
 	}
 

@@ -94,11 +94,11 @@ export class EditorComponent implements AfterViewInit{
 				mxEvent.START_EDITING, 
 				mxEvent.EDITING_STOPPED,
 				mxEvent.CELL_CONNECTED, 
-				mxEvent.EDITING_STOPPED,
 				mxEvent.CELLS_MOVED,
 				mxEvent.CLICK,
 				mxEvent.SELECT,
 				mxEvent.CONNECT,
+				// mxEvent.END_EDIT,
 			],
 			this._graph,
 			this
@@ -149,14 +149,11 @@ export class EditorComponent implements AfterViewInit{
 	 * stage the change initiated by the user
 	 * @param change 
 	 */
-	public stageChange(change: ChangeRecord): void
+	public stageChange(change: ChangeRecord, updateSelf: boolean = false): void
 	{
-		if(this.isDiagramSet)
-		{
-			console.log("change staged")
-			console.log(change);
-			this._projectDeveloper.stageChange(change);
-		}
+		//console.log(`GRAPH EVENT---------Change Staged-------\n${change.toString()}`);
+
+		this._projectDeveloper.stageChange(change, updateSelf);
 	}
 
 
@@ -196,7 +193,7 @@ export class EditorComponent implements AfterViewInit{
 						relatioships.push(element);
 				else if(element instanceof Component){
 					let graphComponent =  this.insertComponent(element);
-
+					graphComponent.umlElement = element;
 					//todo: lock cells on draw & release on close
 					// if(element.editor instanceof User)
 						// this.updateCellLock(graphComponent);
@@ -205,7 +202,7 @@ export class EditorComponent implements AfterViewInit{
 			}
 
 			for( let element  of relatioships)
-				this.insertRelationship(element);
+				this.insertRelationship(element).umlElement = element;
 					
 		} finally {
 			this._graph.getModel().endUpdate();
@@ -263,13 +260,15 @@ export class EditorComponent implements AfterViewInit{
 
 	public insertProperty(parent: mxCell, property: UmlElement): mxCell
 	{
-		return this._graph.insertVertex(
+		let propertyGraphComponent =  this._graph.insertVertex(
 			parent,
 			property.id,
 			property.toUmlNotation(),
 			0, 0, 0, 0,
 			property.constructor.name
 		);
+		propertyGraphComponent.umlElement = property;
+		return propertyGraphComponent;
 	}
 
 	public insertRelationship(relation: Relationship): mxCell
@@ -282,6 +281,7 @@ export class EditorComponent implements AfterViewInit{
 		edge.id = relation.id
 		edge.geometry.relative = true;
 		edge.style = RelationshipType[relation.type];
+		edge.umlElement = relation;
 		
 		if(relation.source)
 			edge.setTerminal(this._graph.getModel().getCell(relation.source), true);
@@ -300,7 +300,12 @@ export class EditorComponent implements AfterViewInit{
 
 	public processChange(change: ChangeRecord)
 	{
-		let affectedCell = change.id.length>1? this._graph.getModel().getCell(change.id[change.id.length-1]): null;
+		let affectedCell = this._graph.getModel().getCell(change.id[change.id.length-1]);
+		// console.log(`---------PROCESSINGCHANGE-------
+		// ${ActionType[change.action]} . ${PropertyType[change.affectedProperty]}
+		// ${change.id}
+		// value-> ${change.value}`);
+		// console.log(affectedCell);
 
 		switch(change.action){
 			case ActionType.Change:
@@ -414,7 +419,6 @@ export class EditorComponent implements AfterViewInit{
 			let affectedCell = this._graph.getModel().getCell(change.value);
 			this._graph.getModel().setTerminal( affectedEdge, affectedCell, isSource );
 		}
-
 	}
 
 	/**
@@ -424,10 +428,11 @@ export class EditorComponent implements AfterViewInit{
 	 */
 	private updateLabelValue(affectedCell: mxCell, change: ChangeRecord)
 	{
-
+		console.log("-----UPDATELABEL----")
+		console.log(affectedCell);
 		this._graph.getModel().valueForCellChanged(
 			affectedCell,
-			this._projectDeveloper._projectDiagram.at(change.id).toUmlNotation()
+			affectedCell.umlElement.toUmlNotation()
 		);
 	}
 
@@ -476,7 +481,6 @@ export class EditorComponent implements AfterViewInit{
 			ActionType.Lock,
 			this._projectDeveloper._editor
 		));
-
 	}
 
 	/**

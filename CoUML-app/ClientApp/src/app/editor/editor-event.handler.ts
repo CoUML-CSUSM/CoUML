@@ -30,6 +30,7 @@ import { EditorComponent } from "./editor.component";
 		_eventCatalog.set(mxEvent.CONNECT, connect);
 		_eventCatalog.set(mxEvent.START, start);
 		_eventCatalog.set(mxEvent.SELECT, newSelect);
+		_eventCatalog.set(mxEvent.END_EDIT, endEdit);
 
 	/**
 	 * applies the indecated event listerns
@@ -177,7 +178,7 @@ import { EditorComponent } from "./editor.component";
 					)
 				{
 					console.log("this goes here");
-
+					console.log(component);
 					editorComponent.insertProperty(parentCell, component);
 
 				// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
@@ -221,10 +222,21 @@ import { EditorComponent } from "./editor.component";
 	function labelChanged(graph: mxGraph, editorComponent: EditorComponent)
 	{
 		graph.addListener(mxEvent.LABEL_CHANGED,
-			// on change label event 
 			function(eventSource, eventObject){
 				console.log('%c%s', f_alert, "LABEL_CHANGED");
 				let affectedCells = eventObject.getProperties().cell;
+
+				//if the cell is an association edge connected to an object, set the datatype of attribute to object
+				if(affectedCells.edge && affectedCells.target && affectedCells.style == RelationshipType[RelationshipType.Association])
+				{
+					let group2IsDataType = /([\+\-\#\~]?\s*\w+)(\:\s*\w*)*(.*)*/i
+					let valueTokens = affectedCells.value.match(group2IsDataType);
+					if(valueTokens)
+					{
+						valueTokens[2] = `: ${affectedCells.target.value}`;
+						affectedCells.value = `${valueTokens[1]}: ${affectedCells.target.value} ${valueTokens[3] || ""}`;
+					}
+				}
 
 				// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
 				editorComponent.stageChange( new ChangeRecord(
@@ -232,7 +244,7 @@ import { EditorComponent } from "./editor.component";
 					PropertyType.Label, 
 					ActionType.Label,
 					affectedCells.value
-				));
+				), true);
 				// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 		});
 	}
@@ -268,21 +280,6 @@ import { EditorComponent } from "./editor.component";
 			});
 	}
 
-	/**
-	 * 
-	 * @param graph 
-	 * @param editorComponent 
-	 */
-	function editingStopped(graph: mxGraph, editorComponent: EditorComponent)
-	{
-		graph.addListener(mxEvent.EDITING_STOPPED,
-			//
-			function(eventSource, eventObject){
-				console.log('%c%s', f_alert, "EDITING_STOPPED");
-
-				editorComponent.release();
-			});
-	}
 
 	/**
 	 * triggers when users make changes to existing edges/relations
@@ -301,6 +298,7 @@ import { EditorComponent } from "./editor.component";
 				console.log(`edge: ${affectedEdge.edge.id}\nsource(from): ${affectedEdge.edge.source?.id}\ntarget(to): ${affectedEdge.edge.target?.id}`);
 
 				if( isUuid(affectedEdge.edge.id)){
+					console.log(`update edge`)
 					//disconnect action --> previous
 					//connect action --> terminal
 					let isConnectioning = affectedEdge.terminal? true: false;
@@ -314,6 +312,32 @@ import { EditorComponent } from "./editor.component";
 					// relation - connect | dissconnect
 					// sets the source|target to componentId if connect and null if disconnect
 					if(isConnectioning || isDisconnectioning)
+					// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
+						editorComponent.stageChange(new ChangeRecord(
+								editorComponent.getIdPath(affectedEdge.edge),
+								affecedProperty,
+								ActionType.Change,
+								value
+							));
+					// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+					if(isConnectioning && affectedEdge.edge.style == RelationshipType[RelationshipType.Association] && affectedEdge.edge.value)
+					{
+						let group2IsDataType = /([\+\-\#\~]?\s*\w+)(\:\s*\w*)*(.*)*/i
+						let valueTokens = affectedEdge.edge.value.match(group2IsDataType);
+						valueTokens[2] = `: ${affectedEdge.edge.target.value}`
+						affectedEdge.edge.value = `${valueTokens[1]}: ${affectedEdge.edge.target.value} ${valueTokens[3] || ""}`
+						// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
+							editorComponent.stageChange( new ChangeRecord(
+								editorComponent.getIdPath(affectedEdge.edge),
+								PropertyType.Label, 
+								ActionType.Label,
+								affectedEdge.edge.value
+							), true);
+						// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+					}
+
+					
 					// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
 						editorComponent.stageChange(new ChangeRecord(
 								editorComponent.getIdPath(affectedEdge.edge),
@@ -356,7 +380,6 @@ import { EditorComponent } from "./editor.component";
 	 */
 	function isUuid(id: string):boolean
 	{ 
-		//TODO: better way to validate id
 		let uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 		return uuidRegex.test(id);
 	}
@@ -373,12 +396,52 @@ import { EditorComponent } from "./editor.component";
 			function(eventSource, eventObject){
 				let affectedCells = eventObject.getProperties().cell;
 				console.log('%c%s', f_alert, "START_EDITING");
-
+				if(affectedCells.edge)
+					affectedCells.value = affectedCells.umlElement?.attributes?.toUmlNotation();
 				console.log(affectedCells);
 				editorComponent.lock(affectedCells);
 
 			});
 	}
+
+	/**
+	 * 
+	 * @param graph 
+	 * @param editorComponent 
+	 */
+	function editingStopped(graph: mxGraph, editorComponent: EditorComponent)
+	{
+		graph.addListener(mxEvent.EDITING_STOPPED,
+			//TODO: error on change lable on relations prevents release
+			function(eventSource, eventObject){
+				console.log('%c%s', f_alert, "EDITING_STOPPED");
+				console.log(eventSource);
+				console.log(eventObject);
+
+				editorComponent.release();
+			});
+	}
+
+
+	/**
+	 * 
+	 * @param graph 
+	 * @param editorComponent 
+	 */
+	 function endEdit(graph: mxGraph, editorComponent: EditorComponent)
+	 {
+		 graph.getModel().addListener
+		//  graph.addListener
+		 (mxEvent.END_EDIT,
+			 //TODO: error on change lable on relations prevents release
+			 function(eventSource, eventObject){
+				 console.log('%c%s', f_alert, "END_EDIT");
+				 console.log(eventSource);
+				 console.log(eventObject);
+ 
+			 });
+	 }
+ 
 
 
 	/**
@@ -476,9 +539,10 @@ import { EditorComponent } from "./editor.component";
 
 					relation.type = affectedCells.style | RelationshipType.Association;
 
-					affectedCells.id = relation.id;
-					affectedCells.value = relation.attributes;
-					affectedCells.style = RelationshipType[relation.type]
+					// affectedCells.id = relation.id;
+					// affectedCells.value = relation.toUmlNotation();
+					// affectedCells.style = RelationshipType[relation.type]
+					graph.removeCells([affectedCells],true);
 
 				// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
 					editorComponent.stageChange(new ChangeRecord(
@@ -486,7 +550,7 @@ import { EditorComponent } from "./editor.component";
 						PropertyType.Elements,
 						ActionType.Insert,
 						relation
-					));
+					), true);
 				// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 				}

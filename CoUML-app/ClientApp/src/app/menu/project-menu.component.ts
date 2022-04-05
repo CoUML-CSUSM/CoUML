@@ -25,17 +25,21 @@ import { ProjectDeveloper } from '../controller/project-developer.controller';
       this._menuItems = [
         {
           label: "File",
+          id: "menuFile",
           items: [
             {
               label: "New...",
+              id: "menuFileNew",
               command: () => this.showNewDiagramDialog(),
             },
             {
               label: "Trigger Breakpoint",
+              id: "menuFileTriggerBreakpoint",
               command: ()=> this._coUmlHub.triggerBreakPoint(),
             },
             {
               label: "Fetch Test",
+              id: "menuFileFetchTest",
               command: () => this._coUmlHub._projectDeveloper.open("test"),
             },
             {
@@ -55,13 +59,16 @@ import { ProjectDeveloper } from '../controller/project-developer.controller';
         },
         {
           label: "Edit",
+          id: "menuEdit",
           items: []
         },
         {
           label: "User",
+          id: "menuUser",
           items: [
             {
               label: "Login...",
+              id: "menuUserLogin",
 
             }
           ]

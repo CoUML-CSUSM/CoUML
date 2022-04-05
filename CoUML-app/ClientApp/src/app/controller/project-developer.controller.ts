@@ -50,16 +50,20 @@ export class ProjectDeveloper{
 		this._projectDiagram = null;
 		this._diagramEditor.clearGraph();
 	}
-	
+	private _awaitingChanges: ChangeRecord[] = [];
 	public applyChanges(changes: ChangeRecord[])
 	{
-
-		console.log("-------------- apply changes ---------------");
-		console.log(changes);
 		for(let change of changes)
-		{
+			this._awaitingChanges.unshift(change);
+		this.merge();
+	}
+	private merge()
+	{	console.log("-------------- apply changes ---------------");
+		// console.log(changes);
+		// for(let change of changes)
+		while(this._awaitingChanges.length>0){
+			let change = this._awaitingChanges.pop();
 			setTimeout(()=>{
-
 				this.applyChange(change);
 				this._diagramEditor.processChange(change);
 			}, 100)
@@ -71,38 +75,36 @@ export class ProjectDeveloper{
 
 	private applyChange(change: ChangeRecord)
 	{
-		console.log("applyChange");
-		console.log(change);
+		// console.log(`developer---------Change applying-------
+		// ${ActionType[change.action]} . ${PropertyType[change.affectedProperty]}
+		// ${change.id}
+		// value-> ${change.value}`);
 
-		let action = ActionType[change.action].toLowerCase();
-		let affectedProperty = PropertyType[change.affectedProperty].toLowerCase();
+		// let action = ActionType[change.action].toLowerCase();
+		// let affectedProperty = PropertyType[change.affectedProperty].toLowerCase();
 			
-		let operation = "";
+		// let operation = "";
 
 		let affectedComponent= this._projectDiagram.at(change.id);
 
 		switch(change.action){
-			case ActionType.Shift:
-			case ActionType.Insert:
-			case ActionType.Remove:
-			case ActionType.Lock:
-			case ActionType.Release:
-			case ActionType.Label:
-				operation = `${action}(change.value)`;
-				// operation = `${affectedProperty}.${action}(change.value)`;
-				break;
+			case ActionType.Shift:	affectedComponent.shift(change.value); break;
+			case ActionType.Insert:	affectedComponent.insert(change.value); break;
+			case ActionType.Remove:	affectedComponent.remove(change.value); break;
+			case ActionType.Lock:	affectedComponent.lock(change.value); break;
+			case ActionType.Release:	affectedComponent.release(change.value); break;
+			case ActionType.Label:	affectedComponent.label(change.value); break;
+				// operation = `${action}(change.value)`;
+				// // operation = `${affectedProperty}.${action}(change.value)`;
+				// break;
 
 			case ActionType.Change:
-				operation = `${affectedProperty} = change.value`;
-				break;
+				// operation = `${affectedProperty} = change.value`;
+				// break;
+				affectedComponent.change(change); break;
 		}			
 
-		eval("affectedComponent." + operation);
-
-		//if the label is updated teh whole object is updated,
-		// affter the change hass been applied locally replace the value string with the 
-		// if(PropertyType.Label == change.affectedProperty)
-		// 	change.value = affectedComponent
+		// eval("affectedComponent." + operation);
 
 		console.log("result");
 		console.log(this._projectDiagram);//i need to send this down to the c#
@@ -110,13 +112,16 @@ export class ProjectDeveloper{
 
 	}
 
-	stageChange(change: ChangeRecord) {
+	stageChange(change: ChangeRecord, updateSelf: boolean = false) {
 		// apply change locally
 		this.applyChange(change);
 		this._changes.push(change);
 
 		//apply globally
 		this.commitStagedChanges();
+
+		if(updateSelf)
+			this._diagramEditor.processChange(change);
 	}
 
 	private async commitStagedChanges()
@@ -124,7 +129,9 @@ export class ProjectDeveloper{
 		if(!this.shouldDelay)
 		{
 			this.shouldDelay = true;
+
 			this._coUmlHub.commit(this._projectDiagram.id, this._changes);
+
 			this._changes = [];
 			//artificial delay that prevents the program from updating too offten, but submits any last added elements
 			setTimeout(()=>{

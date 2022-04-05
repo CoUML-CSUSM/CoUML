@@ -22,7 +22,7 @@ export function addCellStyles(graph: mxGraph)
 		if (this.state != null && this.state.cell.style != null && this.state.style['stereotype'])
 		{
 			c.setStrokeColor(BLACK);
-			c.text(w/2, MARGIN, w, h, `<<${this.state.style['stereotype']}>>`, 'center', 'top', '','', '', '', 0, '');
+			c.text(w/2, MARGIN/2, w, h, `<<${this.state.style['stereotype']}>>`, 'center', 'top', '','', '', '', 0, '');
 		}
 		
 	}
@@ -154,9 +154,41 @@ export function initLayoutManager(graph: mxGraph)
 
 export function addEdgeStyles(graph: mxGraph)
 {
+	//association relation specialty paint
+	var base_mxConnectorPaint = mxConnector.prototype.paintEdgeShape;
+	mxConnector.prototype.paintEdgeShape = function( c: mxSvgCanvas2D, pts	)
+		
+	{
+		let includeAtt = this.state?.cell?.edge && this.state.cell.umlElement.type == RelationshipType.Association && this.state.cell.umlElement.attSet ; 
+		if(includeAtt)
+			this.state.cell.value = this.state.cell.umlElement.toUmlNotation();
+
+		base_mxConnectorPaint.apply(this, arguments);
+
+		if(includeAtt)
+		{
+			// console.log(this.state);
+			// console.log(this.state.cell.umlElement.attributes?.multiplicity);
+
+			let mulPT = scaleR(pts[0], pts[1], 20);
+			c.setFontBackgroundColor(WHITE);
+			c.text(mulPT.x, mulPT.y, 0, 0, 
+				this.state.cell.umlElement.attributes?.multiplicity?.toUmlNotation(),
+				'left', 'bottom', '', '', '', '', 0, ''
+				);
+		}
+	}
+		
+
+
+
+
 	let  edgeStyleDefualt = graph.getStylesheet().getDefaultEdgeStyle();
 	edgeStyleDefualt[mxConstants.STYLE_STARTSIZE] = 12;
 	edgeStyleDefualt[mxConstants.STYLE_ENDSIZE] = 12;
+	edgeStyleDefualt[mxConstants.STYLE_STROKECOLOR] = BLACK;
+	edgeStyleDefualt[mxConstants.STYLE_LABEL_BACKGROUNDCOLOR] = WHITE;
+	edgeStyleDefualt[mxConstants.STYLE_FONTCOLOR] = BLACK;
 
 	// Realization  - - -|>
 	let realizationStyle = mxUtils.clone(edgeStyleDefualt);
@@ -183,7 +215,8 @@ export function addEdgeStyles(graph: mxGraph)
 	// Association, 1-------*
 	let associationStyle = mxUtils.clone(edgeStyleDefualt);
 	associationStyle[mxConstants.STYLE_DASHED] = false;
-	associationStyle[mxConstants.STYLE_ENDARROW] = mxConstants.NONE;
+	// associationStyle[mxConstants.STYLE_ENDARROW] = mxConstants.NONE;
+	associationStyle[mxConstants.STYLE_ENDARROW] = mxConstants.ARROW_OPEN;
 	graph.getStylesheet().putCellStyle(
 		RelationshipType[RelationshipType.Association], 
 		associationStyle
@@ -220,4 +253,24 @@ export function addEdgeStyles(graph: mxGraph)
 		RelationshipType[RelationshipType.Generalization], 
 		generalizationStyle
 		);
+}
+
+/**
+ * returns a point that is r distance from point b
+ *  along the line between ab
+ * @param a 
+ * @param b 
+ * @param r 
+ * @returns 
+ */
+function scaleR (a: mxPoint, b: mxPoint, r: number): mxPoint
+{
+	let xdirection = a.x <= b.x ? -1: 1;
+	let ydirection = a.y <= b.y ? -1: 1;
+	let theta = Math.atan(Math.abs((b.y - a.y)/(b.x - a.x)));
+	let point = b.clone();
+	point.x += xdirection*(r * Math.cos(theta))|0;
+	point.y += ydirection*(r * Math.sin(theta))|0;
+	return point;
+
 }
