@@ -25,6 +25,8 @@ import {TabViewModule} from 'primeng/tabview';
 import {DialogModule} from 'primeng/dialog';
 import {MessagesModule} from 'primeng/messages';
 import {MessageModule} from 'primeng/message';
+import {DynamicDialogModule} from 'primeng/dynamicdialog';
+import {TableModule} from 'primeng/table';
 
 // social login
 import { SocialLoginModule, SocialAuthServiceConfig } from 'angularx-social-login';
@@ -60,10 +62,10 @@ import {
     MenubarModule,
     TabViewModule,
     DialogModule,
-
+    DynamicDialogModule,
     MessagesModule,
     MessageModule,
-
+    TableModule,
 
     //login
     SocialLoginModule,

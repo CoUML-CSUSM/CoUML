@@ -1,5 +1,5 @@
 import { AfterViewInit, Component as AngularComponent, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
-import { MenuItem } from 'primeng/api';
+import { MenuItem, MessageService } from 'primeng/api';
 import { Class, Diagram, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType as VisibilityType, User } from 'src/models/DiagramModel';
 import { ProjectManager } from '../controller/project-manager.controller';
 import { CoUmlHubService } from '../service/couml-hub.service';
@@ -8,6 +8,8 @@ import { ProjectDeveloper } from '../controller/project-developer.controller';
 
 import { SocialAuthService, SocialUser } from "angularx-social-login";
 import {GoogleLoginProvider } from "angularx-social-login";
+import { DialogService } from 'primeng/dynamicdialog';
+import { DiagramTableComponent } from './open/diagram-table.compnent';
 
 //client id
 //174000524733-gq2vagupknm77i794hll3kbs3iupm6fu.apps.googleusercontent.com
@@ -30,7 +32,9 @@ import {GoogleLoginProvider } from "angularx-social-login";
       private _projectManager: ProjectManager,
       private _coUmlHub: CoUmlHubService,
       private primengConfig: PrimeNGConfig,
-      private authService: SocialAuthService//login stuff
+      private authService: SocialAuthService,//login stuff,
+      private dialogService: DialogService,
+      public messageService: MessageService,
       ){
       this._menuItems = [
         {
@@ -41,6 +45,11 @@ import {GoogleLoginProvider } from "angularx-social-login";
               label: "New...",
               id: "menuFileNew",
               command: () => this.showNewDiagramDialog(),
+            },
+            {
+              label: "Open...",
+              id: "menuFileOpen",
+              command: ()=> this.showOpenDiagram()
             },
             {
               label: "Trigger Breakpoint",
@@ -78,9 +87,6 @@ import {GoogleLoginProvider } from "angularx-social-login";
 
     }
 
-    // public generate(){
-    //     this._projectManager.generate("null");
-    // }
     
     //pop up
     ngOnInit() {
@@ -115,4 +121,20 @@ import {GoogleLoginProvider } from "angularx-social-login";
     refreshToken(): void {
       this.authService.refreshAuthToken(GoogleLoginProvider.PROVIDER_ID);
     }
+
+    
+
+    openDiagram()
+    {
+      const ref = this.dialogService.open(DiagramTableComponent, {
+          header: 'Choose a Diagram',
+          width: '70%'
+      });
+  
+      ref.onClose.subscribe((_id: object) => {
+          if (_id) {
+              this.messageService.add({severity:'info', summary: 'Diagram Selected', detail:'_id: ' + _id});
+          }
+      });
+  }
   }
