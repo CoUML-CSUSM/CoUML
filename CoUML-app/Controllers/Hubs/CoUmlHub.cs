@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 
 using CoUML_app.Models;
 using CoUML_app.Controllers.Project;
+using CoUML_app.Utility;
 
 //mongodb stuff
 using MongoDB.Driver;
@@ -33,86 +34,6 @@ namespace CoUML_app.Controllers.Hubs
     public interface ICoUmlClient{
         Task issueUser(string message);
         Task Dispatch(string changes);
-    }
-
-    /// data structure to store active users
-    public class ConnectionMap<CID, User>
-    {
-        /// <summary>
-        /// the repo of active connections
-        /// </summary>
-        /// <typeparam name="CID">connectionId: string</typeparam>
-        /// <typeparam name="DID">value: string</typeparam>
-        private readonly Dictionary<CID, User> _connections = new Dictionary<CID, User>();
-
-        /// <summary>
-        /// get the count of client connections in the repo
-        /// </summary>
-        /// <value>int</value>
-        public int Count
-        {
-            get
-            {
-                return _connections.Count;
-            }
-        }
-        
-        /// <summary>
-        /// add a client connection to the repo
-        /// </summary>
-        /// <param name="connectionId">
-        ///     the client id retrieved from the hub context
-        ///     > Context.ConnectionId
-        /// </param>
-        /// <param name="user">
-        ///     \! not currently used - a value to associate with the connectionId
-        /// </param>
-        public void Add(CID connectionId, User user)
-        {
-            lock(_connections)
-            {
-                if(!_connections.TryAdd(connectionId, user)){
-                    //TODO: error because tryadd failed
-                }
-            }
-        }
-
-        /// <summary>
-        /// removes a client connection from the repo
-        /// </summary>
-        /// <param name="connectionId">the id of the connection</param>
-        /// <returns>true if sucsessfully removed</returns>
-        public bool Remove(CID connectionId)
-        {
-            bool isItemRemoved = false;
-            lock(_connections)
-            {
-                if(IsConnected(connectionId))
-                    isItemRemoved = _connections.Remove(connectionId);
-            }
-            return isItemRemoved;
-        }
-
-        /// <summary>
-        /// determin if the connectioId is is in the repo
-        /// </summary>
-        /// <param name="connectionId">the connectionId of the client connection</param>
-        /// <returns>true: connectionId is in repo</returns>
-        public bool IsConnected(CID connectionId)
-        {
-            User temValueHolder;
-            return _connections.TryGetValue(connectionId, out temValueHolder);
-        }
-
-        public User GetUser(CID connectionId)
-        {
-            User user;
-            _connections.TryGetValue(connectionId, out user);
-            return user;
-
-        }
-
-
     }
 
     public class CoUmlHub : Hub<ICoUmlClient>
@@ -259,114 +180,5 @@ namespace CoUML_app.Controllers.Hubs
             if(testDiagram != null)
                 testDiagram.GenerateCode(codeGenerator);
         }
-    }
-//=======================================================================================
-//=======================================================================================
-
-//=======================================================================================
-//=======================================================================================
-//=======================================================================================
-//=======================================================================================
-//=======================================================================================
-    static class DevUtility{
-        public static Diagram DiagramDefualt(String dId)
-        {
-            Diagram d = new Diagram(dId);
-
-
-            // interface
-            Interface i = new Interface("IShape");
-            Operation io = new Operation
-            {   
-                name = "draw",
-                visibility = VisibilityType.Public,
-                type = new DataType{ dataType = "void"}
-            };
-            i.operations.Insert(io);
-
-            io = new Operation
-            {   
-                name = "scale",
-                visibility = VisibilityType.Public,
-                type = new DataType{ dataType = "void"}
-            };
-            io.parameters.Insert(
-                new Models.Attribute {
-                    name = "percent",
-                    visibility = VisibilityType.Private,
-                    type = new DataType{ dataType = "double" }
-                }
-            );
-            i.operations.Insert(io);
-
-            io = new Operation
-            {   
-                name = "area",
-                visibility = VisibilityType.Public,
-                type = new DataType{ dataType = "double"}
-            };
-            i.operations.Insert(io);
-
-
-            // class
-            Class c1  =  new Class("Hexagon");
-            Models.Attribute a1 = new Models.Attribute
-            {
-                name = "diagonal",
-                visibility = VisibilityType.Private,
-                type = new DataType{ dataType = "double" }
-            };
-
-            c1.dimension.y = 400;
-            c1.attributes.Insert(a1);
-
-            // c impliments i
-            Relationship r1 = new Relationship
-            {
-                type = RelationshipType.Realization,
-                sourceComponent = c1,
-                targetComponent = i,
-            };
-            // c1.relations.Insert(r1.id);
-            // i.relations.Insert(r1.id);
-
-
-            // class2
-            Class c2  =  new Class("Trangle");
-
-            c2.dimension.y = 400;
-            c2.dimension.x = 400;
-
-            Relationship r2 = new Relationship
-            {
-                type = RelationshipType.Realization,
-                sourceComponent = c2,
-                targetComponent = i,
-            };
-            // c2.relations.Insert(r2.id);
-            // i.relations.Insert(r2.id);
-
-            d.elements.Insert(i);
-            d.elements.Insert(c1);
-            d.elements.Insert(r1); 
-            d.elements.Insert(c2); 
-            d.elements.Insert(r2); 
-
-            return d;
-        }
-
-
-        public static Diagram EmptyDiagram(){
-            return new Diagram();
-        }      
-
-
-        public static string OpenSampleFile()
-        {
-            string path = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Samples/"))[0];
-            return File.ReadAllText(path);
-
-        }
-
     }
 }

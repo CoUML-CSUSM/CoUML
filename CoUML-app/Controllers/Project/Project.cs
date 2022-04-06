@@ -6,6 +6,7 @@ using Newtonsoft.Json.Serialization;
 
 using CoUML_app.Models;
 using CoUML_app.Controllers.Hubs;
+using CoUML_app.Utility;
 //mongodb stuff
 using MongoDB.Driver;
 using MongoDB.Bson;
@@ -46,19 +47,18 @@ namespace CoUML_app.Controllers.Project
 
 
         //creates a diagram string that gets sent to the database
-		public void Generate(string dId){
+		public Diagram Generate(string dId){
 
             var collection = GetCollection("Diagrams");
-
-            var dto = DTO.FromDiagram(DevUtility.DiagramDefualt("test"));
+            var projectDiagram = new Diagram(dId);
 
             //sends diagram as bson doc using the string of the diagram
             MongoDB.Bson.BsonDocument doc = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonDocument>(
-                dto
-                // DTO.FromDiagram(new Diagram(dId))
+                DTO.FromDiagram(projectDiagram)
             );
 
             collection.InsertOne(doc);
+            return projectDiagram;
         }
 
 
