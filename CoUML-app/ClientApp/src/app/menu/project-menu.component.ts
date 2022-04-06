@@ -46,7 +46,7 @@ import {GoogleLoginProvider } from "angularx-social-login";
             },
             {
               label: "Fetch Test",
-              command: () => this._coUmlHub._projectDeveloper.open("test"),
+              command: () => this._coUmlHub._projectDeveloper.open("test",this._coUmlHub._projectDeveloper._editor),
             }
           ]
         },

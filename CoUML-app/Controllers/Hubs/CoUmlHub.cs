@@ -182,7 +182,7 @@ namespace CoUML_app.Controllers.Hubs
         /// </summary>
         /// <param name="dId">somthing to identify the diagram file by</param>
         /// <returns>the diagram requested</returns>
-        public string Fetch(string dId)
+        public string Fetch(string dId, string uId)
         {
             //attacha as a listener to this diagram
             Groups.AddToGroupAsync(Context.ConnectionId,dId);
@@ -201,7 +201,9 @@ namespace CoUML_app.Controllers.Hubs
             IMongoDatabase db = dbClient.GetDatabase("CoUML");
 
             var collection = db.GetCollection<BsonDocument>("Diagrams");
-            var filter = Builders<BsonDocument>.Filter.Eq("id", dId);
+            var dIdFilter = Builders<BsonDocument>.Filter.Eq("id", dId);
+            var uIdFilter = Builders<BsonDocument>.Filter.Eq("editor.id", uId);
+            var filter = Builders<BsonDocument>.Filter.And(dIdFilter,uIdFilter);
             
             var diagram = collection.Find(filter).Project("{_id: 0}").FirstOrDefault(); //may return null
 

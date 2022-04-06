@@ -55,7 +55,7 @@ export class HomeComponent {
     this._coUmlHub._projectManager.generate(dId,this._coUmlHub._projectDeveloper._editor.id);
     console.log("generated");
     console.log("opeining");
-    this._coUmlHub._projectDeveloper.open(dId);
+    this._coUmlHub._projectDeveloper.open(dId,this._coUmlHub._projectDeveloper._editor);
      console.log("opened");
      this.showNewDiagramDialog = false;
   }

@@ -66,7 +66,7 @@ export class CoUmlHubService{
 	 * @param dId get Diagram from server
 	 * @returns 
 	 */
-	public fetch(dId: string ): Promise<string>
+	public fetch(dId: string, uId:string ): Promise<string>
 	{
 
 		// calling function : public string Fetch(string dId)
@@ -74,7 +74,7 @@ export class CoUmlHubService{
 
 		//move this line and change new user to email adress
 		//this._projectDeveloper.setEditor(new User(this._coUmlHubConnection.connectionId));
-		return this._coUmlHubConnection.invoke<string>('Fetch',dId); 
+		return this._coUmlHubConnection.invoke<string>('Fetch',dId,uId); 
 	}
 
 	/**
