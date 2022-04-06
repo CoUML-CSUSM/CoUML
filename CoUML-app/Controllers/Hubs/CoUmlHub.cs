@@ -208,7 +208,7 @@ namespace CoUML_app.Controllers.Hubs
             var diagram = collection.Find(filter).Project("{_id: 0}").FirstOrDefault(); //may return null
 
             if(diagram == null){
-                Generate(dId,"");//change later to match email
+                Generate(dId,uId);//change later to match email
                 diagram = collection.Find(filter).Project("{_id: 0}").FirstOrDefault();
             }
 
