@@ -3,6 +3,7 @@ import { User, Class, AbstractClass, Diagram,  Component, Attribute, Interface, 
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 import * as EditorFormatHandler  from './editor-format.handler';
 import * as EditorEventHandler  from './editor-event.handler';
+import { Event } from 'jquery';
 
 
 const DELETE = 46;
@@ -33,6 +34,10 @@ export class EditorComponent implements AfterViewInit{
 	public toolbarContainer: ElementRef<HTMLElement>;
 
     private _toolbar: mxToolbar;
+	get isDiagramSet()
+	{
+		return this._projectDeveloper.isDiagramSet();
+	}
 
 	get toolbar(){ return this._toolbar;}
 	get graph(){return this._graph;}
@@ -42,8 +47,6 @@ export class EditorComponent implements AfterViewInit{
 	) {
 		this._projectDeveloper.subscribe(this);
 		this.onResize();
-			
-
 	}
 
 	/** frame controls */
@@ -69,10 +72,16 @@ export class EditorComponent implements AfterViewInit{
 	 */
 	ngAfterViewInit(): void 
 	{
-		//init graph div
+		this.initGraph();
+		this.initToolbar();
+	}
+
+	initGraph()
+	{
+
 		this._graph = new mxGraph(this.graphContainer.nativeElement);
 		this._graph.setDropEnabled(true); // ability to drag elements as groups
-	
+
 		// UML styles
 		EditorFormatHandler.addEdgeStyles(this._graph);
 		EditorFormatHandler.addCellStyles(this._graph);
@@ -86,26 +95,19 @@ export class EditorComponent implements AfterViewInit{
 				mxEvent.START_EDITING, 
 				mxEvent.EDITING_STOPPED,
 				mxEvent.CELL_CONNECTED, 
-				mxEvent.EDITING_STOPPED,
 				mxEvent.CELLS_MOVED,
 				mxEvent.CLICK,
 				mxEvent.SELECT,
 				mxEvent.CONNECT,
+				// mxEvent.END_EDIT,
 			],
 			this._graph,
 			this
 		);
-		
+
 		//special context menu on graph
 		mxEvent.disableContextMenu(this.graphContainer.nativeElement);
 		EditorEventHandler.addContextMenu( this._graph, this);
-
-		//init toolbar div
-        this._toolbar = new mxToolbar(this.toolbarContainer.nativeElement);
-		EditorEventHandler.addToolbarItems(
-			[Class, AbstractClass, Interface, Enumeration, Attribute, Operation, Enumeral],
-			this
-		);
 
 		// Key binding
 		// Adds handling of return and escape keystrokes for editing
@@ -113,24 +115,46 @@ export class EditorComponent implements AfterViewInit{
 		this._editorKeyHandler.bindKey(DELETE, ()=>this.deleteCell()); 
 		this._editorKeyHandler.bindKey(BACKSPACE, ()=>this.deleteCell()); 
 
+		/**
+		 * set callback that a cell is locked if it has an ovelay,
+		 * a cell has an overlau if it has an user
+		 */
+		// let baseIsCellLocked = this._graph.isCellLocked;
+		this._graph.isCellLocked = function(cell: mxCell)
+		{
+			// if* the cell has an overlay *then* somone is using it and the cell is locked
+			return cell?.overlays?.length > 0 || false;
+		}
 
 		this.editorOverlay = new mxCellOverlay(
 			new mxImage('editors/images/overlays/user3.png', 24, 24), "locked by other user");
-
+		
+		let baseIsValidDropTarget = this._graph.isValidDropTarget;
+		this._graph.isValidDropTarget = function (cell: mxCell, cells: mxCell[], evt: Event){
+			return this.isDiagramSet? baseIsValidDropTarget(cell, cells, evt): false;
+		}
+		
 	}
 
-	
-
-	
+	initToolbar()
+	{
+		//init toolbar div
+		this._toolbar = new mxToolbar(this.toolbarContainer.nativeElement);
+		EditorEventHandler.addToolbarItems(
+			[Class, AbstractClass, Interface, Enumeration, Attribute, Operation, Enumeral],
+			this
+		);
+	}
+		
 	/**
 	 * stage the change initiated by the user
 	 * @param change 
 	 */
-	public stageChange(change: ChangeRecord): void
+	public stageChange(change: ChangeRecord, updateSelf: boolean = false): void
 	{
-		console.log("change staged")
-		console.log(change);
-		this._projectDeveloper.stageChange(change);
+		//console.log(`GRAPH EVENT---------Change Staged-------\n${change.toString()}`);
+
+		this._projectDeveloper.stageChange(change, updateSelf);
 	}
 
 
@@ -140,6 +164,7 @@ export class EditorComponent implements AfterViewInit{
 	 */
 	public draw(projectDiagram: Diagram) 
 	{
+		this.clearGraph();
 		//turn off notifications before drawing new graph 
 		this._graph.eventsEnabled = false;
 
@@ -149,15 +174,7 @@ export class EditorComponent implements AfterViewInit{
 		//set defualt parrent id to diagram id
 		this._graph.getDefaultParent().id = projectDiagram.id;
 
-		/**
-		 * set callback that a cell is locked if it has an ovelay,
-		 * a cell has an overlau if it has an user
-		 */
-		this._graph.isCellLocked = function(cell: mxCell)
-		{
-			// if* the cell has an overlay *then* somone is using it and the cell is locked
-			return cell?.overlays?.length > 0 || false;
-		}
+		
 
 		// this._graph.iscellS
 		this._graph.getModel().beginUpdate();
@@ -176,8 +193,7 @@ export class EditorComponent implements AfterViewInit{
 				if( element instanceof Relationship)
 						relatioships.push(element);
 				else if(element instanceof Component){
-					let graphComponent =  this.insertComponent(element);
-
+					this.insertComponent(element);
 					//todo: lock cells on draw & release on close
 					// if(element.editor instanceof User)
 						// this.updateCellLock(graphComponent);
@@ -186,7 +202,7 @@ export class EditorComponent implements AfterViewInit{
 			}
 
 			for( let element  of relatioships)
-				this.insertRelationship(element);
+				this.insertRelationship(element).umlElement = element;
 					
 		} finally {
 			this._graph.getModel().endUpdate();
@@ -237,20 +253,22 @@ export class EditorComponent implements AfterViewInit{
 				
 		}
 
-
+		graphComponent.umlElement = component;
 		return graphComponent;
 	}
 
 
 	public insertProperty(parent: mxCell, property: UmlElement): mxCell
 	{
-		return this._graph.insertVertex(
+		let propertyGraphComponent =  this._graph.insertVertex(
 			parent,
 			property.id,
 			property.toUmlNotation(),
 			0, 0, 0, 0,
 			property.constructor.name
 		);
+		propertyGraphComponent.umlElement = property;
+		return propertyGraphComponent;
 	}
 
 	public insertRelationship(relation: Relationship): mxCell
@@ -263,6 +281,7 @@ export class EditorComponent implements AfterViewInit{
 		edge.id = relation.id
 		edge.geometry.relative = true;
 		edge.style = RelationshipType[relation.type];
+		edge.umlElement = relation;
 		
 		if(relation.source)
 			edge.setTerminal(this._graph.getModel().getCell(relation.source), true);
@@ -281,7 +300,12 @@ export class EditorComponent implements AfterViewInit{
 
 	public processChange(change: ChangeRecord)
 	{
-		let affectedCell = change.id.length>1? this._graph.getModel().getCell(change.id[change.id.length-1]): null;
+		let affectedCell = this._graph.getModel().getCell(change.id[change.id.length-1]);
+		// console.log(`---------PROCESSINGCHANGE-------
+		// ${ActionType[change.action]} . ${PropertyType[change.affectedProperty]}
+		// ${change.id}
+		// value-> ${change.value}`);
+		// console.log(affectedCell);
 
 		switch(change.action){
 			case ActionType.Change:
@@ -318,7 +342,7 @@ export class EditorComponent implements AfterViewInit{
 				}
 				break;
 			case ActionType.Remove:
-				this.removeCell(affectedCell);
+				this.removeCell(this._graph.getModel().getCell(change.value)); break;
 			case ActionType.Lock:
 			case ActionType.Release:
 				this.updateCellLockOverlay(affectedCell, change.action); break;
@@ -341,7 +365,7 @@ export class EditorComponent implements AfterViewInit{
 				this._graph.addCellOverlay(affectedCell, this.editorOverlay);
 				break;
 			case ActionType.Release:
-				this._graph.removeCellOverlays(affectedCell);
+				this._graph.removeCellOverlay(affectedCell, this.editorOverlay);
 			default:	break;
 		}
 	}
@@ -395,7 +419,6 @@ export class EditorComponent implements AfterViewInit{
 			let affectedCell = this._graph.getModel().getCell(change.value);
 			this._graph.getModel().setTerminal( affectedEdge, affectedCell, isSource );
 		}
-
 	}
 
 	/**
@@ -405,10 +428,11 @@ export class EditorComponent implements AfterViewInit{
 	 */
 	private updateLabelValue(affectedCell: mxCell, change: ChangeRecord)
 	{
-
+		console.log("-----UPDATELABEL----")
+		console.log(affectedCell);
 		this._graph.getModel().valueForCellChanged(
 			affectedCell,
-			this._projectDeveloper._projectDiagram.at(change.id).toUmlNotation()
+			affectedCell.umlElement.toUmlNotation()
 		);
 	}
 
@@ -457,7 +481,6 @@ export class EditorComponent implements AfterViewInit{
 			ActionType.Lock,
 			this._projectDeveloper._editor
 		));
-
 	}
 
 	/**
@@ -485,6 +508,11 @@ export class EditorComponent implements AfterViewInit{
 				deleteId
 			));
 		}
+	}
+	clearGraph()
+	{
+		this._graph.selectAll(this._graph.getDefaultParent(), true);
+		this._graph.removeCells(this._graph.getSelectionCells(), true);
 	}
 
 	/**

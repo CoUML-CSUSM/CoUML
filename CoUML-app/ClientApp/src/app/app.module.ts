@@ -23,6 +23,8 @@ import {MenubarModule} from 'primeng/menubar';
 
 import {TabViewModule} from 'primeng/tabview';
 import {DialogModule} from 'primeng/dialog';
+import {MessagesModule} from 'primeng/messages';
+import {MessageModule} from 'primeng/message';
 
 // social login
 import { SocialLoginModule, SocialAuthServiceConfig } from 'angularx-social-login';
@@ -59,9 +61,13 @@ import {
     TabViewModule,
     DialogModule,
 
+    MessagesModule,
+    MessageModule,
+
+
     //login
     SocialLoginModule,
-    
+
     BrowserAnimationsModule
   ],
   providers: [

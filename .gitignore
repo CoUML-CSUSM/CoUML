@@ -1,3 +1,24 @@
 
+
 CoUML-app.Test/obj/Debug/net5.0/CoUML-app.Test.assets.cache
 CoUML-app.Test/obj/Debug/net5.0/CoUML-app.Test.csproj.AssemblyReference.cache
+*.dll
+<<<<<<< HEAD
+*.cache
+CoUML-app.Test/obj/Debug/*
+=======
+*.dll
+# Build results
+[Dd]ebug/**
+[Dd]ebugPublic/**
+[Rr]elease/**
+[Rr]eleases/**
+x64/**
+x86/**
+build/**
+bld/**
+bin/**
+Bin/**
+obj/**
+Obj/**
+>>>>>>> Selenium

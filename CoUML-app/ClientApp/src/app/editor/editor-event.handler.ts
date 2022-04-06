@@ -1,3 +1,4 @@
+import { stringify } from "querystring";
 import { AbstractClass, 
 	ActionType, 
 	PropertyType, 
@@ -29,6 +30,7 @@ import { EditorComponent } from "./editor.component";
 		_eventCatalog.set(mxEvent.CONNECT, connect);
 		_eventCatalog.set(mxEvent.START, start);
 		_eventCatalog.set(mxEvent.SELECT, newSelect);
+		_eventCatalog.set(mxEvent.END_EDIT, endEdit);
 
 	/**
 	 * applies the indecated event listerns
@@ -47,6 +49,15 @@ import { EditorComponent } from "./editor.component";
  //================================================================================================
  //	context menue for Relations
  //================================================================================================
+	const _relationtypeCatolog: Map<RelationshipType, string> = new Map();
+	_relationtypeCatolog.set(RelationshipType.Dependency, 'Dependency');
+	_relationtypeCatolog.set(RelationshipType.Association, 'Association');	
+	_relationtypeCatolog.set(RelationshipType.Aggregation, 'Aggregation'); 
+	_relationtypeCatolog.set(RelationshipType.Composition, 'Composition');	
+	_relationtypeCatolog.set(RelationshipType.Generalization, 'Generalization');
+	_relationtypeCatolog.set(RelationshipType.Realization, 'Realization');
+	
+   
 	/**
 	 * creates a context menu for setting the relation type of an edge
 	 * @param graph 
@@ -59,12 +70,9 @@ import { EditorComponent } from "./editor.component";
 			console.log(cell)
 			if(cell?.edge)// menu if user clicks on edge
 			{
-				menu.addItem('Dependency',		'editors/images/uml/Dependency.svg',	()=>setRelationType(cell, RelationshipType.Dependency));
-				menu.addItem('Association',		'editors/images/uml/Association.svg',	 ()=>setRelationType(cell, RelationshipType.Association));
-				menu.addItem('Aggregation', 	'editors/images/uml/Aggregation.svg',	 ()=>setRelationType(cell, RelationshipType.Aggregation));
-				menu.addItem('Composition',		'editors/images/uml/Composition.svg',	()=>setRelationType(cell, RelationshipType.Composition));
-				menu.addItem('Generalization',	'editors/images/uml/Generalization.svg',	()=>setRelationType(cell, RelationshipType.Generalization));
-				menu.addItem('Realization',		'editors/images/uml/Realization.svg',	()=>setRelationType(cell, RelationshipType.Realization));
+				_relationtypeCatolog.forEach((title: string, relationshipType: RelationshipType)=>{
+					menu.addItem(title,		EDITOR_IMAGES_UML_PAPTH(title),	()=>setRelationType(cell, relationshipType)).id = title;
+				})
 			}
 		};
 
@@ -87,14 +95,15 @@ import { EditorComponent } from "./editor.component";
  //================================================================================================
 	const _prototypeCatalog: Map<any, string > = new Map();
 	//iconCatalog.set(prototype, wwwroot/ <<path>>);
-	_prototypeCatalog.set( Interface, 'editors/images/uml/Interface.svg', );
-	_prototypeCatalog.set( AbstractClass, 'editors/images/uml/Abstract.svg');
-	_prototypeCatalog.set( Class, 'editors/images/uml/Class.svg');
-	_prototypeCatalog.set( Enumeration, 'editors/images/uml/Enumeration.svg');
-	_prototypeCatalog.set( Attribute, 'editors/images/uml/Attribute.svg');
-	_prototypeCatalog.set( Operation, 'editors/images/uml/Operation.svg');
-	_prototypeCatalog.set( Enumeral, 'editors/images/uml/Enumeral.svg');
+	_prototypeCatalog.set( Interface, 'Interface', );
+	_prototypeCatalog.set( AbstractClass, 'Abstract');
+	_prototypeCatalog.set( Class, 'Class');
+	_prototypeCatalog.set( Enumeration, 'Enumeration');
+	_prototypeCatalog.set( Attribute, 'Attribute');
+	_prototypeCatalog.set( Operation, 'Operation');
+	_prototypeCatalog.set( Enumeral, 'Enumeral');
 
+	const EDITOR_IMAGES_UML_PAPTH = (name: string )=> {return `editors/images/uml/${name}.svg`};
 	/**
 	 * 
 	 * @param items the types of items to be included in the toolbar
@@ -169,7 +178,7 @@ import { EditorComponent } from "./editor.component";
 					)
 				{
 					console.log("this goes here");
-
+					console.log(component);
 					editorComponent.insertProperty(parentCell, component);
 
 				// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
@@ -191,14 +200,13 @@ import { EditorComponent } from "./editor.component";
 		}
 		
 		// Creates the image which is used as the drag icon (preview)
-		var img = editorComponent.toolbar.addMode("Drag", image, function(evt, cell)
+		var img = editorComponent.toolbar.addMode("Drag", EDITOR_IMAGES_UML_PAPTH(image), function(evt, cell)
 		{
 			var pt = editorComponent.graph.getPointForEvent(evt, true);
-			drop(editorComponent.graph, evt, cell, pt.x, pt.y);
+				drop(editorComponent.graph, evt, cell, pt.x, pt.y);
 		});
-		
+		img.id = image;
 		mxUtils.makeDraggable(img, editorComponent.graph, drop);
-		
 		return img;
 	}
 
@@ -214,10 +222,21 @@ import { EditorComponent } from "./editor.component";
 	function labelChanged(graph: mxGraph, editorComponent: EditorComponent)
 	{
 		graph.addListener(mxEvent.LABEL_CHANGED,
-			// on change label event 
 			function(eventSource, eventObject){
 				console.log('%c%s', f_alert, "LABEL_CHANGED");
 				let affectedCells = eventObject.getProperties().cell;
+
+				//if the cell is an association edge connected to an object, set the datatype of attribute to object
+				if(affectedCells.edge && affectedCells.target && affectedCells.style == RelationshipType[RelationshipType.Association])
+				{
+					let group2IsDataType = /([\+\-\#\~]?\s*\w+)(\:\s*\w*)*(.*)*/i
+					let valueTokens = affectedCells.value.match(group2IsDataType);
+					if(valueTokens)
+					{
+						valueTokens[2] = `: ${affectedCells.target.value}`;
+						affectedCells.value = `${valueTokens[1]}: ${affectedCells.target.value} ${valueTokens[3] || ""}`;
+					}
+				}
 
 				// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
 				editorComponent.stageChange( new ChangeRecord(
@@ -225,7 +244,7 @@ import { EditorComponent } from "./editor.component";
 					PropertyType.Label, 
 					ActionType.Label,
 					affectedCells.value
-				));
+				), true);
 				// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 		});
 	}
@@ -261,21 +280,6 @@ import { EditorComponent } from "./editor.component";
 			});
 	}
 
-	/**
-	 * 
-	 * @param graph 
-	 * @param editorComponent 
-	 */
-	function editingStopped(graph: mxGraph, editorComponent: EditorComponent)
-	{
-		graph.addListener(mxEvent.EDITING_STOPPED,
-			//
-			function(eventSource, eventObject){
-				console.log('%c%s', f_alert, "EDITING_STOPPED");
-
-				editorComponent.release();
-			});
-	}
 
 	/**
 	 * triggers when users make changes to existing edges/relations
@@ -294,6 +298,7 @@ import { EditorComponent } from "./editor.component";
 				console.log(`edge: ${affectedEdge.edge.id}\nsource(from): ${affectedEdge.edge.source?.id}\ntarget(to): ${affectedEdge.edge.target?.id}`);
 
 				if( isUuid(affectedEdge.edge.id)){
+					console.log(`update edge`)
 					//disconnect action --> previous
 					//connect action --> terminal
 					let isConnectioning = affectedEdge.terminal? true: false;
@@ -307,6 +312,32 @@ import { EditorComponent } from "./editor.component";
 					// relation - connect | dissconnect
 					// sets the source|target to componentId if connect and null if disconnect
 					if(isConnectioning || isDisconnectioning)
+					// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
+						editorComponent.stageChange(new ChangeRecord(
+								editorComponent.getIdPath(affectedEdge.edge),
+								affecedProperty,
+								ActionType.Change,
+								value
+							));
+					// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+					if(isConnectioning && affectedEdge.edge.style == RelationshipType[RelationshipType.Association] && affectedEdge.edge.value)
+					{
+						let group2IsDataType = /([\+\-\#\~]?\s*\w+)(\:\s*\w*)*(.*)*/i
+						let valueTokens = affectedEdge.edge.value.match(group2IsDataType);
+						valueTokens[2] = `: ${affectedEdge.edge.target.value}`
+						affectedEdge.edge.value = `${valueTokens[1]}: ${affectedEdge.edge.target.value} ${valueTokens[3] || ""}`
+						// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
+							editorComponent.stageChange( new ChangeRecord(
+								editorComponent.getIdPath(affectedEdge.edge),
+								PropertyType.Label, 
+								ActionType.Label,
+								affectedEdge.edge.value
+							), true);
+						// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+					}
+
+					
 					// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
 						editorComponent.stageChange(new ChangeRecord(
 								editorComponent.getIdPath(affectedEdge.edge),
@@ -349,7 +380,6 @@ import { EditorComponent } from "./editor.component";
 	 */
 	function isUuid(id: string):boolean
 	{ 
-		//TODO: better way to validate id
 		let uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 		return uuidRegex.test(id);
 	}
@@ -366,12 +396,52 @@ import { EditorComponent } from "./editor.component";
 			function(eventSource, eventObject){
 				let affectedCells = eventObject.getProperties().cell;
 				console.log('%c%s', f_alert, "START_EDITING");
-
+				if(affectedCells.edge)
+					affectedCells.value = affectedCells.umlElement?.attributes?.toUmlNotation();
 				console.log(affectedCells);
 				editorComponent.lock(affectedCells);
 
 			});
 	}
+
+	/**
+	 * 
+	 * @param graph 
+	 * @param editorComponent 
+	 */
+	function editingStopped(graph: mxGraph, editorComponent: EditorComponent)
+	{
+		graph.addListener(mxEvent.EDITING_STOPPED,
+			//TODO: error on change lable on relations prevents release
+			function(eventSource, eventObject){
+				console.log('%c%s', f_alert, "EDITING_STOPPED");
+				console.log(eventSource);
+				console.log(eventObject);
+
+				editorComponent.release();
+			});
+	}
+
+
+	/**
+	 * 
+	 * @param graph 
+	 * @param editorComponent 
+	 */
+	 function endEdit(graph: mxGraph, editorComponent: EditorComponent)
+	 {
+		 graph.getModel().addListener
+		//  graph.addListener
+		 (mxEvent.END_EDIT,
+			 //TODO: error on change lable on relations prevents release
+			 function(eventSource, eventObject){
+				 console.log('%c%s', f_alert, "END_EDIT");
+				 console.log(eventSource);
+				 console.log(eventObject);
+ 
+			 });
+	 }
+ 
 
 
 	/**
@@ -414,21 +484,30 @@ import { EditorComponent } from "./editor.component";
 	 */
 	function click(graph: mxGraph, editorComponent: EditorComponent)
 	{
-		// TODO: need to come up with a better way to lock items.
+		var click = 0;
 		graph.addListener(mxEvent.CLICK, 
 			// click on object to see its makup.
 			function(eventSource, eventObject){
 				let affectedCells = eventObject.getProperties().cell;
 				console.log('%c%s',f_alert, "mxCell description");
 				console.log(affectedCells);
-
 				if(graph.isCellLocked(affectedCells))
 					affectedCells = undefined;
 				if(affectedCells == undefined )
 					graph.clearSelection();
 				
+
+				// if(eventSource.lastMouseX){	
+				// 	let x = eventSource.lastMouseX;
+				// 	let y = eventSource.lastMouseY;
+				// 	let coords = `${click++}:\t(${x},${y})`
+				// 	console.log('Location Point %c%s',f_info, coords);
+				// 	if(affectedCells == undefined)
+				// 		graph.insertVertex(graph.getDefaultParent(), null, coords, x-215, y-65, 5, 5, 'ClickHere');
+				// }
 			});
 	}
+
 
 	/**
 	 * function that fires when a new edge/relation is drawn between 2 compnents
@@ -460,9 +539,10 @@ import { EditorComponent } from "./editor.component";
 
 					relation.type = affectedCells.style | RelationshipType.Association;
 
-					affectedCells.id = relation.id;
-					affectedCells.value = relation.attributes;
-					affectedCells.style = RelationshipType[relation.type]
+					// affectedCells.id = relation.id;
+					// affectedCells.value = relation.toUmlNotation();
+					// affectedCells.style = RelationshipType[relation.type]
+					graph.removeCells([affectedCells],true);
 
 				// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
 					editorComponent.stageChange(new ChangeRecord(
@@ -470,7 +550,7 @@ import { EditorComponent } from "./editor.component";
 						PropertyType.Elements,
 						ActionType.Insert,
 						relation
-					));
+					), true);
 				// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 				}

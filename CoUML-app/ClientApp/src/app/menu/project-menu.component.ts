@@ -35,13 +35,16 @@ import {GoogleLoginProvider } from "angularx-social-login";
       this._menuItems = [
         {
           label: "File",
+          id: "menuFile",
           items: [
             {
               label: "New...",
+              id: "menuFileNew",
               command: () => this.showNewDiagramDialog(),
             },
             {
               label: "Trigger Breakpoint",
+              id: "menuFileTriggerBreakpoint",
               command: ()=> this._coUmlHub.triggerBreakPoint(),
             },
             {
@@ -52,17 +55,21 @@ import {GoogleLoginProvider } from "angularx-social-login";
         },
         {
           label: "Edit",
+          id: "menuEdit",
           items: []
         },
         {
           label: "User",
+          id: "menuUser",
           items: [
             {
               label: "Login...",
+              id: "menuUserLogin",
               command: () => this.signInWithGoogle(),
             },
             {
-              label: "Signout",
+              label: "Sign Out",
+              id: "menuUserSignOut",
               command: () => this.signOut(),
             }
           ]

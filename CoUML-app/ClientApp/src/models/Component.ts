@@ -1,3 +1,4 @@
+import { ChangeRecord } from "./ChangeRecord";
 import { GeneralCollection, RelationalCollection } from "./Collection";
 import { UmlElement } from "./Diagram";
 import { Operation, Attribute, ComponentProperty,  ICollection, Enumeral } from "./DiagramModel";
@@ -35,6 +36,9 @@ export abstract class Component extends UmlElement
  */
 export class Enumeration extends Component
 {
+    change(change: ChangeRecord) {
+        throw new Error("Method not implemented.");
+    }
     insert(element: any) {
         this.enums.insert(element);
     }
@@ -59,6 +63,9 @@ export class Enumeration extends Component
  */
 export class Interface extends Component
 {
+    change(change: ChangeRecord) {
+        throw new Error("Method not implemented.");
+    }
     insert(element: any) {
         this.operations.insert(element);
     }
@@ -83,6 +90,9 @@ export class Interface extends Component
  */
 export class AbstractClass extends Component
 {
+    change(change: ChangeRecord) {
+        throw new Error("Method not implemented.");
+    }
     insert(element: any) {
         console.log(element);
         if(element.constructor.name == Operation.name){
@@ -127,6 +137,9 @@ export class AbstractClass extends Component
  */
 export class Class extends Component
 {
+    change(change: ChangeRecord) {
+        throw new Error("Method not implemented.");
+    }
     insert(element: any) {
         
         

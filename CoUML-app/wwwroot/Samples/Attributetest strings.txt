@@ -1,0 +1,20 @@
+^ + _secretItem: boolean[1..*] = null ^
+^ - _secretItem: boolean[100..*] = 5 ^
+^ # _secretItem: boolean[1..*] = \"string\" ^
+^ ~ _secretItem: boolean[1..*] ^
+^ _secretItem: boolean[10] = null ^
+^ + _secretItem: boolean[10] = 5 ^
+^ - _secretItem: boolean[10] = \"string\" ^
+^ # _secretItem: boolean[10] ^
+^ ~ _secretItem: boolean[*] = null ^
+^ _secretItem: boolean[*] = 5 ^
+^ + _secretItem: boolean[*] = \"string\" ^
+^ - _secretItem: boolean[*] ^
+^ # _secretItem: boolean[5..10] = null ^
+^ ~ regularItem: boolean[5..10] = 5 ^
+^ regularItem: boolean[5..10] = \"string\" ^
+^ + regularItem: boolean[15..100] ^
+^ - regularItem: boolean = null ^
+^ # regularItem: boolean = 5 ^
+^ ~ regularItem: boolean = \"string\" ^
+^ regularItem: boolean ^
