@@ -131,4 +131,8 @@ export class CoUmlHubService{
 		this._coUmlHubConnection.invoke("Send",Did,changeDiagram);
 	}
 
+	public register(uId: string){
+		this._coUmlHubConnection.invoke("register",uId);
+	}
+
 }
