@@ -8,7 +8,7 @@ namespace CoUML_app.Models
 
 	public abstract class UmlElement
 	{
-		public string id { get; } = Guid.NewGuid().ToString();
+		public string id { get; set; } = Guid.NewGuid().ToString();
 		public IUser editor { get; set; } = new NullUser();
 		public IDimension dimension { get; set; } = new Dimension(0,0,200,40);
 
@@ -21,16 +21,15 @@ namespace CoUML_app.Models
 		}
 	}
 
-	public class Diagram
+	public class Diagram : UmlElement
 	{
-		public string id { get; }
-		public ICollection<UmlElement> elements {get;}
+		public ICollection<UmlElement> elements {get;} = new RelationalCollection<UmlElement>();
 
-		public Diagram(String? dId = null)
+		public Diagram(String dId)
 		{
-			this.id = dId ?? Guid.NewGuid().ToString();
-			this.elements = new RelationalCollection<UmlElement>();
+			id = dId;
 		}
+		public Diagram(){}
 
 	}
 }

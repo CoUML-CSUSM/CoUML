@@ -32,6 +32,10 @@ namespace CoUML_app.Models
 			}
 		}
 
+override
+public string ToString(){
+	return this._id;
+}
 	}
 
 	public class NullUser: IUser

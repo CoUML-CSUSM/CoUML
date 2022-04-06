@@ -12,13 +12,13 @@ export class ProjectManager{
         this._coUmlHub.subscribe(this);
     }
 
-    public generate(dId:string){
+    public generate(dId:string, uId:string){
 
         console.log("manager");
         console.log(dId);
-        console.log("Creating new diagram")
-        this._coUmlHub.generate(dId);
-        
+        console.log("Creating new diagram");
+        this._coUmlHub.generate(dId,uId);
+
         // (d) => {
         //     this.newDiagram = Assembler.assembleDiagram(d);
         // };

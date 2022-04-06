@@ -4,6 +4,7 @@ import { ProjectDeveloper } from '../controller/project-developer.controller';
 import * as EditorFormatHandler  from './editor-format.handler';
 import * as EditorEventHandler  from './editor-event.handler';
 
+
 const DELETE = 46;
 const BACKSPACE = 8;
 
