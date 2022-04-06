@@ -238,13 +238,16 @@ import { EditorComponent } from "./editor.component";
 					}
 				}
 
+				//calls internal UML Element
+				affectedCells.umlElement.label( affectedCells.value);
+				affectedCells.value = affectedCells.umlElement.toUmlNotation(); 
 				// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
 				editorComponent.stageChange( new ChangeRecord(
 					editorComponent.getIdPath(affectedCells),
 					PropertyType.Label, 
 					ActionType.Label,
 					affectedCells.value
-				), true);
+				));
 				// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 		});
 	}
@@ -438,7 +441,6 @@ import { EditorComponent } from "./editor.component";
 				 console.log('%c%s', f_alert, "END_EDIT");
 				 console.log(eventSource);
 				 console.log(eventObject);
- 
 			 });
 	 }
  
@@ -496,7 +498,7 @@ import { EditorComponent } from "./editor.component";
 				if(affectedCells == undefined )
 					graph.clearSelection();
 				
-
+				/* puts a little point on the graph so you can see where the user is clicking */
 				// if(eventSource.lastMouseX){	
 				// 	let x = eventSource.lastMouseX;
 				// 	let y = eventSource.lastMouseY;

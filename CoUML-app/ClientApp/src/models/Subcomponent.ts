@@ -337,8 +337,8 @@ export class Enumeral extends UmlElement
  */
 export class Multiplicity
 {
-	public min: number = null;
-	public max: number = null;
+	public min: number = 1;
+	public max: number = 1;
 
 	public constructor( description: string = "1")
 	{
@@ -353,8 +353,6 @@ export class Multiplicity
 
 	public toUmlNotation(): string
 	{
-		// if(this.isSingle)
-		// 	return "";
 		return `${this.min != this.max ? this.min+"..": ""}${this.max == -1? "*":this.max}`;
 	}
 
