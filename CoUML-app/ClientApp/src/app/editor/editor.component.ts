@@ -193,8 +193,7 @@ export class EditorComponent implements AfterViewInit{
 				if( element instanceof Relationship)
 						relatioships.push(element);
 				else if(element instanceof Component){
-					let graphComponent =  this.insertComponent(element);
-					graphComponent.umlElement = element;
+					this.insertComponent(element);
 					//todo: lock cells on draw & release on close
 					// if(element.editor instanceof User)
 						// this.updateCellLock(graphComponent);
@@ -254,7 +253,7 @@ export class EditorComponent implements AfterViewInit{
 				
 		}
 
-
+		graphComponent.umlElement = component;
 		return graphComponent;
 	}
 
