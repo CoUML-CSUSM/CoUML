@@ -69,13 +69,15 @@ export class CoUmlHubService{
 	 * @param dId get Diagram from server
 	 * @returns 
 	 */
-	public fetch(dId: string ): Promise<string>
+	public fetch(dId: string, uId:string ): Promise<string>
 	{
 
 		// calling function : public string Fetch(string dId)
 		//return this._coUmlHubConnection.invoke<string>('Fetch','test'); // test diagram
-		this._projectDeveloper.setEditor(new User(this._coUmlHubConnection.connectionId));
-		return this._coUmlHubConnection.invoke<string>('Fetch',dId); 
+
+		//move this line and change new user to email adress
+		//this._projectDeveloper.setEditor(new User(this._coUmlHubConnection.connectionId));
+		return this._coUmlHubConnection.invoke<string>('Fetch',dId,uId); 
 	}
 
 	/**
@@ -116,11 +118,11 @@ export class CoUmlHubService{
 	}
 
 
-	public generate(Did:string)
+	public generate(dId:string,uId:string)
 	{
 		console.log("hub");
-    	console.log(Did);
-		this._coUmlHubConnection.invoke("Generate",Did);
+    	console.log(dId);
+		this._coUmlHubConnection.invoke("Generate",dId,uId);
 	}
 
 	//sends document text over to c#

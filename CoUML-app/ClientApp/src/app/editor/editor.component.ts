@@ -5,6 +5,7 @@ import * as EditorFormatHandler  from './editor-format.handler';
 import * as EditorEventHandler  from './editor-event.handler';
 import { Event } from 'jquery';
 
+
 const DELETE = 46;
 const BACKSPACE = 8;
 

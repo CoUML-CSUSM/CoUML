@@ -141,10 +141,12 @@ namespace CoUML_app.Controllers.Hubs
         public override Task OnConnectedAsync()
         {
             string connectionId = Context.ConnectionId;
-            IUser name = new User(connectionId);
+            IUser name = new User(connectionId);//this needs to become email
             _connections.Add(connectionId, name);
 
             IssueUser(connectionId);
+            //can be removed make this happend when they login
+            //connectionID can be like email or sum shit
 
             return base.OnConnectedAsync();
         }
@@ -160,6 +162,7 @@ namespace CoUML_app.Controllers.Hubs
             
             // Groups.RemoveFromGroupAsync(connectionId)
             _connections.Remove(connectionId);
+            //same stuff but for sign out
             return base.OnDisconnectedAsync(exception);
         }
 
@@ -167,6 +170,7 @@ namespace CoUML_app.Controllers.Hubs
         /// test server to client communication
         /// </summary>
         /// <param name="connectionId">connectionId of client being called</param>
+        //make login changes here
         public void IssueUser(string connectionId)
         {
             Clients.Client(connectionId).issueUser(connectionId);
@@ -178,7 +182,7 @@ namespace CoUML_app.Controllers.Hubs
         /// </summary>
         /// <param name="dId">somthing to identify the diagram file by</param>
         /// <returns>the diagram requested</returns>
-        public string Fetch(string dId)
+        public string Fetch(string dId, string uId)
         {
             //attacha as a listener to this diagram
             Groups.AddToGroupAsync(Context.ConnectionId,dId);
@@ -197,12 +201,14 @@ namespace CoUML_app.Controllers.Hubs
             IMongoDatabase db = dbClient.GetDatabase("CoUML");
 
             var collection = db.GetCollection<BsonDocument>("Diagrams");
-            var filter = Builders<BsonDocument>.Filter.Eq("id", dId);
+            var dIdFilter = Builders<BsonDocument>.Filter.Eq("id", dId);
+            var uIdFilter = Builders<BsonDocument>.Filter.Eq("editor.id", uId);
+            var filter = Builders<BsonDocument>.Filter.And(dIdFilter,uIdFilter);
             
             var diagram = collection.Find(filter).Project("{_id: 0}").FirstOrDefault(); //may return null
 
             if(diagram == null){
-                Generate(dId);
+                Generate(dId,uId);//change later to match email
                 diagram = collection.Find(filter).Project("{_id: 0}").FirstOrDefault();
             }
 
@@ -248,8 +254,14 @@ namespace CoUML_app.Controllers.Hubs
 
 
         //creates a diagram string that gets sent to the database
-        public void Generate(string Did){
+        public void Generate(string dId, string uId){
 
+
+            //
+            Console.WriteLine($"user test {Context.ConnectionId}");
+            Console.WriteLine($"{_connections.GetUser(Context.ConnectionId).ToString()}");
+
+            //
             //mongodb database
             var dbClient = new MongoClient("mongodb://localhost:27017");
             //adds document to the database
@@ -257,9 +269,12 @@ namespace CoUML_app.Controllers.Hubs
 
             var collection = db.GetCollection<BsonDocument>("Diagrams");
 
+            Diagram d = new Diagram(dId);
+            d.editor = new User(uId);
+
             //sends diagram as bson doc using the string of the diagram
             MongoDB.Bson.BsonDocument doc = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonDocument>(
-                JsonConvert.SerializeObject(new Diagram(Did), Formatting.Indented, new JsonSerializerSettings
+                JsonConvert.SerializeObject(d, Formatting.Indented, new JsonSerializerSettings
                     {
                         TypeNameHandling = TypeNameHandling.Auto
                     })
