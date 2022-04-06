@@ -300,6 +300,31 @@ namespace CoUML_app.Controllers.Hubs
             var doc = BsonDocument.Parse(Diagram);
             collection.ReplaceOne(filter, doc);
         }
+
+        //saves email to database
+        //
+        public void register(string uId){
+            //mongodb database
+            var dbClient = new MongoClient("mongodb://localhost:27017");
+            //adds document to the database
+            IMongoDatabase db = dbClient.GetDatabase("CoUML");
+
+            var collection = db.GetCollection<BsonDocument>("Users");
+            var filter = Builders<BsonDocument>.Filter.Eq("id", uId);
+            
+            var user = collection.Find(filter).Project("{_id: 0}").FirstOrDefault(); //may return null
+
+            if(user == null){
+                
+                var doc = new BsonDocument
+                {
+                    {"id", uId},
+                };
+
+                collection.InsertOne(doc);
+            }
+
+        }
     }
 
     static class DevUtility{
