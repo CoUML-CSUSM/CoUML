@@ -9,7 +9,7 @@ import { ProjectDeveloper } from '../controller/project-developer.controller';
 import { SocialAuthService, SocialUser } from "angularx-social-login";
 import {GoogleLoginProvider } from "angularx-social-login";
 import { DialogService } from 'primeng/dynamicdialog';
-import { DiagramTableComponent } from './open/diagram-table.compnent';
+import { DiagramTableComponent } from './open/diagram-table.component';
 
 //client id
 //174000524733-gq2vagupknm77i794hll3kbs3iupm6fu.apps.googleusercontent.com
@@ -20,7 +20,7 @@ import { DiagramTableComponent } from './open/diagram-table.compnent';
 @AngularComponent({
     selector: 'app-menu',
     templateUrl: './project-menu.component.html',
-    providers: [ProjectManager, ProjectDeveloper]
+    providers: [ProjectManager, ProjectDeveloper, DialogService]
   })
   export class ProjectMenuComponent{
 
@@ -123,19 +123,24 @@ import { DiagramTableComponent } from './open/diagram-table.compnent';
       this.authService.refreshAuthToken(GoogleLoginProvider.PROVIDER_ID);
     }
 
-    
-
-    openDiagram()
+    /**
+     * opens a dialog to let the user select from diagrams they hae access to.
+     */
+    showOpenDiagram()
     {
-      const ref = this.dialogService.open(DiagramTableComponent, {
+      const openDiagramDialog = this.dialogService.open(DiagramTableComponent, {
+        data: {
+          id: this._coUmlHub._projectDeveloper._editor.id
+        },
           header: 'Choose a Diagram',
           width: '70%'
       });
   
-      ref.onClose.subscribe((_id: object) => {
+      // string of the _id is returned to indicate the user's selection
+      openDiagramDialog.onClose.subscribe((_id: string) => {
           if (_id) {
               this.messageService.add({severity:'info', summary: 'Diagram Selected', detail:'_id: ' + _id});
           }
       });
-  }
+    }
   }

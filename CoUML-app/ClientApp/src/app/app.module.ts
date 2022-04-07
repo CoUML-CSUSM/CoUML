@@ -27,12 +27,14 @@ import {MessagesModule} from 'primeng/messages';
 import {MessageModule} from 'primeng/message';
 import {DynamicDialogModule} from 'primeng/dynamicdialog';
 import {TableModule} from 'primeng/table';
+import {ToastModule} from 'primeng/toast'
 
 // social login
 import { SocialLoginModule, SocialAuthServiceConfig } from 'angularx-social-login';
 import {
   GoogleLoginProvider
 } from 'angularx-social-login';
+import { DiagramTableComponent } from './menu/open/diagram-table.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +42,7 @@ import {
     HomeComponent,
     EditorComponent,
     ProjectMenuComponent,
+    DiagramTableComponent
 
 
   ],
@@ -66,6 +69,7 @@ import {
     MessagesModule,
     MessageModule,
     TableModule,
+    ToastModule,
 
     //login
     SocialLoginModule,
@@ -87,6 +91,7 @@ import {
         ],
       } as SocialAuthServiceConfig,
     },
+
 
   ],
   bootstrap: [AppComponent],

@@ -111,6 +111,30 @@ export class CoUmlHubService{
 	}
 
 
+    listMyDiagrams(id: any) {
+        
+		//TODO: c# method that returns list of diagrams
+		return new Promise(()=>{
+			return 	[
+				{
+					id: "hello world",
+					_id: "916d8889-f46e-46f4-98e7-9793f29495hw"
+				}, 
+				{
+					id: "hello void",
+					_id: "dbf6b814-185c-4e9e-a963-776e5c549fhv"
+				},
+				{
+					id: "hello antivoid",
+					_id: "9d53558b-2c0f-4d48-9ba7-7eb7d705e0ha"
+				},
+				{
+					id: "goodby world",
+					_id: "548618a3-b598-4f3f-9b5d-96d54696c1gw"
+				} ];
+		})
+    }
+
 	/// for test only!!!!
 	public triggerBreakPoint()
 	{
