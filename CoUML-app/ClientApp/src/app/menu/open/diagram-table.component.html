@@ -1,15 +1,17 @@
-<p-table [value]="diagrams" responsiveLayout="scroll" [paginator]="true" [rows]="5" [responsive]="true">
+<p-table [value]="_diagramDataSets" responsiveLayout="scroll" [rows]="5" [responsive]="true">
     <ng-template pTemplate="header">
         <tr>
             <th pSortableColumn="name">Name </th>
+            <!-- <th pSortableColumn="name">Immutible ID </th> -->
             <th style="width:4em"></th>
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-diagram>
         <tr>
             <td>{{diagram.id}}</td>
+            <!-- <td>{{diagram._id}}</td> -->
             <td>
-                <button type="button" pButton icon="pi pi-search" (click)="fetchDiagram(diagram._id)"></button>
+                <button type="button" pButton icon="pi pi-search" (click)="select(diagram)"></button>
             </td>
         </tr>
     </ng-template>

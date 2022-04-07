@@ -1,6 +1,6 @@
 import { AfterViewInit, Component as AngularComponent, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { MenuItem, MessageService } from 'primeng/api';
-import { Class, Diagram, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType as VisibilityType, User } from 'src/models/DiagramModel';
+import { Class, Diagram, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType as VisibilityType, User, DiagramDataSet } from 'src/models/DiagramModel';
 import { ProjectManager } from '../controller/project-manager.controller';
 import { CoUmlHubService } from '../service/couml-hub.service';
 import { PrimeNGConfig } from "primeng/api";
@@ -20,6 +20,7 @@ import { DiagramTableComponent } from './open/diagram-table.component';
 @AngularComponent({
     selector: 'app-menu',
     templateUrl: './project-menu.component.html',
+    // providers: [ProjectManager, ProjectDeveloper]
     providers: [ProjectManager, ProjectDeveloper, DialogService]
   })
   export class ProjectMenuComponent{
@@ -33,8 +34,7 @@ import { DiagramTableComponent } from './open/diagram-table.component';
       private _coUmlHub: CoUmlHubService,
       private primengConfig: PrimeNGConfig,
       private authService: SocialAuthService,//login stuff,
-      private dialogService: DialogService,
-      public messageService: MessageService,
+      private dialogService: DialogService,//open dialog box
       ){
       this._menuItems = [
         {
@@ -128,19 +128,23 @@ import { DiagramTableComponent } from './open/diagram-table.component';
      */
     showOpenDiagram()
     {
-      const openDiagramDialog = this.dialogService.open(DiagramTableComponent, {
-        data: {
-          id: this._coUmlHub._projectDeveloper._editor.id
-        },
-          header: 'Choose a Diagram',
-          width: '70%'
-      });
-  
-      // string of the _id is returned to indicate the user's selection
-      openDiagramDialog.onClose.subscribe((_id: string) => {
-          if (_id) {
-              this.messageService.add({severity:'info', summary: 'Diagram Selected', detail:'_id: ' + _id});
-          }
-      });
+      //if user is logged in
+      if(this._coUmlHub._projectDeveloper._editor?.id)
+      {
+        const openDiagramDialog = this.dialogService.open(DiagramTableComponent, {
+          data: {
+            id: this._coUmlHub._projectDeveloper._editor.id // id of user ToDO: Central user service? maybe move to different central provider class?
+          },
+            header: 'Choose a Diagram',
+            width: '70%'
+        });
+    
+        // string of the _id is returned to indicate the user's selection
+        openDiagramDialog.onClose.subscribe((diagram: DiagramDataSet) => {
+            if (diagram) {
+                console.log(diagram);
+            }
+        });
+      }
     }
   }

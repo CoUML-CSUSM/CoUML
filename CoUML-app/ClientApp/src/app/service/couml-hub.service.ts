@@ -3,7 +3,7 @@ import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 import { ProjectManager } from '../controller/project-manager.controller';
 import { environment } from '../../environments/environment';
-import { Assembler, ChangeRecord, User, Diagram } from 'src/models/DiagramModel';
+import { Assembler, ChangeRecord, User, Diagram, DiagramDataSet } from 'src/models/DiagramModel';
 
 
 @Injectable()
@@ -111,17 +111,35 @@ export class CoUmlHubService{
 	}
 
 
+	/**
+	 * looksup the diagrams that a user has access to
+	 * @param id the ID of the user
+	 * @returns array of diagrams that the user has access to[]
+	 */
     listMyDiagrams(id: any) {
-        
+        // TODO: create a function in C# that fulfulls this request
 		//TODO: c# method that returns list of diagrams
-		return new Promise(()=>{
-			return 	[
-				{
-					id: "hello world",
+
+		// TEMPORARRY!!!! returns a sample promise
+		return new Promise<DiagramDataSet[]>((resolve)=>{
+			resolve([{
+					id: "Haikus are",
 					_id: "916d8889-f46e-46f4-98e7-9793f29495hw"
 				}, 
 				{
-					id: "hello void",
+					id: "easy, but",
+					_id: "dbf6b814-185c-4e9e-a963-776e5c549fhv"
+				},
+				{
+					id: "sometimes they",
+					_id: "9d53558b-2c0f-4d48-9ba7-7eb7d705e0ha"
+				},
+				{
+					id: "don't make sence",
+					_id: "548618a3-b598-4f3f-9b5d-96d54696c1gw"
+				}, 
+				{
+					id: "refrigerator",
 					_id: "dbf6b814-185c-4e9e-a963-776e5c549fhv"
 				},
 				{
@@ -131,7 +149,7 @@ export class CoUmlHubService{
 				{
 					id: "goodby world",
 					_id: "548618a3-b598-4f3f-9b5d-96d54696c1gw"
-				} ];
+				} ]);
 		})
     }
 

@@ -2,13 +2,19 @@ import {Component} from '@angular/core';
 import {DynamicDialogRef} from 'primeng/dynamicdialog';
 import {DynamicDialogConfig} from 'primeng/dynamicdialog';
 import { CoUmlHubService } from 'src/app/service/couml-hub.service';
+import { DiagramDataSet } from 'src/models/DiagramModel';
 
 @Component({
     templateUrl: './diagram-table.component.html',
 })
 export class DiagramTableComponent {
 
-    diagrams;
+    _diagramDataSets: DiagramDataSet[] = [
+        {
+            id: "something...",
+            _id: "Went wrong in promise?"
+        }
+    ];
 
 
     constructor(
@@ -19,10 +25,10 @@ export class DiagramTableComponent {
 
     ngOnInit() {
         //id: this.config.id
-        this._coUmlHub.listMyDiagrams(this.config.data.id).then(diagramList => this.diagrams = diagramList);
+        this._coUmlHub.listMyDiagrams(this.config.data.id).then(diagramList => this._diagramDataSets = diagramList);
     }
 
-    fetchDiagram(_id: string) {
-        this.ref.close(_id);
+    select(diagramData: DiagramDataSet) {
+        this.ref.close(diagramData);
     }
 }
