@@ -322,6 +322,7 @@ namespace CoUML_app.Controllers.Hubs
                 };
 
                 collection.InsertOne(doc);
+                Console.WriteLine(doc.ToString());
             }
 
         }
