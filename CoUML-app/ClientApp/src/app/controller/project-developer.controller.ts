@@ -75,15 +75,6 @@ export class ProjectDeveloper{
 
 	private applyChange(change: ChangeRecord)
 	{
-		// console.log(`developer---------Change applying-------
-		// ${ActionType[change.action]} . ${PropertyType[change.affectedProperty]}
-		// ${change.id}
-		// value-> ${change.value}`);
-
-		// let action = ActionType[change.action].toLowerCase();
-		// let affectedProperty = PropertyType[change.affectedProperty].toLowerCase();
-			
-		// let operation = "";
 
 		let affectedComponent= this._projectDiagram.at(change.id);
 
@@ -94,17 +85,11 @@ export class ProjectDeveloper{
 			case ActionType.Lock:	affectedComponent.lock(change.value); break;
 			case ActionType.Release:	affectedComponent.release(change.value); break;
 			case ActionType.Label:	affectedComponent.label(change.value); break;
-				// operation = `${action}(change.value)`;
-				// // operation = `${affectedProperty}.${action}(change.value)`;
-				// break;
 
 			case ActionType.Change:
-				// operation = `${affectedProperty} = change.value`;
-				// break;
+
 				affectedComponent.change(change); break;
 		}			
-
-		// eval("affectedComponent." + operation);
 
 		console.log("result");
 		console.log(this._projectDiagram);//i need to send this down to the c#
