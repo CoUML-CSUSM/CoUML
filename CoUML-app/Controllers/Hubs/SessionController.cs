@@ -117,8 +117,15 @@ namespace CoUML_app.Controllers.Hubs
             return _team.Count > 0;
         }
 
+        public void UpdateModel(ChangeRecord [] changes)
+        {
+            _projectDiagram.Apply(changes);
+            _history.InsertRange(_history.Count, changes);
+        }
+
     }
 
+    
     public class SessionManager
     {
         private Dictionary<string, ActiveSession> _sessions = new Dictionary<string, ActiveSession>();
@@ -161,5 +168,12 @@ namespace CoUML_app.Controllers.Hubs
                 TerminateSession(dId);
             return left;
         }
+
+        public bool CommitUpdatesToSession(string dId, User author, ChangeRecord[] changes)
+        {
+            _sessions[dId].UpdateModel(changes);
+            return false; 
+        }
+
     }
 }

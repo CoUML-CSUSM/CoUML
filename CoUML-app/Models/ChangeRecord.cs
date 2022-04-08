@@ -2,10 +2,10 @@ namespace CoUML_app.Models
 {
     public struct ChangeRecord
     {
-        string[] id {get; set;}
-        PropertyType affectedProperty {get; set;}
-        ActionType action {get; set;}
-        object value {get; set;}
+        public string[] id {get;}
+        public PropertyType affectedProperty {get;}
+        public ActionType action {get;}
+        public object value {get;}
     }
 
     public enum ActionType

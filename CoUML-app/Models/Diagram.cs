@@ -16,6 +16,11 @@ namespace CoUML_app.Models
 		public IDimension dimension { get; set; } = new Dimension(0,0,200,40);
 
 		public abstract void GenerateCode(ISourceCodeGenerator codeGenerator);
+		public abstract void Apply(ChangeRecord change, int index);
+		protected bool IsThis(string[] ids)
+		{
+			return ids[ids.Length-1] == id;
+		}
 	}
 
 	public class Diagram : UmlElement
@@ -35,6 +40,27 @@ namespace CoUML_app.Models
 			while(elementIterator.HasNext())
 				elementIterator.GetNext().GenerateCode(codeGenerator);
 			codeGenerator.ClosePackage();
+		}
+
+		override public void Apply(ChangeRecord change, int depth)
+		{
+			if(IsThis(change.id))
+			{
+				
+			}
+			else
+			{
+				elements[change.id[depth]].Apply(change, ++depth);
+			}
+
+		}
+
+		public void Apply(ChangeRecord[] changes)
+		{
+			foreach (var change in changes)
+			{
+				Apply(change, 0);
+			}
 		}
 
 	}

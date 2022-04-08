@@ -19,6 +19,7 @@ namespace CoUML_app.Models
 		public T Remove(string key);
 		public T Remove(int key);
 		public int Size { get;}
+		public T this[string id]{get;}
 		
 	}
 	public class GeneralCollection<T> : ICollection<T>
@@ -45,6 +46,11 @@ namespace CoUML_app.Models
 		public GeneralCollection()
 		{
 			this._items = new List<T>();
+		}
+
+		public T this[string id]
+		{
+			get =>  items.Find(x => x.Equals(id));
 		}
 
 		/// <summary>
@@ -160,6 +166,11 @@ namespace CoUML_app.Models
 		public RelationalCollection()
 		{
 			this._items = new Dictionary<string, T>();
+		}
+
+		public T this[string id]
+		{
+			get =>  _items[id];
 		}
 
 		public ICollectionIterator<T> Iterator()

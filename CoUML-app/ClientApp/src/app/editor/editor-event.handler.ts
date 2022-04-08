@@ -395,7 +395,7 @@ import { EditorComponent } from "./editor.component";
 	function startEditing(graph: mxGraph, editorComponent: EditorComponent)
 	{
 		graph.addListener(mxEvent.START_EDITING, 
-			// When double click on cell to change label
+			// fires When double click on cell to change label
 			function(eventSource, eventObject){
 				let affectedCells = eventObject.getProperties().cell;
 				console.log('%c%s', f_alert, "START_EDITING");
@@ -415,7 +415,6 @@ import { EditorComponent } from "./editor.component";
 	function editingStopped(graph: mxGraph, editorComponent: EditorComponent)
 	{
 		graph.addListener(mxEvent.EDITING_STOPPED,
-			//TODO: error on change lable on relations prevents release
 			function(eventSource, eventObject){
 				console.log('%c%s', f_alert, "EDITING_STOPPED");
 				console.log(eventSource);
@@ -436,7 +435,6 @@ import { EditorComponent } from "./editor.component";
 		 graph.getModel().addListener
 		//  graph.addListener
 		 (mxEvent.END_EDIT,
-			 //TODO: error on change lable on relations prevents release
 			 function(eventSource, eventObject){
 				 console.log('%c%s', f_alert, "END_EDIT");
 				 console.log(eventSource);
