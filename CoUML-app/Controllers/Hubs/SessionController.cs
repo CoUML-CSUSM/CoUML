@@ -135,43 +135,43 @@ namespace CoUML_app.Controllers.Hubs
             return _sessions.TryAdd(diagram.id, new ActiveSession(diagram));
         }
 
-        public bool IsSessionActive(string dId)
+        public bool IsSessionActive(string id)
         {
             ActiveSession sess;
-            return _sessions.TryGetValue(dId, out sess);
+            return _sessions.TryGetValue(id, out sess);
         }
 
-        public ActiveSession GetSession(string dId)
+        public ActiveSession GetSession(string id)
         {
             ActiveSession sess;
-            _sessions.TryGetValue(dId, out sess);
+            _sessions.TryGetValue(id, out sess);
             return sess;
         }
 
-        public bool TerminateSession(string dId)
+        public bool TerminateSession(string id)
         {
-            var session = GetSession(dId);
+            var session = GetSession(id);
             if(!session.IsActive())
-                return _sessions.Remove(dId);
+                return _sessions.Remove(id);
             return false;
         }
 
-        public bool JoinSession(string dId, User user)
+        public bool JoinSession(string id, User user)
         {
-            return _sessions[dId].AddTeamMember(user);
+            return _sessions[id].AddTeamMember(user);
         }
 
-        public bool LeaveSession(string dId, User user)
+        public bool LeaveSession(string id, User user)
         {
-            var left = _sessions[dId].RemoveTeamMember(user);
-            if(left && !_sessions[dId].IsActive())
-                TerminateSession(dId);
+            var left = _sessions[id].RemoveTeamMember(user);
+            if(left && !_sessions[id].IsActive())
+                TerminateSession(id);
             return left;
         }
 
-        public bool CommitUpdatesToSession(string dId, User author, ChangeRecord[] changes)
+        public bool CommitUpdatesToSession(string id, ChangeRecord[] changes)
         {
-            _sessions[dId].UpdateModel(changes);
+            _sessions[id].UpdateModel(changes);
             return false; 
         }
 

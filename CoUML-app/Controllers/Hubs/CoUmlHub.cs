@@ -48,6 +48,7 @@ namespace CoUML_app.Controllers.Hubs
         private static Diagram testDiagram = DevUtility.DiagramDefualt("test"); // test code here
 
         private static ProjectController _projectController = new ProjectController();
+        private static SessionManager _sessionManager = new SessionManager();
        
         
         /// <summary>
@@ -100,12 +101,6 @@ namespace CoUML_app.Controllers.Hubs
             
             //attacha as a listener to this diagram
             Groups.AddToGroupAsync(Context.ConnectionId, dId);
-
-            if( dId != "test")
-            {
-                //TODO: look up real diagram and return
-                Console.WriteLine("not test id");
-            }
 
             // string diagram = _projectController.LookUp(dId);
             var diagram = _projectController.Find(dId);

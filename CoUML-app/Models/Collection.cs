@@ -18,8 +18,9 @@ namespace CoUML_app.Models
 		public void Insert(T item);
 		public T Remove(string key);
 		public T Remove(int key);
+		public void RemoveAll();
 		public int Size { get;}
-		public T this[string id]{get;}
+		public T? this[string id]{get;}
 		
 	}
 	public class GeneralCollection<T> : ICollection<T>
@@ -48,7 +49,7 @@ namespace CoUML_app.Models
 			this._items = new List<T>();
 		}
 
-		public T this[string id]
+		public T? this[string id]
 		{
 			get =>  items.Find(x => x.Equals(id));
 		}
@@ -104,6 +105,11 @@ namespace CoUML_app.Models
 				Console.WriteLine(e.Message);
 			}
 			return default(T);
+		}
+
+		public void RemoveAll()
+		{
+			_items.Clear();
 		}
 
 		/// <summary>
@@ -168,9 +174,16 @@ namespace CoUML_app.Models
 			this._items = new Dictionary<string, T>();
 		}
 
-		public T this[string id]
+		public T? this[string id]
 		{
-			get =>  _items[id];
+			get
+			{  
+				try{
+					return _items[id];
+				}catch(KeyNotFoundException){
+					return null;
+				}
+			}
 		}
 
 		public ICollectionIterator<T> Iterator()
@@ -207,6 +220,10 @@ namespace CoUML_app.Models
 			return item;
 		}
 
+		public void RemoveAll()
+		{
+			_items.Clear();
+		}
 
 		public int Size
 		{

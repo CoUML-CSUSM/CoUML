@@ -281,7 +281,7 @@ export class Attribute extends ComponentProperty
 		throw new Error("Method not implemented.");
 	}
 
-	parameterize(params: string): void
+	private parameterize(params: string): void
 	{
 		this.parameters.removeAll();
 		if(params)

@@ -10,11 +10,13 @@ namespace CoUML_app.Models
 
     public enum ActionType
     {
-        Insert, // value must be < UmlElement | ComponenetProperty >
+        Insert, // value must be < DiagramElement | ComponenetProperty >
         Remove, // value must be < string | id>
         Change, // value must be approprate datatypes of ChangePropertyType
+        Label,
         Lock,	
-        Release
+        Release,
+        Shift 
     }
 
     public enum PropertyType
@@ -40,4 +42,5 @@ namespace CoUML_app.Models
         Dimension,
         Editor
     }
+
 }

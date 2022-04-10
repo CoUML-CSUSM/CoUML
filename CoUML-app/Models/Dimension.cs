@@ -6,6 +6,7 @@ namespace CoUML_app.Models
 		public int? y { get; set; }
 		public int? width { get; set; }
 		public int? height { get; set; }
+		public void Shift(Point point);
 	}
 	public class Dimension: IDimension
 	{
@@ -20,6 +21,17 @@ namespace CoUML_app.Models
 		public int? y { get; set; }
 		public int? width { get; set; }
 		public int? height { get; set; }
+
+		public void Shift(Point point)
+		{
+			x = point.X;
+			y = point.Y;
+		}
 	}
 
+	public struct Point
+	{
+		public int X { get;set; }
+		public int Y { get;set; }
+	}
 }
