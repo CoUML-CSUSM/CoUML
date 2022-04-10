@@ -385,7 +385,7 @@ namespace CoUML_app.Controllers.Hubs
 
             var collection = db.GetCollection<BsonDocument>("Diagrams");
             //var filter = Builders<BsonDocument>.Filter.Eq("_id", "ObjectId(\"624df1ee084f4afd218cd596\")");
-            var filter = Builders<BsonDocument>.Filter.Eq("_id", ObjectId.Parse("624df1ee084f4afd218cd596"));
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", ObjectId.Parse(id));
 
             var doc = collection.Find(filter).FirstOrDefault();//not needed
             if(doc != null){
