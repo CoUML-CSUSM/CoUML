@@ -127,18 +127,38 @@ export class CoUmlHubService{
 		var diagrams = this._coUmlHubConnection.invoke("listMyDiagrams",id).then((d) => {
 			console.log(d);
 			console.log(d[1]);
-		}
-			 );
+		});
+		
 		console.log("list of diagrams from the databse");
 		//console.log(diagrams);
 		//
         
+		//get names for each mongodb diagram id
+		console.log("get name of diagram");
+		var name;
+		this._coUmlHubConnection.invoke("getName",diagrams[0]).then((d) => {
+			console.log(d);
+			name = d;
+			//console.log(d[1]);
+		});
+
+		console.log("post name test");
+		console.log(name);
+
+
+		//
+
 		// TODO: create a function in C# that fulfulls this request
 		//TODO: c# method that returns list of diagrams
 
 		// TEMPORARRY!!!! returns a sample promise
 		return new Promise<DiagramDataSet[]>((resolve)=>{
-			resolve([{
+			resolve([
+				{//test one
+					id: name,
+					_id: JSON.stringify(diagrams[0])
+				},
+				{
 					id: "Haikus are",
 					_id: "916d8889-f46e-46f4-98e7-9793f29495hw"
 				}, 

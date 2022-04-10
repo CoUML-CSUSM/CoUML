@@ -378,6 +378,25 @@ namespace CoUML_app.Controllers.Hubs
                 return null;
                             }
         }
+
+        public string getName(string id){
+            var dbClient = new MongoClient("mongodb://localhost:27017");
+            IMongoDatabase db = dbClient.GetDatabase("CoUML");
+
+            var collection = db.GetCollection<BsonDocument>("Diagrams");
+            //var filter = Builders<BsonDocument>.Filter.Eq("_id", "ObjectId(\"624df1ee084f4afd218cd596\")");
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", ObjectId.Parse("624df1ee084f4afd218cd596"));
+
+            var doc = collection.Find(filter).FirstOrDefault();//not needed
+            if(doc != null){
+                Console.WriteLine(doc["id"].ToString());
+                return doc["id"].ToString();
+            }
+            else{
+                Console.WriteLine("cant find mongodb id");
+                return null;
+            }
+        }
     }
 
     static class DevUtility{
