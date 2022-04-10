@@ -4,6 +4,7 @@ import { ProjectDeveloper } from '../controller/project-developer.controller';
 import { ProjectManager } from '../controller/project-manager.controller';
 import { environment } from '../../environments/environment';
 import { Assembler, ChangeRecord, User, Diagram, DiagramDataSet } from 'src/models/DiagramModel';
+import { ConsoleLogger } from '@microsoft/signalr/dist/esm/Utils';
 
 
 @Injectable()
@@ -116,8 +117,23 @@ export class CoUmlHubService{
 	 * @param id the ID of the user
 	 * @returns array of diagrams that the user has access to[]
 	 */
-    listMyDiagrams(id: any) {
-        // TODO: create a function in C# that fulfulls this request
+     listMyDiagrams(id: any) {
+
+		//returns array of mongodb diagram ids
+		console.log("list diagrams");
+		console.log(id);
+		//get diagram array from cs database
+		//let diagrams = this._coUmlHubConnection.invoke("listMyDiagrams",id);
+		var diagrams = this._coUmlHubConnection.invoke("listMyDiagrams",id).then((d) => {
+			console.log(d);
+			console.log(d[1]);
+		}
+			 );
+		console.log("list of diagrams from the databse");
+		//console.log(diagrams);
+		//
+        
+		// TODO: create a function in C# that fulfulls this request
 		//TODO: c# method that returns list of diagrams
 
 		// TEMPORARRY!!!! returns a sample promise

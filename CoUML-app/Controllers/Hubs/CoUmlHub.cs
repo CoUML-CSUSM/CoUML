@@ -326,6 +326,58 @@ namespace CoUML_app.Controllers.Hubs
             }
 
         }
+
+        public string[] listMyDiagrams(string id){
+            var dbClient = new MongoClient("mongodb://localhost:27017");
+            IMongoDatabase db = dbClient.GetDatabase("CoUML");
+
+            var Tcollection = db.GetCollection<BsonDocument>("Teams");
+            //var TdIdFilter = Builders<BsonDocument>.Filter.Eq("diagrams", "ObjectId(\"624df21e084f4afd218cd597\")");
+            var TuIdFilter = Builders<BsonDocument>.Filter.Eq("user", id);
+            //var Tfilter = Builders<BsonDocument>.Filter.And(TdIdFilter,TuIdFilter);
+            
+            //var p = Builders<Array>
+
+            var diagram = Tcollection.Find(TuIdFilter).Project("{_id: 0, user: 0}").FirstOrDefault(); //may return null
+
+            if(diagram != null){
+            var diagramText = diagram.ToString();
+            Console.WriteLine(diagramText);//outputs the diagram text
+            Console.WriteLine(diagram);//outputs the diagram text
+
+            //var strings = diagram["diagrams"].AsBsonArray.Select(p -> p.AsString).toArray();
+            var strings = diagram["diagrams"].AsBsonArray;
+            string[] array = new string[strings.Count];
+            Console.WriteLine(strings.Count);
+            
+            for(int i=0;i<strings.Count;i++){
+                array[i] = strings[i].ToString();
+            }
+            ;
+
+            //
+            // for(int i=0;i<strings.Count;i++){
+            //     array[i] = JsonConvert.SerializeObject(strings[i], Formatting.Indented, new JsonSerializerSettings
+            //         {
+            //             TypeNameHandling = TypeNameHandling.Auto
+            //         });
+            // }
+            //
+
+            //Console.WriteLine(array);
+            return array;
+
+            // return JsonConvert.SerializeObject(strings, Formatting.Indented, new JsonSerializerSettings
+            //         {
+            //             TypeNameHandling = TypeNameHandling.Auto
+            //         });
+
+            }
+            else{
+                Console.WriteLine("cant find doc");
+                return null;
+                            }
+        }
     }
 
     static class DevUtility{
