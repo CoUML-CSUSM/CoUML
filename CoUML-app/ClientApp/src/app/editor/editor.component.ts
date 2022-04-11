@@ -149,11 +149,11 @@ export class EditorComponent implements AfterViewInit{
 	 * stage the change initiated by the user
 	 * @param change 
 	 */
-	public stageChange(change: ChangeRecord, updateSelf: boolean = false): void
+	public stageChange(change: ChangeRecord): void
 	{
 		//console.log(`GRAPH EVENT---------Change Staged-------\n${change.toString()}`);
 
-		this._projectDeveloper.stageChange(change, updateSelf);
+		this._projectDeveloper.stageChange(change);
 	}
 
 
