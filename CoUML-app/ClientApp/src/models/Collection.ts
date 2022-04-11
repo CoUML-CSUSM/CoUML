@@ -34,7 +34,7 @@ export class GeneralCollection<T> implements ICollection<T>{
 	constructor(items: T[])
 	{
 		this.items = items;
-		this[TYPE] = `CoUML_app.Models.GeneralCollection\`1[[CoUML_app.Models.${typeof(items)}, CoUML-app]], CoUML-app`;
+		this[TYPE] = `CoUML_app.Models.GeneralCollection\`1[[CoUML_app.Models.${typeof(items)}]]`;
 	}
 	removeAll(): void {
 		delete this.items;
@@ -135,12 +135,12 @@ export class RelationalCollection<T extends UmlElement> implements ICollection<T
 	// 	let ttype = T.name == Operation.name ? "Operation": 
 	// 		T.name == Attribute.name ? "Attribute": "UmlElement";
 			
-	// 	// (this.size>0? this.items.values().next().value[TYPE]:"CoUML_app.Models.UmlElement, CoUML-app")
-	// 	// return `CoUML_app.Models.RelationalCollection\`1[["CoUML_app.Models.UmlElement, CoUML-app"]], CoUML-app`
+	// 	// (this.size>0? this.items.values().next().value[TYPE]:"CoUML_app.Models.UmlElement")
+	// 	// return `CoUML_app.Models.RelationalCollection\`1[["CoUML_app.Models.UmlElement"]]`
 	// };
 	toJSON(): any {
 		return {
-			typeName: "CoUML_app.Models.RelationalCollection\`1[[CoUML_app.Models.UmlElement, CoUML-app]], CoUML-app",
+			typeName: "CoUML_app.Models.RelationalCollection\`1[[CoUML_app.Models.UmlElement]]",
 			items: Object.fromEntries(this.items),
 		}
 	 }
@@ -149,7 +149,7 @@ export class RelationalCollection<T extends UmlElement> implements ICollection<T
 	{
 		for(let elem of collection)
 			this.insert(elem);
-		// this[TYPE] = "CoUML_app.Models.RelationalCollection, CoUML-app";
+		// this[TYPE] = "CoUML_app.Models.RelationalCollection";
 	}
 	removeAll(): void {
 		delete this.items;

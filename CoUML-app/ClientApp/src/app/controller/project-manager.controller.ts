@@ -18,10 +18,5 @@ export class ProjectManager{
         console.log(dId);
         console.log("Creating new diagram")
         this._coUmlHub.generate(dId);
-        
-        // (d) => {
-        //     this.newDiagram = Assembler.assembleDiagram(d);
-        // };
-            
     }
 }

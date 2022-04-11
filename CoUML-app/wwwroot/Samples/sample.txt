@@ -1,16 +1,16 @@
 {
   "id": "test",
   "elements": {
-    "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.DiagramElement, CoUML-app]], CoUML-app",
+    "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.DiagramElement]]",
     "items": [
       {
-        "$type": "CoUML_app.Models.Interface, CoUML-app",
+        "$type": "CoUML_app.Models.Interface",
         "operations": {
-          "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.Operation, CoUML-app]], CoUML-app",
+          "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.Operation]]",
           "items": [
             {
               "parameters": {
-                "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.Attribute, CoUML-app]], CoUML-app",
+                "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.Attribute]]",
                 "items": [],
                 "size": 0
               },
@@ -24,7 +24,7 @@
             },
             {
               "parameters": {
-                "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.Attribute, CoUML-app]], CoUML-app",
+                "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.Attribute]]",
                 "items": [
                   {
                     "multiplicity": {
@@ -53,7 +53,7 @@
             },
             {
               "parameters": {
-                "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.Attribute, CoUML-app]], CoUML-app",
+                "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.Attribute]]",
                 "items": [],
                 "size": 0
               },
@@ -70,19 +70,19 @@
         },
         "name": "IShape",
         "relations": {
-          "$type": "CoUML_app.Models.GeneralCollection`1[[System.String, System.Private.CoreLib]], CoUML-app",
+          "$type": "CoUML_app.Models.GeneralCollection`1[[System.String, System.Private.CoreLib]]",
           "items": [
             "b63dace7-e3e8-45bf-b76d-9e54246f64cf"
           ],
           "size": 1
         },
         "editor": {
-          "$type": "CoUML_app.Models.NullUser, CoUML-app",
+          "$type": "CoUML_app.Models.NullUser",
           "id": "N/A"
         },
         "id": "0b68a108-f685-4e44-9e6e-a325d8d439f3",
         "dimension": {
-          "$type": "CoUML_app.Models.Dimension, CoUML-app",
+          "$type": "CoUML_app.Models.Dimension",
           "x": 100,
           "y": 100,
           "width": 60,
@@ -90,14 +90,14 @@
         }
       },
       {
-        "$type": "CoUML_app.Models.Class, CoUML-app",
+        "$type": "CoUML_app.Models.Class",
         "operations": {
-          "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.Operation, CoUML-app]], CoUML-app",
+          "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.Operation]]",
           "items": [],
           "size": 0
         },
         "attributes": {
-          "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.Attribute, CoUML-app]], CoUML-app",
+          "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.Attribute]]",
           "items": [
             {
               "multiplicity": {
@@ -118,19 +118,19 @@
         },
         "name": "Hexagon",
         "relations": {
-          "$type": "CoUML_app.Models.GeneralCollection`1[[System.String, System.Private.CoreLib]], CoUML-app",
+          "$type": "CoUML_app.Models.GeneralCollection`1[[System.String, System.Private.CoreLib]]",
           "items": [
             "b63dace7-e3e8-45bf-b76d-9e54246f64cf"
           ],
           "size": 1
         },
         "editor": {
-          "$type": "CoUML_app.Models.NullUser, CoUML-app",
+          "$type": "CoUML_app.Models.NullUser",
           "id": "N/A"
         },
         "id": "31c0ee0f-043e-48c0-ab8e-059ebbd9b03e",
         "dimension": {
-          "$type": "CoUML_app.Models.Dimension, CoUML-app",
+          "$type": "CoUML_app.Models.Dimension",
           "x": 100,
           "y": 300,
           "width": 60,
@@ -138,22 +138,22 @@
         }
       },
       {
-        "$type": "CoUML_app.Models.Relationship, CoUML-app",
+        "$type": "CoUML_app.Models.Relationship",
         "type": 5,
         "source": "31c0ee0f-043e-48c0-ab8e-059ebbd9b03e",
         "target": "0b68a108-f685-4e44-9e6e-a325d8d439f3",
         "attributes": {
-          "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.Attribute, CoUML-app]], CoUML-app",
+          "$type": "CoUML_app.Models.GeneralCollection`1[[CoUML_app.Models.Attribute]]",
           "items": [],
           "size": 0
         },
         "editor": {
-          "$type": "CoUML_app.Models.NullUser, CoUML-app",
+          "$type": "CoUML_app.Models.NullUser",
           "id": "N/A"
         },
         "id": "b63dace7-e3e8-45bf-b76d-9e54246f64cf",
         "dimension": {
-          "$type": "CoUML_app.Models.Dimension, CoUML-app",
+          "$type": "CoUML_app.Models.Dimension",
           "x": null,
           "y": null,
           "width": null,

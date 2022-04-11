@@ -93,7 +93,7 @@ export class ProjectDeveloper{
 
 		console.log("result");
 		console.log(this._projectDiagram);//i need to send this down to the c#
-		this._coUmlHub.send(this._projectDiagram.id,this._projectDiagram);
+		// this._coUmlHub.send(this._projectDiagram.id,this._projectDiagram);
 
 	}
 

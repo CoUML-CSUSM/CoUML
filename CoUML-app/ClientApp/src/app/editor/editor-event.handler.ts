@@ -187,7 +187,7 @@ import { EditorComponent } from "./editor.component";
 						editorComponent.getIdPath(parentCell),
 						component instanceof Operation? 
 								PropertyType.Operations: component instanceof Attribute?
-								PropertyType.Attributes: PropertyType.Enums,
+								PropertyType.Attribute: PropertyType.Enums,
 						ActionType.Insert,
 						component
 					));
@@ -400,7 +400,7 @@ import { EditorComponent } from "./editor.component";
 				let affectedCells = eventObject.getProperties().cell;
 				console.log('%c%s', f_alert, "START_EDITING");
 				if(affectedCells.edge)
-					affectedCells.value = affectedCells.umlElement?.attributes?.toUmlNotation();
+					affectedCells.value = affectedCells.umlElement?.attribute?.toUmlNotation();
 				console.log(affectedCells);
 				editorComponent.lock(affectedCells);
 

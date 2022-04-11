@@ -3,7 +3,7 @@ import { ChangeRecord } from './ChangeRecord';
 import { GeneralCollection, RelationalCollection } from './Collection';
 import { ICollection, Dimension, IUser, NullUser, Relationship, Interface, Class, AbstractClass, User} from './DiagramModel';
 
-export const TYPE ='typeName';
+export const TYPE ='$type';
 export  abstract class UmlElement
 {
 	public id: string;

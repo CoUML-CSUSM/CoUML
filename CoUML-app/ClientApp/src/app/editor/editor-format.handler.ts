@@ -168,12 +168,12 @@ export function addEdgeStyles(graph: mxGraph)
 		if(includeAtt)
 		{
 			// console.log(this.state);
-			// console.log(this.state.cell.umlElement.attributes?.multiplicity);
+			// console.log(this.state.cell.umlElement.attribute?.multiplicity);
 
 			let mulPT = scaleR(pts[0], pts[1], 20);
 			c.setFontBackgroundColor(WHITE);
 			c.text(mulPT.x, mulPT.y, 0, 0, 
-				this.state.cell.umlElement.attributes?.multiplicity?.toUmlNotation(),
+				this.state.cell.umlElement.attribute?.multiplicity?.toUmlNotation(),
 				'left', 'bottom', '', '', '', '', 0, ''
 				);
 		}

@@ -86,6 +86,7 @@ export class CoUmlHubService{
 	public commit(dId: string, changes: ChangeRecord[])
 	{
 		let changesDTO = JSON.stringify(changes)
+		console.log(changesDTO);
 		this._coUmlHubConnection.invoke("Push", dId, changesDTO);
 	}
 
@@ -119,17 +120,17 @@ export class CoUmlHubService{
 	}
 
 
-	public generate(Did:string)
+	public generate(dId: string)
 	{
 		console.log("hub");
-    	console.log(Did);
-		this._coUmlHubConnection.invoke("Generate",Did);
+    	console.log(dId);
+		this._coUmlHubConnection.invoke("Generate",dId);
 	}
 
 	//sends document text over to c#
-	public send(Did:string, projectDiagram: Diagram){
-		let changeDiagram = JSON.stringify(projectDiagram)
-		this._coUmlHubConnection.invoke("Send",Did,changeDiagram);
-	}
+	// public send(Did:string, projectDiagram: Diagram){
+	// 	let changeDiagram = JSON.stringify(projectDiagram)
+	// 	this._coUmlHubConnection.invoke("Send",Did,changeDiagram);
+	// }
 
 }

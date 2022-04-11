@@ -57,7 +57,7 @@ namespace CoUML_app.Utility
             };
 
             c1.dimension.y = 400;
-            c1.attributes.Insert(a1);
+            c1.attribute.Insert(a1);
 
             // c impliments i
             Relationship r1 = new Relationship

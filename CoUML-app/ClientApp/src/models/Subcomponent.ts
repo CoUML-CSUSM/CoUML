@@ -58,9 +58,9 @@ export class Relationship extends UmlElement
 	public type: RelationshipType;
 	public source: string | null;
 	public target: string | null;
-	public attributes: Attribute | null;
+	public attribute: Attribute | null;
 
-	get attSet(){return this.attributes != null}
+	get attSet(){return this.attribute != null}
 
 	public constructor()
 	{
@@ -77,7 +77,7 @@ export class Relationship extends UmlElement
 
 	get(id: string) 
 	{
-		return this.attributes.get(id);
+		return this.attribute.get(id);
 	}
 	insert(element: any) 
 	{
@@ -90,7 +90,7 @@ export class Relationship extends UmlElement
 
 	toUmlNotation(): string 
 	{
-		return this.attributes? `${this.attributes?.visibility} ${this.attributes?.name}`: "";
+		return this.attribute? `${this.attribute?.visibility} ${this.attribute?.name}`: "";
 	}
 
 	change(change: ChangeRecord) {
@@ -101,8 +101,8 @@ export class Relationship extends UmlElement
 
 		switch(change.affectedProperty)
 		{
-			case PropertyType.Attributes:
-				this.attributes = change.value;
+			case PropertyType.Attribute:
+				this.attribute = change.value;
 				break;
 			case PropertyType.Target:
 				this.target = change.value;
@@ -122,12 +122,12 @@ export class Relationship extends UmlElement
 	public label(description: string)
 	{
 		if( this.type == RelationshipType.Association && description != "")
-		{	if(!this.attributes)
-				this.attributes = new Attribute();
-			this.attributes.label(description);
+		{	if(!this.attribute)
+				this.attribute = new Attribute();
+			this.attribute.label(description);
 		}else
 		{
-			delete this.attributes;
+			delete this.attribute;
 		}
 	}
 

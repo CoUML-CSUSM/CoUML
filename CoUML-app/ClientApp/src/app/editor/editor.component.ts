@@ -228,7 +228,7 @@ export class EditorComponent implements AfterViewInit{
 		
 		if(component instanceof AbstractClass || component instanceof Class)
 		{
-			let attributeIterator: ICollectionIterator<Attribute> = component.attributes.iterator();
+			let attributeIterator: ICollectionIterator<Attribute> = component.attribute.iterator();
 
 			while(attributeIterator.hasNext())
 				this.insertProperty(graphComponent, attributeIterator.getNext()) ;
@@ -334,7 +334,7 @@ export class EditorComponent implements AfterViewInit{
 						else
 							this.insertComponent(change.value);
 						break;
-					case PropertyType.Attributes:
+					case PropertyType.Attribute:
 					case PropertyType.Operations:
 					case PropertyType.Enums:
 						this.insertProperty(affectedCell, change.value);

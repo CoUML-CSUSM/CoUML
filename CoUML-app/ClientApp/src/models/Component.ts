@@ -99,7 +99,7 @@ export class AbstractClass extends Component
             this.operations.insert(element);
         }
         if(element.constructor.name == Attribute.name){
-            this.attributes.insert(element);
+            this.attribute.insert(element);
         }
     }
     remove(id: string) {
@@ -111,24 +111,24 @@ export class AbstractClass extends Component
             this.operations.remove(id);
         }
         if(element.constructor.name == Attribute.name){
-            this.attributes.remove(id);
+            this.attribute.remove(id);
         }
         // return element
     }
 
     public operations:ICollection<Operation>;
-    public attributes:ICollection<Attribute>;
+    public attribute:ICollection<Attribute>;
 
     public constructor(name: string = "AbstractClassComponent")
     {
         super("AbstractClass", name);
         this.operations  = new RelationalCollection<Operation> ([]);
-        this.attributes  = new RelationalCollection<Attribute> ([]);
+        this.attribute  = new RelationalCollection<Attribute> ([]);
     }
 
 
     get(id: any) : Operation | Attribute{
-        return this.operations.get(id) || this.attributes.get(id);
+        return this.operations.get(id) || this.attribute.get(id);
     }
 }
 
@@ -147,7 +147,7 @@ export class Class extends Component
             this.operations.insert(element);
         }
         if(element.constructor.name == Attribute.name){
-            this.attributes.insert(element);
+            this.attribute.insert(element);
         }
     }
     remove(id: string) {
@@ -158,24 +158,24 @@ export class Class extends Component
             this.operations.remove(id);
         }
         if(element.constructor.name == Attribute.name){
-            this.attributes.remove(id);
+            this.attribute.remove(id);
         }
         
         // return element
     }
 
     public operations:ICollection<Operation>;
-    public attributes:ICollection<Attribute>;
+    public attribute:ICollection<Attribute>;
 
     public constructor(name: string = "ClassComponent")
     {
         super("Class", name);
         this.operations  = new RelationalCollection<Operation> ([]);
-        this.attributes  = new RelationalCollection<Attribute> ([]);
+        this.attribute  = new RelationalCollection<Attribute> ([]);
     }
 
 
     get(id: any)  : Operation | Attribute{
-        return this.operations.get(id) || this.attributes.get(id);
+        return this.operations.get(id) || this.attribute.get(id);
     }
 }

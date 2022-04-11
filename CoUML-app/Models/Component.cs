@@ -77,7 +77,7 @@ namespace CoUML_app.Models
 
 	public class AbstractClass : Component{
 		public ICollection<Operation> operations { get;set; }= new RelationalCollection<Operation>();
-		public ICollection<Attribute>  attributes { get;set; }= new RelationalCollection<Attribute>();
+		public ICollection<Attribute>  attribute { get;set; }= new RelationalCollection<Attribute>();
 		
 		public AbstractClass(string name): base(name) { }
 
@@ -89,7 +89,7 @@ namespace CoUML_app.Models
 			{
 				var next = change.id[depth++];
 				ComponentProperty prop = operations[next];
-				prop ??= attributes[next];
+				prop ??= attribute[next];
 				prop?.Apply(change, depth);
 			}
 				
@@ -102,7 +102,7 @@ namespace CoUML_app.Models
 				case ActionType.Insert: 
 					switch(change.affectedProperty)
 					{
-						case PropertyType.Attributes: attributes.Insert((Attribute)change.value); break;
+						case PropertyType.Attribute: attribute.Insert((Attribute)change.value); break;
 						case PropertyType.Operations: operations.Insert((Operation)change.value); break;
 						default: break;
 					}
@@ -110,7 +110,7 @@ namespace CoUML_app.Models
 				case ActionType.Remove:
 					switch(change.affectedProperty)
 					{
-						case PropertyType.Attributes: attributes.Remove((string)change.value); break;
+						case PropertyType.Attribute: attribute.Remove((string)change.value); break;
 						case PropertyType.Operations: operations.Remove((string)change.value); break;
 						default: break;
 					}
@@ -123,7 +123,7 @@ namespace CoUML_app.Models
 
 	public class Class : Component{
 		public ICollection<Operation> operations { get;set; }= new RelationalCollection<Operation>();
-		public ICollection<Attribute> attributes { get;set; }= new RelationalCollection<Attribute>();
+		public ICollection<Attribute> attribute { get;set; }= new RelationalCollection<Attribute>();
 
 		public Class(string name): base(name) { }
 
@@ -135,7 +135,7 @@ namespace CoUML_app.Models
 			{
 				var next = change.id[depth++];
 				ComponentProperty prop = operations[next];
-				prop ??= attributes[next];
+				prop ??= attribute[next];
 				prop?.Apply(change, depth);
 			}
 				
@@ -148,14 +148,14 @@ namespace CoUML_app.Models
 				case ActionType.Insert: 
 					switch(change.affectedProperty)
 					{
-						case PropertyType.Attributes: attributes.Insert((Attribute)change.value); break;
+						case PropertyType.Attribute: attribute.Insert((Attribute)change.value); break;
 						case PropertyType.Operations: operations.Insert((Operation)change.value); break;
 					}
 					break;
 				case ActionType.Remove:
 					switch(change.affectedProperty)
 					{
-						case PropertyType.Attributes: attributes.Remove((string)change.value); break;
+						case PropertyType.Attribute: attribute.Remove((string)change.value); break;
 						case PropertyType.Operations: operations.Remove((string)change.value); break;
 					}
 					break;

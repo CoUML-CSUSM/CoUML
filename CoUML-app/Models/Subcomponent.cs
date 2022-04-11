@@ -61,7 +61,7 @@ namespace CoUML_app.Models
 		public Component sourceComponent{set{source = value.id;}}
 		public string target {get; set;}
 		public Component targetComponent{set{target = value.id;}}
-		public Attribute? attributes{get; set;}
+		public Attribute? attribute{get; set;}
 
 		public Relationship() { }
 		override public void GenerateCode(ISourceCodeGenerator codeGenerator)
@@ -105,7 +105,7 @@ namespace CoUML_app.Models
 
 		public void Label(string? description = "")
 		{
-			attributes = description == "" ? null : new Attribute(description);
+			attribute = description == "" ? null : new Attribute(description);
 		}
 	}
 
