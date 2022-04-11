@@ -128,7 +128,7 @@ namespace CoUML_app.Controllers.Hubs
 		/// </summary>
 		/// <param name="dId">somthing to identify the diagram file by</param>
 		/// <returns>the diagram requested</returns>
-		public string Fetch(string dId)
+		public string Fetch(string dId, string userId)
 		{
 
 			if(Context.Items[CoUmlContext.DIAGRAM] != null)
