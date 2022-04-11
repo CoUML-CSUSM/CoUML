@@ -19,7 +19,12 @@ namespace CoUML_app.Models
 				return this._id;
 			}
 		}
+
+
+	public override string ToString(){
+		return this._id;
 	}
+}
 
 	public class NullUser: IUser
 	{

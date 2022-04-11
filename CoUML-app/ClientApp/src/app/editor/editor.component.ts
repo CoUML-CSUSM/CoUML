@@ -5,6 +5,7 @@ import * as EditorFormatHandler  from './editor-format.handler';
 import * as EditorEventHandler  from './editor-event.handler';
 import { Event } from 'jquery';
 
+
 const DELETE = 46;
 const BACKSPACE = 8;
 
@@ -192,8 +193,7 @@ export class EditorComponent implements AfterViewInit{
 				if( element instanceof Relationship)
 						relatioships.push(element);
 				else if(element instanceof Component){
-					let graphComponent =  this.insertComponent(element);
-					graphComponent.umlElement = element;
+					this.insertComponent(element);
 					//todo: lock cells on draw & release on close
 					// if(element.editor instanceof User)
 						// this.updateCellLock(graphComponent);
@@ -253,7 +253,7 @@ export class EditorComponent implements AfterViewInit{
 				
 		}
 
-
+		graphComponent.umlElement = component;
 		return graphComponent;
 	}
 
