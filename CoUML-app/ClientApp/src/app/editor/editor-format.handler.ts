@@ -157,8 +157,11 @@ export function addEdgeStyles(graph: mxGraph)
 	//association relation specialty paint
 	var base_mxConnectorPaint = mxConnector.prototype.paintEdgeShape;
 	mxConnector.prototype.paintEdgeShape = function( c: mxSvgCanvas2D, pts	)
-		
 	{
+
+		console.log(this.state);
+		console.log(this.state.cell.umlElement.attribute?.multiplicity);
+		
 		let includeAtt = this.state?.cell?.edge && this.state.cell.umlElement.type == RelationshipType.Association && this.state.cell.umlElement.attSet ; 
 		if(includeAtt)
 			this.state.cell.value = this.state.cell.umlElement.toUmlNotation();
@@ -167,8 +170,6 @@ export function addEdgeStyles(graph: mxGraph)
 
 		if(includeAtt)
 		{
-			// console.log(this.state);
-			// console.log(this.state.cell.umlElement.attribute?.multiplicity);
 
 			let mulPT = scaleR(pts[0], pts[1], 20);
 			c.setFontBackgroundColor(WHITE);

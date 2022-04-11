@@ -6,7 +6,7 @@ import { AbstractClass,
 	UmlElement,
 	Component,
 	Class, 
-	Dimension, 
+	Dimension, Point,
 	Enumeration, 
 	Interface, 
 	Relationship, 
@@ -240,13 +240,14 @@ import { EditorComponent } from "./editor.component";
 
 				//calls internal UML Element
 				affectedCells.umlElement.label( affectedCells.value);
+				let userEnteredValue = affectedCells.value;
 				affectedCells.value = affectedCells.umlElement.toUmlNotation(); 
 				// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
 				editorComponent.stageChange( new ChangeRecord(
 					editorComponent.getIdPath(affectedCells),
 					PropertyType.Label, 
 					ActionType.Label,
-					affectedCells.value
+					userEnteredValue
 				));
 				// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 		});
@@ -274,10 +275,7 @@ import { EditorComponent } from "./editor.component";
 						editorComponent.getIdPath(cell),
 						PropertyType.Dimension,
 						ActionType.Shift,
-						{ // new absolute location
-							x: cell.geometry.x,
-							y: cell.geometry.y,
-						}
+						new Point( cell.geometry.x, cell.geometry.y )
 					));
 				// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 			});

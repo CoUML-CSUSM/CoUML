@@ -1,3 +1,5 @@
+import { TYPE } from "./Diagram";
+
 export interface IDimension
 {
 	x: number,
@@ -19,7 +21,7 @@ export class Dimension implements IDimension {
 		this.height = h;
 	}
 
-	shift(point)
+	shift(point: Point)
 	{
 		this.x = point.x;
 		this.y = point.y;
@@ -36,3 +38,15 @@ export class Dimension implements IDimension {
 }
 
 export const DEFUALT_DIMENSION: IDimension = {x: 0, y: 0, width: 200, height: 20}
+
+export class Point
+{
+	x: number;
+	y: number;
+	constructor(x: number, y: number)
+	{
+		this.x = x; 
+		this.y = y;
+		this[TYPE] = "CoUML_app.Models.Point";
+	}
+}

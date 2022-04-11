@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using CoUML_app.Controllers.Generators;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
 namespace CoUML_app.Models
 {
 	public static class CoUmlRegex
@@ -93,6 +96,11 @@ namespace CoUML_app.Models
 						case PropertyType.Target: 	
 							target = (string)change.value; 
 							break;
+							
+						case PropertyType.Type: 	
+							type = Enum.Parse<RelationshipType>(change.value.ToString()); 
+							// type = (RelationshipType)((int)change.value); 
+							break;
 
 						default: break;
 					}
@@ -111,6 +119,7 @@ namespace CoUML_app.Models
 
 
 	public abstract class ComponentProperty: UmlElement{
+		[JsonConverter(typeof(StringEnumConverter))]
 		public VisibilityType visibility {get; set;}
 		public string name{get; set;}
 		public string propertyString {get; set;}
@@ -183,7 +192,7 @@ namespace CoUML_app.Models
 			visibility = (VisibilityType)(tokens[CoUmlRegex.VISIBILITY].Value.Length == 1? tokens[CoUmlRegex.VISIBILITY].Value[0] : ' ');
 			name = tokens[CoUmlRegex.NAME].Value;
 			type = new DataType(tokens[CoUmlRegex.TYPE].Value);
-			multiplicity = new Multiplicity (tokens[CoUmlRegex.MULTIPLICITY].Value);
+			multiplicity = new Multiplicity(tokens[CoUmlRegex.MULTIPLICITY].Success? tokens[CoUmlRegex.MULTIPLICITY].Value : "1");
 			defaultValue =  tokens[CoUmlRegex.DEFUALT_VALUE].Value;
 			propertyString = tokens[CoUmlRegex.PROPERTY_STRING].Value;
 		}
@@ -202,7 +211,7 @@ namespace CoUML_app.Models
 		{
 			var tokens = CoUmlRegex.Match(description, CoUmlRegex.OPERATION_PATTERN);
 
-			visibility = (VisibilityType)(tokens[CoUmlRegex.VISIBILITY].Value.Length == 1? tokens[CoUmlRegex.VISIBILITY].Value[0] : ' ');
+			visibility = (tokens[CoUmlRegex.VISIBILITY].Value.Length == 1? (VisibilityType)tokens[CoUmlRegex.VISIBILITY]?.Value[0] : VisibilityType.LocalScope);
 			name = tokens[CoUmlRegex.NAME].Value;
 			Parameterize(tokens[CoUmlRegex.PARAMETERS].Value);
 			type = new DataType(tokens[CoUmlRegex.TYPE].Value);
@@ -219,6 +228,21 @@ namespace CoUML_app.Models
 					parameters.Insert(new Attribute(param));
 			}
 		}
+	}
+
+	public class Enumeral: UmlElement
+	{
+		public string name {get; set;}
+
+		public override void Apply(ChangeRecord change, int index)
+		{
+			switch(change.action)
+			{
+				case ActionType.Label:  this.name = (string)change.value;
+				break;
+			}
+		}
+
 	}
 
 	public struct Multiplicity

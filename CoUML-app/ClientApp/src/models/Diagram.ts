@@ -22,7 +22,7 @@ export  abstract class UmlElement
 		this.id = Uuid();
 		this.editor = new NullUser();
 		this.dimension = new Dimension(0, 0, 200,  40);
-		this[TYPE] = `CoUML_app.Model.${type}, CoUML_app`;
+		this[TYPE] = `CoUML_app.Models.${type}`;
 	}
 
 	public lock(editor: IUser){

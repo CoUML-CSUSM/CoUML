@@ -90,7 +90,7 @@ export class Relationship extends UmlElement
 
 	toUmlNotation(): string 
 	{
-		return this.attribute? `${this.attribute?.visibility} ${this.attribute?.name}`: "";
+		return this.attribute? `${VisibilityType.symbol( this.attribute?.visibility)} ${this.attribute?.name}`: "";
 	}
 
 	change(change: ChangeRecord) {
@@ -169,7 +169,7 @@ export class Attribute extends ComponentProperty
 
 	toUmlNotation(): string
 	{
-		return `${this.visibility} ${this.name}${this.type.toUmlNotation()}`+
+		return `${VisibilityType.symbol( this.visibility)} ${this.name}${this.type.toUmlNotation()}`+
 		(this.multiplicity.isSingle() ? "": `[${this.multiplicity.toUmlNotation()}]` )+
 		` ${this.defaultValue? " = "+this.defaultValue: ""}${this.propertyString}`;
 	}
@@ -247,7 +247,7 @@ export class Attribute extends ComponentProperty
 
 	toUmlNotation(): string
 	{
-		return `${this.visibility} ${this.name}(${this.parameters.toUmlNotation()}): ${this.type.dataType}`;
+		return `${VisibilityType.symbol( this.visibility)} ${this.name}(${this.parameters.toUmlNotation()}): ${this.type.dataType}`;
 	}
 
 	public label(description: string)
@@ -342,7 +342,7 @@ export class Multiplicity
 
 	public constructor( description: string = "1")
 	{
-		this[TYPE] = `CoUML_app.Model.Multiplicity, CoUML_app`;
+		this[TYPE] = `CoUML_app.Model.Multiplicity`;
 		let tokenDescription  = description.match(VALID_MULTIPLICITY);
 		if(tokenDescription)
 		{

@@ -16,7 +16,11 @@ namespace CoUML_app.Models
 		public IUser editor { get; set; } = new NullUser();
 		public IDimension dimension { get; set; } = new Dimension(0,0,200,40);
 
-		public abstract void GenerateCode(ISourceCodeGenerator codeGenerator);
+		public virtual void GenerateCode(ISourceCodeGenerator codeGenerator)
+		{
+			codeGenerator.Parse(this);
+		}
+
 		public abstract void Apply(ChangeRecord change, int index);
 
 		protected bool AppliesToMe(string[] ids)
@@ -83,7 +87,7 @@ namespace CoUML_app.Models
 			if(AppliesToMe(change.id))
 				ApplyLocally(change);
 			else
-				elements[change.id[depth]].Apply(change, ++depth);
+				elements[change.id[++depth]].Apply(change, depth);
 		}
 
 		protected void ApplyLocally(ChangeRecord change)

@@ -1,36 +1,43 @@
 export namespace VisibilityType{
     export enum VisibilityType{
-        Private	=	'-',
-        Public	=	'+',
-        Protected =	'#',
-        Package	=	'~',
-        LocalScope = ' '
+        Private,
+        Public,
+        Protected,
+        Package,
+        LocalScope
     }
 
     export function get(x: string | number): VisibilityType
     {
         switch(x){
-            case VisibilityType.Private:
-            case VisibilityType.Private.charCodeAt(0):
+            case VisibilityType.Private: case '-':
                     return VisibilityType.Private;
                     
-            case VisibilityType.Public:
-            case VisibilityType.Public.charCodeAt(0):
+            case VisibilityType.Public: case '+':
                      return VisibilityType.Public;
 
-            case VisibilityType.Protected:
-            case VisibilityType.Protected.charCodeAt(0):
+            case VisibilityType.Protected: case '#':
                   return VisibilityType.Protected;
 
-            case VisibilityType.Package:
-            case VisibilityType.Package.charCodeAt(0):
+            case VisibilityType.Package: case '~':
                     return VisibilityType.Package;
 
-            case VisibilityType.LocalScope:
-            case VisibilityType.LocalScope.charCodeAt(0):
+            case VisibilityType.LocalScope: case ' ':
             default:
                  return VisibilityType.LocalScope;
         }
+    }
+    export function symbol(type: VisibilityType): string
+    {
+        switch(type)
+        {
+            case VisibilityType.Private	: return '-';
+            case VisibilityType.Public	: return	'+';
+            case VisibilityType.Protected	: return	'#';
+            case VisibilityType.Package	: return	'~';
+            case VisibilityType.LocalScope	: return ' ';
+        }
+       
     }
 }
 export class DataType

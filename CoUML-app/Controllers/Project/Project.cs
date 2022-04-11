@@ -121,13 +121,14 @@ namespace CoUML_app.Controllers.Project
 			var changeRecords = To<ChangeRecord[]>(crs);
 			for(int i = 0; i< changeRecords.Length; i++)
 			{
-				JObject value = (JObject)changeRecords[i].value;
-				if(value.HasValues)
+				if(changeRecords[i].value is JObject)
 				{
-					 changeRecords[i].value = ToUnknownType(value);
+					JObject value = (JObject)changeRecords[i].value;
+					if(value.HasValues)
+					{
+						changeRecords[i].value = ToUnknownType(value);
+					}
 				}
-					
-				
 			}
 			return changeRecords;
 		}
@@ -135,7 +136,7 @@ namespace CoUML_app.Controllers.Project
 
 		public static object ToUnknownType(JObject obj)
 		{
-			var t = obj.GetValue("$type").Value<string>();
+			var t = obj.GetValue("$type")?.Value<string>();
 			switch(t)
 			{
 				case "CoUML_app.Models.Diagram":        return To<Diagram>(obj.ToString());
@@ -149,7 +150,9 @@ namespace CoUML_app.Controllers.Project
 				case "CoUML_app.Models.User":           return To<Models.User>(obj.ToString());
 				case "CoUML_app.Models.NullUser":       return To<Models.NullUser>(obj.ToString());
 				case "CoUML_app.Models.Dimension":		return To<Dimension>(obj.ToString());
-				default: return null;
+				case "CoUML_app.Models.Enumeral":		return To<Enumeral>(obj.ToString());
+				case "CoUML_app.Models.Point": 			return To<Point>(obj.ToString());
+				default: return JsonConvert.DeserializeObject(obj.ToString());
 			}
 		}
 	}
@@ -188,11 +191,13 @@ namespace CoUML_app.Controllers.Project
 				case "CoUML_app.Models.AbstractClass":  return jo.ToObject<AbstractClass>(serializer);
 				case "CoUML_app.Models.Class":          return jo.ToObject<Class>(serializer);
 				case "CoUML_app.Models.Enumeration":    return jo.ToObject<Enumeration>(serializer);
+				case "CoUML_app.Models.Enumeral":    	return jo.ToObject<Enumeration>(serializer);
 				case "CoUML_app.Models.Relationship":   return jo.ToObject<Relationship>(serializer);
 				case "CoUML_app.Models.Operation":      return jo.ToObject<Operation>(serializer);
 				case "CoUML_app.Models.Attribute":      return jo.ToObject<Models.Attribute>(serializer);
 				case "CoUML_app.Models.User":           return jo.ToObject<Models.User>(serializer);
 				case "CoUML_app.Models.NullUser":       return jo.ToObject<Models.NullUser>(serializer);
+				case "CoUML_app.Models.Point": 			return jo.ToObject<Point>(serializer);
 
 			}
 			Console.WriteLine("returning null");

@@ -30,7 +30,7 @@ namespace CoUML_app.Models
 	}
 
 	public class Enumeration : Component{
-		public ICollection<string> enums { get;set; }= new GeneralCollection<string>();
+		public ICollection<Enumeral> enums { get;set; }= new RelationalCollection<Enumeral>();
 
 		public Enumeration(string name): base(name) { }
 		
@@ -38,13 +38,15 @@ namespace CoUML_app.Models
 		{
 			if(AppliesToMe(change.id))
 				ApplyLocally(change);
+			else
+				enums[change.id[++depth]].Apply(change, depth);
 		}
 
 		protected override void ApplyLocally(ChangeRecord change)
 		{
 			switch(change.action)
 			{
-				case ActionType.Insert: enums.Insert((string) change.value); break;
+				case ActionType.Insert: enums.Insert((Enumeral) change.value); break;
 				case ActionType.Remove: enums.Remove((string) change.value); break;
 				default: base.ApplyLocally(change);	break;							
 			}
@@ -61,7 +63,7 @@ namespace CoUML_app.Models
 			if(AppliesToMe(change.id))
 				ApplyLocally(change);
 			else
-				operations[change.id[depth]].Apply(change, ++depth);
+				operations[change.id[++depth]].Apply(change, depth);
 		}
 
 		protected override void ApplyLocally(ChangeRecord change)
@@ -87,7 +89,7 @@ namespace CoUML_app.Models
 				ApplyLocally(change);
 			else
 			{
-				var next = change.id[depth++];
+				var next = change.id[++depth];
 				ComponentProperty prop = operations[next];
 				prop ??= attribute[next];
 				prop?.Apply(change, depth);
@@ -133,7 +135,7 @@ namespace CoUML_app.Models
 				ApplyLocally(change);
 			else
 			{
-				var next = change.id[depth++];
+				var next = change.id[++depth];
 				ComponentProperty prop = operations[next];
 				prop ??= attribute[next];
 				prop?.Apply(change, depth);
