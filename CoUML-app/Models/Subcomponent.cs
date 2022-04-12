@@ -124,6 +124,7 @@ namespace CoUML_app.Models
 		public string name{get; set;}
 		public string propertyString {get; set;}
 		public DataType type{get; set;}
+
 		override public void GenerateCode(ISourceCodeGenerator codeGenerator)
 		{
 			codeGenerator.Parse(this);
@@ -135,7 +136,7 @@ namespace CoUML_app.Models
 				ApplyLocally(change);
 		}
 
-		protected override void ApplyLocally(ChangeRecord change)
+		override protected void ApplyLocally(ChangeRecord change)
 		{
 			switch(change.action)
 			{

@@ -12,9 +12,11 @@ namespace CoUML_app.Models
 		{
 			Diagram d = new Diagram(dId);
 
-
 			// interface
-			Interface i = new Interface("IShape");
+			Interface i = new Interface();
+			i.name = "IShape";
+			i.dimension.x = 300;
+
 			Operation io = new Operation
 			{   
 				name = "draw",
@@ -48,7 +50,8 @@ namespace CoUML_app.Models
 
 
 			// class
-			Class c1  =  new Class("Hexagon");
+			Class c1  =  new Class();
+			c1.name = "Hexagon";
 			Models.Attribute a1 = new Models.Attribute
 			{
 				name = "diagonal",
@@ -71,8 +74,8 @@ namespace CoUML_app.Models
 
 
 			// class2
-			Class c2  =  new Class("Trangle");
-
+			Class c2  =  new Class();
+			c2.name = "Trangle";
 			c2.dimension.y = 400;
 			c2.dimension.x = 400;
 
@@ -90,6 +93,8 @@ namespace CoUML_app.Models
 			d.elements.Insert(r1); 
 			d.elements.Insert(c2); 
 			d.elements.Insert(r2); 
+
+			d.elements.Insert(new Class());
 
 			return d;
 		}
