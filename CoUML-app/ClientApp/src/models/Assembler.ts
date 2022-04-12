@@ -1,5 +1,5 @@
 import { UmlElement } from "./Diagram";
-import { DataType, Diagram, Relationship, RelationshipType, Class, Dimension, Operation, Attribute, AbstractClass, Interface, Enumeration, ICollection, IUser, User, NullUser } from "./DiagramModel";
+import { TYPE, DataType, Diagram, Relationship, RelationshipType, Class, Dimension, Operation, Attribute, AbstractClass, Interface, Enumeration, ICollection, IUser, User, NullUser } from "./DiagramModel";
 import { Enumeral } from "./Subcomponent";
 import { VisibilityType } from "./Types";
 
@@ -83,7 +83,7 @@ import { VisibilityType } from "./Types";
 		__relationship.source = x.source;
 		__relationship.target = x.target;
 		__relationship.type = x.type;
-		__relationship.attributes = x.attributes? assembleAttribute(x.attributes) : null;
+		__relationship.attribute = x.attribute? assembleAttribute(x.attribute) : null;
 		return __relationship;
 	}
 	
@@ -92,7 +92,7 @@ import { VisibilityType } from "./Types";
 		__class.id = x.id;
 		__class.editor = assembleUser(x.editor);
 		__class.dimension = assembleDimension(x.dimension);
-		assembleAttributeCollection(__class.attributes, x.attributes);
+		assembleAttributeCollection(__class.attribute, x.attribute);
 		assembleOperationsCollection(__class.operations, x.operations);
 		// assembleStringCollection( __class.relations, x.relations);
 		return __class;
@@ -102,7 +102,7 @@ import { VisibilityType } from "./Types";
 		__abstract.id = x.id;
 		__abstract.editor = assembleUser(x.editor);
 		__abstract.dimension = assembleDimension(x.dimension);
-		assembleAttributeCollection(__abstract.attributes, x.attributes);
+		assembleAttributeCollection(__abstract.attribute, x.attribute);
 		assembleOperationsCollection(__abstract.operations, x.operations);
 		// assembleStringCollection(__abstract.relations, x.relations);
 		return __abstract;
@@ -203,7 +203,7 @@ import { VisibilityType } from "./Types";
 
 
 	/**
-	 * takes a JSON string {  "_$type": "CoUML_app.Models.Interface, CoUML-app", ...}
+	 * takes a JSON string {  "_$type": "CoUML_app.Models.Interface", ...}
 	 * returns "Interface"
 	 * @param element 
 	 * @returns 
@@ -213,8 +213,8 @@ import { VisibilityType } from "./Types";
 		// console.log("----- getType")
 		// console.log(element)
 		try{
-			let typeString = element["$type"] || element["_$type"];
-			// console.log(typeString);
+			let typeString = element["$type"] || element[TYPE];
+			console.log(typeString);
 			let regex = /(\w*?),*?(?=,)/g;
 			let type = regex.exec(typeString)[0];
 			// console.log(`returning "${type}"-----`);

@@ -8,6 +8,7 @@ import { Assembler, ChangeRecord, User, Diagram } from 'src/models/DiagramModel'
 
 @Injectable()
 export class CoUmlHubService{
+
 	private _coUmlHubConnection: HubConnection;
 	
 	private _url = environment.apiUrl + "/couml";
@@ -84,13 +85,11 @@ export class CoUmlHubService{
 	 * Changes are commited from client to server
 	 * @param changes 
 	 */
-	public commit(changes: ChangeRecord[])
+	public commit(dId: string, changes: ChangeRecord[])
 	{
-		let changesDTO = JSON.stringify(changes);
-		console.log(`hub.commit(changes)
-		${changesDTO}
-		`)
-		this._coUmlHubConnection.invoke("Push", 'test', changesDTO);
+		let changesDTO = JSON.stringify(changes)
+		console.log(changesDTO);
+		this._coUmlHubConnection.invoke("Push", dId, changesDTO);
 	}
 
 	/**
@@ -110,6 +109,11 @@ export class CoUmlHubService{
 		}
 	}
 
+	generateSourceCode(dId: string, language: number = 0): void {
+		// TODO: language number should be enum | lang.Java = 0
+		this._coUmlHubConnection.invoke("GenerateSourceCode", dId, language);
+	}
+
 
 	/// for test only!!!!
 	public triggerBreakPoint()
@@ -118,17 +122,17 @@ export class CoUmlHubService{
 	}
 
 
-	public generate(dId:string,uId:string)
+	public generate(dId:string,uId:string): Promise<boolean>
 	{
-		console.log("hub");
-    	console.log(dId);
-		this._coUmlHubConnection.invoke("Generate",dId,uId);
+			console.log("hub");
+			console.log(dId);
+		return this._coUmlHubConnection.invoke("Generate",dId,uId);
 	}
 
 	//sends document text over to c#
-	public send(Did:string, projectDiagram: Diagram){
-		let changeDiagram = JSON.stringify(projectDiagram)
-		this._coUmlHubConnection.invoke("Send",Did,changeDiagram);
-	}
+	// public send(Did:string, projectDiagram: Diagram){
+	// 	let changeDiagram = JSON.stringify(projectDiagram)
+	// 	this._coUmlHubConnection.invoke("Send",Did,changeDiagram);
+	// }
 
 }

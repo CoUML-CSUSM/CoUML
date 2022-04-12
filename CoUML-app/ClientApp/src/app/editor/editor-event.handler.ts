@@ -6,7 +6,7 @@ import { AbstractClass,
 	UmlElement,
 	Component,
 	Class, 
-	Dimension, 
+	Dimension, Point,
 	Enumeration, 
 	Interface, 
 	Relationship, 
@@ -187,7 +187,7 @@ import { EditorComponent } from "./editor.component";
 						editorComponent.getIdPath(parentCell),
 						component instanceof Operation? 
 								PropertyType.Operations: component instanceof Attribute?
-								PropertyType.Attributes: PropertyType.Enums,
+								PropertyType.Attribute: PropertyType.Enums,
 						ActionType.Insert,
 						component
 					));
@@ -238,12 +238,16 @@ import { EditorComponent } from "./editor.component";
 					}
 				}
 
+				//calls internal UML Element
+				affectedCells.umlElement.label( affectedCells.value);
+				let userEnteredValue = affectedCells.value;
+				affectedCells.value = affectedCells.umlElement.toUmlNotation(); 
 				// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
 				editorComponent.stageChange( new ChangeRecord(
 					editorComponent.getIdPath(affectedCells),
 					PropertyType.Label, 
 					ActionType.Label,
-					affectedCells.value
+					userEnteredValue
 				), true);
 				// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 		});
@@ -271,10 +275,7 @@ import { EditorComponent } from "./editor.component";
 						editorComponent.getIdPath(cell),
 						PropertyType.Dimension,
 						ActionType.Shift,
-						{ // new absolute location
-							x: cell.geometry.x,
-							y: cell.geometry.y,
-						}
+						new Point( cell.geometry.x, cell.geometry.y )
 					));
 				// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 			});
@@ -392,12 +393,12 @@ import { EditorComponent } from "./editor.component";
 	function startEditing(graph: mxGraph, editorComponent: EditorComponent)
 	{
 		graph.addListener(mxEvent.START_EDITING, 
-			// When double click on cell to change label
+			// fires When double click on cell to change label
 			function(eventSource, eventObject){
 				let affectedCells = eventObject.getProperties().cell;
 				console.log('%c%s', f_alert, "START_EDITING");
 				if(affectedCells.edge)
-					affectedCells.value = affectedCells.umlElement?.attributes?.toUmlNotation();
+					affectedCells.value = affectedCells.umlElement?.attribute?.toUmlNotation();
 				console.log(affectedCells);
 				editorComponent.lock(affectedCells);
 
@@ -412,7 +413,6 @@ import { EditorComponent } from "./editor.component";
 	function editingStopped(graph: mxGraph, editorComponent: EditorComponent)
 	{
 		graph.addListener(mxEvent.EDITING_STOPPED,
-			//TODO: error on change lable on relations prevents release
 			function(eventSource, eventObject){
 				console.log('%c%s', f_alert, "EDITING_STOPPED");
 				console.log(eventSource);
@@ -433,12 +433,10 @@ import { EditorComponent } from "./editor.component";
 		 graph.getModel().addListener
 		//  graph.addListener
 		 (mxEvent.END_EDIT,
-			 //TODO: error on change lable on relations prevents release
 			 function(eventSource, eventObject){
 				 console.log('%c%s', f_alert, "END_EDIT");
 				 console.log(eventSource);
 				 console.log(eventObject);
- 
 			 });
 	 }
  
@@ -496,7 +494,7 @@ import { EditorComponent } from "./editor.component";
 				if(affectedCells == undefined )
 					graph.clearSelection();
 				
-
+				/* puts a little point on the graph so you can see where the user is clicking */
 				// if(eventSource.lastMouseX){	
 				// 	let x = eventSource.lastMouseX;
 				// 	let y = eventSource.lastMouseY;

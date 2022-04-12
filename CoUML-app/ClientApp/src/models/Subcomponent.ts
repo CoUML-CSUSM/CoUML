@@ -1,5 +1,6 @@
 import { ChangeRecord, PropertyType } from "./ChangeRecord";
 import { RelationalCollection } from "./Collection";
+import { TYPE } from "./Diagram";
 import { GeneralCollection, ICollection, UmlElement, Component } from "./DiagramModel";
 import { VisibilityType, DataType, RelationshipType} from "./Types";
 
@@ -57,9 +58,9 @@ export class Relationship extends UmlElement
 	public type: RelationshipType;
 	public source: string | null;
 	public target: string | null;
-	public attributes: Attribute | null;
+	public attribute: Attribute | null;
 
-	get attSet(){return this.attributes != null}
+	get attSet(){return this.attribute != null}
 
 	public constructor()
 	{
@@ -76,7 +77,7 @@ export class Relationship extends UmlElement
 
 	get(id: string) 
 	{
-		return this.attributes.get(id);
+		return this.attribute.get(id);
 	}
 	insert(element: any) 
 	{
@@ -89,7 +90,7 @@ export class Relationship extends UmlElement
 
 	toUmlNotation(): string 
 	{
-		return this.attributes? `${this.attributes?.visibility} ${this.attributes?.name}`: "";
+		return this.attribute? `${VisibilityType.symbol( this.attribute?.visibility)} ${this.attribute?.name}`: "";
 	}
 
 	change(change: ChangeRecord) {
@@ -100,8 +101,8 @@ export class Relationship extends UmlElement
 
 		switch(change.affectedProperty)
 		{
-			case PropertyType.Attributes:
-				this.attributes = change.value;
+			case PropertyType.Attribute:
+				this.attribute = change.value;
 				break;
 			case PropertyType.Target:
 				this.target = change.value;
@@ -121,12 +122,12 @@ export class Relationship extends UmlElement
 	public label(description: string)
 	{
 		if( this.type == RelationshipType.Association && description != "")
-		{	if(!this.attributes)
-				this.attributes = new Attribute();
-			this.attributes.label(description);
+		{	if(!this.attribute)
+				this.attribute = new Attribute();
+			this.attribute.label(description);
 		}else
 		{
-			delete this.attributes;
+			delete this.attribute;
 		}
 	}
 
@@ -142,7 +143,6 @@ export abstract class ComponentProperty extends UmlElement
 	constructor(type)
 	{
 		super(type);
-		// this["_$type"] = `CoUML_app.Model.${type}, CoUML-app`;
 	}
 }
 /**
@@ -169,9 +169,9 @@ export class Attribute extends ComponentProperty
 
 	toUmlNotation(): string
 	{
-		return `${this.visibility} ${this.name}${this.type.toUmlNotation()}`+
+		return `${VisibilityType.symbol( this.visibility)} ${this.name}${this.type.toUmlNotation()}`+
 		(this.multiplicity.isSingle() ? "": `[${this.multiplicity.toUmlNotation()}]` )+
-		` ${this.defaultValue? " = "+this.defaultValue: ""}${this.propertyString}`;
+		` ${this.defaultValue? " = "+this.defaultValue: ""}${this.propertyString ?? ""}`;
 	}
 
 	get(id: string)
@@ -205,12 +205,12 @@ export class Attribute extends ComponentProperty
 		let tokenDescription  = description.match(VALID_ATTIBUTE);
 		if(tokenDescription)
 		{
-			this.visibility = VisibilityType.get(tokenDescription[1]) || VisibilityType.VisibilityType.LocalScope;
-			this.name = tokenDescription[2] || "attribute";
-			this.type = new DataType(tokenDescription[3] || DEFUALT_DATATYPE_ATTRIBUTE);
+			this.visibility = VisibilityType.get(tokenDescription[1]);
+			this.name = tokenDescription[2] ?? "attribute";
+			this.type = new DataType(tokenDescription[3] ?? DEFUALT_DATATYPE_ATTRIBUTE);
 			this.multiplicity =  new Multiplicity(tokenDescription[4]);
-			this.defaultValue = tokenDescription[5] || "";
-			this.propertyString = tokenDescription[6] || "";
+			this.defaultValue = tokenDescription[5] ?? "";
+			this.propertyString = tokenDescription[6] ?? "";
 		}
 		console.log(`Attribute.label = ${tokenDescription}`);
 		console.log(this);
@@ -247,7 +247,7 @@ export class Attribute extends ComponentProperty
 
 	toUmlNotation(): string
 	{
-		return `${this.visibility} ${this.name}(${this.parameters.toUmlNotation()}): ${this.type.dataType}`;
+		return `${VisibilityType.symbol( this.visibility)} ${this.name}(${this.parameters.toUmlNotation()}): ${this.type.dataType}`;
 	}
 
 	public label(description: string)
@@ -281,7 +281,7 @@ export class Attribute extends ComponentProperty
 		throw new Error("Method not implemented.");
 	}
 
-	parameterize(params: string): void
+	private parameterize(params: string): void
 	{
 		this.parameters.removeAll();
 		if(params)
@@ -337,12 +337,12 @@ export class Enumeral extends UmlElement
  */
 export class Multiplicity
 {
-	public min: number = null;
-	public max: number = null;
+	public min: number = 1;
+	public max: number = 1;
 
 	public constructor( description: string = "1")
 	{
-		this["_$type"] = `CoUML_app.Model.${Multiplicity}, CoUML_app`;
+		this[TYPE] = `CoUML_app.Models.Multiplicity`;
 		let tokenDescription  = description.match(VALID_MULTIPLICITY);
 		if(tokenDescription)
 		{
@@ -353,8 +353,6 @@ export class Multiplicity
 
 	public toUmlNotation(): string
 	{
-		// if(this.isSingle)
-		// 	return "";
 		return `${this.min != this.max ? this.min+"..": ""}${this.max == -1? "*":this.max}`;
 	}
 

@@ -49,8 +49,22 @@ import {GoogleLoginProvider } from "angularx-social-login";
             },
             {
               label: "Fetch Test",
+              id: "menuFileFetchTest",
               command: () => this._coUmlHub._projectDeveloper.open("test",this._coUmlHub._projectDeveloper._editor),
-            }
+            },
+            {
+              separator:true
+            },
+            {
+              label: "Export",
+              items: [
+                {
+                  label: "Generate Source Code...('test')",
+                  command: () => this._coUmlHub.generateSourceCode("test")
+                }
+              ]
+            },
+
           ]
         },
         {

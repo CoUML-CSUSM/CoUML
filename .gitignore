@@ -3,10 +3,10 @@
 CoUML-app.Test/obj/Debug/net5.0/CoUML-app.Test.assets.cache
 CoUML-app.Test/obj/Debug/net5.0/CoUML-app.Test.csproj.AssemblyReference.cache
 *.dll
-<<<<<<< HEAD
 *.cache
 CoUML-app.Test/obj/Debug/*
-=======
+*.dll
+*.dll
 *.dll
 # Build results
 [Dd]ebug/**
@@ -21,4 +21,3 @@ bin/**
 Bin/**
 obj/**
 Obj/**
->>>>>>> Selenium

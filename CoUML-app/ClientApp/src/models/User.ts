@@ -1,3 +1,5 @@
+import { TYPE } from "./DiagramModel";
+
 export interface IUser
 {
 	readonly id: string;
@@ -7,10 +9,10 @@ export class User implements IUser {
 	constructor(id: string)
 	{
 		this.id = id
-		this["_$type"] = "CoUML_app.Models.User, CoUML-app"
+		this[TYPE] = "CoUML_app.Models.User"
 	}
 }
 export class NullUser implements IUser {
 	readonly id: string = "N/A";
-	["_$type"] = "CoUML_app.Models.NullUser, CoUML-app"
+	[TYPE] = "CoUML_app.Models.NullUser"
 }
