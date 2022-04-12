@@ -18,10 +18,10 @@ export class ProjectManager{
 			console.log("manager");
 			console.log(dId);
 			console.log("Creating new diagram");
-		this._coUmlHub.generate(dId,uId).then((project) => 
+		this._coUmlHub.generate(dId).then((project) => 
 			{
 				if(project)
-					this._coUmlHub._projectDeveloper.open(dId,this._coUmlHub._projectDeveloper._editor);
+					this._coUmlHub._projectDeveloper.open(project);
 				else
 					console.log(`Project "${dId}" not created.`)
 			});

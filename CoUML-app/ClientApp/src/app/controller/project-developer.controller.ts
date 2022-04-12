@@ -32,10 +32,10 @@ export class ProjectDeveloper{
 		return this._projectDiagram != null;
 	}
 
-	public open( dId: string , uId: IUser)
+	public open( dId: string)
 	{
 		
-		this._coUmlHub.fetch( dId, uId.id ) //get diagram from server
+		this._coUmlHub.fetch( dId) //get diagram from server
 			.then( (d) => {
 				console.log(d);
 				this._projectDiagram = Assembler.assembleDiagram(d);
@@ -115,7 +115,7 @@ export class ProjectDeveloper{
 		{
 			this.shouldDelay = true;
 
-			this._coUmlHub.commit(this._projectDiagram.id, this._changes);
+			this._coUmlHub.commit( this._changes);
 
 			this._changes = [];
 			//artificial delay that prevents the program from updating too offten, but submits any last added elements

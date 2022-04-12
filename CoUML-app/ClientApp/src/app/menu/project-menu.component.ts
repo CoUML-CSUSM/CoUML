@@ -1,6 +1,6 @@
 import { AfterViewInit, Component as AngularComponent, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
-import { MenuItem } from 'primeng/api';
-import { Class, Diagram, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType as VisibilityType, User } from 'src/models/DiagramModel';
+import { MenuItem, MessageService } from 'primeng/api';
+import { Class, Diagram, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType as VisibilityType, User, DiagramDataSet } from 'src/models/DiagramModel';
 import { ProjectManager } from '../controller/project-manager.controller';
 import { CoUmlHubService } from '../service/couml-hub.service';
 import { PrimeNGConfig } from "primeng/api";
@@ -8,6 +8,8 @@ import { ProjectDeveloper } from '../controller/project-developer.controller';
 
 import { SocialAuthService, SocialUser } from "angularx-social-login";
 import {GoogleLoginProvider } from "angularx-social-login";
+import { DialogService } from 'primeng/dynamicdialog';
+import { DiagramTableComponent } from './open/diagram-table.component';
 
 //client id
 //174000524733-gq2vagupknm77i794hll3kbs3iupm6fu.apps.googleusercontent.com
@@ -18,7 +20,8 @@ import {GoogleLoginProvider } from "angularx-social-login";
 @AngularComponent({
     selector: 'app-menu',
     templateUrl: './project-menu.component.html',
-    providers: [ProjectManager, ProjectDeveloper]
+    // providers: [ProjectManager, ProjectDeveloper]
+    providers: [ProjectManager, ProjectDeveloper, DialogService]
   })
   export class ProjectMenuComponent{
 
@@ -30,7 +33,8 @@ import {GoogleLoginProvider } from "angularx-social-login";
       private _projectManager: ProjectManager,
       private _coUmlHub: CoUmlHubService,
       private primengConfig: PrimeNGConfig,
-      private authService: SocialAuthService//login stuff
+      private authService: SocialAuthService,//login stuff,
+      private dialogService: DialogService,//open dialog box
       ){
       this._menuItems = [
         {
@@ -43,15 +47,20 @@ import {GoogleLoginProvider } from "angularx-social-login";
               command: () => this.showNewDiagramDialog(),
             },
             {
+              label: "Open...",
+              id: "menuFileOpen",
+              command: ()=> this.showOpenDiagram()
+            },
+            {
               label: "Trigger Breakpoint",
               id: "menuFileTriggerBreakpoint",
               command: ()=> this._coUmlHub.triggerBreakPoint(),
             },
             {
               label: "Fetch Test",
-              id: "menuFileFetchTest",
-              command: () => this._coUmlHub._projectDeveloper.open("test",this._coUmlHub._projectDeveloper._editor),
+              command: () => this._coUmlHub._projectDeveloper.open("test"),
             },
+
             {
               separator:true
             },
@@ -92,9 +101,6 @@ import {GoogleLoginProvider } from "angularx-social-login";
 
     }
 
-    // public generate(){
-    //     this._projectManager.generate("null");
-    // }
     
     //pop up
     ngOnInit() {
@@ -113,6 +119,7 @@ import {GoogleLoginProvider } from "angularx-social-login";
       .then((socialUser)=>{//store email here nd send it to databse
         console.log(socialUser.email);
         this._coUmlHub._projectDeveloper.setEditor(new User(socialUser.email));
+        this._coUmlHub.register(socialUser.email);
         //this._coUmlHub.generate("111");
       });
   
@@ -128,5 +135,31 @@ import {GoogleLoginProvider } from "angularx-social-login";
     //
     refreshToken(): void {
       this.authService.refreshAuthToken(GoogleLoginProvider.PROVIDER_ID);
+    }
+
+    /**
+     * opens a dialog to let the user select from diagrams they hae access to.
+     */
+    showOpenDiagram()
+    {
+      //if user is logged in
+      if(this._coUmlHub._projectDeveloper._editor?.id)
+      {
+        const openDiagramDialog = this.dialogService.open(DiagramTableComponent, {
+          data: {
+            id: this._coUmlHub._projectDeveloper._editor.id // id of user ToDO: Central user service? maybe move to different central provider class?
+          },
+            header: 'Choose a Diagram',
+            width: '70%'
+        });
+    
+        // string of the _id is returned to indicate the user's selection
+        openDiagramDialog.onClose.subscribe((diagram: DiagramDataSet) => {
+            if (diagram) {//diagram is the dataset of the chosen diagram
+                console.log(diagram);
+                this._coUmlHub._projectDeveloper.open(diagram._id);
+            }
+        });
+      }
     }
   }

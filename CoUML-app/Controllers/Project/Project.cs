@@ -28,7 +28,7 @@ namespace CoUML_app.Controllers.Project
 		public BsonDocument? Find(string dId)
 		{
 			var collection = GetCollection("Diagrams");
-			var filter = Builders<BsonDocument>.Filter.Eq("id", dId);
+			var filter = Builders<BsonDocument>.Filter.Eq("_id", ObjectId.Parse(dId));
 			var diagramBSON = collection.Find(filter).Project("{_id: 0}").FirstOrDefault(); //may return null
 			return diagramBSON;
 		}
@@ -47,10 +47,11 @@ namespace CoUML_app.Controllers.Project
 
 
 		//creates a diagram string that gets sent to the database
-		public Diagram Generate(string dId){
+		public string Generate(string dId, User projectManager){
 
 			var collection = GetCollection("Diagrams");
 			var projectDiagram = dId =="test" ? Template.DiagramDefualt(dId): new Diagram(dId);
+			projectDiagram.editor = projectManager;
 
 			//sends diagram as bson doc using the string of the diagram
 			MongoDB.Bson.BsonDocument doc = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonDocument>(
@@ -58,8 +59,101 @@ namespace CoUML_app.Controllers.Project
 			);
 
 			collection.InsertOne(doc);
-			return projectDiagram;
+
+			this.AddToTeam(doc["_id"].ToString(), projectManager);
+
+			return doc["_id"].ToString();
 		}
+
+		public void AddToTeam(string dId, User user){
+			var collection = GetCollection("Teams");
+			var filter = Builders<BsonDocument>.Filter.Eq("user", user.id);	
+			var team = collection.Find(filter).FirstOrDefault();
+
+			var update = Builders<BsonDocument>.Update.Push<String>("diagrams", dId);
+
+            	collection.UpdateOne(filter, update);
+		}
+
+		public void register(string uId)
+		{
+			var collection = GetCollection("Users");
+			var filter = Builders<BsonDocument>.Filter.Eq("id", uId);
+			
+			var user = collection.Find(filter).Project("{_id: 0}").FirstOrDefault(); //may return null
+
+			if(user == null){
+				
+				var doc = new BsonDocument
+				{
+					{"id", uId},
+				};
+
+				collection.InsertOne(doc);
+				Console.WriteLine(doc.ToString());
+			}
+
+		}
+
+		public string ListMyDiagrams(User user)
+		{
+
+
+			var Tcollection = GetCollection("Teams");
+			var TuIdFilter = Builders<BsonDocument>.Filter.Eq("user", user.id);
+			
+
+			var diagram = Tcollection.Find(TuIdFilter).Project("{_id: 0, id: 0}").FirstOrDefault(); //may return null
+
+			if(diagram != null){
+			var diagramText = diagram.ToString();
+			Console.WriteLine(diagramText);//outputs the diagram text
+			Console.WriteLine(diagram);//outputs the diagram text
+
+			//var strings = diagram["diagrams"].AsBsonArray.Select(p -> p.AsString).toArray();
+			var strings = diagram["diagrams"].AsBsonArray;
+			string[] array = new string[strings.Count];
+			Console.WriteLine(strings.Count);
+			
+			for(int i=0;i<strings.Count;i++){
+				array[i] = strings[i].ToString();
+			}
+			
+			DiagramSet[] diagrams = new DiagramSet[array.Count()];
+
+
+			for(int i=0;i<strings.Count;i++){
+			diagrams[i] = new DiagramSet(array[i], this.getName(array[i]));
+			}
+
+			Console.WriteLine(diagrams[0]);
+			return JsonConvert.SerializeObject(diagrams);
+			}
+			else{
+			Console.WriteLine("cant find doc");
+			return null;
+					}
+		}
+
+
+        public string getName(string id){
+            var dbClient = new MongoClient("mongodb://localhost:27017");
+            IMongoDatabase db = dbClient.GetDatabase("CoUML");
+
+            var collection = db.GetCollection<BsonDocument>("Diagrams");
+            //var filter = Builders<BsonDocument>.Filter.Eq("_id", "ObjectId(\"624df1ee084f4afd218cd596\")");
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", ObjectId.Parse(id));
+
+            var doc = collection.Find(filter).FirstOrDefault();//not needed
+            if(doc != null){
+                Console.WriteLine(doc["id"].ToString());
+                return doc["id"].ToString();
+            }
+            else{
+                Console.WriteLine("cant find mongodb id");
+                return null;
+            }
+        }
 
 
 		public void Overwrite(Diagram diagram){

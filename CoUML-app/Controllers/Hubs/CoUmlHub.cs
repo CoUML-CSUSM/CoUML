@@ -66,15 +66,7 @@ namespace CoUML_app.Controllers.Hubs
 		/// <returns></returns>
 		public override Task OnConnectedAsync()
 		{
-
 			InitContextItems();
-
-
-			/* * * * Temp way to login * * * */
-			/* * * * Delete later * * * */
-			LogIn(Context.ConnectionId);
-			/* * * * * * * * * * * * * * * * */
-
 			return base.OnConnectedAsync();
 		}
 
@@ -107,6 +99,7 @@ namespace CoUML_app.Controllers.Hubs
 		public void LogIn(string userId)
 		{
 			Context.Items[CoUmlContext.USER] = new User(userId);
+			ProjectController.register(userId);
 		}
 
 		public void LogOut()
@@ -132,7 +125,7 @@ namespace CoUML_app.Controllers.Hubs
 		/// </summary>
 		/// <param name="dId">somthing to identify the diagram file by</param>
 		/// <returns>the diagram requested</returns>
-		public string Fetch(string dId, string userId)
+		public string Fetch(string dId)
 		{
 
 			LogOut();
@@ -143,7 +136,7 @@ namespace CoUML_app.Controllers.Hubs
 			if(!SessionManager.IsSessionActive(dId))
 			{
 				fetchedDiagram = ProjectController.FindDiagram(dId);
-				SessionManager.InitSession(fetchedDiagram);
+				SessionManager.InitSession(dId, fetchedDiagram);
 			}else
 			{
 				fetchedDiagram = SessionManager.GetLiveDiagram(dId);
@@ -155,19 +148,20 @@ namespace CoUML_app.Controllers.Hubs
 			return DTO.FromDiagram(fetchedDiagram);
 		}
 
-		public bool Generate(string dId,  string userId){
-			return ProjectController.Generate(dId) is not null;
+		public string Generate(string dId){
+			return ProjectController.Generate(dId,  (User)Context.Items[CoUmlContext.USER]);
+		}
+		
+		public string ListMyDiagrams(){
+			return ProjectController.ListMyDiagrams( (User)Context.Items[CoUmlContext.USER] );
 		}
 
-
-		public void Push(string dId, string changes)
+		public void Push(string changes)
 		{
-			if((string)Context.Items[CoUmlContext.DIAGRAM] == dId)
-			{
-				SessionManager.CommitUpdatesToSession(dId, DTO.ToChangeRecords(changes));
-				ProjectController.Overwrite(SessionManager.GetLiveDiagram(dId));
-				Dispatch(dId, Context.ConnectionId, changes);
-			}
+			var dId = (string)Context.Items[CoUmlContext.DIAGRAM];
+			SessionManager.CommitUpdatesToSession(dId, DTO.ToChangeRecords(changes));
+			ProjectController.Overwrite(SessionManager.GetLiveDiagram(dId));
+			Dispatch(dId, Context.ConnectionId, changes);
 		}
 
 		public void Dispatch(string dId, string callerId, string changes)

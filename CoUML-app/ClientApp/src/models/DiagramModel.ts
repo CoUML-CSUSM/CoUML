@@ -15,3 +15,12 @@ export * from './User';
 export * from './Dimension';
 export * from './ChangeRecord'
 export * as Assembler from './Assembler'
+
+export class DiagramDataSet
+{
+	id: string;
+	_id: string;
+	toString(){
+		return `id: ${this.id}\n_id: ${this._id}`
+	}
+}

@@ -3,7 +3,9 @@ import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 import { ProjectManager } from '../controller/project-manager.controller';
 import { environment } from '../../environments/environment';
-import { Assembler, ChangeRecord, User, Diagram } from 'src/models/DiagramModel';
+import { Assembler, ChangeRecord, User, Diagram, DiagramDataSet } from 'src/models/DiagramModel';
+import { ConsoleLogger } from '@microsoft/signalr/dist/esm/Utils';
+import { waitForAsync } from '@angular/core/testing';
 
 
 @Injectable()
@@ -70,26 +72,20 @@ export class CoUmlHubService{
 	 * @param dId get Diagram from server
 	 * @returns 
 	 */
-	public fetch(dId: string, uId:string ): Promise<string>
+	public fetch(dId: string): Promise<string>
 	{
-
-		// calling function : public string Fetch(string dId)
-		//return this._coUmlHubConnection.invoke<string>('Fetch','test'); // test diagram
-
-		//move this line and change new user to email adress
-		//this._projectDeveloper.setEditor(new User(this._coUmlHubConnection.connectionId));
-		return this._coUmlHubConnection.invoke<string>('Fetch',dId,uId); 
+		return this._coUmlHubConnection.invoke<string>('Fetch',dId); 
 	}
 
 	/**
 	 * Changes are commited from client to server
 	 * @param changes 
 	 */
-	public commit(dId: string, changes: ChangeRecord[])
+	public commit(changes: ChangeRecord[])
 	{
 		let changesDTO = JSON.stringify(changes)
 		console.log(changesDTO);
-		this._coUmlHubConnection.invoke("Push", dId, changesDTO);
+		this._coUmlHubConnection.invoke("Push", changesDTO);
 	}
 
 	/**
@@ -115,6 +111,16 @@ export class CoUmlHubService{
 	}
 
 
+	/**
+	 * looksup the diagrams that a user has access to
+	 * @param id the ID of the user
+	 * @returns array of diagrams that the user has access to[]
+	 */
+     listMyDiagrams() {
+		return this._coUmlHubConnection.invoke("ListMyDiagrams")
+    }
+
+
 	/// for test only!!!!
 	public triggerBreakPoint()
 	{
@@ -122,17 +128,15 @@ export class CoUmlHubService{
 	}
 
 
-	public generate(dId:string,uId:string): Promise<boolean>
+	public generate(dId:string): Promise<string>
 	{
 			console.log("hub");
 			console.log(dId);
-		return this._coUmlHubConnection.invoke("Generate",dId,uId);
+		return this._coUmlHubConnection.invoke("Generate",dId);
 	}
 
-	//sends document text over to c#
-	// public send(Did:string, projectDiagram: Diagram){
-	// 	let changeDiagram = JSON.stringify(projectDiagram)
-	// 	this._coUmlHubConnection.invoke("Send",Did,changeDiagram);
-	// }
+	public register(uId: string){
+		this._coUmlHubConnection.invoke("LogIn",uId);
+	}
 
 }

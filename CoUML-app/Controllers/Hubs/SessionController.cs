@@ -135,9 +135,9 @@ namespace CoUML_app.Controllers.Hubs
 	{
 		private Dictionary<string, ActiveSession> _sessions = new Dictionary<string, ActiveSession>();
 
-		public bool InitSession(Diagram diagram)
+		public bool InitSession(string dId, Diagram diagram)
 		{
-			return _sessions.TryAdd(diagram.id, new ActiveSession(diagram));
+			return _sessions.TryAdd(dId, new ActiveSession(diagram));
 		}
 
 		public bool IsSessionActive(string id)
