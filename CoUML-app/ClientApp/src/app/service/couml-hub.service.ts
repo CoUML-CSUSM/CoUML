@@ -124,20 +124,24 @@ export class CoUmlHubService{
 		console.log(id);
 		//get diagram array from cs database
 		//let diagrams = this._coUmlHubConnection.invoke("listMyDiagrams",id);
-		var diagrams = this._coUmlHubConnection.invoke("listMyDiagrams",id).then((d) => {
+		this._coUmlHubConnection.invoke("listMyDiagrams",id).then((d) => 
+		{
+			console.log("promise test");
 			console.log(d);
-			console.log(d[1]);
+			console.log(JSON.parse(d));
+			return JSON.parse(d);
+			// console.log(d[0]);
 
-			console.log("list of diagrams from the databse");
-			console.log(diagrams);
-			//
+			// console.log("list of diagrams from the databse");
+			// console.log(diagrams);
+			// //
 			
-			//get names for each mongodb diagram id
-			console.log("get name of diagram");
-			this._coUmlHubConnection.invoke("getName",d[0]).then((d2) => {
-				console.log(d2);
-				//console.log(d[1]);
-			});	
+			// //get names for each mongodb diagram id
+			// console.log("get name of diagram");
+			// this._coUmlHubConnection.invoke("getName",d[0]).then((d2) => {
+			// 	console.log(d2);
+			// 	//console.log(d[1]);
+			// });	
 	
 			//
 		});
@@ -151,7 +155,7 @@ export class CoUmlHubService{
 			resolve([
 				{//test one
 					id: "name",
-					_id: diagrams[0]
+					_id: this.getId(id)
 				},
 				{
 					id: "Haikus are",
@@ -183,6 +187,16 @@ export class CoUmlHubService{
 				} ]);
 		})
     }
+
+	public getId(id:any) {
+		var diagrams = this._coUmlHubConnection.invoke("listMyDiagrams",id).then((d) => {
+			console.log("method test");
+			console.log(d[0]);
+			return d[0];
+
+		});
+		return null;
+	}
 
 	/// for test only!!!!
 	public triggerBreakPoint()

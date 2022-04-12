@@ -327,7 +327,7 @@ namespace CoUML_app.Controllers.Hubs
 
         }
 
-        public string[] listMyDiagrams(string id){
+        public string listMyDiagrams(string id){
             var dbClient = new MongoClient("mongodb://localhost:27017");
             IMongoDatabase db = dbClient.GetDatabase("CoUML");
 
@@ -365,13 +365,18 @@ namespace CoUML_app.Controllers.Hubs
             //
 
             //Console.WriteLine(array);
-            return array;
+            //return array;
 
             // return JsonConvert.SerializeObject(strings, Formatting.Indented, new JsonSerializerSettings
             //         {
             //             TypeNameHandling = TypeNameHandling.Auto
             //         });
+        
 
+                diagramSet[] diagrams = new diagramSet[array.Count()];
+                diagrams[0] = new diagramSet(array[0], this.getName(array[0]));
+                Console.WriteLine(diagrams[0]);
+                return JsonConvert.SerializeObject(diagrams);
             }
             else{
                 Console.WriteLine("cant find doc");
@@ -491,5 +496,19 @@ namespace CoUML_app.Controllers.Hubs
             return new Diagram();
         }      
 
+    }
+
+    public class diagramSet{
+        public string id;
+        public string _id;
+
+        public diagramSet(string _id,string id){
+            this.id = id;
+            this._id = _id;
+        }
+
+        public override string ToString(){
+            return "id: " + id + "\n_id: " + _id;
+        }  
     }
 }
