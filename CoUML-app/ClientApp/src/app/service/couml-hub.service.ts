@@ -5,6 +5,7 @@ import { ProjectManager } from '../controller/project-manager.controller';
 import { environment } from '../../environments/environment';
 import { Assembler, ChangeRecord, User, Diagram, DiagramDataSet } from 'src/models/DiagramModel';
 import { ConsoleLogger } from '@microsoft/signalr/dist/esm/Utils';
+import { waitForAsync } from '@angular/core/testing';
 
 
 @Injectable()
@@ -123,35 +124,9 @@ export class CoUmlHubService{
 		console.log("list diagrams");
 		console.log(id);
 		//get diagram array from cs database
-		//let diagrams = this._coUmlHubConnection.invoke("listMyDiagrams",id);
-		this._coUmlHubConnection.invoke("listMyDiagrams",id).then((d) => 
-		{
-			console.log("promise test");
-			console.log(d);
-			console.log(JSON.parse(d));
-			return JSON.parse(d);
-			// console.log(d[0]);
-
-			// console.log("list of diagrams from the databse");
-			// console.log(diagrams);
-			// //
-			
-			// //get names for each mongodb diagram id
-			// console.log("get name of diagram");
-			// this._coUmlHubConnection.invoke("getName",d[0]).then((d2) => {
-			// 	console.log(d2);
-			// 	//console.log(d[1]);
-			// });	
-	
-			//
-		});
-		
-
-		// TODO: create a function in C# that fulfulls this request
-		//TODO: c# method that returns list of diagrams
-
-		// TEMPORARRY!!!! returns a sample promise
-		return new Promise<DiagramDataSet[]>((resolve)=>{
+		let diagrams = this._coUmlHubConnection.invoke("listMyDiagrams",id);
+		let die;
+		let pain = new Promise<DiagramDataSet[]>((resolve)=>{
 			resolve([
 				{//test one
 					id: "name",
@@ -186,6 +161,78 @@ export class CoUmlHubService{
 					_id: "548618a3-b598-4f3f-9b5d-96d54696c1gw"
 				} ]);
 		})
+		this._coUmlHubConnection.invoke("listMyDiagrams",id).then((d) => 
+		{
+			console.log("promise test");
+			console.log(d);
+			console.log(JSON.parse(d));
+			diagrams = JSON.parse(d);
+			die = Assembler.assembleDiagramList(d);
+			pain[0] = die;
+
+			// console.log(d[0]);
+
+			// console.log("list of diagrams from the databse");
+			// console.log(diagrams);
+			// //
+			
+			// //get names for each mongodb diagram id
+			// console.log("get name of diagram");
+			// this._coUmlHubConnection.invoke("getName",d[0]).then((d2) => {
+			// 	console.log(d2);
+			// 	//console.log(d[1]);
+			// });	
+	
+		
+		});
+
+		die = this._coUmlHubConnection.invoke("listMyDiagrams",id).then(value => {});
+		console.log("post assemble test");
+		console.log(die);
+		return pain;
+		// return this._coUmlHubConnection.invoke("listMyDiagrams",id)((resolve)=>{
+		// 	resolve()
+		// })
+
+		// TODO: create a function in C# that fulfulls this request
+		//TODO: c# method that returns list of diagrams
+
+		// TEMPORARRY!!!! returns a sample promise
+		// return new Promise<DiagramDataSet[]>((resolve)=>{
+		// 	resolve([
+		// 		{//test one
+		// 			id: "name",
+		// 			_id: this.getId(id)
+		// 		},
+		// 		{
+		// 			id: "Haikus are",
+		// 			_id: "916d8889-f46e-46f4-98e7-9793f29495hw"
+		// 		}, 
+		// 		{
+		// 			id: "easy, but",
+		// 			_id: "dbf6b814-185c-4e9e-a963-776e5c549fhv"
+		// 		},
+		// 		{
+		// 			id: "sometimes they",
+		// 			_id: "9d53558b-2c0f-4d48-9ba7-7eb7d705e0ha"
+		// 		},
+		// 		{
+		// 			id: "don't make sence",
+		// 			_id: "548618a3-b598-4f3f-9b5d-96d54696c1gw"
+		// 		}, 
+		// 		{
+		// 			id: "refrigerator",
+		// 			_id: "dbf6b814-185c-4e9e-a963-776e5c549fhv"
+		// 		},
+		// 		{
+		// 			id: "hello antivoid",
+		// 			_id: "9d53558b-2c0f-4d48-9ba7-7eb7d705e0ha"
+		// 		},
+		// 		{
+		// 			id: "goodby world",
+		// 			_id: "548618a3-b598-4f3f-9b5d-96d54696c1gw"
+		// 		} ]);
+		// })
     }
 
 	public getId(id:any) {

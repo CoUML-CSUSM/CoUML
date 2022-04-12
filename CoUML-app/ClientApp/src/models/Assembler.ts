@@ -1,7 +1,24 @@
 import { UmlElement } from "./Diagram";
-import { DataType, Diagram, Relationship, RelationshipType, Class, Dimension, Operation, Attribute, AbstractClass, Interface, Enumeration, ICollection, IUser, User, NullUser } from "./DiagramModel";
+import { DataType, Diagram, Relationship, RelationshipType, Class, Dimension, Operation, Attribute, AbstractClass, Interface, Enumeration, ICollection, IUser, User, NullUser, DiagramDataSet } from "./DiagramModel";
 import { Enumeral } from "./Subcomponent";
 import { VisibilityType } from "./Types";
+
+
+	export function assembleDiagramList(diagramList: string){//: Promise<DiagramDataSet[]> {
+
+		let d = JSON.parse(diagramList);
+		console.log("assmeble test");
+		console.log(d);
+		console.log(d[0]);
+
+		let _diagramDataSet = new DiagramDataSet();
+		_diagramDataSet.id = d[0].id;
+		_diagramDataSet._id = d[0]._id;
+		console.log("assmeble test part 2");
+		console.log(_diagramDataSet);
+
+		return  _diagramDataSet;
+	}
 
 	export function assembleDiagram(diagram_DTO: string): Diagram
 	{
