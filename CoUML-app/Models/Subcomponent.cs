@@ -119,10 +119,9 @@ namespace CoUML_app.Models
 
 
 	public abstract class ComponentProperty: UmlElement{
-		[JsonConverter(typeof(StringEnumConverter))]
 		public VisibilityType visibility {get; set;}
 		public string name{get; set;}
-		public string propertyString {get; set;}
+		public string propertyString {get; set;} = "";
 		public DataType type{get; set;}
 
 		override public void GenerateCode(ISourceCodeGenerator codeGenerator)
@@ -177,7 +176,7 @@ namespace CoUML_app.Models
 	}
 
 	public class Attribute: ComponentProperty{
-		public Multiplicity multiplicity{get; set;}
+		public Multiplicity multiplicity{get; set;} = new Multiplicity();
 		public string defaultValue {get; set;}
 
 		public Attribute():base(){ }
@@ -190,7 +189,7 @@ namespace CoUML_app.Models
 		{
 			var tokens = CoUmlRegex.Match(description, CoUmlRegex.ATTIBUTE_PATTERN);
 
-			visibility = (VisibilityType)(tokens[CoUmlRegex.VISIBILITY].Value.Length == 1? tokens[CoUmlRegex.VISIBILITY].Value[0] : ' ');
+			visibility = VisibilityTypeHandler.From(tokens[CoUmlRegex.VISIBILITY].Value.Length>0 ? tokens[CoUmlRegex.VISIBILITY].Value.ToCharArray()[0] : ' ') ;
 			name = tokens[CoUmlRegex.NAME].Value;
 			type = new DataType(tokens[CoUmlRegex.TYPE].Value);
 			multiplicity = new Multiplicity(tokens[CoUmlRegex.MULTIPLICITY].Success? tokens[CoUmlRegex.MULTIPLICITY].Value : "1");

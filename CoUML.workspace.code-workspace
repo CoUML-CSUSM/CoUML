@@ -15,6 +15,8 @@
 	],
 	"settings": {
 		"angular.enable-strict-mode-prompt": false,
-		"csharp.referencesCodeLens.enabled": false
+		"csharp.referencesCodeLens.enabled": false,
+		"editor.tabSize": 6,
+		"editor.insertSpaces": false
 	}
 }

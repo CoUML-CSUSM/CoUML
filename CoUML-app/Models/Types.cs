@@ -3,13 +3,27 @@ using Newtonsoft.Json.Converters;
 namespace CoUML_app.Models
 {
 
-	[JsonConverter(typeof(StringEnumConverter))] 
 	public enum VisibilityType{//enums cant be strings in c#
 		Private = 0,
 		Public = 1,
 		Protected = 2,
 		Package = 3,
 		LocalScope = 4
+	}
+	public static class VisibilityTypeHandler
+	{
+		public static VisibilityType From(char symbol)
+		{
+			switch(symbol)
+			{
+				case '-': return VisibilityType.Private;
+				case '+': return VisibilityType.Public;
+				case '#': return VisibilityType.Protected;
+				case '~': return VisibilityType.Package;
+				case ' ': default:
+					return VisibilityType.LocalScope;
+			}
+		}
 	}
 
 	public struct DataType{

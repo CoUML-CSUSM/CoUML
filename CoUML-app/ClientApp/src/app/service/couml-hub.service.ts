@@ -122,11 +122,11 @@ export class CoUmlHubService{
 	}
 
 
-	public generate(dId:string,uId:string)
+	public generate(dId:string,uId:string): Promise<boolean>
 	{
-		console.log("hub");
-    	console.log(dId);
-		this._coUmlHubConnection.invoke("Generate",dId,uId);
+			console.log("hub");
+			console.log(dId);
+		return this._coUmlHubConnection.invoke("Generate",dId,uId);
 	}
 
 	//sends document text over to c#

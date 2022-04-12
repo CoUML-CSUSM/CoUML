@@ -35,7 +35,8 @@ namespace CoUML_app.Models
 				new Models.Attribute {
 					name = "percent",
 					visibility = VisibilityType.Private,
-					type = new DataType{ dataType = "double" }
+					type = new DataType{ dataType = "double" },
+					multiplicity = new Multiplicity()
 				}
 			);
 			i.operations.Insert(io);
@@ -55,8 +56,9 @@ namespace CoUML_app.Models
 			Models.Attribute a1 = new Models.Attribute
 			{
 				name = "diagonal",
-				visibility = VisibilityType.Private,
-				type = new DataType{ dataType = "double" }
+				visibility = VisibilityType.LocalScope,
+				type = new DataType{ dataType = "double" },
+				multiplicity = new Multiplicity()
 			};
 
 			c1.dimension.y = 400;

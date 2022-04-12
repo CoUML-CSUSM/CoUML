@@ -119,7 +119,6 @@ export class EditorComponent implements AfterViewInit{
 		 * set callback that a cell is locked if it has an ovelay,
 		 * a cell has an overlau if it has an user
 		 */
-		// let baseIsCellLocked = this._graph.isCellLocked;
 		this._graph.isCellLocked = function(cell: mxCell)
 		{
 			// if* the cell has an overlay *then* somone is using it and the cell is locked
@@ -174,9 +173,6 @@ export class EditorComponent implements AfterViewInit{
 		//set defualt parrent id to diagram id
 		this._graph.getDefaultParent().id = projectDiagram.id;
 
-		
-
-		// this._graph.iscellS
 		this._graph.getModel().beginUpdate();
 		try {
 

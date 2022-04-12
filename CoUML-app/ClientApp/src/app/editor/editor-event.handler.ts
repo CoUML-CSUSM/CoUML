@@ -248,7 +248,7 @@ import { EditorComponent } from "./editor.component";
 					PropertyType.Label, 
 					ActionType.Label,
 					userEnteredValue
-				));
+				), true);
 				// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 		});
 	}

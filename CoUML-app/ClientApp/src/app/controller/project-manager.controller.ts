@@ -6,18 +6,24 @@ import {  User, UmlElement } from 'src/models/DiagramModel';
 
 @Injectable()
 export class ProjectManager{
-    newDiagram: Diagram;
 
-    constructor(private _coUmlHub: CoUmlHubService){
-        this._coUmlHub.subscribe(this);
-    }
+	newDiagram: Diagram;
 
-    public generate(dId:string, uId:string){
+	constructor(private _coUmlHub: CoUmlHubService){
+		this._coUmlHub.subscribe(this);
+	}
 
-        console.log("manager");
-        console.log(dId);
-        console.log("Creating new diagram");
-        this._coUmlHub.generate(dId,uId);
-            
-    }
+	public generate(dId:string, uId:string){
+
+			console.log("manager");
+			console.log(dId);
+			console.log("Creating new diagram");
+		this._coUmlHub.generate(dId,uId).then((project) => 
+			{
+				if(project)
+					this._coUmlHub._projectDeveloper.open(dId,this._coUmlHub._projectDeveloper._editor);
+				else
+					console.log(`Project "${dId}" not created.`)
+			});
+	}
 }

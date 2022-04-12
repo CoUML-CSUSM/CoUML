@@ -114,7 +114,11 @@ namespace CoUML_app.Controllers.Hubs
 
 			try
 			{
-			   SessionManager.LeaveSession((string)Context.Items[CoUmlContext.DIAGRAM], (User)Context.Items[CoUmlContext.USER]);
+				if(Context.Items[CoUmlContext.DIAGRAM] is not null)
+				{ // remove self from other groups before continuing
+					Groups.RemoveFromGroupAsync(Context.ConnectionId, (string)Context.Items[CoUmlContext.DIAGRAM]);
+					SessionManager.LeaveSession((string)Context.Items[CoUmlContext.DIAGRAM], (User)Context.Items[CoUmlContext.USER]);
+				}
 			}
 			catch (KeyNotFoundException knf)
 			{
@@ -131,11 +135,7 @@ namespace CoUML_app.Controllers.Hubs
 		public string Fetch(string dId, string userId)
 		{
 
-			if(Context.Items[CoUmlContext.DIAGRAM] != null)
-			{ // remove self from other groups before continuing
-				Groups.RemoveFromGroupAsync(Context.ConnectionId, (string)Context.Items[CoUmlContext.DIAGRAM]);
-				SessionManager.LeaveSession((string)Context.Items[CoUmlContext.DIAGRAM], (User)Context.Items[CoUmlContext.USER]);
-			}
+			LogOut();
 
 			Context.Items[CoUmlContext.DIAGRAM] = dId;
 
@@ -155,8 +155,8 @@ namespace CoUML_app.Controllers.Hubs
 			return DTO.FromDiagram(fetchedDiagram);
 		}
 
-		public void Generate(string dId){
-			ProjectController.Generate(dId);
+		public bool Generate(string dId,  string userId){
+			return ProjectController.Generate(dId) is not null;
 		}
 
 
@@ -169,12 +169,6 @@ namespace CoUML_app.Controllers.Hubs
 				Dispatch(dId, Context.ConnectionId, changes);
 			}
 		}
-
-		//not needed
-		// public void ApplyChange(string dId, ChangeRecord[] change)
-		// {
-		// 	ProjectController.Write(dId, change);
-		// }
 
 		public void Dispatch(string dId, string callerId, string changes)
 		{

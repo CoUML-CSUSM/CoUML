@@ -171,7 +171,7 @@ export class Attribute extends ComponentProperty
 	{
 		return `${VisibilityType.symbol( this.visibility)} ${this.name}${this.type.toUmlNotation()}`+
 		(this.multiplicity.isSingle() ? "": `[${this.multiplicity.toUmlNotation()}]` )+
-		` ${this.defaultValue? " = "+this.defaultValue: ""}${this.propertyString}`;
+		` ${this.defaultValue? " = "+this.defaultValue: ""}${this.propertyString ?? ""}`;
 	}
 
 	get(id: string)
@@ -342,7 +342,7 @@ export class Multiplicity
 
 	public constructor( description: string = "1")
 	{
-		this[TYPE] = `CoUML_app.Model.Multiplicity`;
+		this[TYPE] = `CoUML_app.Models.Multiplicity`;
 		let tokenDescription  = description.match(VALID_MULTIPLICITY);
 		if(tokenDescription)
 		{

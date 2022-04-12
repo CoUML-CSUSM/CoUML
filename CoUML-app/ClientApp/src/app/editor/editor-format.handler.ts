@@ -157,22 +157,32 @@ export function addEdgeStyles(graph: mxGraph)
 	//association relation specialty paint
 	var base_mxConnectorPaint = mxConnector.prototype.paintEdgeShape;
 	mxConnector.prototype.paintEdgeShape = function( c: mxSvgCanvas2D, pts	)
-		
 	{
+
 		let includeAtt = this.state?.cell?.edge && this.state.cell.umlElement.type == RelationshipType.Association && this.state.cell.umlElement.attSet ; 
-		if(includeAtt)
-			this.state.cell.value = this.state.cell.umlElement.toUmlNotation();
+
+		console.log('%c%s', f_alert, `paintEdgeShape\n Attribute = ${includeAtt}`);
+		console.log(this.state?.cell?.edge );
+		console.log(this.state.cell.umlElement.type == RelationshipType.Association);
+		console.log(this.state.cell.umlElement.attSet);
+		
+		// if(includeAtt)
+		// 	this.state.cell.value = this.state.cell.umlElement.toUmlNotation();
 
 		base_mxConnectorPaint.apply(this, arguments);
 
 		if(includeAtt)
 		{
-			let mulPT = scaleR(pts[0], pts[1], 20);
-			c.setFontBackgroundColor("#FF0000");
-			// c.setFontBackgroundColor(WHITE);
+			let mulPT = scaleR(pts[0], pts[1], 35);
+			// let mulPT = pts[1];
+			// c.setFontBackgroundColor("#FF0000");
+			console.log(mulPT);
+			console.log(this.state.cell.umlElement);
+			console.log(this.state.cell.umlElement.attribute?.multiplicity?.toUmlNotation());
+			c.setFontBackgroundColor(WHITE);
 			c.text(mulPT.x, mulPT.y, 0, 0, 
-				this.state.cell.umlElement.attributes?.multiplicity?.toUmlNotation(),
-				'left', 'bottom', '', '', '', '', 0, ''
+				this.state.cell.umlElement.attribute?.multiplicity?.toUmlNotation(),
+				'top', 'left', '', '', '', '', 0, ''
 				);
 		}
 	}
@@ -271,3 +281,4 @@ function scaleR (a: mxPoint, b: mxPoint, r: number): mxPoint
 	return point;
 
 }
+var f_alert = 'text-align: center; width: 100%; background: black; color: red; font-size: 1.5em;';
