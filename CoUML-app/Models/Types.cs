@@ -5,11 +5,11 @@ namespace CoUML_app.Models
 
 	[JsonConverter(typeof(StringEnumConverter))] 
 	public enum VisibilityType{//enums cant be strings in c#
-		Private,
-		Public,
-		Protected,
-		Package,
-		LocalScope
+		Private = 0,
+		Public = 1,
+		Protected = 2,
+		Package = 3,
+		LocalScope = 4
 	}
 
 	public struct DataType{

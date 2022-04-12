@@ -205,12 +205,12 @@ export class Attribute extends ComponentProperty
 		let tokenDescription  = description.match(VALID_ATTIBUTE);
 		if(tokenDescription)
 		{
-			this.visibility = VisibilityType.get(tokenDescription[1]) || VisibilityType.VisibilityType.LocalScope;
-			this.name = tokenDescription[2] || "attribute";
-			this.type = new DataType(tokenDescription[3] || DEFUALT_DATATYPE_ATTRIBUTE);
+			this.visibility = VisibilityType.get(tokenDescription[1]);
+			this.name = tokenDescription[2] ?? "attribute";
+			this.type = new DataType(tokenDescription[3] ?? DEFUALT_DATATYPE_ATTRIBUTE);
 			this.multiplicity =  new Multiplicity(tokenDescription[4]);
-			this.defaultValue = tokenDescription[5] || "";
-			this.propertyString = tokenDescription[6] || "";
+			this.defaultValue = tokenDescription[5] ?? "";
+			this.propertyString = tokenDescription[6] ?? "";
 		}
 		console.log(`Attribute.label = ${tokenDescription}`);
 		console.log(this);
