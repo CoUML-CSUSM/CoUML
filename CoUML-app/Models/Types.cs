@@ -55,5 +55,23 @@ namespace CoUML_app.Models
 		Realization
 	}
 
+	public class DiagramSet
+	{
+		public string id;
+		public string _id;
+
+		public DiagramSet(string _id, string id)
+		{
+			this._id = _id;
+			this.id = id;
+		}
+
+		public override string ToString()
+		{
+			return $"id: {id}, _id: {_id}";
+		}
+
+	}
+
 
 }

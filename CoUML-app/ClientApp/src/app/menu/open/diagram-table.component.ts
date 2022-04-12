@@ -25,7 +25,7 @@ export class DiagramTableComponent {
 
     ngOnInit() {
         //id: this.config.id
-        this._coUmlHub.listMyDiagrams(this.config.data.id)
+        this._coUmlHub.listMyDiagrams()
             .then((diagramList) => {
                 this._diagramDataSets = JSON.parse (diagramList);
                 console.log(diagramList);

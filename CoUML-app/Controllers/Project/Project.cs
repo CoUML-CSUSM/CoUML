@@ -82,15 +82,15 @@ namespace CoUML_app.Controllers.Project
 
 		}
 
-		public string listMyDiagrams(string id)
+		public string ListMyDiagrams(User user)
 		{
 
 
 			var Tcollection = GetCollection("Teams");
-			var TuIdFilter = Builders<BsonDocument>.Filter.Eq("user", id);
+			var TuIdFilter = Builders<BsonDocument>.Filter.Eq("user", user.id);
 			
 
-			var diagram = Tcollection.Find(TuIdFilter).Project("{_id: 0, user: 0}").FirstOrDefault(); //may return null
+			var diagram = Tcollection.Find(TuIdFilter).Project("{_id: 0, id: 0}").FirstOrDefault(); //may return null
 
 			if(diagram != null){
 			var diagramText = diagram.ToString();
@@ -103,17 +103,14 @@ namespace CoUML_app.Controllers.Project
 			Console.WriteLine(strings.Count);
 			
 			for(int i=0;i<strings.Count;i++){
-			array[i] = strings[i].ToString();
+				array[i] = strings[i].ToString();
 			}
-			;
-
-
-
-			diagramSet[] diagrams = new diagramSet[array.Count()];
+			
+			DiagramSet[] diagrams = new DiagramSet[array.Count()];
 
 
 			for(int i=0;i<strings.Count;i++){
-			diagrams[i] = new diagramSet(array[i], this.getName(array[i]));
+			diagrams[i] = new DiagramSet(array[i], this.getName(array[i]));
 			}
 
 			Console.WriteLine(diagrams[0]);

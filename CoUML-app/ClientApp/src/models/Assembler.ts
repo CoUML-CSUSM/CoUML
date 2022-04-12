@@ -1,5 +1,5 @@
 import { UmlElement } from "./Diagram";
-import { DataType, Diagram, Relationship, RelationshipType, Class, Dimension, Operation, Attribute, AbstractClass, Interface, Enumeration, ICollection, IUser, User, NullUser, DiagramDataSet } from "./DiagramModel";
+import { DataType, Diagram, Relationship, RelationshipType, Class, Dimension, Operation, Attribute, AbstractClass, Interface, Enumeration, ICollection, IUser, User, NullUser, DiagramDataSet, TYPE } from "./DiagramModel";
 import { Enumeral } from "./Subcomponent";
 import { VisibilityType } from "./Types";
 
