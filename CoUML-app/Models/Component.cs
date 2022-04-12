@@ -1,23 +1,21 @@
 using System;
 using System.Collections.Generic;
-using CoUML_app.Models;
+using System.Linq;
 using CoUML_app.Controllers.Generators;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace CoUML_app.Models
 {
 	public abstract class Component : UmlElement{
 		public string name { get;set; }
 
-		public Component(string name)
-		{
-			this.name = name;
-		}
 		override public void GenerateCode(ISourceCodeGenerator codeGenerator)
 		{
 			codeGenerator.Parse(this);
 		}
 
-		protected override void ApplyLocally(ChangeRecord change)
+		override protected void ApplyLocally(ChangeRecord change)
 		{
 			switch(change.action)
 			{
@@ -32,7 +30,8 @@ namespace CoUML_app.Models
 	public class Enumeration : Component{
 		public ICollection<Enumeral> enums { get;set; }= new RelationalCollection<Enumeral>();
 
-		public Enumeration(string name): base(name) { }
+		public Enumeration(): base() { }
+		// public Enumeration(string name): base(name) { }
 		
 		override public void Apply(ChangeRecord change, int depth)
 		{
@@ -56,7 +55,8 @@ namespace CoUML_app.Models
 	
 	public class Interface : Component{
 		public ICollection<Operation> operations { get;set; }= new RelationalCollection<Operation>();
-		public Interface(string name): base(name) { }
+		public Interface(): base() { }
+		// public Interface(string name): base(name) { }
 		
 		override public void Apply(ChangeRecord change, int depth)
 		{
@@ -81,7 +81,8 @@ namespace CoUML_app.Models
 		public ICollection<Operation> operations { get;set; }= new RelationalCollection<Operation>();
 		public ICollection<Attribute>  attribute { get;set; }= new RelationalCollection<Attribute>();
 		
-		public AbstractClass(string name): base(name) { }
+		public AbstractClass(): base() { }
+		// public AbstractClass(string name): base(name) { }
 
 		override public void Apply(ChangeRecord change, int depth)
 		{
@@ -127,7 +128,8 @@ namespace CoUML_app.Models
 		public ICollection<Operation> operations { get;set; }= new RelationalCollection<Operation>();
 		public ICollection<Attribute> attribute { get;set; }= new RelationalCollection<Attribute>();
 
-		public Class(string name): base(name) { }
+		// public Class(string name): base(name) { }
+		public Class(): base() { }
 
 		override public void Apply(ChangeRecord change, int depth)
 		{

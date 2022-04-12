@@ -139,19 +139,19 @@ namespace CoUML_app.Controllers.Project
 			var t = obj.GetValue("$type")?.Value<string>();
 			switch(t)
 			{
-				case "CoUML_app.Models.Diagram":        return To<Diagram>(obj.ToString());
-				case "CoUML_app.Models.Interface":      return To<Interface>(obj.ToString());
-				case "CoUML_app.Models.AbstractClass":  return To<AbstractClass>(obj.ToString());
-				case "CoUML_app.Models.Class":          return To<Class>(obj.ToString());
-				case "CoUML_app.Models.Enumeration":    return To<Enumeration>(obj.ToString());
-				case "CoUML_app.Models.Relationship":   return To<Relationship>(obj.ToString());
-				case "CoUML_app.Models.Operation":      return To<Operation>(obj.ToString());
+				case "CoUML_app.Models.Diagram":        return To<Models.Diagram>(obj.ToString());
+				case "CoUML_app.Models.Interface":      return To<Models.Interface>(obj.ToString());
+				case "CoUML_app.Models.AbstractClass":  return To<Models.AbstractClass>(obj.ToString());
+				case "CoUML_app.Models.Class":          return To<Models.Class>(obj.ToString());
+				case "CoUML_app.Models.Enumeration":    return To<Models.Enumeration>(obj.ToString());
+				case "CoUML_app.Models.Relationship":   return To<Models.Relationship>(obj.ToString());
+				case "CoUML_app.Models.Operation":      return To<Models.Operation>(obj.ToString());
 				case "CoUML_app.Models.Attribute":      return To<Models.Attribute>(obj.ToString());
 				case "CoUML_app.Models.User":           return To<Models.User>(obj.ToString());
 				case "CoUML_app.Models.NullUser":       return To<Models.NullUser>(obj.ToString());
-				case "CoUML_app.Models.Dimension":		return To<Dimension>(obj.ToString());
-				case "CoUML_app.Models.Enumeral":		return To<Enumeral>(obj.ToString());
-				case "CoUML_app.Models.Point": 			return To<Point>(obj.ToString());
+				case "CoUML_app.Models.Dimension":		return To<Models.Dimension>(obj.ToString());
+				case "CoUML_app.Models.Enumeral":		return To<Models.Enumeral>(obj.ToString());
+				case "CoUML_app.Models.Point": 			return To<Models.Point>(obj.ToString());
 				default: return JsonConvert.DeserializeObject(obj.ToString());
 			}
 		}
