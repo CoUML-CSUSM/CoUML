@@ -63,15 +63,6 @@ export class Enumeration extends Component
  */
 export class Interface extends Component
 {
-    change(change: ChangeRecord) {
-        throw new Error("Method not implemented.");
-    }
-    insert(element: any) {
-        this.operations.insert(element);
-    }
-    remove(id: string) {
-        this.operations.remove(id);
-    }
     public operations: ICollection<Operation>;
 
     public constructor(name: string = "InterfaceComponent")
@@ -82,6 +73,15 @@ export class Interface extends Component
 
     get(id: string) {
         return this.operations.get(id);
+    }
+    change(change: ChangeRecord) {
+        throw new Error("Method not implemented.");
+    }
+    insert(element: any) {
+        this.operations.insert(element);
+    }
+    remove(id: string) {
+        this.operations.remove(id);
     }
 }
 
