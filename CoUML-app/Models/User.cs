@@ -7,7 +7,6 @@ namespace CoUML_app.Models
 	public class User: IUser
 	{
 		private string _id;
-		private string _diagramId = null;
 
 		public User(string id)
 		{
@@ -21,22 +20,11 @@ namespace CoUML_app.Models
 			}
 		}
 
-		public string DiagramId{
-			get
-			{ 
-				return this._diagramId;
-			}
-			set
-			{ 
-				this._diagramId = value;
-			}
-		}
 
-override
-public string ToString(){
-	return this._id;
-}
+	public override string ToString(){
+		return this._id;
 	}
+}
 
 	public class NullUser: IUser
 	{

@@ -21,8 +21,6 @@ https://www.toolsqa.com/selenium-webdriver/c-sharp/findelement-and-findelements-
 
 namespace CoUML_app.Test.Tests
 {
-    
-
     public struct Coords
     {
         public Coords(int x, int y)
@@ -177,7 +175,7 @@ namespace CoUML_app.Test.Tests
             OpenClientConnection();
             LoadToolbarItems();
             OpenTest();
-            // make list of attributes
+            // make list of attribute
             List<DiagramComponent> dc = new List<DiagramComponent>();
             dc.Add(new (_toolBarItems[Tool.AbstractClass], "AttributeTest"));
             Random random = new Random();
@@ -200,7 +198,7 @@ namespace CoUML_app.Test.Tests
             OpenClientConnection();
             LoadToolbarItems();
             OpenTest();
-            // make list of attributes
+            // make list of attribute
             List<DiagramComponent> dc = new List<DiagramComponent>();
             dc.Add(new (_toolBarItems[Tool.Interface], "OperationsTest"));
             Random random = new Random();
@@ -406,5 +404,6 @@ namespace CoUML_app.Test.Tests
             );
         }
     }
+
 
 }

@@ -1,16 +1,37 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 namespace CoUML_app.Models
 {
 
 	public enum VisibilityType{//enums cant be strings in c#
-		Private = '-',
-		Public  = '+',
-		Protected  = '#',
-		Package  = '~',
-		LocalScope = ' '
+		Private = 0,
+		Public = 1,
+		Protected = 2,
+		Package = 3,
+		LocalScope = 4
+	}
+	public static class VisibilityTypeHandler
+	{
+		public static VisibilityType From(char symbol)
+		{
+			switch(symbol)
+			{
+				case '-': return VisibilityType.Private;
+				case '+': return VisibilityType.Public;
+				case '#': return VisibilityType.Protected;
+				case '~': return VisibilityType.Package;
+				case ' ': default:
+					return VisibilityType.LocalScope;
+			}
+		}
 	}
 
 	public struct DataType{
 		public string dataType { get; set; }
+		public DataType(string typeName)
+		{
+			dataType = typeName;
+		}
 	}
 
 

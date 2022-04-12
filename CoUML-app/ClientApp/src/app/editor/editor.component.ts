@@ -119,7 +119,6 @@ export class EditorComponent implements AfterViewInit{
 		 * set callback that a cell is locked if it has an ovelay,
 		 * a cell has an overlau if it has an user
 		 */
-		// let baseIsCellLocked = this._graph.isCellLocked;
 		this._graph.isCellLocked = function(cell: mxCell)
 		{
 			// if* the cell has an overlay *then* somone is using it and the cell is locked
@@ -174,9 +173,6 @@ export class EditorComponent implements AfterViewInit{
 		//set defualt parrent id to diagram id
 		this._graph.getDefaultParent().id = projectDiagram.id;
 
-		
-
-		// this._graph.iscellS
 		this._graph.getModel().beginUpdate();
 		try {
 
@@ -228,7 +224,7 @@ export class EditorComponent implements AfterViewInit{
 		
 		if(component instanceof AbstractClass || component instanceof Class)
 		{
-			let attributeIterator: ICollectionIterator<Attribute> = component.attributes.iterator();
+			let attributeIterator: ICollectionIterator<Attribute> = component.attribute.iterator();
 
 			while(attributeIterator.hasNext())
 				this.insertProperty(graphComponent, attributeIterator.getNext()) ;
@@ -334,7 +330,7 @@ export class EditorComponent implements AfterViewInit{
 						else
 							this.insertComponent(change.value);
 						break;
-					case PropertyType.Attributes:
+					case PropertyType.Attribute:
 					case PropertyType.Operations:
 					case PropertyType.Enums:
 						this.insertProperty(affectedCell, change.value);

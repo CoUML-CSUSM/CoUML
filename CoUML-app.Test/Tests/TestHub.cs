@@ -31,7 +31,7 @@ namespace CoUML_app.Test.Tests
             // Models.Attribute a = new Models.Attribute(); // include "Models." as part of the name because there is also a System.Attribute class. 
             // a.visibility = VisibilityType.Private;
             // a.type = new DataType("double");
-            // c.Attributes.Insert(a);
+            // c.Attribute.Insert(a);
 
             // // c impliments i
             // Relationship r = new Relationship();
