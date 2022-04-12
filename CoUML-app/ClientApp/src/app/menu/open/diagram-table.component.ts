@@ -25,7 +25,12 @@ export class DiagramTableComponent {
 
     ngOnInit() {
         //id: this.config.id
-        this._coUmlHub.listMyDiagrams(this.config.data.id).then(diagramList => this._diagramDataSets = diagramList);
+        this._coUmlHub.listMyDiagrams(this.config.data.id)
+            .then((diagramList) => {
+                this._diagramDataSets = JSON.parse (diagramList);
+                console.log(diagramList);
+                console.log(this._diagramDataSets);
+            } );
     }
 
     select(diagramData: DiagramDataSet) {

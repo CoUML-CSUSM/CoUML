@@ -32,10 +32,10 @@ export class ProjectDeveloper{
 		return this._projectDiagram != null;
 	}
 
-	public open( dId: string , uId: IUser)
+	public open( dId: string)
 	{
 		
-		this._coUmlHub.fetch( dId, uId.id ) //get diagram from server
+		this._coUmlHub.fetch( dId) //get diagram from server
 			.then( (d) => {
 				console.log(d);
 				this._projectDiagram = Assembler.assembleDiagram(d);

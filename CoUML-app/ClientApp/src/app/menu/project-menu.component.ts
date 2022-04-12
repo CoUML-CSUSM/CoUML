@@ -58,7 +58,7 @@ import { DiagramTableComponent } from './open/diagram-table.component';
             },
             {
               label: "Fetch Test",
-              command: () => this._coUmlHub._projectDeveloper.open("test",this._coUmlHub._projectDeveloper._editor),
+              command: () => this._coUmlHub._projectDeveloper.open("test"),
             }
           ]
         },
@@ -141,8 +141,9 @@ import { DiagramTableComponent } from './open/diagram-table.component';
     
         // string of the _id is returned to indicate the user's selection
         openDiagramDialog.onClose.subscribe((diagram: DiagramDataSet) => {
-            if (diagram) {
+            if (diagram) {//diagram is the dataset of the chosen diagram
                 console.log(diagram);
+                this._coUmlHub._projectDeveloper.open(diagram._id);
             }
         });
       }

@@ -182,7 +182,7 @@ namespace CoUML_app.Controllers.Hubs
         /// </summary>
         /// <param name="dId">somthing to identify the diagram file by</param>
         /// <returns>the diagram requested</returns>
-        public string Fetch(string dId, string uId)
+        public string Fetch(string dId)
         {
             //attacha as a listener to this diagram
             Groups.AddToGroupAsync(Context.ConnectionId,dId);
@@ -201,14 +201,17 @@ namespace CoUML_app.Controllers.Hubs
             IMongoDatabase db = dbClient.GetDatabase("CoUML");
 
             var collection = db.GetCollection<BsonDocument>("Diagrams");
-            var dIdFilter = Builders<BsonDocument>.Filter.Eq("id", dId);
-            var uIdFilter = Builders<BsonDocument>.Filter.Eq("editor.id", uId);
-            var filter = Builders<BsonDocument>.Filter.And(dIdFilter,uIdFilter);
+            // var dIdFilter = Builders<BsonDocument>.Filter.Eq("id", dId);
+            // var uIdFilter = Builders<BsonDocument>.Filter.Eq("editor.id", uId);//
+            // var filter = Builders<BsonDocument>.Filter.And(dIdFilter,uIdFilter);
+
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", ObjectId.Parse(dId));
             
             var diagram = collection.Find(filter).Project("{_id: 0}").FirstOrDefault(); //may return null
 
             if(diagram == null){
-                Generate(dId,uId);//change later to match email
+                //come bakc later
+                //Generate(dId,uId);//change later to match email
                 diagram = collection.Find(filter).Project("{_id: 0}").FirstOrDefault();
             }
 
@@ -374,7 +377,12 @@ namespace CoUML_app.Controllers.Hubs
         
 
                 diagramSet[] diagrams = new diagramSet[array.Count()];
-                diagrams[0] = new diagramSet(array[0], this.getName(array[0]));
+
+
+                for(int i=0;i<strings.Count;i++){
+                diagrams[i] = new diagramSet(array[i], this.getName(array[i]));
+                }
+
                 Console.WriteLine(diagrams[0]);
                 return JsonConvert.SerializeObject(diagrams);
             }

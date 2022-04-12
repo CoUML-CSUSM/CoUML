@@ -22,7 +22,7 @@ export class HomeComponent {
     this.showNewDiagramDialog = event;
   }
 
-  public create(dId:string){
+  public create(dId:string){//create need to change stuff to make fetch work
 
 		console.log("test editor");
         console.log(this._coUmlHub._projectDeveloper._editor.id);
@@ -33,7 +33,7 @@ export class HomeComponent {
     this._coUmlHub._projectManager.generate(dId,this._coUmlHub._projectDeveloper._editor.id);
     console.log("generated");
     console.log("opeining");
-    this._coUmlHub._projectDeveloper.open(dId,this._coUmlHub._projectDeveloper._editor);
+    this._coUmlHub._projectDeveloper.open(dId);
      console.log("opened");
      this.showNewDiagramDialog = false;
   }
