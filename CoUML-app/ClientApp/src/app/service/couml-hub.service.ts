@@ -128,7 +128,7 @@ export class CoUmlHubService{
 	}
 
 
-	public generate(dId:string): Promise<boolean>
+	public generate(dId:string): Promise<string>
 	{
 			console.log("hub");
 			console.log(dId);

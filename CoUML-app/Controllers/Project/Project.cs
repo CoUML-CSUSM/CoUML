@@ -47,7 +47,7 @@ namespace CoUML_app.Controllers.Project
 
 
 		//creates a diagram string that gets sent to the database
-		public Diagram Generate(string dId, User projectManager){
+		public string Generate(string dId, User projectManager){
 
 			var collection = GetCollection("Diagrams");
 			var projectDiagram = dId =="test" ? Template.DiagramDefualt(dId): new Diagram(dId);
@@ -59,7 +59,20 @@ namespace CoUML_app.Controllers.Project
 			);
 
 			collection.InsertOne(doc);
-			return projectDiagram;
+
+			this.AddToTeam(doc["_id"].ToString(), projectManager);
+
+			return doc["_id"].ToString();
+		}
+
+		public void AddToTeam(string dId, User user){
+			var collection = GetCollection("Teams");
+			var filter = Builders<BsonDocument>.Filter.Eq("user", user.id);	
+			var team = collection.Find(filter).FirstOrDefault();
+
+			var update = Builders<BsonDocument>.Update.Push<String>("diagrams", dId);
+
+            	collection.UpdateOne(filter, update);
 		}
 
 		public void register(string uId)

@@ -148,8 +148,8 @@ namespace CoUML_app.Controllers.Hubs
 			return DTO.FromDiagram(fetchedDiagram);
 		}
 
-		public bool Generate(string dId){
-			return ProjectController.Generate(dId,  (User)Context.Items[CoUmlContext.USER]) is not null;
+		public string Generate(string dId){
+			return ProjectController.Generate(dId,  (User)Context.Items[CoUmlContext.USER]);
 		}
 		
 		public string ListMyDiagrams(){

@@ -21,7 +21,7 @@ export class ProjectManager{
 		this._coUmlHub.generate(dId).then((project) => 
 			{
 				if(project)
-					this._coUmlHub._projectDeveloper.open(dId);
+					this._coUmlHub._projectDeveloper.open(project);
 				else
 					console.log(`Project "${dId}" not created.`)
 			});
