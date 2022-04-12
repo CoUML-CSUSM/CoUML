@@ -97,13 +97,16 @@ export class ProjectDeveloper{
 
 	}
 
-	stageChange(change: ChangeRecord) {
+	stageChange(change: ChangeRecord, updateSelf: boolean = false) {
 		// apply change locally
 		this.applyChange(change);
 		this._changes.push(change);
 
 		//apply globally
 		this.commitStagedChanges();
+
+		if(updateSelf)
+			this._diagramEditor.processChange(change);
 	}
 
 	private async commitStagedChanges()

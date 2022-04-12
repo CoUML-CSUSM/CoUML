@@ -334,7 +334,7 @@ import { EditorComponent } from "./editor.component";
 								PropertyType.Label, 
 								ActionType.Label,
 								affectedEdge.edge.value
-							));
+							), true);
 						// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 					}
 
@@ -548,7 +548,7 @@ import { EditorComponent } from "./editor.component";
 						PropertyType.Elements,
 						ActionType.Insert,
 						relation
-					));
+					), true);
 				// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 				}
