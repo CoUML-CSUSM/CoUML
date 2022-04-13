@@ -86,7 +86,8 @@ import { DiagramTableComponent } from './menu/open/diagram-table.component';
         providers: [
           {
             id: GoogleLoginProvider.PROVIDER_ID,
-            provider: new GoogleLoginProvider('174000524733-gq2vagupknm77i794hll3kbs3iupm6fu.apps.googleusercontent.com') // your client id
+            provider: new GoogleLoginProvider('687361943795-f6ssou25g5d4jb9rj4j1r9ouugjidkjj.apps.googleusercontent.com') // sirena's client id
+            // provider: new GoogleLoginProvider('174000524733-gq2vagupknm77i794hll3kbs3iupm6fu.apps.googleusercontent.com') // your client id
           },
         ],
       } as SocialAuthServiceConfig,
