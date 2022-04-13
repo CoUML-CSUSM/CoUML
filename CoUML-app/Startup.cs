@@ -31,11 +31,11 @@ namespace CoUML_app
                 options.AddPolicy(
                     "CorsPolicy", builder => builder
                     // .WithOrigins("http://localhost:4200")
-                    .AllowAnyOrigin()
+                    // .AllowAnyOrigin()
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .SetIsOriginAllowed(origin => true)
-                    // .AllowCredentials()
+                    .AllowCredentials()
                 );
             });
             services.AddControllers();
