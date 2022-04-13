@@ -53,15 +53,15 @@ import { DiagramTableComponent } from './open/diagram-table.component';
               id: "menuFileOpen",
               command: ()=> this.showOpenDiagram()
             },
-            {
-              label: "Trigger Breakpoint",
-              id: "menuFileTriggerBreakpoint",
-              command: ()=> this._coUmlHub.triggerBreakPoint(),
-            },
-            {
-              label: "Fetch Test",
-              command: () => this._coUmlHub._projectDeveloper.open("test"),
-            },
+            // {
+            //   label: "Trigger Breakpoint",
+            //   id: "menuFileTriggerBreakpoint",
+            //   command: ()=> this._coUmlHub.triggerBreakPoint(),
+            // },
+            // {
+            //   label: "Fetch Test",
+            //   command: () => this._coUmlHub._projectDeveloper.open("test"),
+            // },
 
             {
               separator:true
@@ -70,7 +70,7 @@ import { DiagramTableComponent } from './open/diagram-table.component';
               label: "Export",
               items: [
                 {
-                  label: "Generate Source Code...('test')",
+                  label: "Generate Source Code...(\"test\")",
                   command: () => this._coUmlHub.generateSourceCode("test")
                 }
               ]

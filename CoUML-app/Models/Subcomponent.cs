@@ -211,7 +211,7 @@ namespace CoUML_app.Models
 		{
 			var tokens = CoUmlRegex.Match(description, CoUmlRegex.OPERATION_PATTERN);
 
-			visibility = (tokens[CoUmlRegex.VISIBILITY].Value.Length == 1? (VisibilityType)tokens[CoUmlRegex.VISIBILITY]?.Value[0] : VisibilityType.LocalScope);
+			visibility = VisibilityTypeHandler.From(tokens[CoUmlRegex.VISIBILITY].Value.Length>0 ? tokens[CoUmlRegex.VISIBILITY].Value.ToCharArray()[0] : ' ') ;
 			name = tokens[CoUmlRegex.NAME].Value;
 			Parameterize(tokens[CoUmlRegex.PARAMETERS].Value);
 			type = new DataType(tokens[CoUmlRegex.TYPE].Value);
