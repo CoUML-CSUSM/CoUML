@@ -16,6 +16,9 @@ namespace CoUML_app.Models
 		public IUser editor { get; set; } = new NullUser();
 		public IDimension dimension { get; set; } = new Dimension(0,0,200,40);
 
+		[JsonIgnore]
+		private UmlElement Parent{get; set;}
+
 		public virtual void GenerateCode(ISourceCodeGenerator codeGenerator)
 		{
 			codeGenerator.Parse(this);
@@ -53,6 +56,12 @@ namespace CoUML_app.Models
 		{
 			dimension.Shift(point);
 		}
+
+		public virtual void Validate(ref UmlElement parent)
+		{
+			Parent = parent;
+		}
+		
 	}
 
 	public class Diagram : UmlElement
@@ -100,5 +109,16 @@ namespace CoUML_app.Models
 				break;							
 			}
 		}
+		
+		override
+		public void Validate( ref UmlElement defualtParrent)
+		{
+			base.Validate(ref defualtParrent);
+			var elementIterator = elements.Iterator();
+
+			while(elementIterator.HasNext()){}
+				// elementIterator.GetNext().Validate(refthis);
+		}
+
 	}
 }
