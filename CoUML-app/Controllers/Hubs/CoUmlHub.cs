@@ -99,7 +99,7 @@ namespace CoUML_app.Controllers.Hubs
 		public void LogIn(string userId)
 		{
 			Context.Items[CoUmlContext.USER] = new User(userId);
-			ProjectController.register(userId);
+			ProjectController.Register((User)Context.Items[CoUmlContext.USER]);
 		}
 
 		public void LogOut()

@@ -68,17 +68,20 @@ namespace CoUML_app.Controllers.Project
 		public void AddToTeam(string dId, User user){
 			var collection = GetCollection("Teams");
 			var filter = Builders<BsonDocument>.Filter.Eq("user", user.id);	
+
 			var team = collection.Find(filter).FirstOrDefault();
+			if(team is null)
+				CreateTeam(user);
 
 			var update = Builders<BsonDocument>.Update.Push<String>("diagrams", dId);
 
             	collection.UpdateOne(filter, update);
 		}
 
-		public void register(string uId)
+		public void Register(User newUser)
 		{
 			var collection = GetCollection("Users");
-			var filter = Builders<BsonDocument>.Filter.Eq("id", uId);
+			var filter = Builders<BsonDocument>.Filter.Eq("id", newUser.id);
 			
 			var user = collection.Find(filter).Project("{_id: 0}").FirstOrDefault(); //may return null
 
@@ -86,19 +89,19 @@ namespace CoUML_app.Controllers.Project
 				
 				var doc = new BsonDocument
 				{
-					{"id", uId},
+					{"id", newUser.id},
 				};
 
 				collection.InsertOne(doc);
 				Console.WriteLine(doc.ToString());
 
 				//create team database
-				CreateTeam(uId);
+				CreateTeam(newUser);
 			}
 
 		}
 
-		public void CreateTeam(string uId){
+		public void CreateTeam(User newUser){
 			var collection = GetCollection("Teams");
 
 			string[] a = new String[0];
@@ -106,7 +109,7 @@ namespace CoUML_app.Controllers.Project
 			var doc = new BsonDocument
 			{
 				{"diagrams", new BsonArray(a)},
-				{"user", uId}
+				{"user", newUser.id}
 				
 			};
 			collection.InsertOne(doc);
