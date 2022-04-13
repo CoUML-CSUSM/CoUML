@@ -190,5 +190,10 @@ namespace CoUML_app.Controllers.Hubs
 			if(testDiagram != null)
 				testDiagram.GenerateCode(codeGenerator);
 		}
+
+		public void Invite(string uId){
+			User add = new User(uId);
+			ProjectController.AddToTeam((string)(Context.Items[CoUmlContext.DIAGRAM]),add);	
+		}
 	}
 }

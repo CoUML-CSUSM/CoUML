@@ -26,4 +26,8 @@ export class ProjectManager{
 					console.log(`Project "${dId}" not created.`)
 			});
 	}
+
+	public invite(uId:string){
+		this._coUmlHub.invite(uId);
+	}
 }

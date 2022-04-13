@@ -91,8 +91,25 @@ namespace CoUML_app.Controllers.Project
 
 				collection.InsertOne(doc);
 				Console.WriteLine(doc.ToString());
+
+				//create team database
+				CreateTeam(uId);
 			}
 
+		}
+
+		public void CreateTeam(string uId){
+			var collection = GetCollection("Teams");
+
+			string[] a = new String[0];
+
+			var doc = new BsonDocument
+			{
+				{"diagrams", new BsonArray(a)},
+				{"id", uId}
+				
+			};
+			collection.InsertOne(doc);
 		}
 
 		public string ListMyDiagrams(User user)

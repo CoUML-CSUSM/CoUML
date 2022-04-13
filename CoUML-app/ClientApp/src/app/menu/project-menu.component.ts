@@ -28,6 +28,8 @@ import { DiagramTableComponent } from './open/diagram-table.component';
     _menuItems: MenuItem[];
     @Output() open: EventEmitter<boolean> = new EventEmitter();
 
+    @Output() invite: EventEmitter<boolean> = new EventEmitter();
+
 
     constructor(
       private _projectManager: ProjectManager,
@@ -94,6 +96,11 @@ import { DiagramTableComponent } from './open/diagram-table.component';
               label: "Sign Out",
               id: "menuUserSignOut",
               command: () => this.signOut(),
+            },
+            {
+              label: "Invite User...",
+              id: "menuUserSignInvite",
+              command: () => this.showInviteDialog(),
             }
           ]
         }
@@ -108,7 +115,10 @@ import { DiagramTableComponent } from './open/diagram-table.component';
     }
     
     showNewDiagramDialog() {
-      this.open.emit(true);
+      if(this._coUmlHub._projectDeveloper._editor?.id)
+      {
+        this.open.emit(true);
+      }
     }
 
     //login stuff
@@ -160,6 +170,13 @@ import { DiagramTableComponent } from './open/diagram-table.component';
                 this._coUmlHub._projectDeveloper.open(diagram._id);
             }
         });
+      }
+    }
+
+    showInviteDialog(){
+      if(this._coUmlHub._projectDeveloper._projectDiagram?.id)
+      {
+        this.invite.emit(true);
       }
     }
   }

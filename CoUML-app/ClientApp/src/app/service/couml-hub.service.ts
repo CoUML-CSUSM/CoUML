@@ -139,4 +139,8 @@ export class CoUmlHubService{
 		this._coUmlHubConnection.invoke("LogIn",uId);
 	}
 
+	public invite(uId: string){
+		this._coUmlHubConnection.invoke("Invite", uId);
+	}
+
 }

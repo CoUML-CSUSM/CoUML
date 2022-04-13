@@ -10,7 +10,11 @@ export class HomeComponent {
 
 	ip: string;
 	showNewDiagramDialog: boolean = false;
+
+	showInviteDialog: boolean = false;
+
 	value1: string;
+	value2: string;
 
 	constructor(
 		private _coUmlHub: CoUmlHubService,
@@ -20,6 +24,11 @@ export class HomeComponent {
 	onOpen(event)
 	{
 		this.showNewDiagramDialog = event;
+	}
+
+	onInvite(event)
+	{
+		this.showInviteDialog = event;
 	}
 
 	public create(dId:string){
@@ -40,6 +49,11 @@ export class HomeComponent {
 	
 	public test(){
 		console.log("test");
+	}
+
+	public invite(uId:string){
+		this._coUmlHub._projectManager.invite(uId);
+		this.showInviteDialog = false;
 	}
 }
 
