@@ -165,15 +165,15 @@ import { EditorComponent } from "./editor.component";
 				console.log(parentCell);
 				//does this acctualy go here?
 				if((component instanceof Attribute 
-					&& (parentCell.style == Class.name 
-						|| parentCell.style == AbstractClass.name 
+					&& (parentCell.style == "CoUML_app.Models.Class"
+						|| parentCell.style == "CoUML_app.Models.AbstractClass"
 						)) ||
 					(component instanceof Operation
-					&&(parentCell.style == Class.name 
-						|| parentCell.style == AbstractClass.name 
-						|| parentCell.style == Interface.name 
+					&&(parentCell.style == "CoUML_app.Models.Class"
+						|| parentCell.style == "CoUML_app.Models.AbstractClass"
+						|| parentCell.style == "CoUML_app.Models.Interface"
 						)) ||
-					( component instanceof Enumeral && parentCell.style == Enumeration.name)
+					( component instanceof Enumeral && parentCell.style == "CoUML_app.Models.Enumeration")
 					)
 				{
 					console.log("this goes here");

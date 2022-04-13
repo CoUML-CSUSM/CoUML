@@ -232,12 +232,13 @@ import { VisibilityType } from "./Types";
 		try{
 			let typeString = element["$type"] || element[TYPE];
 			console.log(typeString);
-			let regex = /(\w*?),*?(?=,)/g;
-			let type = regex.exec(typeString)[0];
-			// console.log(`returning "${type}"-----`);
+			let regex = /(?:\w+\.\w+.)(\w+)(?:\s*.*)/g;
+			let type = regex.exec(typeString)[1];
+			console.log(`returning "${type}"-----`);
+
 			return type;
 		}catch(any){
-			// console.log("no $type");
+			console.log("no $type");
 			return null;
 		}
 	}
