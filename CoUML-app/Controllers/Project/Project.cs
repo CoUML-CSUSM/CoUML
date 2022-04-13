@@ -106,7 +106,7 @@ namespace CoUML_app.Controllers.Project
 			var doc = new BsonDocument
 			{
 				{"diagrams", new BsonArray(a)},
-				{"id", uId}
+				{"user", uId}
 				
 			};
 			collection.InsertOne(doc);
