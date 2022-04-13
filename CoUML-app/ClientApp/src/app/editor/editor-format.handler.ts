@@ -62,23 +62,23 @@ export function addCellStyles(graph: mxGraph)
 
 	style = mxUtils.clone(style);
 	style[mxConstants.STYLE_FONTSTYLE] = mxConstants.FONT_ITALIC;
-	graph.getStylesheet().putCellStyle(AbstractClass.name, style);
+	graph.getStylesheet().putCellStyle("CoUML_app.Models.AbstractClass", style);
 
 	style = mxUtils.clone(style);
 	style[mxConstants.STYLE_FONTSTYLE] = mxConstants.DEFAULT_FONTSTYLE;
-	graph.getStylesheet().putCellStyle(Class.name, style);
+	graph.getStylesheet().putCellStyle("CoUML_app.Models.Class", style);
 
 	//styles with stereotypes
 	style = mxUtils.clone(style);
 	style[mxConstants.STYLE_FONTSTYLE] = mxConstants.DEFAULT_FONTSTYLE;
 	style[mxConstants.STYLE_STARTSIZE] = HEIGHT * 7/6;
 	style['stereotype'] = 'interface';
-	graph.getStylesheet().putCellStyle(Interface.name, style);
+	graph.getStylesheet().putCellStyle("CoUML_app.Models.Interface", style);
 
 	style = mxUtils.clone(style);
 	style[mxConstants.STYLE_FONTSTYLE] = mxConstants.DEFAULT_FONTSTYLE;
 	style['stereotype'] = 'enumeration';
-	graph.getStylesheet().putCellStyle(Enumeration.name, style);
+	graph.getStylesheet().putCellStyle("CoUML_app.Models.Enumeration", style);
 
 }
 
