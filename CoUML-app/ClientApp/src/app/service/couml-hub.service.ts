@@ -20,11 +20,7 @@ export class CoUmlHubService{
 
 	constructor(){
 		this._coUmlHubConnection = new SignalR.HubConnectionBuilder()
-				.withUrl(this._url, 
-					{
-						skipNegotiation: true,
-						transport: SignalR.HttpTransportType.WebSockets
-					    })
+				.withUrl(this._url)
 				.build();
 		this.startConnection();
 	}
