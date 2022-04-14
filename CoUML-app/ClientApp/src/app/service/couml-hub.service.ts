@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+import  * as SignalR from '@microsoft/signalr';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 import { ProjectManager } from '../controller/project-manager.controller';
 import { environment } from '../../environments/environment';
@@ -11,7 +11,7 @@ import { waitForAsync } from '@angular/core/testing';
 @Injectable()
 export class CoUmlHubService{
 
-	private _coUmlHubConnection: HubConnection;
+	private _coUmlHubConnection: SignalR.HubConnection;
 	
 	private _url = environment.apiUrl + "/couml";
 
@@ -19,8 +19,12 @@ export class CoUmlHubService{
 	public _projectManager: ProjectManager = null;
 
 	constructor(){
-		this._coUmlHubConnection = new HubConnectionBuilder()
-				.withUrl(this._url)
+		this._coUmlHubConnection = new SignalR.HubConnectionBuilder()
+				.withUrl(this._url, 
+					{
+						skipNegotiation: true,
+						transport: SignalR.HttpTransportType.WebSockets
+					    })
 				.build();
 		this.startConnection();
 	}
