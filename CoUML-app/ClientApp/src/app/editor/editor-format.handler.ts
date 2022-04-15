@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { AbstractClass, ActionType, ChangeRecord, Class, Dimension, Enumeration, Interface, PropertyType, RelationshipType } from "src/models/DiagramModel";
-import { EditorColors } from "./editor-resources";
+import { EditorColors } from "./editor.resources";
+
 const DASH_PATTERN: string  = '12 4';
 const MARGIN: number = 5;
 const HEIGHT:number = 30;

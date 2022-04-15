@@ -16,7 +16,7 @@ const BACKSPACE = 8;
   selector: 'app-editor',
   templateUrl: './editor.component.html',
   providers: [ProjectDeveloper],
-  styleUrls: ['./editor-style.css']
+  styleUrls: ['./editor.styles.css']
 })
 export class EditorComponent implements AfterViewInit{
 
@@ -55,8 +55,7 @@ export class EditorComponent implements AfterViewInit{
 	canvasHeight: number;
 	canvasWidth: number;
 
-	toolbarWidth: number = 212;
-	accentColor: string = '#EFEFEF';
+	toolbarWidth: number = 215;
 	
 	@HostListener('window:resize', ['$event'])
 	onResize(event?) {
