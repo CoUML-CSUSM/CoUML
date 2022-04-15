@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CoUmlHubService } from "../service/couml-hub.service";
+import { MessageService } from 'primeng/api';
 import { Diagram, Assembler, ChangeRecord, ActionType, PropertyType, Component, Class, AbstractClass, Interface, Enumeration, UmlElement, IUser, ICollection } from 'src/models/DiagramModel';
 import { EditorComponent } from '../editor/editor.component';
 
@@ -14,7 +15,10 @@ export class ProjectDeveloper{
 
 	_changes: ChangeRecord[] = [];
 
-	constructor(private _coUmlHub: CoUmlHubService)	{
+	constructor(
+		private _coUmlHub: CoUmlHubService,
+		private _toastMessageService: MessageService
+		)	{
 		this._coUmlHub.subscribe(this);
 	}
 
@@ -24,6 +28,11 @@ export class ProjectDeveloper{
 
 	setEditor(user: IUser) {
 		this._editor = user;
+		this._toastMessageService.add({
+			severity: 'success',
+			summary: 'Logged in',
+			detail: this._editor.id
+		});
 		console.log("editor set to");
 		console.log(this._editor);
 	}

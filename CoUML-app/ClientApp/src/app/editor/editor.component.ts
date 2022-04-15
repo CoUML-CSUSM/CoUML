@@ -15,7 +15,8 @@ const BACKSPACE = 8;
 @AngularComponent({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
-  providers: [ProjectDeveloper]
+  providers: [ProjectDeveloper],
+  styleUrls: ['./editor-style.css']
 })
 export class EditorComponent implements AfterViewInit{
 
@@ -52,7 +53,7 @@ export class EditorComponent implements AfterViewInit{
 	/** frame controls */
 
 	canvasHeight: number;
-    canvasWidth: number;
+	canvasWidth: number;
 
 	toolbarWidth: number = 212;
 	accentColor: string = '#EFEFEF';

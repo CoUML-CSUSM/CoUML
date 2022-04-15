@@ -27,7 +27,9 @@ import {MessagesModule} from 'primeng/messages';
 import {MessageModule} from 'primeng/message';
 import {DynamicDialogModule} from 'primeng/dynamicdialog';
 import {TableModule} from 'primeng/table';
-import {ToastModule} from 'primeng/toast'
+
+import {ToastModule} from 'primeng/toast';
+import {MessageService} from 'primeng/api';
 
 // social login
 import { SocialLoginModule, SocialAuthServiceConfig } from 'angularx-social-login';
@@ -92,7 +94,7 @@ import { DiagramTableComponent } from './menu/open/diagram-table.component';
         ],
       } as SocialAuthServiceConfig,
     },
-
+    MessageService,
 
   ],
   bootstrap: [AppComponent],

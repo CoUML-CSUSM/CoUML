@@ -15,4 +15,9 @@
             </td>
         </tr>
     </ng-template>
+    <ng-template pTemplate="footer">
+        <ng-container [*ngIf]="setsEmpty">
+            No diagrams found.
+        </ng-container>
+      </ng-template>
 </p-table>

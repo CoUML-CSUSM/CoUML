@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import  * as SignalR from '@microsoft/signalr';
+import {MessageService} from 'primeng/api';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 import { ProjectManager } from '../controller/project-manager.controller';
 import { environment } from '../../environments/environment';
@@ -18,7 +19,7 @@ export class CoUmlHubService{
 	public _projectDeveloper: ProjectDeveloper = null;
 	public _projectManager: ProjectManager = null;
 
-	constructor(){
+	constructor(private _toastMessageService: MessageService){
 		this._coUmlHubConnection = new SignalR.HubConnectionBuilder()
 				.withUrl(this._url)
 				.build();
@@ -48,8 +49,23 @@ export class CoUmlHubService{
 
 		this._coUmlHubConnection
 				.start()
-				.then(()=> console.log(CoUmlHubService.name,"startConnection", `Connections started with URL: ${this._url}`))
-				.catch((err) => console.log(CoUmlHubService.name,"startConnection",'Error while starting connection: ' + err));
+				.then(()=>{ 
+					console.log(CoUmlHubService.name,"startConnection", `Connections started with URL: ${this._url}`);
+					this._toastMessageService.add({
+						severity: 'success',
+						summary: 'Wellcome to CoUML!'
+					});
+				})
+				.catch((err) => 
+				{
+					console.log(CoUmlHubService.name,"startConnection",'Error while starting connection: ' + err);
+					console.log(err);
+					this._toastMessageService.add({
+						severity: 'error',
+						summary: 'Unable to secure connection to CoUML',
+						detail: err
+					});
+				});
 
 		// listen for *test*
 		this._coUmlHubConnection.on("issueUser", (userId: string)=>{

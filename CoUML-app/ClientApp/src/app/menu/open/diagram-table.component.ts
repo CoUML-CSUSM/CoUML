@@ -9,12 +9,11 @@ import { DiagramDataSet } from 'src/models/DiagramModel';
 })
 export class DiagramTableComponent {
 
-    _diagramDataSets: DiagramDataSet[] = [
-        {
-            id: "something...",
-            _id: "Went wrong in promise?"
-        }
-    ];
+    _diagramDataSets: DiagramDataSet[] = [];
+    get setsEmpty()
+    {
+        return this._diagramDataSets == []
+    }
 
 
     constructor(
@@ -27,9 +26,7 @@ export class DiagramTableComponent {
         //id: this.config.id
         this._coUmlHub.listMyDiagrams()
             .then((diagramList) => {
-                this._diagramDataSets = JSON.parse (diagramList);
-                console.log(diagramList);
-                console.log(this._diagramDataSets);
+                this._diagramDataSets = diagramList? JSON.parse (diagramList) : [];
             } );
     }
 

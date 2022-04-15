@@ -126,33 +126,31 @@ namespace CoUML_app.Controllers.Project
 			var diagram = Tcollection.Find(TuIdFilter).Project("{_id: 0, id: 0}").FirstOrDefault(); //may return null
 
 			if(diagram != null){
-			var diagramText = diagram.ToString();
-			Console.WriteLine(diagramText);//outputs the diagram text
-			Console.WriteLine(diagram);//outputs the diagram text
+				var diagramText = diagram.ToString();
+				Console.WriteLine(diagramText);//outputs the diagram text
+				Console.WriteLine(diagram);//outputs the diagram text
 
-			//var strings = diagram["diagrams"].AsBsonArray.Select(p -> p.AsString).toArray();
-			var strings = diagram["diagrams"].AsBsonArray;
-			string[] array = new string[strings.Count];
-			Console.WriteLine(strings.Count);
-			
-			for(int i=0;i<strings.Count;i++){
-				array[i] = strings[i].ToString();
-			}
-			
-			DiagramSet[] diagrams = new DiagramSet[array.Count()];
+				var strings = diagram["diagrams"].AsBsonArray;
+				string[] array = new string[strings.Count];
+				Console.WriteLine(strings.Count);
+				
+				for(int i=0;i<strings.Count;i++){
+					array[i] = strings[i].ToString();
+				}
+				
+				DiagramSet[] diagrams = new DiagramSet[array.Count()];
 
 
-			for(int i=0;i<strings.Count;i++){
-			diagrams[i] = new DiagramSet(array[i], this.getName(array[i]));
-			}
+				for(int i=0;i<strings.Count;i++){
+					diagrams[i] = new DiagramSet(array[i], this.getName(array[i]));
+				}
 
-			Console.WriteLine(diagrams[0]);
-			return JsonConvert.SerializeObject(diagrams);
+				return JsonConvert.SerializeObject(diagrams);
 			}
 			else{
-			Console.WriteLine("cant find doc");
-			return null;
-					}
+				Console.WriteLine("cant find doc");
+				return null;
+			}
 		}
 
 
