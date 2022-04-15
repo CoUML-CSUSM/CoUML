@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using CoUML_app.Controllers.Hubs;
+using System.Net;
 
 namespace CoUML_app
 {
@@ -58,6 +59,11 @@ namespace CoUML_app
 					.AllowAnyHeader();
 				});
 			});
+			
+			services.Configure<ForwardedHeadersOptions>(options =>
+			{
+				options.KnownProxies.Add(IPAddress.Parse("10.0.0.100"));
+			});
 
 			services.AddControllers();
 			services.AddSignalR();
@@ -82,6 +88,10 @@ namespace CoUML_app
 			app.UseHttpsRedirection();
 			app.UseRouting();
 
+			app.UseForwardedHeaders(new ForwardedHeadersOptions
+			{
+			ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+			});
 
 			app.UseAuthorization();
 			app.UseStaticFiles();
