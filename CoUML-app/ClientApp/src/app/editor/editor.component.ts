@@ -52,10 +52,9 @@ export class EditorComponent implements AfterViewInit{
 	/** frame controls */
 
 	canvasHeight: number;
-    canvasWidth: number;
+	canvasWidth: number;
 
-	toolbarWidth: number = 212;
-	accentColor: string = '#EFEFEF';
+	toolbarWidth: number = 215;
 	
 	@HostListener('window:resize', ['$event'])
 	onResize(event?) {

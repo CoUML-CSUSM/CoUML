@@ -1,11 +1,10 @@
 import { Injectable } from "@angular/core";
 import { AbstractClass, ActionType, ChangeRecord, Class, Dimension, Enumeration, Interface, PropertyType, RelationshipType } from "src/models/DiagramModel";
+import { EditorColors } from "./editor.resources";
 
 const DASH_PATTERN: string  = '12 4';
 const MARGIN: number = 5;
 const HEIGHT:number = 30;
-const WHITE: string = '#ffffff';
-const BLACK: string = '#000000';
 
 
 
@@ -21,7 +20,7 @@ export function addCellStyles(graph: mxGraph)
 		base_mxSwimlanePaint.apply(this, arguments);
 		if (this.state != null && this.state.cell.style != null && this.state.style['stereotype'])
 		{
-			c.setStrokeColor(BLACK);
+			c.setStrokeColor(EditorColors.BLACK);
 			c.text(w/2, MARGIN/2, w, h, `<<${this.state.style['stereotype']}>>`, 'center', 'top', '','', '', '', 0, '');
 		}
 		
@@ -34,7 +33,7 @@ export function addCellStyles(graph: mxGraph)
 				style[mxConstants.STYLE_FILLCOLOR] = 'none';
 				style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RECTANGLE;
 				style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_LEFT;
-				style[mxConstants.STYLE_FONTCOLOR] = BLACK;
+				style[mxConstants.STYLE_FONTCOLOR] = EditorColors.BLACK;
 
 				
 	style = mxUtils.clone(style);
@@ -45,7 +44,7 @@ export function addCellStyles(graph: mxGraph)
 	style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_SWIMLANE;
 	style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;
 	style[mxConstants.STYLE_STARTSIZE] = HEIGHT;
-	style[mxConstants.STYLE_FILLCOLOR] = WHITE;
+	style[mxConstants.STYLE_FILLCOLOR] = EditorColors.WHITE;
 	style['childLayout'] = "stackLayout";
 	style['horizontalStack'] = 0;
 	style['resizeParent'] = 1;
@@ -58,7 +57,7 @@ export function addCellStyles(graph: mxGraph)
 	style['marginTop'] = MARGIN;
 	style['marginBottom'] = MARGIN;
 	style['selectable'] = 1;
-	style[mxConstants.STYLE_STROKECOLOR] = BLACK;
+	style[mxConstants.STYLE_STROKECOLOR] = EditorColors.BLACK;
 
 	style = mxUtils.clone(style);
 	style[mxConstants.STYLE_FONTSTYLE] = mxConstants.FONT_ITALIC;
@@ -179,7 +178,7 @@ export function addEdgeStyles(graph: mxGraph)
 			console.log(mulPT);
 			console.log(this.state.cell.umlElement);
 			console.log(this.state.cell.umlElement.attribute?.multiplicity?.toUmlNotation());
-			c.setFontBackgroundColor(WHITE);
+			c.setFontBackgroundColor(EditorColors.WHITE);
 			c.text(mulPT.x, mulPT.y, 0, 0, 
 				this.state.cell.umlElement.attribute?.multiplicity?.toUmlNotation(),
 				'top', 'left', '', '', '', '', 0, ''
@@ -193,9 +192,9 @@ export function addEdgeStyles(graph: mxGraph)
 	let  edgeStyleDefualt = graph.getStylesheet().getDefaultEdgeStyle();
 	edgeStyleDefualt[mxConstants.STYLE_STARTSIZE] = 12;
 	edgeStyleDefualt[mxConstants.STYLE_ENDSIZE] = 12;
-	edgeStyleDefualt[mxConstants.STYLE_STROKECOLOR] = BLACK;
-	edgeStyleDefualt[mxConstants.STYLE_LABEL_BACKGROUNDCOLOR] = WHITE;
-	edgeStyleDefualt[mxConstants.STYLE_FONTCOLOR] = BLACK;
+	edgeStyleDefualt[mxConstants.STYLE_STROKECOLOR] = EditorColors.BLACK;
+	edgeStyleDefualt[mxConstants.STYLE_LABEL_BACKGROUNDCOLOR] = EditorColors.WHITE;
+	edgeStyleDefualt[mxConstants.STYLE_FONTCOLOR] = EditorColors.BLACK;
 
 	// Realization  - - -|>
 	let realizationStyle = mxUtils.clone(edgeStyleDefualt);
