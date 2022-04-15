@@ -48,6 +48,7 @@ export namespace EditorColors{
 
 
 export namespace Keys{
+	// https://www.kodyaz.com/content/HowToGetKeyCodesList.aspx
 	export const _0 = 48 ;
 	export const _1 = 49 ;
 	export const _2 = 50 ;
