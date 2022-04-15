@@ -2,5 +2,4 @@
 export const environment = {
   production: true,
   apiUrl: "https://ec2-54-241-128-89.us-west-1.compute.amazonaws.com"
-//   apiUrl: "https://54.241.128.89"
 };
