@@ -1,5 +1,6 @@
 
 export namespace EditorColors{
+	// https://louisem.com/29880/color-thesaurus-infographic
 	export const CRIMSONRED = '#BE0039';
 	export const FIRERED = '#FF4500';
 	export const CANNARYYELLOW = '#FFA800';
