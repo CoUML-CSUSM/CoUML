@@ -9,11 +9,14 @@
 </p-dialog> -->
 
 
-<p-menubar [model]="_menuItems"
->
-<ng-template pTemplate="start">
-	<span class="text-xl pr-2 pl-2" id="CoUML_app">CoUML</span>
-</ng-template>
+<p-menubar [model]="_menuItems">
+	<ng-template pTemplate="start">
+		<span class="text-xl pr-2 pl-2" id="CoUML_app">CoUML</span>
+	</ng-template>
+	
+	<ng-template pTemplate="end">
+		<input type="text" pInputText placeholder="Search">
+	</ng-template>
 
 </p-menubar>
 

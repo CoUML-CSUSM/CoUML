@@ -7,6 +7,7 @@ import { environment } from '../../environments/environment';
 import { Assembler, ChangeRecord, User, Diagram, DiagramDataSet } from 'src/models/DiagramModel';
 import { ConsoleLogger } from '@microsoft/signalr/dist/esm/Utils';
 import { waitForAsync } from '@angular/core/testing';
+import { Collaborator } from '../controller/collaborator.controller';
 
 
 @Injectable()
@@ -18,6 +19,7 @@ export class CoUmlHubService{
 
 	public _projectDeveloper: ProjectDeveloper = null;
 	public _projectManager: ProjectManager = null;
+	public _collaborator: Collaborator = null;
 
 	constructor(
 		private _toastMessageService: MessageService
@@ -34,14 +36,15 @@ export class CoUmlHubService{
 	 */
 	public subscribe(subscriber: any): void
 	{
-		if(subscriber instanceof ProjectDeveloper){
-
-			this._projectDeveloper = subscriber;
+		switch(true)
+		{
+			case subscriber instanceof ProjectDeveloper: 
+				this._projectDeveloper = subscriber; break;
+			case subscriber instanceof ProjectManager:
+				this._projectManager  = subscriber; break;
+			case subscriber instanceof Collaborator:
+				this._collaborator  = subscriber; break;
 		}
-		else if(subscriber instanceof ProjectManager)
-			this._projectManager  = subscriber;
-		
-		
 	}
 
 

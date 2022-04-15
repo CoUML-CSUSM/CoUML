@@ -11,6 +11,7 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { EditorComponent } from './editor/editor.component';
 import { ProjectMenuComponent } from './menu/project-menu.component';
+import { DiagramTableComponent } from './menu/open/diagram-table.component';
 
 
 import { CoUmlHubService } from './service/couml-hub.service';
@@ -27,16 +28,17 @@ import {MessagesModule} from 'primeng/messages';
 import {MessageModule} from 'primeng/message';
 import {DynamicDialogModule} from 'primeng/dynamicdialog';
 import {TableModule} from 'primeng/table';
+import { ChipModule } from 'primeng/chip';
 
 import {ToastModule} from 'primeng/toast';
 import {MessageService} from 'primeng/api';
+import { TooltipModule } from 'primeng/tooltip';
 
 // social login
 import { SocialLoginModule, SocialAuthServiceConfig } from 'angularx-social-login';
 import {
   GoogleLoginProvider
 } from 'angularx-social-login';
-import { DiagramTableComponent } from './menu/open/diagram-table.component';
 
 @NgModule({
   declarations: [
@@ -72,7 +74,9 @@ import { DiagramTableComponent } from './menu/open/diagram-table.component';
     MessageModule,
     TableModule,
     ToastModule,
-
+    ChipModule,
+    TooltipModule,
+    
     //login
     SocialLoginModule,
 

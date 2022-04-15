@@ -1,0 +1,10 @@
+<div class="p-d-flex p-ai-center">
+	<ng-template ngFor let-c [ngForOf]="collaborators">
+		<p-chip 
+		[pTooltip]="c.user.id"  
+		icon="pi pi-user-edit"
+		tooltipPosition="bottom" 
+		[styleClass]="c.color"
+			></p-chip>
+	</ng-template>
+    </div>
