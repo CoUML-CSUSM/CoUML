@@ -19,7 +19,9 @@ export class CoUmlHubService{
 	public _projectDeveloper: ProjectDeveloper = null;
 	public _projectManager: ProjectManager = null;
 
-	constructor(private _toastMessageService: MessageService){
+	constructor(
+		private _toastMessageService: MessageService
+	){
 		this._coUmlHubConnection = new SignalR.HubConnectionBuilder()
 				.withUrl(this._url)
 				.build();

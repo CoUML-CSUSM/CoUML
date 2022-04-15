@@ -40,14 +40,25 @@ namespace CoUML_app
 			// 	);
 			// });
 
+			// services.AddCors(options =>{
+			// 	options.AddPolicy(
+			// 		"CorsPolicy", builder => builder
+			// 		.AllowAnyOrigin()
+			// 		.AllowAnyMethod()
+			// 		.AllowAnyHeader()
+			// 	);
+			// });
+			
+
 			services.AddCors(options =>{
-				options.AddPolicy(
-					"CorsPolicy", builder => builder
+				options.AddDefaultPolicy( builder => {
+					builder
 					.AllowAnyOrigin()
 					.AllowAnyMethod()
-					.AllowAnyHeader()
-				);
+					.AllowAnyHeader();
+				});
 			});
+
 			services.AddControllers();
 			services.AddSignalR();
 		}
@@ -68,7 +79,8 @@ namespace CoUML_app
 
 			app.UseHttpsRedirection();
 			app.UseRouting();
-			app.UseCors("CorsPolicy");
+			app.UseCors();
+			// app.UseCors("CorsPolicy");
 			app.UseAuthorization();
 			app.UseStaticFiles();
 			if (!env.IsDevelopment())
