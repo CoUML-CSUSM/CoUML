@@ -23,7 +23,6 @@ export class CoUmlHubService{
 		private _toastMessageService: MessageService
 	){
 		this._coUmlHubConnection = new SignalR.HubConnectionBuilder()
-
 			.withUrl(this._url)
 			.build();
 		this.startConnection();
