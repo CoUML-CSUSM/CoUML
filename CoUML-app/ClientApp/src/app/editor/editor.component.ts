@@ -15,7 +15,8 @@ const BACKSPACE = 8;
 @AngularComponent({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
-  providers: [ProjectDeveloper]
+  providers: [ProjectDeveloper],
+  styleUrls: ['./editor.styles.css']
 })
 export class EditorComponent implements AfterViewInit{
 
