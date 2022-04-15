@@ -28,28 +28,6 @@ namespace CoUML_app
 				configuration.RootPath = "ClientApp/dist";
 			});
 
-			// services.AddCors(options =>{
-			// 	options.AddPolicy(
-			// 		"CorsPolicy", builder => builder
-			// 		.WithOrigins("https://localhost:5001")
-			// 		// .AllowAnyOrigin()
-			// 		.AllowAnyMethod()
-			// 		.AllowAnyHeader()
-			// 		.SetIsOriginAllowed(origin => true)
-			// 		.AllowCredentials()
-			// 	);
-			// });
-
-			// services.AddCors(options =>{
-			// 	options.AddPolicy(
-			// 		"CorsPolicy", builder => builder
-			// 		.AllowAnyOrigin()
-			// 		.AllowAnyMethod()
-			// 		.AllowAnyHeader()
-			// 	);
-			// });
-			
-
 			services.AddCors(options =>{
 				options.AddDefaultPolicy( builder => {
 					builder
