@@ -365,7 +365,8 @@ export class EditorComponent implements AfterViewInit{
 
 	updateLockCell(affectedCell: mxCell, user: IUser)
 	{
-		let activeteam = this._projectDeveloper._teamActivity.getteam(user);
+		// let activeteam = this._projectDeveloper._teamActivity.getteam(user); //TOUNDO
+		let activeteam = {user: user, iconFilePath: null};
 		this._lockedCellLogs.set(affectedCell.id, 
 			this._graph.addCellOverlay(affectedCell, new mxCellOverlay( new mxImage(
 				activeteam.iconFilePath, 24, 36), 
@@ -486,7 +487,8 @@ export class EditorComponent implements AfterViewInit{
 			this.getIdPath(cell),
 			PropertyType.Editor,
 			ActionType.Lock,
-			this._projectDeveloper._teamActivity.getUser().user
+			// this._projectDeveloper._teamActivity.getUser().user //TOUNDO
+			new NullUser()
 		));
 	}
 

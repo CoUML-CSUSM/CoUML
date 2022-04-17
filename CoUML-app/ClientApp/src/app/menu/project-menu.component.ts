@@ -1,6 +1,6 @@
-import { AfterViewInit, Component as AngularComponent, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import {  Component as AngularComponent, EventEmitter,  Output } from '@angular/core';
 import { MenuItem, MessageService } from 'primeng/api';
-import { Class, Diagram, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType as VisibilityType, User, DiagramDataSet } from 'src/models/DiagramModel';
+import { Class, Diagram, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, User, DiagramDataSet } from 'src/models/DiagramModel';
 import { ProjectManager } from '../controller/project-manager.controller';
 import { CoUmlHubService } from '../service/couml-hub.service';
 import { PrimeNGConfig } from "primeng/api";
@@ -21,7 +21,7 @@ import { DiagramTableComponent } from './open/diagram-table.component';
 	selector: 'app-menu',
 	templateUrl: './project-menu.component.html',
 	// providers: [ProjectManager, ProjectDeveloper]
-providers: [ProjectManager, ProjectDeveloper, DialogService]
+	providers: [ProjectManager, ProjectDeveloper, DialogService]
 })
 export class ProjectMenuComponent{
 
@@ -32,7 +32,7 @@ export class ProjectMenuComponent{
 
 
 	constructor(
-		private _projectManager: ProjectManager,
+		// private _projectManager: ProjectManager,
 		private _coUmlHub: CoUmlHubService,
 		private primengConfig: PrimeNGConfig,
 		private authService: SocialAuthService,//login stuff,
@@ -106,10 +106,11 @@ export class ProjectMenuComponent{
 	}
 	
 	showNewDiagramDialog() {
-		if(this._coUmlHub._teamActivity.isLoggedIn())
-		{
+		//TOUNDO
+		// if(this._coUmlHub._teamActivity.isLoggedIn())
+		// {
 			this.open.emit(true);
-		}
+		// }
 	}
 
 	//login stuff
@@ -138,12 +139,13 @@ export class ProjectMenuComponent{
 	 */
 	showOpenDiagram()
 	{
-		//if user is logged in
-		if(this._coUmlHub._teamActivity.isLoggedIn())
-		{
+		// //TOUNDO
+		// if(this._coUmlHub._teamActivity.isLoggedIn())
+		// {
 			const openDiagramDialog = this.dialogService.open(DiagramTableComponent, {
 			data: {
-				id: this._coUmlHub._teamActivity.getUser().user.id // id of user ToDO: Central user service? maybe move to different central provider class?
+				id:"sirenaamaranth@gmail.com"
+				// id: this._coUmlHub._teamActivity.getUser().user.id // id of user ToDO: Central user service? maybe move to different central provider class?
 			},
 				header: 'Choose a Diagram',
 				width: '70%'
@@ -156,7 +158,7 @@ export class ProjectMenuComponent{
 				this._coUmlHub._projectDeveloper.open(diagram._id);
 				}
 			});
-		}
+		// }
 	}
 
 	showInviteDialog(){
