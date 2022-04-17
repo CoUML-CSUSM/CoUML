@@ -1,5 +1,5 @@
 import { AfterViewInit, Component as AngularComponent, ElementRef, OnInit, ViewChild, HostListener } from '@angular/core';
-import { TYPE, User, Class, AbstractClass, Diagram,  Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, ChangeRecord, ActionType, PropertyType, ICollectionIterator, Enumeration, Dimension, DEFUALT_DIMENSION, NullUser, ComponentProperty, UmlElement, Enumeral } from 'src/models/DiagramModel';
+import { TYPE, User, Class, AbstractClass, Diagram,  Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, ChangeRecord, ActionType, PropertyType, ICollectionIterator, Enumeration, Dimension, DEFUALT_DIMENSION, NullUser, ComponentProperty, UmlElement, Enumeral, IUser } from 'src/models/DiagramModel';
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 import * as EditorFormatHandler  from './editor-format.handler';
 import * as EditorEventHandler  from './editor-event.handler';
@@ -24,7 +24,7 @@ export class EditorComponent implements AfterViewInit{
 	diagram_description: string;
 	diagramId: string;
 
-	editorOverlay: mxCellOverlay;
+	// editorOverlay: mxCellOverlay;
 
 	_activeEditCell: mxCell = null;
 
@@ -125,8 +125,8 @@ export class EditorComponent implements AfterViewInit{
 			return cell?.overlays?.length > 0 || false;
 		}
 
-		this.editorOverlay = new mxCellOverlay(
-			new mxImage('editors/images/overlays/user3.png', 24, 24), "locked by other user");
+		// this.editorOverlay = new mxCellOverlay(
+		// 	new mxImage('editors/images/overlays/user3.png', 24, 24), "locked by other user");
 		
 		let baseIsValidDropTarget = this._graph.isValidDropTarget;
 		this._graph.isValidDropTarget = function (cell: mxCell, cells: mxCell[], evt: Event){
@@ -156,7 +156,7 @@ export class EditorComponent implements AfterViewInit{
 		this._projectDeveloper.stageChange(change, updateSelf);
 	}
 
-
+	/**Draw ********************************************************************************** */
 	/**
 	 * template to draw diagram
 	 * @param projectDiagram  Diagram to be drawn
@@ -293,7 +293,7 @@ export class EditorComponent implements AfterViewInit{
 
 	}
 
-
+	/* **************************************************************************************** */
 	public processChange(change: ChangeRecord)
 	{
 		let affectedCell = this._graph.getModel().getCell(change.id[change.id.length-1]);
@@ -340,8 +340,9 @@ export class EditorComponent implements AfterViewInit{
 			case ActionType.Remove:
 				this.removeCell(this._graph.getModel().getCell(change.value)); break;
 			case ActionType.Lock:
+				this.updateLockCell(affectedCell, change.value); break;
 			case ActionType.Release:
-				this.updateCellLockOverlay(affectedCell, change.action); break;
+				this.updateReleaseCell(affectedCell); break;
 			case ActionType.Label: this.updateLabelValue(affectedCell, change); break;
 
 		}
@@ -349,24 +350,31 @@ export class EditorComponent implements AfterViewInit{
 		this._graph.refresh();
 	}
 
-	/**
+	/** Lock/Release ****************************************************************************
 	 * place or remove overlay lock on cell
 	 * @param affectedCell 
 	 * @param change change.actiorn is Lock or Release
 	 */
-	private updateCellLockOverlay(affectedCell: mxCell, action: ActionType)
+	private _lockedCellLogs: Map<string, mxCellOverlay> = new Map<string, mxCellOverlay>();
+
+	private updateReleaseCell(affectedCell: mxCell)
 	{
-		switch(action){
-			case ActionType.Lock:
-				this._graph.addCellOverlay(affectedCell, this.editorOverlay);
-				break;
-			case ActionType.Release:
-				this._graph.removeCellOverlay(affectedCell, this.editorOverlay);
-			default:	break;
-		}
+		this._graph.removeCellOverlay(affectedCell, this._lockedCellLogs.get(affectedCell.id));
 	}
 
-	/**
+	updateLockCell(affectedCell: mxCell, user: IUser)
+	{
+		let activeCollaborator = this._projectDeveloper._collaborationManager.getCollaborator(user);
+		this._lockedCellLogs.set(affectedCell.id, 
+			this._graph.addCellOverlay(affectedCell, new mxCellOverlay( new mxImage(
+				activeCollaborator.iconFilePath, 24, 36), 
+				activeCollaborator.user.id 
+			)));
+	}
+	/* **************************************************************************************** */
+
+
+	/** Geometry ********************************************************************************
 	 * change the shape of a cell
 	 * @param affectedCell 
 	 * @param change 
@@ -378,8 +386,9 @@ export class EditorComponent implements AfterViewInit{
 		newCellGeometry.y = change.value.y;
 		this._graph.getModel().setGeometry(affectedCell, newCellGeometry);
 	}
-	
-	/**
+	/* **************************************************************************************** */
+
+	/** EDGE *********************************************************************************
 	 * change the shape of an edge
 	 * @param affectedEdge 
 	 * @param change 
@@ -397,7 +406,7 @@ export class EditorComponent implements AfterViewInit{
 
 		this._graph.getModel().setGeometry(affectedEdge, newEdgeGeometry);
 	}
-
+	
 	/**
 	 * change the edge connection ponts
 	 * @param affectedEdge 
@@ -416,6 +425,7 @@ export class EditorComponent implements AfterViewInit{
 			this._graph.getModel().setTerminal( affectedEdge, affectedCell, isSource );
 		}
 	}
+	/* **************************************************************************************** */
 
 	/**
 	 * change the value of a label
@@ -475,7 +485,7 @@ export class EditorComponent implements AfterViewInit{
 			this.getIdPath(cell),
 			PropertyType.Editor,
 			ActionType.Lock,
-			this._projectDeveloper._editor
+			this._projectDeveloper._collaborationManager.getUser().user
 		));
 	}
 
@@ -499,12 +509,13 @@ export class EditorComponent implements AfterViewInit{
 			this.removeCell(currentSelection);
 			this.stageChange( new ChangeRecord(
 				deleteIdPath,
-				PropertyType.Elements,	///**** */
+				PropertyType.Elements, 
 				ActionType.Remove,
 				deleteId
 			));
 		}
 	}
+
 	clearGraph()
 	{
 		this._graph.selectAll(this._graph.getDefaultParent(), true);

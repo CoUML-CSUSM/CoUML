@@ -7,7 +7,7 @@ import { environment } from '../../environments/environment';
 import { Assembler, ChangeRecord, User, Diagram, DiagramDataSet } from 'src/models/DiagramModel';
 import { ConsoleLogger } from '@microsoft/signalr/dist/esm/Utils';
 import { waitForAsync } from '@angular/core/testing';
-import { Collaborator } from '../controller/collaborator.controller';
+import { CollaborationActivityManager } from '../menu/activity/collaborator-activity.component';
 
 
 @Injectable()
@@ -19,7 +19,7 @@ export class CoUmlHubService{
 
 	public _projectDeveloper: ProjectDeveloper = null;
 	public _projectManager: ProjectManager = null;
-	public _collaborator: Collaborator = null;
+	public _collaboratorActivity: CollaborationActivityManager = null;
 
 	constructor(
 		private _toastMessageService: MessageService
@@ -42,8 +42,8 @@ export class CoUmlHubService{
 				this._projectDeveloper = subscriber; break;
 			case subscriber instanceof ProjectManager:
 				this._projectManager  = subscriber; break;
-			case subscriber instanceof Collaborator:
-				this._collaborator  = subscriber; break;
+			case subscriber instanceof CollaborationActivityManager:
+				this._collaboratorActivity  = subscriber; break;
 		}
 	}
 
@@ -156,7 +156,9 @@ export class CoUmlHubService{
 		return this._coUmlHubConnection.invoke("Generate",dId);
 	}
 
-	public register(uId: string){
+	public loginUser(uId: string){
+		let user = new User(uId);
+		this._collaboratorActivity?.login(user);
 		this._coUmlHubConnection.invoke("LogIn",uId);
 	}
 

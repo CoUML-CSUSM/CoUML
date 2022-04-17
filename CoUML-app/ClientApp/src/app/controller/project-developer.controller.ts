@@ -3,15 +3,20 @@ import { CoUmlHubService } from "../service/couml-hub.service";
 import { MessageService } from 'primeng/api';
 import { Diagram, Assembler, ChangeRecord, ActionType, PropertyType, Component, Class, AbstractClass, Interface, Enumeration, UmlElement, IUser, ICollection } from 'src/models/DiagramModel';
 import { EditorComponent } from '../editor/editor.component';
+import { CollaborationActivityManager } from '../menu/activity/collaborator-activity.component';
 
 
 @Injectable()
 export class ProjectDeveloper{
 
+	setCollaborationManager(collaborator: CollaborationActivityManager) {
+		this._collaborationManager = collaborator;
+	}
+
 	_projectDiagram: Diagram = null;
 
 	_diagramEditor: EditorComponent = null;
-	_editor: IUser
+	_collaborationManager: CollaborationActivityManager
 
 	_changes: ChangeRecord[] = [];
 
@@ -26,16 +31,6 @@ export class ProjectDeveloper{
 		this._diagramEditor = diagramEditor;
 	}
 
-	setEditor(user: IUser) {
-		this._editor = user;
-		this._toastMessageService.add({
-			severity: 'success',
-			summary: 'Logged in',
-			detail: this._editor.id
-		});
-		console.log("editor set to");
-		console.log(this._editor);
-	}
 	isDiagramSet()
 	{
 		return this._projectDiagram != null;

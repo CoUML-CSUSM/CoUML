@@ -101,8 +101,7 @@ import { EditorComponent } from "./editor.component";
 	_prototypeCatalog.set( Attribute, 'Attribute');
 	_prototypeCatalog.set( Operation, 'Operation');
 	_prototypeCatalog.set( Enumeral, 'Enumeral');
-
-	const EDITOR_IMAGES_UML_PAPTH = (name: string )=> {return `editors/images/uml/${name}.svg`};
+	const EDITOR_IMAGES_UML_PAPTH = (name: string )=> {return `resources/uml/${name}.svg`};
 	/**
 	 * 
 	 * @param items the types of items to be included in the toolbar

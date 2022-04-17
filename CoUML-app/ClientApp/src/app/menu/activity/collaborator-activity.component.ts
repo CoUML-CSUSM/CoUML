@@ -1,33 +1,72 @@
 import { Component } from "@angular/core";
-import { User } from "src/models/DiagramModel";
+import { ProjectDeveloper } from "src/app/controller/project-developer.controller";
+import { CoUmlHubService } from "src/app/service/couml-hub.service";
+import { User, IUser, NullUser } from "src/models/DiagramModel";
 @Component({
 selector: "app-collaborator-activity",
 templateUrl: "collaborator-activity.component.html",
 styleUrls: ["./collaborator-activity.component.css"]
 })
-export class AppComponent {
+export class CollaborationActivityManager {
 
-	collaborators: ActiveUser[] =[]
+	private _collaborators: ActiveUser[] = [];
+	private _user: ActiveUser = new ActiveUser(new NullUser(),'NULL');
+
+
+	constructor(private _projectDeveloper: ProjectDeveloper)
+	{
+		_projectDeveloper.setCollaborationManager(this);
+	}
 
 	join(user: User)
 	{
-		this.collaborators.push({user: user, color:this.color});
+		this._collaborators.push( new ActiveUser( user, this.colorCheckOut()));
 	}
 
 	leave(user: User)
 	{
-		let removeUserAtI = this.collaborators.findIndex((u)=>u.user.id == user.id);
-		let inactiveUser = this.collaborators[removeUserAtI];
-		this.collaborators = this.collaborators.splice(removeUserAtI);
-		this.VibrantColors.push(inactiveUser.color);
+		let removeUserAtI = this._collaborators.findIndex((u)=>u.user.id == user.id);
+		this.colorCheckIn(this._collaborators[removeUserAtI].icon);
+		this._collaborators = this._collaborators.splice(removeUserAtI);
 	}
 
-	get color():string
+	login(user: IUser)
 	{
-		return this.VibrantColors.shift();
+		this._user = new ActiveUser(user,'UMLGRAY');
 	}
 
-	VibrantColors: string[]=[
+	logout()
+	{
+		this._user = new ActiveUser(new NullUser(),'NULL');
+	}
+
+	isLoggedIn(): boolean
+	{
+		return !(this._user instanceof NullUser)
+	}
+
+	private colorCheckOut():string
+	{
+		return this._chipColors.shift();
+	}
+
+	private colorCheckIn(color: string)
+	{
+		this._chipColors.push(color);
+	}
+
+	getCollaborator(user: IUser): ActiveUser
+	{
+		return this._collaborators.find((u)=> u.user.id == user.id);
+	}
+
+	getUser(): ActiveUser
+	{
+		return this._user;
+	}
+	
+
+	private _chipColors: string[]=[
 		'CRIMSONRED',
 		'FIRERED',
 		'CANNARYYELLOW',
@@ -47,12 +86,24 @@ export class AppComponent {
 		'FUSIAPINK',
 		'FLAMINGOPINK',
 	]
-
 }
+
 export class ActiveUser
 {
-	user: User;
-	color: string;
+	user: IUser;
+	_icon: string ;
+	get iconFilePath()
+	{
+		return `resources/icons/users/${this._icon}.svg`
+	}
+	get icon(): string
+	{
+		return this._icon;
+	}
+	constructor(user: IUser, color: string)
+	{
+		this._icon = color;
+		this.user = user;
+	}
 }
-
 

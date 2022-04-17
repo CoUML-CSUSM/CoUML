@@ -105,9 +105,9 @@ export class ProjectMenuComponent{
 	}
 	
 	showNewDiagramDialog() {
-		if(this._coUmlHub._projectDeveloper._editor?.id)
+		if(this._coUmlHub._collaboratorActivity.isLoggedIn())
 		{
-		this.open.emit(true);
+			this.open.emit(true);
 		}
 	}
 
@@ -116,14 +116,9 @@ export class ProjectMenuComponent{
 		console.log("sign in");
 	
 		this.authService.signIn(GoogleLoginProvider.PROVIDER_ID)
-		.then((socialUser)=>{//store email here nd send it to databse
-		console.log(socialUser.email);
-		this._coUmlHub._projectDeveloper.setEditor(new User(socialUser.email));
-		this._coUmlHub.register(socialUser.email);
-		//this._coUmlHub.generate("111");
-		});
-	
-		//console.log(`${GoogleLoginProvider.PROVIDER_ID}`);
+			.then((socialUser)=>{//store email here nd send it to databse
+				this._coUmlHub.loginUser(socialUser.email);
+			});
 	}
 	
 	
@@ -143,23 +138,23 @@ export class ProjectMenuComponent{
 	showOpenDiagram()
 	{
 		//if user is logged in
-		if(this._coUmlHub._projectDeveloper._editor?.id)
+		if(this._coUmlHub._collaboratorActivity.isLoggedIn())
 		{
-		const openDiagramDialog = this.dialogService.open(DiagramTableComponent, {
-		data: {
-			id: this._coUmlHub._projectDeveloper._editor.id // id of user ToDO: Central user service? maybe move to different central provider class?
-		},
-			header: 'Choose a Diagram',
-			width: '70%'
-		});
-	
-		// string of the _id is returned to indicate the user's selection
-		openDiagramDialog.onClose.subscribe((diagram: DiagramDataSet) => {
-			if (diagram) {//diagram is the dataset of the chosen diagram
-			console.log(diagram);
-			this._coUmlHub._projectDeveloper.open(diagram._id);
-			}
-		});
+			const openDiagramDialog = this.dialogService.open(DiagramTableComponent, {
+			data: {
+				id: this._coUmlHub._collaboratorActivity.getUser().user.id // id of user ToDO: Central user service? maybe move to different central provider class?
+			},
+				header: 'Choose a Diagram',
+				width: '70%'
+			});
+		
+			// string of the _id is returned to indicate the user's selection
+			openDiagramDialog.onClose.subscribe((diagram: DiagramDataSet) => {
+				if (diagram) {//diagram is the dataset of the chosen diagram
+				console.log(diagram);
+				this._coUmlHub._projectDeveloper.open(diagram._id);
+				}
+			});
 		}
 	}
 
