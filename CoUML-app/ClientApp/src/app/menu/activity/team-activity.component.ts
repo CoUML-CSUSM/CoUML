@@ -1,45 +1,44 @@
 import { Component } from "@angular/core";
 import { ProjectDeveloper } from "src/app/controller/project-developer.controller";
+import { CoUmlHubService } from "src/app/service/couml-hub.service";
 import { User, IUser, NullUser } from "src/models/DiagramModel";
 
 @Component({
-	selector: "app-collaborator-activity",
-	templateUrl: "collaborator-activity.component.html",
-	styleUrls: ["./collaborator-activity.component.css"]
+	selector: "app-team-activity",
+	templateUrl: "team-activity.component.html",
+	styleUrls: ["./team-activity.component.css"]
 })
-export class CollaborationActivityManager {
-
-	_collaborators: ActiveUser[] = [];
+export class TeamActivityComponent {
+	_team: ActiveUser[] = [];
 	_user: ActiveUser = new ActiveUser(new NullUser(),'NULL');
 
 
-	constructor(private _projectDeveloper: ProjectDeveloper)
+	constructor(private _projectDeveloper: ProjectDeveloper,
+		private _coUmlHub: CoUmlHubService
+		)
 	{
-		this._projectDeveloper.setCollaborationManager(this);
+		this._projectDeveloper.subscribe(this);
+		this._coUmlHub.subscribe(this);
+	}
 
-		let names = [
-			"April Branch",
-			"Caden Brown",
-			"Diana Brown",
-			"Kristen Brown",
-		]
-
-		for(let n of names)
-		{
-			this.join(new User(n));
-		}
+	init(teamMemebers: User[]) {
+		this._team = [];
+		teamMemebers.forEach((tm)=>{
+			if(tm.id != this._user.user.id)
+				this.join(tm)
+		});
 	}
 
 	join(user: User)
 	{
-		this._collaborators.push( new ActiveUser( user, this.colorCheckOut()));
+		this._team.push( new ActiveUser( user, this.colorCheckOut()));
 	}
 
 	leave(user: User)
 	{
-		let removeUserAtI = this._collaborators.findIndex((u)=>u.user.id == user.id);
+		let removeUserAtI = this._team.findIndex((u)=>u.user.id == user.id);
 		
-		let left = this._collaborators.splice(removeUserAtI,1).pop();
+		let left = this._team.splice(removeUserAtI,1).pop();
 		this.colorCheckIn(left.icon);
 	}
 
@@ -72,9 +71,9 @@ export class CollaborationActivityManager {
 		this._chipColors.push(color);
 	}
 
-	getCollaborator(user: IUser): ActiveUser
+	getteam(user: IUser): ActiveUser
 	{
-		return this._collaborators.find((u)=> u.user.id == user.id);
+		return this._team.find((u)=> u.user.id == user.id);
 	}
 
 	getUser(): ActiveUser

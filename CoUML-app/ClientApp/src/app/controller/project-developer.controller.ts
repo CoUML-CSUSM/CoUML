@@ -3,20 +3,16 @@ import { CoUmlHubService } from "../service/couml-hub.service";
 import { MessageService } from 'primeng/api';
 import { Diagram, Assembler, ChangeRecord, ActionType, PropertyType, Component, Class, AbstractClass, Interface, Enumeration, UmlElement, IUser, ICollection } from 'src/models/DiagramModel';
 import { EditorComponent } from '../editor/editor.component';
-import { CollaborationActivityManager } from '../menu/activity/collaborator-activity.component';
+import { TeamActivityComponent } from '../menu/activity/team-activity.component';
 
 
 @Injectable()
 export class ProjectDeveloper{
 
-	setCollaborationManager(collaborator: CollaborationActivityManager) {
-		this._collaborationManager = collaborator;
-	}
-
 	_projectDiagram: Diagram = null;
 
 	_diagramEditor: EditorComponent = null;
-	_collaborationManager: CollaborationActivityManager
+	_teamActivity: TeamActivityComponent
 
 	_changes: ChangeRecord[] = [];
 
@@ -27,8 +23,16 @@ export class ProjectDeveloper{
 		this._coUmlHub.subscribe(this);
 	}
 
-	subscribe(diagramEditor: EditorComponent) {
-		this._diagramEditor = diagramEditor;
+	subscribe(subscriber: any) 
+	{
+		switch(true)
+		{
+			case subscriber instanceof EditorComponent: 
+				this._diagramEditor = subscriber; break;
+
+			case subscriber instanceof TeamActivityComponent:
+				this._teamActivity  = subscriber; break;
+		}
 	}
 
 	isDiagramSet()
@@ -43,7 +47,6 @@ export class ProjectDeveloper{
 			.then( (d) => {
 				console.log(d);
 				this._projectDiagram = Assembler.assembleDiagram(d);
-				//this._projectDiagram.editor = uId;
 				console.log(this._projectDiagram);
 				this._diagramEditor.draw(this._projectDiagram);
 			} ); 
@@ -54,13 +57,16 @@ export class ProjectDeveloper{
 		this._projectDiagram = null;
 		this._diagramEditor.clearGraph();
 	}
+
 	private _awaitingChanges: ChangeRecord[] = [];
+
 	public applyChanges(changes: ChangeRecord[])
 	{
 		for(let change of changes)
 			this._awaitingChanges.unshift(change);
 		this.merge();
 	}
+
 	private merge()
 	{	console.log("-------------- apply changes ---------------");
 		// console.log(changes);
@@ -74,7 +80,6 @@ export class ProjectDeveloper{
 		}
 		console.log("-------------- Done! ---------------");
 		console.log(this._projectDiagram);
-
 	}
 
 	private applyChange(change: ChangeRecord)

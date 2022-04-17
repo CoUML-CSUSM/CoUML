@@ -105,7 +105,7 @@ export class ProjectMenuComponent{
 	}
 	
 	showNewDiagramDialog() {
-		if(this._coUmlHub._collaboratorActivity.isLoggedIn())
+		if(this._coUmlHub._teamActivity.isLoggedIn())
 		{
 			this.open.emit(true);
 		}
@@ -138,11 +138,11 @@ export class ProjectMenuComponent{
 	showOpenDiagram()
 	{
 		//if user is logged in
-		if(this._coUmlHub._collaboratorActivity.isLoggedIn())
+		if(this._coUmlHub._teamActivity.isLoggedIn())
 		{
 			const openDiagramDialog = this.dialogService.open(DiagramTableComponent, {
 			data: {
-				id: this._coUmlHub._collaboratorActivity.getUser().user.id // id of user ToDO: Central user service? maybe move to different central provider class?
+				id: this._coUmlHub._teamActivity.getUser().user.id // id of user ToDO: Central user service? maybe move to different central provider class?
 			},
 				header: 'Choose a Diagram',
 				width: '70%'

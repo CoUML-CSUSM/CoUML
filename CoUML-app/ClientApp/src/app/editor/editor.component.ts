@@ -34,7 +34,7 @@ export class EditorComponent implements AfterViewInit{
 	@ViewChild('toolbarContainer', { read: ElementRef, static: true })
 	public toolbarContainer: ElementRef<HTMLElement>;
 
-    private _toolbar: mxToolbar;
+    	private _toolbar: mxToolbar;
 	get isDiagramSet()
 	{
 		return this._projectDeveloper.isDiagramSet();
@@ -364,11 +364,11 @@ export class EditorComponent implements AfterViewInit{
 
 	updateLockCell(affectedCell: mxCell, user: IUser)
 	{
-		let activeCollaborator = this._projectDeveloper._collaborationManager.getCollaborator(user);
+		let activeteam = this._projectDeveloper._teamActivity.getteam(user);
 		this._lockedCellLogs.set(affectedCell.id, 
 			this._graph.addCellOverlay(affectedCell, new mxCellOverlay( new mxImage(
-				activeCollaborator.iconFilePath, 24, 36), 
-				activeCollaborator.user.id 
+				activeteam.iconFilePath, 24, 36), 
+				activeteam.user.id 
 			)));
 	}
 	/* **************************************************************************************** */
@@ -485,7 +485,7 @@ export class EditorComponent implements AfterViewInit{
 			this.getIdPath(cell),
 			PropertyType.Editor,
 			ActionType.Lock,
-			this._projectDeveloper._collaborationManager.getUser().user
+			this._projectDeveloper._teamActivity.getUser().user
 		));
 	}
 

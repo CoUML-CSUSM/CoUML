@@ -32,6 +32,18 @@ import { VisibilityType } from "./Types";
 		return __diagram;
 	}
 
+	export function assembleUmlElements(elementString: string)
+	{
+		let objArray = JSON.parse(elementString);
+		
+		let elements = [];
+		for(let element in objArray)
+		{
+			elements.push( assembleUmlElement(element));
+		}
+		return elements;
+	}
+
 	export function assembleUmlElement(elem): UmlElement | null
 	{
 		if (elem == null)

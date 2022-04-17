@@ -34,6 +34,9 @@ namespace CoUML_app.Controllers.Hubs
 	public interface ICoUmlClient{
 		Task issueUser(string message);
 		Task Dispatch(string changes);
+		Task JoinedTeam(string teamMemeber);
+		Task LeftTeam(string teamMemeber);
+		Task InitTeam(string teamMemebers);
 	}
 
 	public static class CoUmlContext
@@ -104,21 +107,51 @@ namespace CoUML_app.Controllers.Hubs
 
 		public void LogOut()
 		{
-
 			try
 			{
-				if(Context.Items[CoUmlContext.DIAGRAM] is not null)
-				{ // remove self from other groups before continuing
-					Groups.RemoveFromGroupAsync(Context.ConnectionId, (string)Context.Items[CoUmlContext.DIAGRAM]);
-					SessionManager.LeaveSession((string)Context.Items[CoUmlContext.DIAGRAM], (User)Context.Items[CoUmlContext.USER]);
-				}
+				LeaveSession();
+				Context.Items[CoUmlContext.USER] = null;
 			}
 			catch (KeyNotFoundException knf)
 			{
 				Console.WriteLine(knf);
 			}
-			
 		}
+
+		private void JoinSession(string dId)
+		{
+			User self = (User)Context.Items[CoUmlContext.USER];
+			Context.Items[CoUmlContext.DIAGRAM] = dId;
+			
+			Groups.AddToGroupAsync(Context.ConnectionId, dId);
+			SessionManager.JoinSession(dId, self);
+
+			Clients.GroupExcept(dId, new List<string>(){Context.ConnectionId}.AsReadOnly())
+				.JoinedTeam(
+					DTO.From<User>(self)
+				);
+			Clients.Caller
+				.InitTeam(
+					DTO.From<User[]>(SessionManager.ListTeamMembers(dId))
+				);
+		}
+
+		private void LeaveSession()
+		{
+			string dId = (string) Context.Items[CoUmlContext.DIAGRAM];
+			User self = (User)Context.Items[CoUmlContext.USER];
+
+			if(dId is not null)
+			{
+				Clients.GroupExcept(dId, new List<string>(){Context.ConnectionId}.AsReadOnly())
+					.LeftTeam(DTO.From<User>(self));
+
+				SessionManager.LeaveSession(dId, self);
+				Groups.RemoveFromGroupAsync(Context.ConnectionId, dId);
+			}
+			Context.Items[CoUmlContext.DIAGRAM] = null;
+		}
+
 
 		/// <summary>
 		/// find an existing diagram in memory and return it to the requesting client
@@ -128,25 +161,26 @@ namespace CoUML_app.Controllers.Hubs
 		public string Fetch(string dId)
 		{
 
-			LogOut();
-
-			Context.Items[CoUmlContext.DIAGRAM] = dId;
+			LeaveSession();
 
 			Diagram fetchedDiagram = null;
-			if(!SessionManager.IsSessionActive(dId))
+			if(SessionManager.IsSessionActive(dId))
+			{
+				fetchedDiagram = SessionManager.GetLiveDiagram(dId);
+			}else
 			{
 				fetchedDiagram = ProjectController.FindDiagram(dId);
 				SessionManager.InitSession(dId, fetchedDiagram);
-			}else
-			{
-				fetchedDiagram = SessionManager.GetLiveDiagram(dId);
 			}
 
-			Groups.AddToGroupAsync(Context.ConnectionId, dId);
-			SessionManager.JoinSession(dId, (User)Context.Items[CoUmlContext.USER]);
+			JoinSession(dId);			
 
 			return DTO.FromDiagram(fetchedDiagram);
 		}
+
+		
+
+		
 
 		public string Generate(string dId){
 			return ProjectController.Generate(dId,  (User)Context.Items[CoUmlContext.USER]);

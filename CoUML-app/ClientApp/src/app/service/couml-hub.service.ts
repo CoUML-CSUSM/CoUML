@@ -7,7 +7,7 @@ import { environment } from '../../environments/environment';
 import { Assembler, ChangeRecord, User, Diagram, DiagramDataSet } from 'src/models/DiagramModel';
 import { ConsoleLogger } from '@microsoft/signalr/dist/esm/Utils';
 import { waitForAsync } from '@angular/core/testing';
-import { CollaborationActivityManager } from '../menu/activity/collaborator-activity.component';
+import { TeamActivityComponent } from '../menu/activity/team-activity.component';
 
 
 @Injectable()
@@ -19,7 +19,7 @@ export class CoUmlHubService{
 
 	public _projectDeveloper: ProjectDeveloper = null;
 	public _projectManager: ProjectManager = null;
-	public _collaboratorActivity: CollaborationActivityManager = null;
+	public _teamActivity: TeamActivityComponent = null;
 
 	constructor(
 		private _toastMessageService: MessageService
@@ -39,14 +39,53 @@ export class CoUmlHubService{
 		switch(true)
 		{
 			case subscriber instanceof ProjectDeveloper: 
-				this._projectDeveloper = subscriber; break;
+				this.projectDeveloper = subscriber; break;
 			case subscriber instanceof ProjectManager:
-				this._projectManager  = subscriber; break;
-			case subscriber instanceof CollaborationActivityManager:
-				this._collaboratorActivity  = subscriber; break;
+				this.projectManager  = subscriber; break;
+			case subscriber instanceof TeamActivityComponent:
+				this.teamActivity  = subscriber; break;
 		}
 	}
 
+	set projectDeveloper(pd: ProjectDeveloper)
+	{
+		this._projectDeveloper = pd;
+
+		// listen for changes
+		this._coUmlHubConnection.on("Dispatch", (changesDTO)=>{
+			let changes: ChangeRecord[] = JSON.parse(changesDTO);
+			changes.forEach((change)=>{
+				change.value = Assembler.assembleUmlElement(change.value);
+			});
+			this._projectDeveloper.applyChanges(changes);
+		});
+	}
+
+	set projectManager(pm: ProjectManager)
+	{
+		this._projectManager = pm;
+		// listen for changes
+		// this._coUmlHubConnection.on("function", (value)=>{ });
+	}
+
+	set teamActivity(cam: TeamActivityComponent)
+	{
+		this._teamActivity = cam;
+
+		// listen for Team Cativity
+		this._coUmlHubConnection.on("JoinedTeam", (value)=>{ 
+			this._teamActivity.join(Assembler.assembleUmlElement(value));
+		});
+
+		this._coUmlHubConnection.on("LeftTeam", (value)=>{ 
+			this._teamActivity.leave(Assembler.assembleUmlElement(value))
+		});
+
+		this._coUmlHubConnection.on("InitTeam", (value)=>{
+			let teamMemebers: User[] = Assembler.assembleUmlElements(value);
+			this._teamActivity.init(teamMemebers);
+		});
+	}
 
 	private startConnection()
 	{
@@ -71,22 +110,13 @@ export class CoUmlHubService{
 						detail: err
 					});
 				});
-
 		// listen for *test*
 		this._coUmlHubConnection.on("issueUser", (userId: string)=>{
 			console.log(`New User ID issued ${userId}`);
 		});
 
-		// listen for changes
-		this._coUmlHubConnection.on("Dispatch", (changesDTO)=>{
-			console.log(`
-			hub.dispathch(changes)
-				${changesDTO}
-				`);
-			let changes: ChangeRecord[] = JSON.parse(changesDTO);
-			this.dispatch(changes);
-		});
 	}
+
 
 	/**
 	 * diagram is fetched from server
@@ -109,23 +139,6 @@ export class CoUmlHubService{
 		this._coUmlHubConnection.invoke("Push", changesDTO);
 	}
 
-	/**
-	 * changes are despatched from the server to a client
-	 * @param changes changes to be applied to this client
-	 */
-	public dispatch(changes: ChangeRecord[])
-	{
-		
-		if(this._projectDeveloper){
-			changes.forEach((change)=>{
-				change.value = Assembler.assembleUmlElement(change.value);
-				console.log("assembled change");
-				console.log(change);
-			});
-			this._projectDeveloper.applyChanges(changes);
-		}
-	}
-
 	generateSourceCode(dId: string, language: number = 0): void {
 		// TODO: language number should be enum | lang.Java = 0
 		this._coUmlHubConnection.invoke("GenerateSourceCode", dId, language);
@@ -137,9 +150,9 @@ export class CoUmlHubService{
 	 * @param id the ID of the user
 	 * @returns array of diagrams that the user has access to[]
 	 */
-     listMyDiagrams() {
+	listMyDiagrams() {
 		return this._coUmlHubConnection.invoke("ListMyDiagrams")
-    }
+	}
 
 
 	/// for test only!!!!
@@ -151,14 +164,12 @@ export class CoUmlHubService{
 
 	public generate(dId:string): Promise<string>
 	{
-			console.log("hub");
-			console.log(dId);
 		return this._coUmlHubConnection.invoke("Generate",dId);
 	}
 
 	public loginUser(uId: string){
 		let user = new User(uId);
-		this._collaboratorActivity?.login(user);
+		this._teamActivity?.login(user);
 		this._coUmlHubConnection.invoke("LogIn",uId);
 	}
 

@@ -2,6 +2,7 @@ using System.Collections.Specialized;
 using System.Collections.Generic;
 using CoUML_app.Models;
 using CoUML_app.Controllers.Project;
+using System.Linq;
 
 namespace CoUML_app.Controllers.Hubs
 {
@@ -96,6 +97,8 @@ namespace CoUML_app.Controllers.Hubs
 
 		public Diagram Diagram{ get => _projectDiagram; }
 
+		public User[] Team { get => _team.Values.ToArray<User>(); }
+
 		public ActiveSession( Diagram diagram)
 		{
 			_projectDiagram = diagram;
@@ -157,6 +160,11 @@ namespace CoUML_app.Controllers.Hubs
 		public Diagram GetLiveDiagram(string id)
 		{
 			return GetSession(id)?.Diagram;
+		}
+
+		public User[] ListTeamMembers(string id)
+		{
+			return GetSession(id)?.Team;
 		}
 
 		public bool TerminateSession(string id)
