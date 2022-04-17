@@ -1,20 +1,22 @@
 <div class="p-d-flex p-ai-center">
 
 	<ng-template ngFor let-c [ngForOf]="_collaborators">
-		<p-chip 
+		<p-image 
 		[pTooltip]="c.user.id"  
-		[image]="c.iconFilePath"
+		[src]="c.iconFilePath"
 		tooltipPosition="bottom" 
-		styleClass="minimal"
-		></p-chip>
+		styleClass="mr-1"
+		></p-image>
 	</ng-template>
 
-	<p-chip
+	<span class="separator"></span>
+
+	<p-image
 	[pTooltip]="_user.user.id"  
-	[image]="_user.iconFilePath"
+	[src]="_user.iconFilePath"
 	tooltipPosition="bottom" 
-	styleClass="p-ml-2 minimal"
-	></p-chip>
+	styleClass="ml-1"
+	></p-image>
 
 
-    </div>
+</div>

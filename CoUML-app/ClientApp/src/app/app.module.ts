@@ -29,6 +29,7 @@ import {MessageModule} from 'primeng/message';
 import {DynamicDialogModule} from 'primeng/dynamicdialog';
 import {TableModule} from 'primeng/table';
 import { ChipModule } from 'primeng/chip';
+import {ImageModule} from 'primeng/image';
 
 import {ToastModule} from 'primeng/toast';
 import {MessageService} from 'primeng/api';
@@ -76,6 +77,7 @@ import {
     ToastModule,
     ChipModule,
     TooltipModule,
+    ImageModule,
     
     //login
     SocialLoginModule,

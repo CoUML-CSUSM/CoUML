@@ -1,3 +1,11 @@
 :host ::ng-deep .p-chip.minimal{
 	background-color: transparent;
 }
+
+.separator{
+	background-color: #edf1f5;
+	border: 2pt solid #edf1f5;
+	position: inherit;
+	border-radius: 6pt;
+	margin: 0pt 6pt;
+}
