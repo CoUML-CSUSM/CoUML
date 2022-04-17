@@ -20,7 +20,9 @@ export class DiagramTableComponent {
         private _coUmlHub: CoUmlHubService,
         public ref: DynamicDialogRef, 
         public config: DynamicDialogConfig,
-        ) { }
+        ) { 
+		console.log("Constructing this", this, "\nwith\n", arguments);
+	  }
 
     ngOnInit() {
         //id: this.config.id

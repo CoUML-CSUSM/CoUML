@@ -38,6 +38,7 @@ export class ProjectMenuComponent{
 		private authService: SocialAuthService,//login stuff,
 		private dialogService: DialogService,//open dialog box
 		){
+			console.log("Constructing this", this, "\nwith\n", arguments);
 		this._menuItems = [
 		{
 		label: "File",

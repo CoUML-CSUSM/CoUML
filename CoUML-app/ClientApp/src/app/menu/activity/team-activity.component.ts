@@ -6,19 +6,19 @@ import { User, IUser, NullUser } from "src/models/DiagramModel";
 @Component({
 	selector: "app-team-activity",
 	templateUrl: "team-activity.component.html",
-	styleUrls: ["./team-activity.component.css"]
+	styleUrls: ["./team-activity.component.css"],
+	providers: [ProjectDeveloper]
 })
 export class TeamActivityComponent {
 	_team: ActiveUser[] = [];
 	_user: ActiveUser = new ActiveUser(new NullUser(),'NULL');
 
 
-	constructor(private _projectDeveloper: ProjectDeveloper,
-		private _coUmlHub: CoUmlHubService
-		)
-	{
+	constructor(
+		private _projectDeveloper: ProjectDeveloper,
+	){
+		console.log("Constructing this", this, "\nwith\n", arguments);
 		this._projectDeveloper.subscribe(this);
-		this._coUmlHub.subscribe(this);
 	}
 
 	init(teamMemebers: User[]) {

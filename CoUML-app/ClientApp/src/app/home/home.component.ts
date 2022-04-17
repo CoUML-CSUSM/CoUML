@@ -19,7 +19,9 @@ export class HomeComponent {
 	constructor(
 		private _coUmlHub: CoUmlHubService,
 		private _renderer: Renderer2
-	) { }
+	) {
+		console.log("Constructing this", this, "\nwith\n", arguments);
+	 }
 
 	onOpen(event)
 	{

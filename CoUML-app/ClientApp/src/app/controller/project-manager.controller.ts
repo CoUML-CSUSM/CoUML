@@ -10,6 +10,7 @@ export class ProjectManager{
 	newDiagram: Diagram;
 
 	constructor(private _coUmlHub: CoUmlHubService){
+		console.log("Constructing this", this, "\nwith\n", arguments);
 		this._coUmlHub.subscribe(this);
 	}
 

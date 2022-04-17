@@ -1,4 +1,3 @@
-import { Injectable } from "@angular/core";
 import { AbstractClass, ActionType, ChangeRecord, Class, Dimension, Enumeration, Interface, PropertyType, RelationshipType } from "src/models/DiagramModel";
 import { EditorColors } from "./editor.resources";
 

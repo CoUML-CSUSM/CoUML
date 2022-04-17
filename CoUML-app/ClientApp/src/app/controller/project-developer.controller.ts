@@ -19,7 +19,8 @@ export class ProjectDeveloper{
 	constructor(
 		private _coUmlHub: CoUmlHubService,
 		private _toastMessageService: MessageService
-		)	{
+	){
+		console.log("Constructing this", this, "\nwith\n", arguments);
 		this._coUmlHub.subscribe(this);
 	}
 
@@ -31,7 +32,9 @@ export class ProjectDeveloper{
 				this._diagramEditor = subscriber; break;
 
 			case subscriber instanceof TeamActivityComponent:
-				this._teamActivity  = subscriber; break;
+				this._teamActivity  = subscriber;
+				this._coUmlHub.subscribe(subscriber);
+				break;
 		}
 	}
 
