@@ -1,6 +1,5 @@
 import { Component } from "@angular/core";
 import { ProjectDeveloper } from "src/app/controller/project-developer.controller";
-import { CoUmlHubService } from "src/app/service/couml-hub.service";
 import { User, IUser, NullUser } from "src/models/DiagramModel";
 @Component({
 selector: "app-collaborator-activity",
@@ -15,7 +14,7 @@ export class CollaborationActivityManager {
 
 	constructor(private _projectDeveloper: ProjectDeveloper)
 	{
-		_projectDeveloper.setCollaborationManager(this);
+		this._projectDeveloper.setCollaborationManager(this);
 	}
 
 	join(user: User)

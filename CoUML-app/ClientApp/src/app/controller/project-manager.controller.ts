@@ -13,7 +13,7 @@ export class ProjectManager{
 		this._coUmlHub.subscribe(this);
 	}
 
-	public generate(dId:string, uId:string){
+	public generate(dId:string){
 
 			console.log("manager");
 			console.log(dId);
