@@ -1,20 +1,33 @@
 import { Component } from "@angular/core";
 import { ProjectDeveloper } from "src/app/controller/project-developer.controller";
 import { User, IUser, NullUser } from "src/models/DiagramModel";
+
 @Component({
-selector: "app-collaborator-activity",
-templateUrl: "collaborator-activity.component.html",
-styleUrls: ["./collaborator-activity.component.css"]
+	selector: "app-collaborator-activity",
+	templateUrl: "collaborator-activity.component.html",
+	styleUrls: ["./collaborator-activity.component.css"]
 })
 export class CollaborationActivityManager {
 
-	private _collaborators: ActiveUser[] = [];
-	private _user: ActiveUser = new ActiveUser(new NullUser(),'NULL');
+	_collaborators: ActiveUser[] = [];
+	_user: ActiveUser = new ActiveUser(new NullUser(),'NULL');
 
 
 	constructor(private _projectDeveloper: ProjectDeveloper)
 	{
 		this._projectDeveloper.setCollaborationManager(this);
+
+		let names = [
+			"April Branch",
+			"Caden Brown",
+			"Diana Brown",
+			"Kristen Brown",
+		]
+
+		for(let n of names)
+		{
+			this.join(new User(n));
+		}
 	}
 
 	join(user: User)
@@ -25,8 +38,9 @@ export class CollaborationActivityManager {
 	leave(user: User)
 	{
 		let removeUserAtI = this._collaborators.findIndex((u)=>u.user.id == user.id);
-		this.colorCheckIn(this._collaborators[removeUserAtI].icon);
-		this._collaborators = this._collaborators.splice(removeUserAtI);
+		
+		let left = this._collaborators.splice(removeUserAtI,1).pop();
+		this.colorCheckIn(left.icon);
 	}
 
 	login(user: IUser)
@@ -46,7 +60,11 @@ export class CollaborationActivityManager {
 
 	private colorCheckOut():string
 	{
-		return this._chipColors.shift();
+		let random = Math.floor(Math.random() * this._chipColors.length);
+		let color = this._chipColors[random];
+		console.log(random, color);
+		this._chipColors.splice(random, 1);
+		return color;
 	}
 
 	private colorCheckIn(color: string)

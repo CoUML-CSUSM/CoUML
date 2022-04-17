@@ -12,7 +12,7 @@ import { HomeComponent } from './home/home.component';
 import { EditorComponent } from './editor/editor.component';
 import { ProjectMenuComponent } from './menu/project-menu.component';
 import { DiagramTableComponent } from './menu/open/diagram-table.component';
-
+import { CollaborationActivityManager } from './menu/activity/collaborator-activity.component';
 
 import { CoUmlHubService } from './service/couml-hub.service';
 
@@ -46,8 +46,8 @@ import {
     HomeComponent,
     EditorComponent,
     ProjectMenuComponent,
-    DiagramTableComponent
-
+    DiagramTableComponent,
+    CollaborationActivityManager
 
   ],
 
