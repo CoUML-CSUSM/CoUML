@@ -77,11 +77,11 @@ export class CoUmlHubService{
 		// listen for Team Cativity
 		this._coUmlHubConnection.on("JoinedTeam", (value)=>{ 
 			console.log("join", value)
-			this._teamActivity.join(Assembler.assembleUmlElement(JSON.parse( value)));
+			this._teamActivity.join(Assembler.assembleUmlElement( value));
 		});
 
 		this._coUmlHubConnection.on("LeftTeam", (value)=>{ 
-			this._teamActivity.leave(Assembler.assembleUmlElement(JSON.parse( value)))
+			this._teamActivity.leave(Assembler.assembleUmlElement(value));
 		});
 
 		this._coUmlHubConnection.on("InitTeam", (value)=>{
@@ -167,10 +167,13 @@ export class CoUmlHubService{
 		return this._coUmlHubConnection.invoke("Generate",dId);
 	}
 
-	public loginUser(uId: string){
-		let user = new User(uId);
-		this._teamActivity?.login(user);
-		this._coUmlHubConnection.invoke("LogIn",uId);
+	public logIn(uId: string): Promise<string>{
+		return this._coUmlHubConnection.invoke("LogIn",uId);
+	}
+
+	public logOut()
+	{
+		this._coUmlHubConnection.invoke("LogOut");
 	}
 
 	public invite(uId: string){

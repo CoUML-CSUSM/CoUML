@@ -99,10 +99,11 @@ namespace CoUML_app.Controllers.Hubs
 			Clients.Client(connectionId).issueUser(connectionId);
 		}
 
-		public void LogIn(string userId)
+		public string LogIn(string userId)
 		{
 			Context.Items[CoUmlContext.USER] = new User(userId);
 			ProjectController.Register((User)Context.Items[CoUmlContext.USER]);
+			return DTO.From<User>((User)Context.Items[CoUmlContext.USER]);
 		}
 
 		public void LogOut()

@@ -47,7 +47,7 @@ export class TeamActivityComponent {
 		this._user = new ActiveUser(user,'UMLGRAY');
 	}
 
-	logout()
+	logOut()
 	{
 		this._user = new ActiveUser(new NullUser(),'NULL');
 	}

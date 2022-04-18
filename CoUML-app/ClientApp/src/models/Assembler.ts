@@ -46,6 +46,8 @@ import { VisibilityType } from "./Types";
 
 	export function assembleUmlElement(elem): UmlElement | null
 	{
+		if(typeof(elem) == typeof("string"))
+			elem = JSON.parse(elem)
 		if (elem == null)
 			return null;
 		let element;

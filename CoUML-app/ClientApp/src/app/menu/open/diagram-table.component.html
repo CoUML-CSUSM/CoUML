@@ -16,7 +16,7 @@
         </tr>
     </ng-template>
     <ng-template pTemplate="footer">
-        <ng-container [*ngIf]="setsEmpty">
+        <ng-container *ngIf="!_diagramDataSets">
             No diagrams found.
         </ng-container>
       </ng-template>

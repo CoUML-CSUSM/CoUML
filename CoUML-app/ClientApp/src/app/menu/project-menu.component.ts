@@ -52,12 +52,12 @@ export class ProjectMenuComponent implements AfterViewInit{
 				label: "New...",
 				id: "menuFileNew",
 				command: () => this.showNewDiagramDialog(),
-				disabled: !this._projectDeveloper._teamActivity.isLoggedIn(),
+				// disabled: !this._projectDeveloper._teamActivity.isLoggedIn(),
 			},
 			{
 				label: "Open...",
 				id: "menuFileOpen",
-				disabled: !this._projectDeveloper._teamActivity.isLoggedIn(),
+				// disabled:  !this._projectDeveloper._teamActivity.isLoggedIn(),
 				command: ()=> this.showOpenDiagram()
 			},
 			{
@@ -65,7 +65,7 @@ export class ProjectMenuComponent implements AfterViewInit{
 			},
 			{
 				label: "Export",
-				disabled: !this._projectDeveloper._teamActivity.isLoggedIn(),
+				// disabled: !this._projectDeveloper._teamActivity.isLoggedIn(),
 				items: [
 				{
 					label: "Generate Source Code...(\"test\")",
@@ -79,7 +79,7 @@ export class ProjectMenuComponent implements AfterViewInit{
 		{
 			label: "Edit",
 			id: "menuEdit",
-			disabled: !this._projectDeveloper._teamActivity.isLoggedIn(),
+			// disabled: !this._projectDeveloper._teamActivity.isLoggedIn(),
 			items: []
 		},
 		{
@@ -94,13 +94,13 @@ export class ProjectMenuComponent implements AfterViewInit{
 				{
 					label: "Sign Out",
 					id: "menuUserSignOut",
-					disabled: !this._projectDeveloper._teamActivity.isLoggedIn(),
+					// disabled: !this._projectDeveloper._teamActivity.isLoggedIn(),
 					command: () => this.signOut(),
 				},
 				{
 					label: "Invite User...",
 					id: "menuUserSignInvite",
-					disabled: !this._projectDeveloper._teamActivity.isLoggedIn(),
+					// disabled: !this._projectDeveloper._teamActivity.isLoggedIn(),
 					command: () => this.showInviteDialog(),
 				}
 			]
@@ -128,7 +128,7 @@ export class ProjectMenuComponent implements AfterViewInit{
 	
 		this.authService.signIn(GoogleLoginProvider.PROVIDER_ID)
 			.then((socialUser)=>{//store email here nd send it to databse
-				this._projectDeveloper.loginUser(socialUser.email);
+				this._projectDeveloper.logIn(socialUser.email);
 			});
 	}
 	
@@ -136,6 +136,7 @@ export class ProjectMenuComponent implements AfterViewInit{
 	signOut(): void {
 		console.log("sign out");
 		this.authService.signOut();
+		this._projectDeveloper.signOut();
 	}
 	
 	//

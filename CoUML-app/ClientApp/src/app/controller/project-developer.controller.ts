@@ -8,8 +8,17 @@ import { TeamActivityComponent } from '../activity/team-activity.component';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectDeveloper{
-	loginUser(email: string) {
-		this._coUmlHub.loginUser(email);
+	signOut() {
+		this._coUmlHub.logOut();
+		this._teamActivity.logOut();
+		this._diagramEditor.clearGraph();
+		this._projectDiagram = null;
+	}
+
+	logIn(email: string) {
+		this._coUmlHub.logIn(email).then((user)=>{
+			this._teamActivity?.login(Assembler.assembleUmlElement(user));
+		});
 	}
 
 	_projectDiagram: Diagram = null;
