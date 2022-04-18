@@ -21,7 +21,7 @@ export class DiagramTableComponent {
         public ref: DynamicDialogRef, 
         public config: DynamicDialogConfig,
         ) { 
-		console.log("Constructing this", this, "\nwith\n", arguments);
+		console.log("DiagramTableComponent\n", this, "\nwith\n", arguments);
 	  }
 
     ngOnInit() {

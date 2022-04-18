@@ -3,16 +3,16 @@ import { CoUmlHubService } from "../service/couml-hub.service";
 import { MessageService } from 'primeng/api';
 import { Diagram, Assembler, ChangeRecord, ActionType, PropertyType, Component, Class, AbstractClass, Interface, Enumeration, UmlElement, IUser, ICollection } from 'src/models/DiagramModel';
 import { EditorComponent } from '../editor/editor.component';
-// import { TeamActivityComponent } from '../activity/team-activity.component';
+import { TeamActivityComponent } from '../activity/team-activity.component';
 
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ProjectDeveloper{
 
 	_projectDiagram: Diagram = null;
 
 	_diagramEditor: EditorComponent = null;
-	// _teamActivity: TeamActivityComponent
+	_teamActivity: TeamActivityComponent
 
 	_changes: ChangeRecord[] = [];
 
@@ -20,7 +20,7 @@ export class ProjectDeveloper{
 		private _coUmlHub: CoUmlHubService,
 		private _toastMessageService: MessageService
 	){
-		console.log("Constructing this", this, "\nwith\n", arguments);
+		console.log("ProjectDeveloper\n", this, "\nwith\n", arguments);
 		this._coUmlHub.subscribe(this);
 	}
 
@@ -31,10 +31,10 @@ export class ProjectDeveloper{
 			case subscriber instanceof EditorComponent: 
 				this._diagramEditor = subscriber; break;
 
-			// case subscriber instanceof TeamActivityComponent:
-			// 	this._teamActivity  = subscriber;
-			// 	this._coUmlHub.subscribe(subscriber);
-			// 	break;
+			case subscriber instanceof TeamActivityComponent:
+				this._teamActivity  = subscriber;
+				this._coUmlHub.subscribe(subscriber);
+				break;
 		}
 	}
 

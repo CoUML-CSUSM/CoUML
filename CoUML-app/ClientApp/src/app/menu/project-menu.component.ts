@@ -20,8 +20,7 @@ import { DiagramTableComponent } from './open/diagram-table.component';
 @AngularComponent({
 	selector: 'app-menu',
 	templateUrl: './project-menu.component.html',
-	// providers: [ProjectManager, ProjectDeveloper]
-	providers: [ProjectManager, ProjectDeveloper, DialogService]
+	providers: [DialogService]
 })
 export class ProjectMenuComponent{
 
@@ -32,13 +31,12 @@ export class ProjectMenuComponent{
 
 
 	constructor(
-		// private _projectManager: ProjectManager,
 		private _coUmlHub: CoUmlHubService,
 		private primengConfig: PrimeNGConfig,
 		private authService: SocialAuthService,//login stuff,
 		private dialogService: DialogService,//open dialog box
 		){
-			console.log("Constructing this", this, "\nwith\n", arguments);
+			console.log("ProjectMenuComponent\n", this, "\nwith\n", arguments);
 		this._menuItems = [
 		{
 		label: "File",
@@ -106,11 +104,10 @@ export class ProjectMenuComponent{
 	}
 	
 	showNewDiagramDialog() {
-		//TOUNDO
-		// if(this._coUmlHub._teamActivity.isLoggedIn())
-		// {
+		if(this._coUmlHub._teamActivity.isLoggedIn())
+		{
 			this.open.emit(true);
-		// }
+		}
 	}
 
 	//login stuff
@@ -139,13 +136,11 @@ export class ProjectMenuComponent{
 	 */
 	showOpenDiagram()
 	{
-		// //TOUNDO
-		// if(this._coUmlHub._teamActivity.isLoggedIn())
-		// {
+		if(this._coUmlHub._teamActivity.isLoggedIn())
+		{
 			const openDiagramDialog = this.dialogService.open(DiagramTableComponent, {
 			data: {
-				id:"sirenaamaranth@gmail.com"
-				// id: this._coUmlHub._teamActivity.getUser().user.id // id of user ToDO: Central user service? maybe move to different central provider class?
+				id: this._coUmlHub._teamActivity.getUser().user.id 
 			},
 				header: 'Choose a Diagram',
 				width: '70%'
@@ -158,7 +153,7 @@ export class ProjectMenuComponent{
 				this._coUmlHub._projectDeveloper.open(diagram._id);
 				}
 			});
-		// }
+		}
 	}
 
 	showInviteDialog(){

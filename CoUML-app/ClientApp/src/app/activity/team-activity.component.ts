@@ -14,10 +14,10 @@ export class TeamActivityComponent {
 
 
 	constructor(
-		// private _projectDeveloper: ProjectDeveloper,
+		private _projectDeveloper: ProjectDeveloper,
 	){
-		console.log("Constructing this", this, "\nwith\n", arguments);
-		// this._projectDeveloper.subscribe(this);
+		console.log("TeamActivityComponent\n", this, "\nwith\n", arguments);
+		this._projectDeveloper.subscribe(this);
 	}
 
 	init(teamMemebers: User[]) {

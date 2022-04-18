@@ -20,8 +20,6 @@ const BACKSPACE = 8;
 export class EditorComponent implements AfterViewInit{
 
 	private _graph: mxGraph;
-	diagram_description: string;
-	diagramId: string;
 
 	// editorOverlay: mxCellOverlay;
 
@@ -33,6 +31,14 @@ export class EditorComponent implements AfterViewInit{
 	@ViewChild('toolbarContainer', { read: ElementRef, static: true })
 	public toolbarContainer: ElementRef<HTMLElement>;
 
+	constructor(
+		private _projectDeveloper: ProjectDeveloper
+	) {
+		console.log("EditorComponent\n", this, "\nwith\n", arguments);
+		this._projectDeveloper.subscribe(this);
+		this.onResize();
+	}
+
     	private _toolbar: mxToolbar;
 	get isDiagramSet()
 	{
@@ -42,13 +48,6 @@ export class EditorComponent implements AfterViewInit{
 	get toolbar(){ return this._toolbar;}
 	get graph(){return this._graph;}
 
-	constructor(
-		private _projectDeveloper: ProjectDeveloper
-	) {
-		console.log("Constructing this", this, "\nwith\n", arguments);
-		this._projectDeveloper.subscribe(this);
-		this.onResize();
-	}
 
 	/** frame controls */
 
@@ -364,8 +363,7 @@ export class EditorComponent implements AfterViewInit{
 
 	updateLockCell(affectedCell: mxCell, user: IUser)
 	{
-		// let activeteam = this._projectDeveloper._teamActivity.getteam(user); //TOUNDO
-		let activeteam = {user: user, iconFilePath: null};
+		let activeteam = this._projectDeveloper._teamActivity.getteam(user); 
 		this._lockedCellLogs.set(affectedCell.id, 
 			this._graph.addCellOverlay(affectedCell, new mxCellOverlay( new mxImage(
 				activeteam.iconFilePath, 24, 36), 
@@ -486,8 +484,7 @@ export class EditorComponent implements AfterViewInit{
 			this.getIdPath(cell),
 			PropertyType.Editor,
 			ActionType.Lock,
-			// this._projectDeveloper._teamActivity.getUser().user //TOUNDO
-			new NullUser()
+			this._projectDeveloper._teamActivity.getUser().user 
 		));
 	}
 

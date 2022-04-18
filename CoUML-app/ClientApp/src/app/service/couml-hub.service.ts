@@ -7,10 +7,10 @@ import { environment } from '../../environments/environment';
 import { Assembler, ChangeRecord, User, Diagram, DiagramDataSet } from 'src/models/DiagramModel';
 import { ConsoleLogger } from '@microsoft/signalr/dist/esm/Utils';
 import { waitForAsync } from '@angular/core/testing';
-// import { TeamActivityComponent } from '../activity/team-activity.component'; //TOUNDO
+import { TeamActivityComponent } from '../activity/team-activity.component'; 
 
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class CoUmlHubService{
 
 	private _coUmlHubConnection: SignalR.HubConnection;
@@ -19,11 +19,12 @@ export class CoUmlHubService{
 
 	public _projectDeveloper: ProjectDeveloper = null;
 	public _projectManager: ProjectManager = null;
-	// public _teamActivity: TeamActivityComponent = null; //TOUNDO
+	public _teamActivity: TeamActivityComponent = null; 
 
 	constructor(
 		private _toastMessageService: MessageService
 	){
+		console.log("CoUmlHubService\n", this, "\nwith\n", arguments);
 		this._coUmlHubConnection = new SignalR.HubConnectionBuilder()
 			.withUrl(this._url)
 			.build();
@@ -42,8 +43,8 @@ export class CoUmlHubService{
 				this.projectDeveloper = subscriber; break;
 			case subscriber instanceof ProjectManager:
 				this.projectManager  = subscriber; break;
-			// case subscriber instanceof TeamActivityComponent: //TOUNDO
-			// 	this.teamActivity  = subscriber; break;
+			case subscriber instanceof TeamActivityComponent:
+				this.teamActivity  = subscriber; break;
 		}
 	}
 
@@ -69,25 +70,24 @@ export class CoUmlHubService{
 	}
 
 
-	//TOUNDO
-	// set teamActivity(cam: TeamActivityComponent)
-	// {
-	// 	this._teamActivity = cam;
+	set teamActivity(cam: TeamActivityComponent)
+	{
+		this._teamActivity = cam;
 
-	// 	// listen for Team Cativity
-	// 	this._coUmlHubConnection.on("JoinedTeam", (value)=>{ 
-	// 		this._teamActivity.join(Assembler.assembleUmlElement(value));
-	// 	});
+		// listen for Team Cativity
+		this._coUmlHubConnection.on("JoinedTeam", (value)=>{ 
+			this._teamActivity.join(Assembler.assembleUmlElement(value));
+		});
 
-	// 	this._coUmlHubConnection.on("LeftTeam", (value)=>{ 
-	// 		this._teamActivity.leave(Assembler.assembleUmlElement(value))
-	// 	});
+		this._coUmlHubConnection.on("LeftTeam", (value)=>{ 
+			this._teamActivity.leave(Assembler.assembleUmlElement(value))
+		});
 
-	// 	this._coUmlHubConnection.on("InitTeam", (value)=>{
-	// 		let teamMemebers: User[] = Assembler.assembleUmlElements(value);
-	// 		this._teamActivity.init(teamMemebers);
-	// 	});
-	// }
+		this._coUmlHubConnection.on("InitTeam", (value)=>{
+			let teamMemebers: User[] = Assembler.assembleUmlElements(value);
+			this._teamActivity.init(teamMemebers);
+		});
+	}
 
 	private startConnection()
 	{
@@ -171,7 +171,7 @@ export class CoUmlHubService{
 
 	public loginUser(uId: string){
 		let user = new User(uId);
-		// this._teamActivity?.login(user); //TOUNDO
+		this._teamActivity?.login(user);
 		this._coUmlHubConnection.invoke("LogIn",uId);
 	}
 

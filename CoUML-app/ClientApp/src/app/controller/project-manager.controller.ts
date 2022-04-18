@@ -7,10 +7,8 @@ import {  User, UmlElement } from 'src/models/DiagramModel';
 @Injectable()
 export class ProjectManager{
 
-	newDiagram: Diagram;
-
 	constructor(private _coUmlHub: CoUmlHubService){
-		console.log("Constructing this", this, "\nwith\n", arguments);
+		console.log("ProjectManager\n", this, "\nwith\n", arguments);
 		this._coUmlHub.subscribe(this);
 	}
 

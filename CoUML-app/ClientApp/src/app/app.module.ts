@@ -15,6 +15,9 @@ import { DiagramTableComponent } from './menu/open/diagram-table.component';
 import { TeamActivityComponent } from './activity/team-activity.component';
 
 import { CoUmlHubService } from './service/couml-hub.service';
+import { ProjectDeveloper } from './controller/project-developer.controller';
+import { ProjectManager } from './controller/project-manager.controller';
+
 
 /*PrimeNG Imported modules */
 import { ButtonModule } from 'primeng/button';
@@ -40,9 +43,6 @@ import { SocialLoginModule, SocialAuthServiceConfig } from 'angularx-social-logi
 import {
   GoogleLoginProvider
 } from 'angularx-social-login';
-import { ProjectDeveloper } from './controller/project-developer.controller';
-import { ProjectManager } from './controller/project-manager.controller';
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -101,9 +101,9 @@ import { ProjectManager } from './controller/project-manager.controller';
         ],
       } as SocialAuthServiceConfig,
     },
-    CoUmlHubService,
-    ProjectDeveloper,
-    ProjectManager,
+//     CoUmlHubService,
+//     ProjectDeveloper,
+//     ProjectManager,
     MessageService,
 
   ],
