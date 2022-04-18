@@ -4,10 +4,12 @@ import { Class, Diagram, Attribute, Interface, Operation, Relationship, Relation
 import {  User, UmlElement } from 'src/models/DiagramModel';
 
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ProjectManager{
 
-	constructor(private _coUmlHub: CoUmlHubService){
+	constructor(
+		private _coUmlHub: CoUmlHubService
+	){
 		console.log("ProjectManager\n", this, "\nwith\n", arguments);
 		this._coUmlHub.subscribe(this);
 	}

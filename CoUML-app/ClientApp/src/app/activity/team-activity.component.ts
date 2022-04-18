@@ -26,6 +26,7 @@ export class TeamActivityComponent {
 			if(tm.id != this._user.user.id)
 				this.join(tm)
 		});
+		console.log("team members init\n", teamMemebers, this._team);
 	}
 
 	join(user: User)
@@ -70,7 +71,7 @@ export class TeamActivityComponent {
 		this._chipColors.push(color);
 	}
 
-	getteam(user: IUser): ActiveUser
+	getTeamMember(user: IUser): ActiveUser
 	{
 		return this._team.find((u)=> u.user.id == user.id);
 	}
