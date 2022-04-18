@@ -159,7 +159,7 @@ export class ProjectMenuComponent{
 	showInviteDialog(){
 		if(this._coUmlHub._projectDeveloper._projectDiagram?.id)
 		{
-		this.invite.emit(true);
+			this.invite.emit(true);
 		}
 	}
 }

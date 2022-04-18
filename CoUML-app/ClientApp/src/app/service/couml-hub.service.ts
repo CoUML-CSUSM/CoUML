@@ -99,10 +99,6 @@ export class CoUmlHubService{
 				.start()
 				.then(()=>{ 
 					console.log(CoUmlHubService.name,"startConnection", `Connections started with URL: ${this._url}`);
-					this._toastMessageService.add({
-						severity: 'success',
-						summary: 'Wellcome to CoUML!'
-					});
 				})
 				.catch((err) => 
 				{
