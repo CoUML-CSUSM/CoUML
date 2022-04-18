@@ -16,7 +16,6 @@ const BACKSPACE = 8;
   selector: 'app-editor',
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.styles.css'],
-  providers: [ProjectDeveloper]
 })
 export class EditorComponent implements AfterViewInit{
 

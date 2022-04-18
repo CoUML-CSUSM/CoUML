@@ -12,7 +12,7 @@ import { HomeComponent } from './home/home.component';
 import { EditorComponent } from './editor/editor.component';
 import { ProjectMenuComponent } from './menu/project-menu.component';
 import { DiagramTableComponent } from './menu/open/diagram-table.component';
-// import { TeamActivityComponent } from './activity/team-activity.component';
+import { TeamActivityComponent } from './activity/team-activity.component';
 
 import { CoUmlHubService } from './service/couml-hub.service';
 
@@ -40,6 +40,8 @@ import { SocialLoginModule, SocialAuthServiceConfig } from 'angularx-social-logi
 import {
   GoogleLoginProvider
 } from 'angularx-social-login';
+import { ProjectDeveloper } from './controller/project-developer.controller';
+import { ProjectManager } from './controller/project-manager.controller';
 
 @NgModule({
   declarations: [
@@ -48,7 +50,7 @@ import {
     EditorComponent,
     ProjectMenuComponent,
     DiagramTableComponent,
-//     TeamActivityComponent
+    TeamActivityComponent
 
   ],
 
@@ -86,7 +88,6 @@ import {
   ],
   providers: [
 
-    CoUmlHubService,
     {
       provide: 'SocialAuthServiceConfig',
       useValue: {
@@ -100,6 +101,9 @@ import {
         ],
       } as SocialAuthServiceConfig,
     },
+    CoUmlHubService,
+    ProjectDeveloper,
+    ProjectManager,
     MessageService,
 
   ],
