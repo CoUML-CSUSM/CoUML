@@ -200,15 +200,15 @@ import { EditorColors } from "./editor.resources";
 				console.log(parentCell);
 				//does this acctualy go here?
 				if((component instanceof Attribute 
-					&& (parentCell.style == "CoUML_app.Models.Class"
-						|| parentCell.style == "CoUML_app.Models.AbstractClass"
+					&& (parentCell.umlElement instanceof Class // == "CoUML_app.Models.Class"
+						|| parentCell.umlElement instanceof AbstractClass //  "CoUML_app.Models.AbstractClass"
 						)) ||
 					(component instanceof Operation
-					&&(parentCell.style == "CoUML_app.Models.Class"
-						|| parentCell.style == "CoUML_app.Models.AbstractClass"
-						|| parentCell.style == "CoUML_app.Models.Interface"
+					&&(parentCell.umlElement instanceof Class //  "CoUML_app.Models.Class"
+						|| parentCell.umlElement instanceof AbstractClass //  "CoUML_app.Models.AbstractClass"
+						|| parentCell.umlElement instanceof Interface //  "CoUML_app.Models.Interface"
 						)) ||
-					( component instanceof Enumeral && parentCell.style == "CoUML_app.Models.Enumeration")
+					( component instanceof Enumeral && parentCell.umlElement instanceof Enumeration )//  "CoUML_app.Models.Enumeration")
 					)
 				{
 					console.log("this goes here");
