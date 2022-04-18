@@ -366,7 +366,7 @@ export class EditorComponent implements AfterViewInit{
 		let activeteam = this._projectDeveloper._teamActivity.getTeamMember(user); 
 		this._lockedCellLogs.set(affectedCell.id, 
 			this._graph.addCellOverlay(affectedCell, new mxCellOverlay( new mxImage(
-				activeteam.iconFilePath, 24, 36), 
+				activeteam.iconFilePath, 36, 24), 
 				activeteam.user.id 
 			)));
 	}

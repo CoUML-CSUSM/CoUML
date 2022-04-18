@@ -37,7 +37,7 @@ import { VisibilityType } from "./Types";
 		let objArray = JSON.parse(elementString);
 		
 		let elements = [];
-		for(let element in objArray)
+		for(let element of objArray['$values'])
 		{
 			elements.push( assembleUmlElement(element));
 		}

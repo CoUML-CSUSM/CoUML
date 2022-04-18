@@ -216,7 +216,7 @@ namespace CoUML_app.Controllers.Project
 		{
 			return JsonConvert.SerializeObject(typedObject, Formatting.Indented, new JsonSerializerSettings
 					{
-						TypeNameHandling = TypeNameHandling.Auto
+						TypeNameHandling = TypeNameHandling.All
 					});
 		}
 

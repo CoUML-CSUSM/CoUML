@@ -24,7 +24,7 @@ export class TeamActivityComponent {
 		this._team = [];
 		teamMemebers.forEach((tm)=>{
 			if(tm.id != this._user.user.id)
-				this.join(tm)
+				this.join(new User(tm.id));
 		});
 		console.log("team members init\n", teamMemebers, this._team);
 	}

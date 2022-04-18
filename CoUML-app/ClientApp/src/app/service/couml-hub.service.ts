@@ -85,6 +85,7 @@ export class CoUmlHubService{
 
 		this._coUmlHubConnection.on("InitTeam", (value)=>{
 			let teamMemebers: User[] = Assembler.assembleUmlElements(value);
+			console.log("hub init team", value, teamMemebers);
 			this._teamActivity.init(teamMemebers);
 		});
 	}
