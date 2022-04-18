@@ -77,11 +77,11 @@ export class CoUmlHubService{
 		// listen for Team Cativity
 		this._coUmlHubConnection.on("JoinedTeam", (value)=>{ 
 			console.log("join", value)
-			this._teamActivity.join(Assembler.assembleUmlElement( value));
+			this._teamActivity.join(Assembler.assembleUmlElement( JSON.parse(value)));
 		});
 
 		this._coUmlHubConnection.on("LeftTeam", (value)=>{ 
-			this._teamActivity.leave(Assembler.assembleUmlElement(value));
+			this._teamActivity.leave(Assembler.assembleUmlElement(JSON.parse(value)));
 		});
 
 		this._coUmlHubConnection.on("InitTeam", (value)=>{

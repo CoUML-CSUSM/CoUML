@@ -7,6 +7,7 @@ namespace CoUML_app.Models
 		public int? width { get; set; }
 		public int? height { get; set; }
 		public void Shift(Point point);
+		public void Style(string color);
 	}
 	public class Dimension: IDimension
 	{
@@ -21,11 +22,17 @@ namespace CoUML_app.Models
 		public int? y { get; set; }
 		public int? width { get; set; }
 		public int? height { get; set; }
+		public string? fillColor { get; set; }
 
 		public void Shift(Point point)
 		{
 			x = point.X;
 			y = point.Y;
+		}
+
+		public void Style(string color)
+		{
+			fillColor = color;
 		}
 	}
 

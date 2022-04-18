@@ -38,6 +38,11 @@ export  abstract class UmlElement
 	{
 		this.dimension.shift(point);
 	}
+
+	public style(color)
+	{
+		this.dimension.style(color);
+	}
 }
 
 export class Diagram extends UmlElement

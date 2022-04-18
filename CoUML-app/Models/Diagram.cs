@@ -37,7 +37,8 @@ namespace CoUML_app.Models
 			{
 				case ActionType.Lock: 		Lock((User)change.value);	break;
 				case ActionType.Release:	Release();	break;
-				case ActionType.Shift: 		Shift((Point) change.value);	break;
+				case ActionType.Shift: 		dimension.Shift((Point) change.value);	break;
+				case ActionType.Style:		dimension.Style((string) change.value);	break;
 				default: break;							
 			}
 		}
@@ -50,11 +51,6 @@ namespace CoUML_app.Models
 		protected void Release()
 		{
 			this.editor = new NullUser();
-		}
-
-		protected void Shift(Point point)
-		{
-			dimension.Shift(point);
 		}
 
 		public virtual void Validate(ref UmlElement parent)

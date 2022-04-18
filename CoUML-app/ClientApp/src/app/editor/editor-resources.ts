@@ -43,6 +43,8 @@ export namespace EditorColors{
 	export const COIN = '#9897a8';
 	export const FOSSI = '#9897a8';
 
+	
+
 }
 
 

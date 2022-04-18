@@ -6,19 +6,23 @@ export interface IDimension
 	y: number,
 	width: number,
 	height: number,
+	fillColor: string,
+
 }
 export class Dimension implements IDimension {
 	x: number;
 	y: number;
 	width: number;
 	height: number;
+	fillColor: string = "#FFFFFF";
 
-	constructor (x = null, y = null, w = null, h = null)
+	constructor (x = null, y = null, w = null, h = null, fillColor = "#FFFFFF")
 	{
 		this.x = x;
 		this.y = y;
 		this.width = w;
 		this.height = h;
+		this.fillColor = fillColor;
 	}
 
 	shift(point: Point)
@@ -35,9 +39,14 @@ export class Dimension implements IDimension {
 		this.height = newDim.x | this.height;
 	}
 
+	style(color: string)
+	{
+		this.fillColor = color;
+	}
+
 }
 
-export const DEFUALT_DIMENSION: IDimension = {x: 0, y: 0, width: 200, height: 20}
+export const DEFUALT_DIMENSION: IDimension = {x: 0, y: 0, width: 200, height: 20, fillColor: "#FFFFFF"}
 
 export class Point
 {

@@ -50,6 +50,7 @@ export class TeamActivityComponent {
 	logOut()
 	{
 		this._user = new ActiveUser(new NullUser(),'NULL');
+		this._team = [];
 	}
 
 	isLoggedIn(): boolean

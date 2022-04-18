@@ -12,6 +12,7 @@ import { AbstractClass,
 	RelationshipType, 
 	Operation, Attribute, ComponentProperty, Enumeral, NullUser } from "src/models/DiagramModel";
 import { EditorComponent } from "./editor.component";
+import { EditorColors } from "./editor.resources";
 
 
  //================================================================================================
@@ -55,7 +56,18 @@ import { EditorComponent } from "./editor.component";
 	_relationtypeCatolog.set(RelationshipType.Composition, 'Composition');	
 	_relationtypeCatolog.set(RelationshipType.Generalization, 'Generalization');
 	_relationtypeCatolog.set(RelationshipType.Realization, 'Realization');
-	
+
+	const _colorCatolog: Map<string, string> = new Map();
+	_colorCatolog.set('FIRERED', EditorColors.FIRERED);
+	_colorCatolog.set('FLAMINGOPINK', EditorColors.FLAMINGOPINK);
+	_colorCatolog.set('CANNARYYELLOW', EditorColors.CANNARYYELLOW);
+	_colorCatolog.set('BUTTERYELLOW', EditorColors.BUTTERYELLOW);
+	_colorCatolog.set('LIMEGREEN', EditorColors.LIMEGREEN);
+	_colorCatolog.set('ARCTICBLUE', EditorColors.ARCTICBLUE);
+	_colorCatolog.set('CERULEANBLUE', EditorColors.CERULEANBLUE);
+	_colorCatolog.set('PURPLE', EditorColors.PURPLE);
+	_colorCatolog.set('LIGHTGRAY', EditorColors.LIGHTGRAY);
+	_colorCatolog.set('WHITE', EditorColors.WHITE);
    
 	/**
 	 * creates a context menu for setting the relation type of an edge
@@ -70,7 +82,18 @@ import { EditorComponent } from "./editor.component";
 			if(cell?.edge)// menu if user clicks on edge
 			{
 				_relationtypeCatolog.forEach((title: string, relationshipType: RelationshipType)=>{
-					menu.addItem(title,		EDITOR_IMAGES_UML_PAPTH(title),	()=>setRelationType(cell, relationshipType)).id = title;
+					menu.addItem(title, EDITOR_IMAGES_UML_PAPTH('uml',title), ()=>setRelationType(cell, relationshipType))
+						.id = title;
+				})
+			}
+			else if(cell?.umlElement instanceof Component)// menu if user clicks on cell
+			{
+				_colorCatolog.forEach((hex: string, color: string)=>{
+					menu.addItem(
+						color,
+					EDITOR_IMAGES_UML_PAPTH('colors', color),
+					()=>setStyle(cell, hex))
+					.id = color;
 				})
 			}
 		};
@@ -87,6 +110,18 @@ import { EditorComponent } from "./editor.component";
 				relationType
 			));
 		}
+
+		var setStyle = function(component: mxCell, color: string):void
+		{
+			editorComponent.updateStyle(component, color);
+
+			editorComponent.stageChange(new ChangeRecord(
+				editorComponent.getIdPath(component),
+				PropertyType.Dimension,
+				ActionType.Style,
+				color
+			));
+		}
 	}
 
  //================================================================================================
@@ -101,7 +136,8 @@ import { EditorComponent } from "./editor.component";
 	_prototypeCatalog.set( Attribute, 'Attribute');
 	_prototypeCatalog.set( Operation, 'Operation');
 	_prototypeCatalog.set( Enumeral, 'Enumeral');
-	const EDITOR_IMAGES_UML_PAPTH = (name: string )=> {return `resources/uml/${name}.svg`};
+	const EDITOR_IMAGES_UML_PAPTH = (folder: string, name: string )=> {return `resources/${folder}/${name}.svg`};
+
 	/**
 	 * 
 	 * @param items the types of items to be included in the toolbar
@@ -198,7 +234,7 @@ import { EditorComponent } from "./editor.component";
 		}
 		
 		// Creates the image which is used as the drag icon (preview)
-		var img = editorComponent.toolbar.addMode("Drag", EDITOR_IMAGES_UML_PAPTH(image), function(evt, cell)
+		var img = editorComponent.toolbar.addMode("Drag", EDITOR_IMAGES_UML_PAPTH('uml', image), function(evt, cell)
 		{
 			var pt = editorComponent.graph.getPointForEvent(evt, true);
 				drop(editorComponent.graph, evt, cell, pt.x, pt.y);

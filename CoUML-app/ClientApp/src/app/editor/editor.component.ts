@@ -220,6 +220,8 @@ export class EditorComponent implements AfterViewInit{
 			component.dimension.height,
 			component[TYPE]
 		);
+
+		this.updateStyle(graphComponent, component.dimension.fillColor);
 		
 		if(component instanceof AbstractClass || component instanceof Class)
 		{
@@ -344,8 +346,16 @@ export class EditorComponent implements AfterViewInit{
 				this.updateReleaseCell(affectedCell); break;
 			case ActionType.Label: this.updateLabelValue(affectedCell, change); break;
 
+			case ActionType.Style: this.updateStyle(affectedCell, change.value); break;
+
 		}
 		this._graph.validateCell(affectedCell, this._graph);
+		this._graph.refresh();
+	}
+
+
+	updateStyle(affectedCell: mxCell, color: any) {
+		this._graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, color, [affectedCell])
 		this._graph.refresh();
 	}
 

@@ -17,7 +17,7 @@ export class ProjectDeveloper{
 
 	logIn(email: string) {
 		this._coUmlHub.logIn(email).then((user)=>{
-			this._teamActivity?.login(Assembler.assembleUmlElement(user));
+			this._teamActivity?.login(Assembler.assembleUmlElement(JSON.parse(user)));
 		});
 	}
 
@@ -104,6 +104,7 @@ export class ProjectDeveloper{
 
 		switch(change.action){
 			case ActionType.Shift:	affectedComponent.shift(change.value); break;
+			case ActionType.Style:	affectedComponent.style(change.value); break;
 			case ActionType.Insert:	affectedComponent.insert(change.value); break;
 			case ActionType.Remove:	affectedComponent.remove(change.value); break;
 			case ActionType.Lock:	affectedComponent.lock(change.value); break;
@@ -117,7 +118,6 @@ export class ProjectDeveloper{
 
 		console.log("result");
 		console.log(this._projectDiagram);//i need to send this down to the c#
-		// this._coUmlHub.send(this._projectDiagram.id,this._projectDiagram);
 
 	}
 

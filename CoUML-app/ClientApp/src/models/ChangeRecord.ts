@@ -31,7 +31,8 @@ export enum ActionType
 	Label = 3,
 	Lock = 4,	
 	Release = 5,
-	Shift = 6
+	Shift = 6,
+	Style = 7
 }
 
 export enum PropertyType
