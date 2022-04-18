@@ -8,6 +8,9 @@ import { TeamActivityComponent } from '../activity/team-activity.component';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectDeveloper{
+	loginUser(email: string) {
+		this._coUmlHub.loginUser(email);
+	}
 
 	_projectDiagram: Diagram = null;
 

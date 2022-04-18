@@ -54,7 +54,7 @@ export class TeamActivityComponent {
 
 	isLoggedIn(): boolean
 	{
-		return !(this._user instanceof NullUser)
+		return !(this._user.user instanceof NullUser)
 	}
 
 	private colorCheckOut():string
