@@ -58,7 +58,7 @@ export class ProjectMenuComponent implements AfterViewInit{
 				label: "Open...",
 				id: "menuFileOpen",
 				// disabled:  !this._projectDeveloper._teamActivity.isLoggedIn(),
-				command: ()=> this.showOpenDiagram()
+				command: ()=> this.showOpenDiagramDialog()
 			},
 			{
 				separator:true
@@ -115,7 +115,8 @@ export class ProjectMenuComponent implements AfterViewInit{
 		this.primengConfig.ripple = true;
 	}
 	
-	showNewDiagramDialog() {
+	showNewDiagramDialog(): void
+	{
 		if(this._projectDeveloper._teamActivity.isLoggedIn())
 		{
 			this.open.emit(true);
@@ -123,7 +124,8 @@ export class ProjectMenuComponent implements AfterViewInit{
 	}
 
 	//login stuff
-	signInWithGoogle(): void {
+	signInWithGoogle(): void
+	 {
 		console.log("sign in");
 	
 		this.authService.signIn(GoogleLoginProvider.PROVIDER_ID)
@@ -133,10 +135,11 @@ export class ProjectMenuComponent implements AfterViewInit{
 	}
 	
 	
-	signOut(): void {
+	signOut(): void 
+	{
 		console.log("sign out");
 		this.authService.signOut();
-		this._projectDeveloper.signOut();
+		this._projectDeveloper.logOut();
 	}
 	
 	//
@@ -147,7 +150,7 @@ export class ProjectMenuComponent implements AfterViewInit{
 	/**
 	 * opens a dialog to let the user select from diagrams they hae access to.
 	 */
-	showOpenDiagram()
+	showOpenDiagramDialog(): void
 	{
 		if(this._projectDeveloper._teamActivity.isLoggedIn())
 		{
@@ -169,7 +172,8 @@ export class ProjectMenuComponent implements AfterViewInit{
 		}
 	}
 
-	showInviteDialog(){
+	showInviteDialog(): void
+	{
 		if(this._projectDeveloper._projectDiagram?.id)
 		{
 			this.invite.emit(true);

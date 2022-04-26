@@ -8,25 +8,14 @@ import { TeamActivityComponent } from '../activity/team-activity.component';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectDeveloper{
-	signOut() {
-		this._coUmlHub.logOut();
-		this._teamActivity.logOut();
-		this._diagramEditor.clearGraph();
-		this._projectDiagram = null;
-	}
-
-	logIn(email: string) {
-		this._coUmlHub.logIn(email).then((user)=>{
-			this._teamActivity?.login(Assembler.assembleUmlElement(JSON.parse(user)));
-		});
-	}
 
 	_projectDiagram: Diagram = null;
 
 	_diagramEditor: EditorComponent = null;
 	_teamActivity: TeamActivityComponent
 
-	_changes: ChangeRecord[] = [];
+	private _outgoingChanges: ChangeRecord[] = [];
+	private _incomingChanges: ChangeRecord[] = [];
 
 	constructor(
 		private _coUmlHub: CoUmlHubService,
@@ -73,21 +62,34 @@ export class ProjectDeveloper{
 		this._diagramEditor.clearGraph();
 	}
 
-	private _awaitingChanges: ChangeRecord[] = [];
 
 	public applyChanges(changes: ChangeRecord[])
 	{
 		for(let change of changes)
-			this._awaitingChanges.unshift(change);
+			this._incomingChanges.unshift(change);
 		this.merge();
 	}
+
+	logIn(email: string) {
+		this._coUmlHub.logIn(email).then((user)=>{
+			this._teamActivity?.logIn(Assembler.assembleUmlElement(JSON.parse(user)));
+		});
+	}
+
+	logOut() {
+		this._coUmlHub.logOut();
+		this._teamActivity.logOut();
+		this._diagramEditor.clearGraph();
+		this._projectDiagram = null;
+	}
+
 
 	private merge()
 	{	console.log("-------------- apply changes ---------------");
 		// console.log(changes);
 		// for(let change of changes)
-		while(this._awaitingChanges.length>0){
-			let change = this._awaitingChanges.pop();
+		while(this._incomingChanges.length>0){
+			let change = this._incomingChanges.pop();
 			setTimeout(()=>{
 				this.applyChange(change);
 				this._diagramEditor.processChange(change);
@@ -124,7 +126,7 @@ export class ProjectDeveloper{
 	stageChange(change: ChangeRecord, updateSelf: boolean = false) {
 		// apply change locally
 		this.applyChange(change);
-		this._changes.push(change);
+		this._outgoingChanges.push(change);
 
 		//apply globally
 		this.commitStagedChanges();
@@ -139,13 +141,13 @@ export class ProjectDeveloper{
 		{
 			this.shouldDelay = true;
 
-			this._coUmlHub.commit( this._changes);
+			this._coUmlHub.commit( this._outgoingChanges);
 
-			this._changes = [];
+			this._outgoingChanges = [];
 			//artificial delay that prevents the program from updating too offten, but submits any last added elements
 			setTimeout(()=>{
 				this.shouldDelay = false;
-				if(0 < this._changes.length)
+				if(0 < this._outgoingChanges.length)
 					this.commitStagedChanges();
 			}, this.delayPeriod);
 		}

@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, Injectable } from "@angular/core";
 import { ProjectDeveloper } from "src/app/controller/project-developer.controller";
 import { CoUmlHubService } from "src/app/service/couml-hub.service";
 import { User, IUser, NullUser } from "src/models/DiagramModel";
@@ -15,39 +15,41 @@ export class TeamActivityComponent {
 
 	constructor(
 		private _projectDeveloper: ProjectDeveloper,
+		private _tokens: UserTokenCatalog,
 	){
 		console.log("TeamActivityComponent\n", this, "\nwith\n", arguments);
 		this._projectDeveloper.subscribe(this);
 	}
 
-	init(teamMemebers: User[]) {
+	initTeam(teamMembers: User[]): void
+	 {
 		this._team = [];
-		teamMemebers.forEach((tm)=>{
+		teamMembers.forEach((tm)=>{
 			if(tm.id != this._user.user.id)
-				this.join(new User(tm.id));
+				this.joinTeam(new User(tm.id));
 		});
-		console.log("team members init\n", teamMemebers, this._team);
+		console.log("team members init\n", teamMembers, this._team);
 	}
 
-	join(user: User)
+	joinTeam(user: User): void
 	{
-		this._team.push( new ActiveUser( user, this.colorCheckOut()));
+		this._team.push( new ActiveUser( user, this._tokens.checkOut()));
 	}
 
-	leave(user: User)
+	leaveTeam(user: User): void
 	{
 		let removeUserAtI = this._team.findIndex((u)=>u.user.id == user.id);
 		
 		let left = this._team.splice(removeUserAtI,1).pop();
-		this.colorCheckIn(left.icon);
+		this._tokens.checkIn(left.icon);
 	}
 
-	login(user: IUser)
+	logIn(user: IUser): void
 	{
 		this._user = new ActiveUser(user,'UMLGRAY');
 	}
 
-	logOut()
+	logOut(): void
 	{
 		this._user = new ActiveUser(new NullUser(),'NULL');
 		this._team = [];
@@ -58,19 +60,7 @@ export class TeamActivityComponent {
 		return !(this._user.user instanceof NullUser)
 	}
 
-	private colorCheckOut():string
-	{
-		let random = Math.floor(Math.random() * this._chipColors.length);
-		let color = this._chipColors[random];
-		console.log(random, color);
-		this._chipColors.splice(random, 1);
-		return color;
-	}
 
-	private colorCheckIn(color: string)
-	{
-		this._chipColors.push(color);
-	}
 
 	getTeamMember(user: IUser): ActiveUser
 	{
@@ -81,7 +71,30 @@ export class TeamActivityComponent {
 	{
 		return this._user;
 	}
-	
+}
+
+export class ActiveUser
+{
+	user: IUser;
+	_icon: string ;
+	get iconFilePath()
+	{
+		return `resources/icons/users/${this._icon}.svg`
+	}
+	get icon(): string
+	{
+		return this._icon;
+	}
+	constructor(user: IUser, color: string)
+	{
+		this._icon = color;
+		this.user = user;
+	}
+}
+
+@Injectable({ providedIn: 'root' })
+export class UserTokenCatalog
+{
 
 	private _chipColors: string[]=[
 		'CRIMSONRED',
@@ -103,24 +116,19 @@ export class TeamActivityComponent {
 		'FUSIAPINK',
 		'FLAMINGOPINK',
 	]
-}
 
-export class ActiveUser
-{
-	user: IUser;
-	_icon: string ;
-	get iconFilePath()
+	public checkOut():string
 	{
-		return `resources/icons/users/${this._icon}.svg`
+		let random = Math.floor(Math.random() * this._chipColors.length);
+		let color = this._chipColors[random];
+		console.log(random, color);
+		this._chipColors.splice(random, 1);
+		return color;
 	}
-	get icon(): string
+
+	public checkIn(color: string)
 	{
-		return this._icon;
-	}
-	constructor(user: IUser, color: string)
-	{
-		this._icon = color;
-		this.user = user;
+		this._chipColors.push(color);
 	}
 }
 

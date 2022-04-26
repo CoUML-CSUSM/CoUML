@@ -10,11 +10,6 @@ templateUrl: './diagram-table.component.html',
 export class DiagramTableComponent {
 
 	_diagramDataSets: DiagramDataSet[] = null;
-	// get setsEmpty()
-	// {
-	// 	return this._diagramDataSets == []
-	// }
-
 
 	constructor(
 		private _coUmlHub: CoUmlHubService,

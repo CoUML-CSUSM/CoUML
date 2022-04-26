@@ -21,8 +21,6 @@ export class EditorComponent implements AfterViewInit{
 
 	private _graph: mxGraph;
 
-	// editorOverlay: mxCellOverlay;
-
 	_activeEditCell: mxCell = null;
 
 	@ViewChild('graphContainer', { read: ElementRef, static: true })
@@ -75,7 +73,7 @@ export class EditorComponent implements AfterViewInit{
 		this.initToolbar();
 	}
 
-	initGraph()
+	private initGraph(): void
 	{
 
 		this._graph = new mxGraph(this.graphContainer.nativeElement);
@@ -90,15 +88,14 @@ export class EditorComponent implements AfterViewInit{
 		EditorEventHandler.addListeners(
 			[
 				mxEvent.LABEL_CHANGED,
-				mxEvent.CELLS_ADDED,
+				// mxEvent.CELLS_ADDED,
 				mxEvent.START_EDITING, 
 				mxEvent.EDITING_STOPPED,
 				mxEvent.CELL_CONNECTED, 
 				mxEvent.CELLS_MOVED,
 				mxEvent.CLICK,
-				mxEvent.SELECT,
+				// mxEvent.SELECT,
 				mxEvent.CONNECT,
-				// mxEvent.END_EDIT,
 			],
 			this._graph,
 			this
@@ -134,7 +131,7 @@ export class EditorComponent implements AfterViewInit{
 		
 	}
 
-	initToolbar()
+	private initToolbar(): void
 	{
 		//init toolbar div
 		this._toolbar = new mxToolbar(this.toolbarContainer.nativeElement);
@@ -354,7 +351,7 @@ export class EditorComponent implements AfterViewInit{
 	}
 
 
-	updateStyle(affectedCell: mxCell, color: any) {
+	updateStyle(affectedCell: mxCell, color: any): void {
 		this._graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, color, [affectedCell])
 		this._graph.refresh();
 	}
@@ -366,12 +363,12 @@ export class EditorComponent implements AfterViewInit{
 	 */
 	private _lockedCellLogs: Map<string, mxCellOverlay> = new Map<string, mxCellOverlay>();
 
-	private updateReleaseCell(affectedCell: mxCell)
+	private updateReleaseCell(affectedCell: mxCell): void
 	{
 		this._graph.removeCellOverlay(affectedCell, this._lockedCellLogs.get(affectedCell.id));
 	}
 
-	updateLockCell(affectedCell: mxCell, user: IUser)
+	private updateLockCell(affectedCell: mxCell, user: IUser): void
 	{
 		let activeteam = this._projectDeveloper._teamActivity.getTeamMember(user); 
 		this._lockedCellLogs.set(affectedCell.id, 
@@ -501,7 +498,8 @@ export class EditorComponent implements AfterViewInit{
 	/**
 	 * fires a delete action for the current active cell
 	 */
-	deleteCell(){
+	deleteCell(): void
+	{
 		//delete function
 		let currentSelection = this._graph.getSelectionCell();
 
@@ -525,7 +523,7 @@ export class EditorComponent implements AfterViewInit{
 		}
 	}
 
-	clearGraph()
+	clearGraph(): void
 	{
 		this._graph.selectAll(this._graph.getDefaultParent(), true);
 		this._graph.removeCells(this._graph.getSelectionCells(), true);

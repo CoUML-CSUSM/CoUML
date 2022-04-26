@@ -21,16 +21,16 @@ import { EditorColors } from "./editor.resources";
 
 	const _eventCatalog: Map<mxEvent, (...args: any[]) => any > = new Map();
 		_eventCatalog.set(mxEvent.LABEL_CHANGED, labelChanged);
-		_eventCatalog.set(mxEvent.CELLS_ADDED, cellsAdded);
+		// _eventCatalog.set(mxEvent.CELLS_ADDED, cellsAdded);
 		_eventCatalog.set(mxEvent.START_EDITING, startEditing);
-		_eventCatalog.set(mxEvent.CELL_CONNECTED, cellConnected);
 		_eventCatalog.set(mxEvent.EDITING_STOPPED, editingStopped);
+		_eventCatalog.set(mxEvent.CELL_CONNECTED, cellConnected);
 		_eventCatalog.set(mxEvent.CELLS_MOVED, cellsMoved);
 		_eventCatalog.set(mxEvent.CLICK, click);
 		_eventCatalog.set(mxEvent.CONNECT, connect);
-		_eventCatalog.set(mxEvent.START, start);
-		_eventCatalog.set(mxEvent.SELECT, newSelect);
-		_eventCatalog.set(mxEvent.END_EDIT, endEdit);
+		// _eventCatalog.set(mxEvent.START, start);
+		// _eventCatalog.set(mxEvent.SELECT, newSelect);
+		// _eventCatalog.set(mxEvent.END_EDIT, endEdit);
 
 	/**
 	 * applies the indecated event listerns
@@ -457,57 +457,57 @@ import { EditorColors } from "./editor.resources";
 	}
 
 
-	/**
-	 * 
-	 * @param graph 
-	 * @param editorComponent 
-	 */
-	 function endEdit(graph: mxGraph, editorComponent: EditorComponent)
-	 {
-		 graph.getModel().addListener
-		//  graph.addListener
-		 (mxEvent.END_EDIT,
-			 function(eventSource, eventObject){
-				 console.log('%c%s', f_alert, "END_EDIT");
-				 console.log(eventSource);
-				 console.log(eventObject);
-			 });
-	 }
+	// /**
+	//  * 
+	//  * @param graph 
+	//  * @param editorComponent 
+	//  */
+	//  function endEdit(graph: mxGraph, editorComponent: EditorComponent)
+	//  {
+	// 	 graph.getModel().addListener
+	// 	//  graph.addListener
+	// 	 (mxEvent.END_EDIT,
+	// 		 function(eventSource, eventObject){
+	// 			 console.log('%c%s', f_alert, "END_EDIT");
+	// 			 console.log(eventSource);
+	// 			 console.log(eventObject);
+	// 		 });
+	//  }
  
 
 
-	/**
-	 * 
-	 * @param graph 
-	 * @param editorComponent 
-	 */
-	function start(graph: mxGraph, editorComponent: EditorComponent)
-	{
-		graph.addListener(mxEvent.START, 
-			// When double click on cell to change label
-			function(eventSource, eventObject){
-				let affectedCells = eventObject.getProperties().cell;
-				console.log('%c%s', f_alert, "START");
+	// /**
+	//  * 
+	//  * @param graph 
+	//  * @param editorComponent 
+	//  */
+	// function start(graph: mxGraph, editorComponent: EditorComponent)
+	// {
+	// 	graph.addListener(mxEvent.START, 
+	// 		// When double click on cell to change label
+	// 		function(eventSource, eventObject){
+	// 			let affectedCells = eventObject.getProperties().cell;
+	// 			console.log('%c%s', f_alert, "START");
 
-				console.log(affectedCells.cell.id);
-			});
-	}
+	// 			console.log(affectedCells.cell.id);
+	// 		});
+	// }
 
-	/**
-	 * 
-	 * @param graph 
-	 * @param editorComponent 
-	 */
-	function cellsAdded(graph: mxGraph, editorComponent: EditorComponent)
-	{
-		graph.addListener(mxEvent.CELLS_ADDED, 
-			// mxEvent.ADD_CELLS
-			function(eventSource, eventObject){
-				let affectedCells = eventObject.getProperties().cells;
-				console.log('%c%s', f_alert, "CELLS_ADDED ");
-				console.log(affectedCells);
-			});
-	}
+	// /**
+	//  * 
+	//  * @param graph 
+	//  * @param editorComponent 
+	//  */
+	// function cellsAdded(graph: mxGraph, editorComponent: EditorComponent)
+	// {
+	// 	graph.addListener(mxEvent.CELLS_ADDED, 
+	// 		// mxEvent.ADD_CELLS
+	// 		function(eventSource, eventObject){
+	// 			let affectedCells = eventObject.getProperties().cells;
+	// 			console.log('%c%s', f_alert, "CELLS_ADDED ");
+	// 			console.log(affectedCells);
+	// 		});
+	// }
 	
 	/**
 	 * used for Lock unlock event
@@ -590,44 +590,44 @@ import { EditorColors } from "./editor.resources";
 	}
 
 
-	/**
-	 * doesnt do anthing yet
-	 * @param graph 
-	 * @param editorComponent 
-	 */
-	function select(graph: mxGraph, editorComponent: EditorComponent)
-	{
-		//listener template
-		graph.getSelectionModel().addListener(mxEvent.SELECT, 
-			// NADA
-			function(eventSource, eventObject){
-				let affectedCells = eventObject.getProperties().cell;
-				console.log('%c%s', f_alert, "mxEvent.SELECT");
-				console.log(affectedCells);
-			});
-	}
+	// /**
+	//  * doesnt do anthing yet
+	//  * @param graph 
+	//  * @param editorComponent 
+	//  */
+	// function select(graph: mxGraph, editorComponent: EditorComponent)
+	// {
+	// 	//listener template
+	// 	graph.getSelectionModel().addListener(mxEvent.SELECT, 
+	// 		// NADA
+	// 		function(eventSource, eventObject){
+	// 			let affectedCells = eventObject.getProperties().cell;
+	// 			console.log('%c%s', f_alert, "mxEvent.SELECT");
+	// 			console.log(affectedCells);
+	// 		});
+	// }
 
-	function newSelect(graph: mxGraph, editorComponent: EditorComponent)
-	{
-		graph.addListener(mxEvent.SELECT, 
-			function(eventSource, eventObject){
-				console.log(`\n\nmxEvent.SELECT\n ${eventObject}`);
-				console.log(eventObject);
+	// function newSelect(graph: mxGraph, editorComponent: EditorComponent)
+	// {
+	// 	graph.addListener(mxEvent.SELECT, 
+	// 		function(eventSource, eventObject){
+	// 			console.log(`\n\nmxEvent.SELECT\n ${eventObject}`);
+	// 			console.log(eventObject);
 				
-			});
-	}
+	// 		});
+	// }
 
 
-	function template(graph: mxGraph, editorComponent: EditorComponent){
-		//listener template
-		graph.addListener(mxEvent.FIRED, 
-			// NADA
-			function(eventSource, eventObject){
-				let affectedCells = eventObject.getProperties().cell;
-				console.log('%c%s', f_alert, "");
-				console.log(affectedCells);
-			});
-	}
+	// function template(graph: mxGraph, editorComponent: EditorComponent){
+	// 	//listener template
+	// 	graph.addListener(mxEvent.FIRED, 
+	// 		// NADA
+	// 		function(eventSource, eventObject){
+	// 			let affectedCells = eventObject.getProperties().cell;
+	// 			console.log('%c%s', f_alert, "");
+	// 			console.log(affectedCells);
+	// 		});
+	// }
 
 
 
