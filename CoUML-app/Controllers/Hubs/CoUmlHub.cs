@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 
 using CoUML_app.Models;
-using CoUML_app.Controllers.Project;
+using CoUML_app.Controllers;
 using CoUML_app.Utility;
 
 //mongodb stuff
@@ -59,6 +59,7 @@ namespace CoUML_app.Controllers.Hubs
 
 
 		private static ProjectController ProjectController = new ProjectController();
+		private static UserController UserController = new UserController();
 		private static SessionHost SessionHost = new SessionHost();
 
 		
@@ -102,7 +103,7 @@ namespace CoUML_app.Controllers.Hubs
 		public string LogIn(string userId)
 		{
 			Context.Items[CoUmlContext.USER] = new User(userId);
-			ProjectController.Register((User)Context.Items[CoUmlContext.USER]);
+			UserController.RegisterUser((User)Context.Items[CoUmlContext.USER]);
 			return DTO.From<User>((User)Context.Items[CoUmlContext.USER]);
 		}
 
@@ -184,11 +185,11 @@ namespace CoUML_app.Controllers.Hubs
 		
 
 		public string Generate(string dId){
-			return ProjectController.Generate(dId,  (User)Context.Items[CoUmlContext.USER]);
+			return ProjectController.CreateDiagram(dId,  (User)Context.Items[CoUmlContext.USER]);
 		}
 		
 		public string ListMyDiagrams(){
-			return ProjectController.ListMyDiagrams( (User)Context.Items[CoUmlContext.USER] );
+			return ProjectController.ListDiagrams( (User)Context.Items[CoUmlContext.USER] );
 		}
 
 		public void Push(string changes)
@@ -228,7 +229,7 @@ namespace CoUML_app.Controllers.Hubs
 
 		public void Invite(string uId){
 			User add = new User(uId);
-			ProjectController.AddToTeam((string)(Context.Items[CoUmlContext.DIAGRAM]),add);	
+			UserController.AddToTeam((string)(Context.Items[CoUmlContext.DIAGRAM]),add);	
 		}
 	}
 }

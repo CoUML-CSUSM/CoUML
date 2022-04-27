@@ -4,7 +4,7 @@ using CoUML_app.Controllers.Generators;
 using CoUML_app.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using CoUML_app.Controllers.Project;
+using CoUML_app.Controllers;
 using System.Drawing;
 
 namespace CoUML_app.Models
