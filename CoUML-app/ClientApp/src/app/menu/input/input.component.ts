@@ -1,8 +1,7 @@
 import {Component} from '@angular/core';
 import {DynamicDialogRef} from 'primeng/dynamicdialog';
 import {DynamicDialogConfig} from 'primeng/dynamicdialog';
-import { CoUmlHubService } from 'src/app/service/couml-hub.service';
-import { DiagramDataSet } from 'src/models/DiagramModel';
+
 
 @Component({
 templateUrl: './input.component.html',

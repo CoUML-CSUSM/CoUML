@@ -109,7 +109,7 @@ export class ProjectMenuComponent implements AfterViewInit{
 
 	//login stuff
 	signInWithGoogle(): void
-	 {
+	{
 		console.log("sign in");
 	
 		this.authService.signIn(GoogleLoginProvider.PROVIDER_ID)
