@@ -13,6 +13,7 @@ import { EditorComponent } from './editor/editor.component';
 import { ProjectMenuComponent } from './menu/project-menu.component';
 import { DiagramTableComponent } from './menu/open/diagram-table.component';
 import { TeamActivityComponent } from './activity/team-activity.component';
+import { InputComponent } from './menu/input/input.component';
 
 import { CoUmlHubService } from './service/couml-hub.service';
 import { ProjectDeveloper } from './controller/project-developer.controller';
@@ -50,7 +51,8 @@ import {
     EditorComponent,
     ProjectMenuComponent,
     DiagramTableComponent,
-    TeamActivityComponent
+    TeamActivityComponent, 
+    InputComponent
 
   ],
 

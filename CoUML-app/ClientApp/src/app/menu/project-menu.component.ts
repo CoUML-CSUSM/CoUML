@@ -1,4 +1,4 @@
-import {  AfterViewInit, Component as AngularComponent, EventEmitter,  Output } from '@angular/core';
+import {  AfterViewInit, Component as AngularComponent, EventEmitter,  Output, Renderer2 } from '@angular/core';
 import { MenuItem, MessageService } from 'primeng/api';
 import { Class, Diagram, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, User, DiagramDataSet } from 'src/models/DiagramModel';
 import { ProjectManager } from '../controller/project-manager.controller';
@@ -11,6 +11,7 @@ import {GoogleLoginProvider } from "angularx-social-login";
 import { DialogService } from 'primeng/dynamicdialog';
 import { DiagramTableComponent } from './open/diagram-table.component';
 import { TeamActivityComponent } from '../activity/team-activity.component';
+import { InputComponent } from './input/input.component';
 
 	//client id
 	//174000524733-gq2vagupknm77i794hll3kbs3iupm6fu.apps.googleusercontent.com
@@ -26,18 +27,14 @@ import { TeamActivityComponent } from '../activity/team-activity.component';
 export class ProjectMenuComponent implements AfterViewInit{
 
 	_menuItems: MenuItem[];
-	@Output() open: EventEmitter<boolean> = new EventEmitter();
-
-	@Output() invite: EventEmitter<boolean> = new EventEmitter();
-
 
 	constructor(
-		// private _coUmlHub: CoUmlHubService,
-		// private _teamActivity: TeamActivityComponent,
 		private _projectDeveloper: ProjectDeveloper,
 		private primengConfig: PrimeNGConfig,
 		private authService: SocialAuthService,//login stuff,
 		private dialogService: DialogService,//open dialog box
+		private _projectManager: ProjectManager,
+		private _renderer: Renderer2
 		){
 			console.log("ProjectMenuComponent\n", this, "\nwith\n", arguments);
 		}
@@ -52,12 +49,10 @@ export class ProjectMenuComponent implements AfterViewInit{
 				label: "New...",
 				id: "menuFileNew",
 				command: () => this.showNewDiagramDialog(),
-				// disabled: !this._projectDeveloper._teamActivity.isLoggedIn(),
 			},
 			{
 				label: "Open...",
 				id: "menuFileOpen",
-				// disabled:  !this._projectDeveloper._teamActivity.isLoggedIn(),
 				command: ()=> this.showOpenDiagramDialog()
 			},
 			{
@@ -65,7 +60,6 @@ export class ProjectMenuComponent implements AfterViewInit{
 			},
 			{
 				label: "Export",
-				// disabled: !this._projectDeveloper._teamActivity.isLoggedIn(),
 				items: [
 				{
 					label: "Generate Source Code...(\"test\")",
@@ -79,7 +73,6 @@ export class ProjectMenuComponent implements AfterViewInit{
 		{
 			label: "Edit",
 			id: "menuEdit",
-			// disabled: !this._projectDeveloper._teamActivity.isLoggedIn(),
 			items: []
 		},
 		{
@@ -94,13 +87,11 @@ export class ProjectMenuComponent implements AfterViewInit{
 				{
 					label: "Sign Out",
 					id: "menuUserSignOut",
-					// disabled: !this._projectDeveloper._teamActivity.isLoggedIn(),
 					command: () => this.signOut(),
 				},
 				{
 					label: "Invite User...",
 					id: "menuUserSignInvite",
-					// disabled: !this._projectDeveloper._teamActivity.isLoggedIn(),
 					command: () => this.showInviteDialog(),
 				}
 			]
@@ -115,13 +106,6 @@ export class ProjectMenuComponent implements AfterViewInit{
 		this.primengConfig.ripple = true;
 	}
 	
-	showNewDiagramDialog(): void
-	{
-		if(this._projectDeveloper._teamActivity.isLoggedIn())
-		{
-			this.open.emit(true);
-		}
-	}
 
 	//login stuff
 	signInWithGoogle(): void
@@ -133,7 +117,6 @@ export class ProjectMenuComponent implements AfterViewInit{
 				this._projectDeveloper.logIn(socialUser.email);
 			});
 	}
-	
 	
 	signOut(): void 
 	{
@@ -155,9 +138,6 @@ export class ProjectMenuComponent implements AfterViewInit{
 		if(this._projectDeveloper._teamActivity.isLoggedIn())
 		{
 			const openDiagramDialog = this.dialogService.open(DiagramTableComponent, {
-			data: {
-				id: this._projectDeveloper._teamActivity.getUser().user.id 
-			},
 				header: 'Choose a Diagram',
 				width: '70%'
 			});
@@ -172,11 +152,40 @@ export class ProjectMenuComponent implements AfterViewInit{
 		}
 	}
 
-	showInviteDialog(): void
-	{
-		if(this._projectDeveloper._projectDiagram?.id)
+	public showInviteDialog(){
+
+		if(this._projectDeveloper._teamActivity.isLoggedIn())
 		{
-			this.invite.emit(true);
+			const openDiagramDialog = this.dialogService.open(InputComponent, {
+				header: 'Invite Team Memeber',
+			});
+		
+			// string of the _id is returned to indicate the user's selection
+			openDiagramDialog.onClose.subscribe((userId: string) => {
+				if (userId) {//diagram is the dataset of the chosen diagram
+				console.log(userId);
+				this._projectManager.invite(userId);
+
+				}
+			});
+		}
+	}
+
+	public showNewDiagramDialog()
+	{
+		if(this._projectDeveloper._teamActivity.isLoggedIn())
+		{
+			const openDiagramDialog = this.dialogService.open(InputComponent, {
+				header: 'New Diagram',
+			});
+		
+			// string of the _id is returned to indicate the user's selection
+			openDiagramDialog.onClose.subscribe((diagramId: string) => {
+				if (diagramId) {//diagram is the dataset of the chosen diagram
+				console.log(diagramId);
+				this._projectManager.generate(diagramId);
+				}
+			});
 		}
 	}
 }
