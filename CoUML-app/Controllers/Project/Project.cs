@@ -5,8 +5,6 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 
 using CoUML_app.Models;
-using CoUML_app.Controllers.Hubs;
-using CoUML_app.Utility;
 //mongodb stuff
 using MongoDB.Driver;
 using MongoDB.Bson;
@@ -25,13 +23,7 @@ namespace CoUML_app.Controllers.Project
 			_dbClient = new MongoClient(COUMLDB_URL);
 		}
 
-		public BsonDocument? Find(string dId)
-		{
-			var collection = GetCollection("Diagrams");
-			var filter = Builders<BsonDocument>.Filter.Eq("_id", ObjectId.Parse(dId));
-			var diagramBSON = collection.Find(filter).Project("{_id: 0}").FirstOrDefault(); //may return null
-			return diagramBSON;
-		}
+
 
 		public Diagram FindDiagram(string dId)
 		{
@@ -45,7 +37,13 @@ namespace CoUML_app.Controllers.Project
 			return null;
 		}
 
-
+		private BsonDocument? Find(string dId)
+		{
+			var collection = GetCollection("Diagrams");
+			var filter = Builders<BsonDocument>.Filter.Eq("_id", ObjectId.Parse(dId));
+			var diagramBSON = collection.Find(filter).Project("{_id: 0}").FirstOrDefault(); //may return null
+			return diagramBSON;
+		}
 		//creates a diagram string that gets sent to the database
 		public string Generate(string dId, User projectManager){
 
@@ -142,7 +140,7 @@ namespace CoUML_app.Controllers.Project
 
 
 				for(int i=0;i<strings.Count;i++){
-					diagrams[i] = new DiagramSet(array[i], this.getName(array[i]));
+					diagrams[i] = new DiagramSet(array[i], this.GetName(array[i]));
 				}
 
 				return JsonConvert.SerializeObject(diagrams);
@@ -154,24 +152,20 @@ namespace CoUML_app.Controllers.Project
 		}
 
 
-        public string getName(string id){
-            var dbClient = new MongoClient("mongodb://localhost:27017");
-            IMongoDatabase db = dbClient.GetDatabase("CoUML");
+		private string GetName(string id){
+			var collection = GetCollection("Diagrams");
+			var filter = Builders<BsonDocument>.Filter.Eq("_id", ObjectId.Parse(id));
 
-            var collection = db.GetCollection<BsonDocument>("Diagrams");
-            //var filter = Builders<BsonDocument>.Filter.Eq("_id", "ObjectId(\"624df1ee084f4afd218cd596\")");
-            var filter = Builders<BsonDocument>.Filter.Eq("_id", ObjectId.Parse(id));
-
-            var doc = collection.Find(filter).FirstOrDefault();//not needed
-            if(doc != null){
-                Console.WriteLine(doc["id"].ToString());
-                return doc["id"].ToString();
-            }
-            else{
-                Console.WriteLine("cant find mongodb id");
-                return null;
-            }
-        }
+			var doc = collection.Find(filter).FirstOrDefault();//not needed
+			if(doc != null){
+				Console.WriteLine(doc["id"].ToString());
+				return doc["id"].ToString();
+			}
+			else{
+				Console.WriteLine("cant find mongodb id");
+				return null;
+			}
+		}
 
 
 		public void Overwrite(Diagram diagram){

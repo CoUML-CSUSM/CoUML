@@ -59,7 +59,7 @@ namespace CoUML_app.Controllers.Hubs
 
 
 		private static ProjectController ProjectController = new ProjectController();
-		private static SessionManager SessionManager = new SessionManager();
+		private static SessionHost SessionHost = new SessionHost();
 
 		
 		/// <summary>
@@ -125,7 +125,7 @@ namespace CoUML_app.Controllers.Hubs
 			Context.Items[CoUmlContext.DIAGRAM] = dId;
 			
 			Groups.AddToGroupAsync(Context.ConnectionId, dId);
-			SessionManager.JoinSession(dId, self);
+			SessionHost.JoinSession(dId, self);
 
 			Clients.GroupExcept(dId, new List<string>(){Context.ConnectionId}.AsReadOnly())
 				.JoinedTeam(
@@ -133,7 +133,7 @@ namespace CoUML_app.Controllers.Hubs
 				);
 			Clients.Caller
 				.InitTeam(
-					DTO.From<User[]>(SessionManager.ListTeamMembers(dId))
+					DTO.From<User[]>(SessionHost.ListTeamMembers(dId))
 				);
 		}
 
@@ -147,7 +147,7 @@ namespace CoUML_app.Controllers.Hubs
 				Clients.GroupExcept(dId, new List<string>(){Context.ConnectionId}.AsReadOnly())
 					.LeftTeam(DTO.From<User>(self));
 
-				SessionManager.LeaveSession(dId, self);
+				SessionHost.LeaveSession(dId, self);
 				Groups.RemoveFromGroupAsync(Context.ConnectionId, dId);
 			}
 			Context.Items[CoUmlContext.DIAGRAM] = null;
@@ -165,13 +165,13 @@ namespace CoUML_app.Controllers.Hubs
 			LeaveSession();
 
 			Diagram fetchedDiagram = null;
-			if(SessionManager.IsSessionActive(dId))
+			if(SessionHost.IsSessionActive(dId))
 			{
-				fetchedDiagram = SessionManager.GetLiveDiagram(dId);
+				fetchedDiagram = SessionHost.GetLiveDiagram(dId);
 			}else
 			{
 				fetchedDiagram = ProjectController.FindDiagram(dId);
-				SessionManager.InitSession(dId, fetchedDiagram);
+				SessionHost.InitSession(dId, fetchedDiagram);
 			}
 
 			JoinSession(dId);			
@@ -194,8 +194,8 @@ namespace CoUML_app.Controllers.Hubs
 		public void Push(string changes)
 		{
 			var dId = (string)Context.Items[CoUmlContext.DIAGRAM];
-			SessionManager.CommitUpdatesToSession(dId, DTO.ToChangeRecords(changes));
-			ProjectController.Overwrite(SessionManager.GetLiveDiagram(dId));
+			SessionHost.CommitUpdatesToSession(dId, DTO.ToChangeRecords(changes));
+			ProjectController.Overwrite(SessionHost.GetLiveDiagram(dId));
 			Dispatch(dId, Context.ConnectionId, changes);
 		}
 

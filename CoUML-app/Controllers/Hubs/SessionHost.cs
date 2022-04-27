@@ -93,7 +93,6 @@ namespace CoUML_app.Controllers.Hubs
 		private Diagram _projectDiagram;
 		private Dictionary<string, User> _team;
 		private List<ChangeRecord> _history;
-		private SessionManager _observer;
 
 		public Diagram Diagram{ get => _projectDiagram; }
 
@@ -134,7 +133,7 @@ namespace CoUML_app.Controllers.Hubs
 	}
 
 	
-	public class SessionManager
+	public class SessionHost
 	{
 		private Dictionary<string, ActiveSession> _sessions = new Dictionary<string, ActiveSession>();
 
