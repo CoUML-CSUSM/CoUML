@@ -1,7 +1,6 @@
 using System.Collections.Specialized;
 using System.Collections.Generic;
 using CoUML_app.Models;
-using CoUML_app.Controllers.Project;
 using System.Linq;
 
 namespace CoUML_app.Controllers.Hubs
