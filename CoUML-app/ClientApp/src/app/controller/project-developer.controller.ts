@@ -65,6 +65,10 @@ export class ProjectDeveloper{
 
 	public applyChanges(changes: ChangeRecord[])
 	{
+		console.log(
+			"Applying changes\n\n",
+			changes
+		);
 		for(let change of changes)
 			this._incomingChanges.unshift(change);
 		this.merge();
@@ -106,6 +110,7 @@ export class ProjectDeveloper{
 
 		switch(change.action){
 			case ActionType.Shift:	affectedComponent.shift(change.value); break;
+			case ActionType.Path:	affectedComponent.path(change.value); break;
 			case ActionType.Style:	affectedComponent.style(change.value); break;
 			case ActionType.Insert:	affectedComponent.insert(change.value); break;
 			case ActionType.Remove:	affectedComponent.remove(change.value); break;

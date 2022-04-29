@@ -48,8 +48,12 @@ namespace CoUML_app.Utility
 			var changeRecords = To<ChangeRecord[]>(crs);
 			for(int i = 0; i< changeRecords.Length; i++)
 			{
-				if(changeRecords[i].value is JObject)
+				if(changeRecords[i].value is JArray)
 				{
+					changeRecords[i].value = To<Point[]>(changeRecords[i].value.ToString());
+				}
+				else if(changeRecords[i].value is JObject){
+						
 					JObject value = (JObject)changeRecords[i].value;
 					if(value.HasValues)
 					{

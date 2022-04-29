@@ -32,8 +32,8 @@ import { EditorColors } from "./editor.resources";
 		// _eventCatalog.set(mxEvent.SELECT, newSelect);
 		// _eventCatalog.set(mxEvent.END_EDIT, endEdit);
 		_eventCatalog.set(mxEvent.MOVE, move);
-		_eventCatalog.set(mxEvent.MOVE_START, moveStart);
-		_eventCatalog.set(mxEvent.MOVE_END, moveEnd);
+		// _eventCatalog.set(mxEvent.MOVE_START, moveStart);
+		// _eventCatalog.set(mxEvent.MOVE_END, moveEnd);
 
 	/**
 	 * applies the indecated event listerns
@@ -45,8 +45,8 @@ import { EditorColors } from "./editor.resources";
 	{
 		// TODO: add to component
 		events.push(mxEvent.MOVE);
-		events.push(mxEvent.MOVE_END);
-		events.push(mxEvent.MOVE_START);
+		// events.push(mxEvent.MOVE_END);
+		// events.push(mxEvent.MOVE_START);
 
 		events.forEach(event =>{
 			_eventCatalog.get(event).call(null, graph, editorComponent)
@@ -108,14 +108,16 @@ import { EditorColors } from "./editor.resources";
 
 		var setRelationType = function(edge: mxCell, relationType: RelationshipType):void
 		{	
-			console.log(
-				"change Edge style",
-				"\nfrom:\n\t",
-				edge.style,
-				"\nto:\n\t",
-				edge.style.replace( /(?:(\w+){1}(\;.*))/, RelationshipType[relationType]+"$2")
-			);
-			edge.style = edge.style.replace( /(?:(\w+){1}(\;.*))/, RelationshipType[relationType]+"$2");
+			/* only replace first element, leave other custom style */
+			// console.log(
+			// 	"change Edge style",
+			// 	"\nfrom:\n\t",
+			// 	edge.style,
+			// 	"\nto:\n\t",
+			// 	edge.style.replace( /(?:(\w+){1}(\;.*))/, RelationshipType[relationType]+"$2")
+			// );
+			// edge.style = edge.style.replace( /(?:(\w+){1}(\;.*))/, RelationshipType[relationType]+"$2");
+			edge.style = RelationshipType[relationType];
 			graph.refresh();
 
 			editorComponent.stageChange(new ChangeRecord(
@@ -638,32 +640,32 @@ import { EditorColors } from "./editor.resources";
 
 	function move(graph: mxGraph, editorComponent: EditorComponent){
 		//listener template
-		graph.addListener(mxEvent.MOVE, 
-			// NADA
+		graph.model.addListener(mxEvent.CHANGE, 
+			// NADA properties.changes[0].cell.geometry.points
 			function(eventSource, eventObject){
-				let affectedCells = eventObject.getProperties().cell;
-				console.log('%c%s', f_alert, "MOVE", affectedCells);
-			});
-	}
-	function moveEnd(graph: mxGraph, editorComponent: EditorComponent){
-		//listener template
-		graph.addListener(mxEvent.MOVE_END, 
-			// NADA
-			function(eventSource, eventObject){
-				let affectedCells = eventObject.getProperties().cell;
-				console.log('%c%s', f_alert, "MOVE_END",affectedCells);
-			});
-	}
-	function moveStart(graph: mxGraph, editorComponent: EditorComponent){
-		//listener template
-		graph.addListener(mxEvent.MOVE_START, 
-			// NADA
-			function(eventSource, eventObject){
-				let affectedCells = eventObject.getProperties().cell;
-				console.log('%c%s', f_alert, "MOVE_START",affectedCells);
-			});
-	}
+				let changes = eventObject.getProperties().changes;
+				console.log('%c%s', f_alert, "model.CHANGE\n", 
+				"\n\neventObject\n",
+				eventSource,
+				"\n\n changes array\n",
+				changes,
+				"\n\npoins\n",
+				changes[0]?.geometry?.points
+				);
 
+				if(changes[0]?.geometry?.points)
+				{
+					// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
+					editorComponent.stageChange(new ChangeRecord(
+						editorComponent.getIdPath(changes[0].cell),
+						PropertyType.Dimension,
+						ActionType.Path,
+						changes[0].geometry.points
+					), true);
+					// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+				}
+			});
+	}
 
 
 var f_info = 'width: 100%; background: yellow; color: navy;';

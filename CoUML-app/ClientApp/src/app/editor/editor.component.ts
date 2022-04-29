@@ -81,6 +81,7 @@ export class EditorComponent implements AfterViewInit{
 
 		// UML styles
 		EditorFormatHandler.addEdgeStyles(this._graph);
+
 		EditorFormatHandler.addCellStyles(this._graph);
 		EditorFormatHandler.initLayoutManager(this._graph);
 
@@ -117,6 +118,10 @@ export class EditorComponent implements AfterViewInit{
 		{
 			// if* the cell has an overlay *then* somone is using it and the cell is locked
 			return cell?.overlays?.length > 0 || false;
+		}
+		this._graph.isCellMovable = function(cell: mxCell)
+		{
+			return !cell.edge;
 		}
 
 		// this.editorOverlay = new mxCellOverlay(
@@ -272,6 +277,7 @@ export class EditorComponent implements AfterViewInit{
 		edge.edge = true;
 		edge.id = relation.id
 		edge.geometry.relative = true;
+		edge.geometry.points = relation.dimension.edgePath;
 		edge.style = RelationshipType[relation.type];
 		edge.umlElement = relation;
 		
@@ -342,6 +348,7 @@ export class EditorComponent implements AfterViewInit{
 			case ActionType.Label: this.updateLabelValue(affectedCell, change); break;
 
 			case ActionType.Style: this.updateStyle(affectedCell, change.value); break;
+			case ActionType.Path: this.updateEdgePoints(affectedCell, change.value); break;
 
 		}
 		this._graph.validateCell(affectedCell, this._graph);
@@ -429,6 +436,17 @@ export class EditorComponent implements AfterViewInit{
 			this._graph.getModel().setTerminal( affectedEdge, affectedCell, isSource );
 		}
 	}
+
+	/**
+	 * change the edge connection ponts
+	 * @param affectedEdge 
+	 * @param change 
+	 */
+		private updateEdgePoints(affectedEdge: mxCell, path: mxPoint[]) 
+		{
+			affectedEdge.getGeometry().points = path;
+			this.graph.refresh();		
+		}
 	/* **************************************************************************************** */
 
 	/**

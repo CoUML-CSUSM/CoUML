@@ -44,7 +44,7 @@ export  abstract class UmlElement
 		this.dimension.style(color);
 	}
 
-	public path(path: string)
+	public path(path: mxPoint[])
 	{
 		this.dimension.path(path);
 	}

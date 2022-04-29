@@ -92,13 +92,13 @@ export function addEdgeStyles(graph: mxGraph)
 
 		let includeAtt = this.state?.cell?.edge && this.state.cell.umlElement.type == RelationshipType.Association && this.state.cell.umlElement.attSet ; 
 
-		console.log('%c%s', f_alert, `paintEdgeShape\n Attribute = ${includeAtt}`);
-		console.log(this.state?.cell?.edge );
-		console.log(this.state.cell.umlElement.type == RelationshipType.Association);
-		console.log(this.state.cell.umlElement.attSet);
+		// console.log('%c%s', f_alert, `paintEdgeShape\n Attribute = ${includeAtt}`,
+		// this.state?.cell?.edge,
+		// this.state.cell.umlElement.type == RelationshipType.Association,
+		// this.state.cell.umlElement.attSet);
 		
-		// if(includeAtt)
-		// 	this.state.cell.value = this.state.cell.umlElement.toUmlNotation();
+		// // if(includeAtt)
+		// // 	this.state.cell.value = this.state.cell.umlElement.toUmlNotation();
 
 		base_mxConnectorPaint.apply(this, arguments);
 
@@ -157,19 +157,19 @@ export function addEdgeStyles(graph: mxGraph)
 		return null;
 	};
 
-	// Defines the default constraints for all shapes
-	mxShape.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0.25, 0), true),
-		new mxConnectionConstraint(new mxPoint(0.5, 0), true),
-		new mxConnectionConstraint(new mxPoint(0.75, 0), true),
-		new mxConnectionConstraint(new mxPoint(0, 0.25), true),
-		new mxConnectionConstraint(new mxPoint(0, 0.5), true),
-		new mxConnectionConstraint(new mxPoint(0, 0.75), true),
-		new mxConnectionConstraint(new mxPoint(1, 0.25), true),
-		new mxConnectionConstraint(new mxPoint(1, 0.5), true),
-		new mxConnectionConstraint(new mxPoint(1, 0.75), true),
-		new mxConnectionConstraint(new mxPoint(0.25, 1), true),
-		new mxConnectionConstraint(new mxPoint(0.5, 1), true),
-		new mxConnectionConstraint(new mxPoint(0.75, 1), true)];
+	// // Defines the default constraints for all shapes
+	// mxShape.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0.25, 0), true),
+	// 	new mxConnectionConstraint(new mxPoint(0.5, 0), true),
+	// 	new mxConnectionConstraint(new mxPoint(0.75, 0), true),
+	// 	new mxConnectionConstraint(new mxPoint(0, 0.25), true),
+	// 	new mxConnectionConstraint(new mxPoint(0, 0.5), true),
+	// 	new mxConnectionConstraint(new mxPoint(0, 0.75), true),
+	// 	new mxConnectionConstraint(new mxPoint(1, 0.25), true),
+	// 	new mxConnectionConstraint(new mxPoint(1, 0.5), true),
+	// 	new mxConnectionConstraint(new mxPoint(1, 0.75), true),
+	// 	new mxConnectionConstraint(new mxPoint(0.25, 1), true),
+	// 	new mxConnectionConstraint(new mxPoint(0.5, 1), true),
+	// 	new mxConnectionConstraint(new mxPoint(0.75, 1), true)];
 
 	// Edges have no connection points
 	mxPolyline.prototype.constraints = null;

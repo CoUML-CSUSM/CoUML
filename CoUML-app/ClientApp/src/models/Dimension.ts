@@ -15,15 +15,16 @@ export class Dimension implements IDimension {
 	width: number;
 	height: number;
 	fillColor: string = "#FFFFFF";
-	edgePath: string;
+	edgePath: mxPoint[];
 
-	constructor (x = null, y = null, w = null, h = null, fillColor = "#FFFFFF", path = null)
+	constructor (x = null, y = null, w = null, h = null, fillColor = "#FFFFFF", path = [])
 	{
 		this.x = x;
 		this.y = y;
 		this.width = w;
 		this.height = h;
 		this.fillColor = fillColor;
+		this.edgePath = path;
 	}
 
 	shift(point: Point)
@@ -45,7 +46,7 @@ export class Dimension implements IDimension {
 		this.fillColor = color;
 	}
 
-	path(path: string)
+	path(path: mxPoint[])
 	{
 		this.edgePath = path;
 	}
