@@ -227,7 +227,8 @@ import { VisibilityType } from "./Types";
 			x.y,
 			x.width,
 			x.height,
-			x.fillColor
+			x.fillColor,
+			x.edgePath
 		);
 	}
 

@@ -15,8 +15,9 @@ export class Dimension implements IDimension {
 	width: number;
 	height: number;
 	fillColor: string = "#FFFFFF";
+	edgePath: string;
 
-	constructor (x = null, y = null, w = null, h = null, fillColor = "#FFFFFF")
+	constructor (x = null, y = null, w = null, h = null, fillColor = "#FFFFFF", path = null)
 	{
 		this.x = x;
 		this.y = y;
@@ -43,6 +44,12 @@ export class Dimension implements IDimension {
 	{
 		this.fillColor = color;
 	}
+
+	path(path: string)
+	{
+		this.edgePath = path;
+	}
+
 
 }
 

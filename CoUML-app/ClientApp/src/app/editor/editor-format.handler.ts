@@ -78,75 +78,8 @@ export function addCellStyles(graph: mxGraph)
 	style['stereotype'] = 'enumeration';
 	graph.getStylesheet().putCellStyle("CoUML_app.Models.Enumeration", style);
 
-}
 
-export function initLayoutManager(graph: mxGraph)
-{
-	var layoutManager = new mxLayoutManager(graph);
-	layoutManager.getLayout = function(cell)
-	{
-		var style = graph.getCellStyle(cell) as any[];
 
-		if (style['childLayout'] == 'stackLayout')
-		{
-			var stackLayout = new mxStackLayout(graph, true);
-			stackLayout.resizeParentMax = mxUtils.getValue(style, 'resizeParentMax', '1') == '1';
-			stackLayout.horizontal = mxUtils.getValue(style, 'horizontalStack', '1') == '1';
-			stackLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', '1') == '1';
-			stackLayout.resizeLast = mxUtils.getValue(style, 'resizeLast', '0') == '1';
-			stackLayout.spacing = style['stackSpacing'] || stackLayout.spacing;
-			stackLayout.border = style['stackBorder'] || stackLayout.border;
-			stackLayout.marginLeft = style['marginLeft'] || 0;
-			stackLayout.marginRight = style['marginRight'] || 0;
-			stackLayout.marginTop = style['marginTop'] || 0;
-			stackLayout.marginBottom = style['marginBottom'] || 0;
-			stackLayout.allowGaps = style['allowGaps'] || 0;
-			// stackLayout.fill = true;
-			stackLayout.fill = false;
-
-			stackLayout.gridSize = HEIGHT;
-			
-			return stackLayout;
-		}
-		else if (style['childLayout'] == 'treeLayout')
-		{
-			var treeLayout = new mxCompactTreeLayout(graph);
-			treeLayout.horizontal = mxUtils.getValue(style, 'horizontalTree', '1') == '1';
-			treeLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', '1') == '1';
-			treeLayout.groupPadding = mxUtils.getValue(style, 'parentPadding', 20);
-			treeLayout.levelDistance = mxUtils.getValue(style, 'treeLevelDistance', 30);
-			treeLayout.maintainParentLocation = true;
-			treeLayout.edgeRouting = false;
-			treeLayout.resetEdges = false;
-			
-			return treeLayout;
-		}
-		else if (style['childLayout'] == 'flowLayout')
-		{
-			var flowLayout = new mxHierarchicalLayout(graph, mxUtils.getValue(style,
-				'flowOrientation', mxConstants.DIRECTION_EAST));
-			flowLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', '1') == '1';
-			flowLayout.parentBorder = mxUtils.getValue(style, 'parentPadding', 20);
-			flowLayout.maintainParentLocation = true;
-			
-			// Special undocumented styles for changing the hierarchical
-			flowLayout.intraCellSpacing = mxUtils.getValue(style, 'intraCellSpacing',
-				mxHierarchicalLayout.prototype.intraCellSpacing);
-			flowLayout.interRankCellSpacing = mxUtils.getValue(style, 'interRankCellSpacing',
-				mxHierarchicalLayout.prototype.interRankCellSpacing);
-			flowLayout.interHierarchySpacing = mxUtils.getValue(style, 'interHierarchySpacing',
-				mxHierarchicalLayout.prototype.interHierarchySpacing);
-			flowLayout.parallelEdgeSpacing = mxUtils.getValue(style, 'parallelEdgeSpacing',
-				mxHierarchicalLayout.prototype.parallelEdgeSpacing);
-			
-			return flowLayout;
-		}
-		else if (style['childLayout'] == 'organicLayout')
-		{
-			return new mxFastOrganicLayout(graph);
-		}
-		return null;
-	};
 }
 
 
@@ -186,7 +119,64 @@ export function addEdgeStyles(graph: mxGraph)
 	}
 
 
+	// Overridden to define per-shape connection points
+	mxGraph.prototype.getAllConnectionConstraints = function(terminal, source)
+	{
 
+		if (terminal != null && terminal.shape != null)
+		{
+			if (terminal.shape.stencil != null)
+			{
+				if (terminal.shape.stencil.constraints != null)
+				{
+					console.log(
+						"getAllConnectionConstraints\n",
+						"terminal.shape.stencil.constraints != null",
+						"\nterminal\n\t",
+						terminal,
+						"\nsource\n\t",
+						source,
+					);
+					return terminal.shape.stencil.constraints;
+				}
+			}
+			else if (terminal.shape.constraints != null)
+			{
+				console.log(
+					"getAllConnectionConstraints\n",
+					"terminal.shape.constraints != null",
+					"\nterminal\n\t",
+					terminal,
+					"\nsource\n\t",
+					source,
+				);
+				return terminal.shape.constraints;
+			}
+		}
+
+		return null;
+	};
+
+	// Defines the default constraints for all shapes
+	mxShape.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0.25, 0), true),
+		new mxConnectionConstraint(new mxPoint(0.5, 0), true),
+		new mxConnectionConstraint(new mxPoint(0.75, 0), true),
+		new mxConnectionConstraint(new mxPoint(0, 0.25), true),
+		new mxConnectionConstraint(new mxPoint(0, 0.5), true),
+		new mxConnectionConstraint(new mxPoint(0, 0.75), true),
+		new mxConnectionConstraint(new mxPoint(1, 0.25), true),
+		new mxConnectionConstraint(new mxPoint(1, 0.5), true),
+		new mxConnectionConstraint(new mxPoint(1, 0.75), true),
+		new mxConnectionConstraint(new mxPoint(0.25, 1), true),
+		new mxConnectionConstraint(new mxPoint(0.5, 1), true),
+		new mxConnectionConstraint(new mxPoint(0.75, 1), true)];
+
+	// Edges have no connection points
+	mxPolyline.prototype.constraints = null;
+
+		
+	// Specifies the default edge style
+	graph.getStylesheet().getDefaultEdgeStyle()['edgeStyle'] = 'orthogonalEdgeStyle';
 
 	let  edgeStyleDefualt = graph.getStylesheet().getDefaultEdgeStyle();
 	edgeStyleDefualt[mxConstants.STYLE_STARTSIZE] = 12;
@@ -280,3 +270,73 @@ function scaleR (a: mxPoint, b: mxPoint, r: number): mxPoint
 
 }
 var f_alert = 'text-align: center; width: 100%; background: black; color: red; font-size: 1.5em;';
+
+
+export function initLayoutManager(graph: mxGraph)
+{
+	var layoutManager = new mxLayoutManager(graph);
+	layoutManager.getLayout = function(cell)
+	{
+		var style = graph.getCellStyle(cell) as any[];
+
+		if (style['childLayout'] == 'stackLayout')
+		{
+			var stackLayout = new mxStackLayout(graph, true);
+			stackLayout.resizeParentMax = mxUtils.getValue(style, 'resizeParentMax', '1') == '1';
+			stackLayout.horizontal = mxUtils.getValue(style, 'horizontalStack', '1') == '1';
+			stackLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', '1') == '1';
+			stackLayout.resizeLast = mxUtils.getValue(style, 'resizeLast', '0') == '1';
+			stackLayout.spacing = style['stackSpacing'] || stackLayout.spacing;
+			stackLayout.border = style['stackBorder'] || stackLayout.border;
+			stackLayout.marginLeft = style['marginLeft'] || 0;
+			stackLayout.marginRight = style['marginRight'] || 0;
+			stackLayout.marginTop = style['marginTop'] || 0;
+			stackLayout.marginBottom = style['marginBottom'] || 0;
+			stackLayout.allowGaps = style['allowGaps'] || 0;
+			// stackLayout.fill = true;
+			stackLayout.fill = false;
+
+			stackLayout.gridSize = HEIGHT;
+			
+			return stackLayout;
+		}
+		else if (style['childLayout'] == 'treeLayout')
+		{
+			var treeLayout = new mxCompactTreeLayout(graph);
+			treeLayout.horizontal = mxUtils.getValue(style, 'horizontalTree', '1') == '1';
+			treeLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', '1') == '1';
+			treeLayout.groupPadding = mxUtils.getValue(style, 'parentPadding', 20);
+			treeLayout.levelDistance = mxUtils.getValue(style, 'treeLevelDistance', 30);
+			treeLayout.maintainParentLocation = true;
+			treeLayout.edgeRouting = false;
+			treeLayout.resetEdges = false;
+			
+			return treeLayout;
+		}
+		else if (style['childLayout'] == 'flowLayout')
+		{
+			var flowLayout = new mxHierarchicalLayout(graph, mxUtils.getValue(style,
+				'flowOrientation', mxConstants.DIRECTION_EAST));
+			flowLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', '1') == '1';
+			flowLayout.parentBorder = mxUtils.getValue(style, 'parentPadding', 20);
+			flowLayout.maintainParentLocation = true;
+			
+			// Special undocumented styles for changing the hierarchical
+			flowLayout.intraCellSpacing = mxUtils.getValue(style, 'intraCellSpacing',
+				mxHierarchicalLayout.prototype.intraCellSpacing);
+			flowLayout.interRankCellSpacing = mxUtils.getValue(style, 'interRankCellSpacing',
+				mxHierarchicalLayout.prototype.interRankCellSpacing);
+			flowLayout.interHierarchySpacing = mxUtils.getValue(style, 'interHierarchySpacing',
+				mxHierarchicalLayout.prototype.interHierarchySpacing);
+			flowLayout.parallelEdgeSpacing = mxUtils.getValue(style, 'parallelEdgeSpacing',
+				mxHierarchicalLayout.prototype.parallelEdgeSpacing);
+			
+			return flowLayout;
+		}
+		else if (style['childLayout'] == 'organicLayout')
+		{
+			return new mxFastOrganicLayout(graph);
+		}
+		return null;
+	};
+}

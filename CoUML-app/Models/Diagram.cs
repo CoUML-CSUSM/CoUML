@@ -39,6 +39,7 @@ namespace CoUML_app.Models
 				case ActionType.Release:	Release();	break;
 				case ActionType.Shift: 		dimension.Shift((Point) change.value);	break;
 				case ActionType.Style:		dimension.Style((string) change.value);	break;
+				case ActionType.Path:		dimension.Path((string) change.value);	break;
 				default: break;							
 			}
 		}

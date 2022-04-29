@@ -88,13 +88,11 @@ export class EditorComponent implements AfterViewInit{
 		EditorEventHandler.addListeners(
 			[
 				mxEvent.LABEL_CHANGED,
-				// mxEvent.CELLS_ADDED,
 				mxEvent.START_EDITING, 
 				mxEvent.EDITING_STOPPED,
 				mxEvent.CELL_CONNECTED, 
 				mxEvent.CELLS_MOVED,
 				mxEvent.CLICK,
-				// mxEvent.SELECT,
 				mxEvent.CONNECT,
 			],
 			this._graph,

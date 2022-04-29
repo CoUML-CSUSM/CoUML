@@ -43,6 +43,11 @@ export  abstract class UmlElement
 	{
 		this.dimension.style(color);
 	}
+
+	public path(path: string)
+	{
+		this.dimension.path(path);
+	}
 }
 
 export class Diagram extends UmlElement

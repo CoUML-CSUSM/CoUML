@@ -31,6 +31,9 @@ import { EditorColors } from "./editor.resources";
 		// _eventCatalog.set(mxEvent.START, start);
 		// _eventCatalog.set(mxEvent.SELECT, newSelect);
 		// _eventCatalog.set(mxEvent.END_EDIT, endEdit);
+		_eventCatalog.set(mxEvent.MOVE, move);
+		_eventCatalog.set(mxEvent.MOVE_START, moveStart);
+		_eventCatalog.set(mxEvent.MOVE_END, moveEnd);
 
 	/**
 	 * applies the indecated event listerns
@@ -40,6 +43,11 @@ import { EditorColors } from "./editor.resources";
 	 */
 	export function addListeners(events: mxEvent[], graph: mxGraph, editorComponent: EditorComponent): void
 	{
+		// TODO: add to component
+		events.push(mxEvent.MOVE);
+		events.push(mxEvent.MOVE_END);
+		events.push(mxEvent.MOVE_START);
+
 		events.forEach(event =>{
 			_eventCatalog.get(event).call(null, graph, editorComponent)
 		});
@@ -99,8 +107,15 @@ import { EditorColors } from "./editor.resources";
 		};
 
 		var setRelationType = function(edge: mxCell, relationType: RelationshipType):void
-		{
-			edge.style = RelationshipType[relationType];
+		{	
+			console.log(
+				"change Edge style",
+				"\nfrom:\n\t",
+				edge.style,
+				"\nto:\n\t",
+				edge.style.replace( /(?:(\w+){1}(\;.*))/, RelationshipType[relationType]+"$2")
+			);
+			edge.style = edge.style.replace( /(?:(\w+){1}(\;.*))/, RelationshipType[relationType]+"$2");
 			graph.refresh();
 
 			editorComponent.stageChange(new ChangeRecord(
@@ -300,8 +315,7 @@ import { EditorColors } from "./editor.resources";
 			function(eventSource, eventObject){
 				let affectedCells: mxCell[] = eventObject.getProperties().cells;
 
-				console.log('%c%s', f_alert, "CELLS_MOVED");
-				console.log(affectedCells);
+				console.log('%c%s', f_alert, "CELLS_MOVED",affectedCells);
 
 				for( let cell of affectedCells)
 				// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
@@ -430,7 +444,7 @@ import { EditorColors } from "./editor.resources";
 			// fires When double click on cell to change label
 			function(eventSource, eventObject){
 				let affectedCells = eventObject.getProperties().cell;
-				console.log('%c%s', f_alert, "START_EDITING");
+				console.log('%c%s', f_alert, "START_EDITING", affectedCells);
 				if(affectedCells.edge)
 					affectedCells.value = affectedCells.umlElement?.attribute?.toUmlNotation();
 				console.log(affectedCells);
@@ -448,9 +462,7 @@ import { EditorColors } from "./editor.resources";
 	{
 		graph.addListener(mxEvent.EDITING_STOPPED,
 			function(eventSource, eventObject){
-				console.log('%c%s', f_alert, "EDITING_STOPPED");
-				console.log(eventSource);
-				console.log(eventObject);
+				console.log('%c%s', f_alert, "EDITING_STOPPED",eventSource,eventObject);
 
 				editorComponent.release();
 			});
@@ -521,8 +533,7 @@ import { EditorColors } from "./editor.resources";
 			// click on object to see its makup.
 			function(eventSource, eventObject){
 				let affectedCells = eventObject.getProperties().cell;
-				console.log('%c%s',f_alert, "mxCell description");
-				console.log(affectedCells);
+				console.log('%c%s',f_alert, "mxCell description",affectedCells);
 				if(graph.isCellLocked(affectedCells))
 					affectedCells = undefined;
 				if(affectedCells == undefined )
@@ -552,8 +563,7 @@ import { EditorColors } from "./editor.resources";
 		graph.connectionHandler.addListener(mxEvent.CONNECT, 
 			function(eventSource, eventObject){
 				let affectedCells = eventObject.getProperties('cell').cell;
-				console.log('%c%s', f_alert, "connectionHandler.CONNECT");
-				console.log(affectedCells);
+				console.log('%c%s', f_alert, "connectionHandler.CONNECT",affectedCells);
 
 				if(affectedCells.edge)
 				{
@@ -571,9 +581,6 @@ import { EditorColors } from "./editor.resources";
 
 					relation.type = affectedCells.style | RelationshipType.Association;
 
-					// affectedCells.id = relation.id;
-					// affectedCells.value = relation.toUmlNotation();
-					// affectedCells.style = RelationshipType[relation.type]
 					graph.removeCells([affectedCells],true);
 
 				// * * * * * * * * * * * * * * * * * StageChange * * * * * * * * * * * * * * * * * //
@@ -628,6 +635,34 @@ import { EditorColors } from "./editor.resources";
 	// 			console.log(affectedCells);
 	// 		});
 	// }
+
+	function move(graph: mxGraph, editorComponent: EditorComponent){
+		//listener template
+		graph.addListener(mxEvent.MOVE, 
+			// NADA
+			function(eventSource, eventObject){
+				let affectedCells = eventObject.getProperties().cell;
+				console.log('%c%s', f_alert, "MOVE", affectedCells);
+			});
+	}
+	function moveEnd(graph: mxGraph, editorComponent: EditorComponent){
+		//listener template
+		graph.addListener(mxEvent.MOVE_END, 
+			// NADA
+			function(eventSource, eventObject){
+				let affectedCells = eventObject.getProperties().cell;
+				console.log('%c%s', f_alert, "MOVE_END",affectedCells);
+			});
+	}
+	function moveStart(graph: mxGraph, editorComponent: EditorComponent){
+		//listener template
+		graph.addListener(mxEvent.MOVE_START, 
+			// NADA
+			function(eventSource, eventObject){
+				let affectedCells = eventObject.getProperties().cell;
+				console.log('%c%s', f_alert, "MOVE_START",affectedCells);
+			});
+	}
 
 
 
