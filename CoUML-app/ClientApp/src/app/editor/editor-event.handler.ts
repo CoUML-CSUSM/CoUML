@@ -21,18 +21,17 @@ import { EditorColors } from "./editor.resources";
 
 	const _eventCatalog: Map<mxEvent, (...args: any[]) => any > = new Map();
 		_eventCatalog.set(mxEvent.LABEL_CHANGED, labelChanged);
-		// _eventCatalog.set(mxEvent.CELLS_ADDED, cellsAdded);
 		_eventCatalog.set(mxEvent.START_EDITING, startEditing);
 		_eventCatalog.set(mxEvent.EDITING_STOPPED, editingStopped);
 		_eventCatalog.set(mxEvent.CELL_CONNECTED, cellConnected);
 		_eventCatalog.set(mxEvent.CELLS_MOVED, cellsMoved);
 		_eventCatalog.set(mxEvent.CLICK, click);
 		_eventCatalog.set(mxEvent.CONNECT, connect);
+		_eventCatalog.set(mxEvent.MOVE, move);
 		// _eventCatalog.set(mxEvent.START, start);
 		// _eventCatalog.set(mxEvent.SELECT, newSelect);
 		// _eventCatalog.set(mxEvent.END_EDIT, endEdit);
-		_eventCatalog.set(mxEvent.MOVE, move);
-		// _eventCatalog.set(mxEvent.MOVE_START, moveStart);
+		// _eventCatalog.set(mxEvent.CELLS_REMOVED, remove);
 		// _eventCatalog.set(mxEvent.MOVE_END, moveEnd);
 
 	/**
@@ -43,11 +42,6 @@ import { EditorColors } from "./editor.resources";
 	 */
 	export function addListeners(events: mxEvent[], graph: mxGraph, editorComponent: EditorComponent): void
 	{
-		// TODO: add to component
-		events.push(mxEvent.MOVE);
-		// events.push(mxEvent.MOVE_END);
-		// events.push(mxEvent.MOVE_START);
-
 		events.forEach(event =>{
 			_eventCatalog.get(event).call(null, graph, editorComponent)
 		});
@@ -55,7 +49,7 @@ import { EditorColors } from "./editor.resources";
 
 
  //================================================================================================
- //	context menue for Relations
+ //	context menus
  //================================================================================================
 	const _relationtypeCatolog: Map<RelationshipType, string> = new Map();
 	_relationtypeCatolog.set(RelationshipType.Dependency, 'Dependency');
@@ -94,7 +88,7 @@ import { EditorColors } from "./editor.resources";
 						.id = title;
 				})
 			}
-			else if(cell?.umlElement instanceof Component)// menu if user clicks on cell
+			if(cell?.umlElement instanceof Component)// menu if user clicks on cell
 			{
 				_colorCatolog.forEach((hex: string, color: string)=>{
 					menu.addItem(
@@ -103,6 +97,12 @@ import { EditorColors } from "./editor.resources";
 					()=>setStyle(cell, hex))
 					.id = color;
 				})
+			}
+			if(cell?.umlElement instanceof Component || cell?.umlElement instanceof ComponentProperty)
+			{
+				let isStatic = menu.addItem("Static", null, ()=> setIsStatic(cell))
+				if(cell.umlElement?.isStatic)
+					menu.addCheckmark(isStatic,null);
 			}
 		};
 
@@ -128,6 +128,17 @@ import { EditorColors } from "./editor.resources";
 				PropertyType.Dimension,
 				ActionType.Style,
 				color
+			));
+		}
+		var setIsStatic = function(component: mxCell)
+		{
+			editorComponent.updateStatic(component, !component.umlElement?.isStatic);
+
+			editorComponent.stageChange(new ChangeRecord(
+				editorComponent.getIdPath(component),
+				PropertyType.IsStatic,
+				ActionType.Change,
+				!component.umlElement?.isStatic
 			));
 		}
 	}
@@ -607,13 +618,14 @@ import { EditorColors } from "./editor.resources";
 	// 		});
 	// }
 
-	// function newSelect(graph: mxGraph, editorComponent: EditorComponent)
+	// function remove(graph: mxGraph, editorComponent: EditorComponent)
 	// {
-	// 	graph.addListener(mxEvent.SELECT, 
+	// 	graph.addListener(mxEvent.CELLS_REMOVED, 
+	// 		// NADA
 	// 		function(eventSource, eventObject){
-	// 			console.log(`\n\nmxEvent.SELECT\n ${eventObject}`);
-	// 			console.log(eventObject);
-				
+	// 			let affectedCells = eventObject.getProperties().cell;
+	// 			console.log('%c%s\n', f_alert, "mxEvent.REMOVE_CELLS",
+	// 			eventObject,"\n\n",eventSource);
 	// 		});
 	// }
 

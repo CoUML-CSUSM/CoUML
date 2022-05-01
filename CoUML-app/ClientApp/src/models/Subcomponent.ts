@@ -137,7 +137,6 @@ export abstract class ComponentProperty extends UmlElement
 {
 	public abstract name: string;
 	public visibility: VisibilityType.VisibilityType = VisibilityType.VisibilityType.LocalScope;
-	public isStatic: boolean = false;
 	public propertyString: string = ""; 
 	public abstract type: DataType;
 	constructor(type)

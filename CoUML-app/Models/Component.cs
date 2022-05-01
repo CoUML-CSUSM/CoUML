@@ -19,7 +19,6 @@ namespace CoUML_app.Models
 		{
 			switch(change.action)
 			{
-				case ActionType.Change: break;
 				case ActionType.Label: name = (string)change.value; break;
 				default: base.ApplyLocally(change);	break;							
 			}
@@ -118,7 +117,7 @@ namespace CoUML_app.Models
 						default: break;
 					}
 					break;
-				case ActionType.Change: break;
+				case ActionType.Change: 
 				default: base.ApplyLocally(change);	break;							
 			}
 		}
@@ -163,7 +162,7 @@ namespace CoUML_app.Models
 						case PropertyType.Operations: operations.Remove((string)change.value); break;
 					}
 					break;
-				case ActionType.Change: break;
+				case ActionType.Change: 
 				default: base.ApplyLocally(change);	break;							
 			}
 		}

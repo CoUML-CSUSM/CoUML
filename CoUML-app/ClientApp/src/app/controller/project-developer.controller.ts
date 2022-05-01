@@ -120,7 +120,14 @@ export class ProjectDeveloper{
 
 			case ActionType.Change:
 
-				affectedComponent.change(change); break;
+				switch(change.affectedProperty)
+				{
+					case PropertyType.IsStatic:
+						affectedComponent.isStatic = change.value;
+						break;
+					default: affectedComponent.change(change); break;
+				}
+				break;
 		}			
 
 		console.log("result");

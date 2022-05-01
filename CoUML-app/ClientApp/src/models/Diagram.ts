@@ -9,6 +9,7 @@ export  abstract class UmlElement
 	public id: string;
 	public editor: IUser;
 	public dimension: Dimension;
+	public isStatic: boolean = false;
 
 	abstract get(id: string);
 	abstract insert(element);

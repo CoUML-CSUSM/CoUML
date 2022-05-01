@@ -96,6 +96,7 @@ export class EditorComponent implements AfterViewInit{
 				mxEvent.CELLS_MOVED,
 				mxEvent.CLICK,
 				mxEvent.CONNECT,
+				mxEvent.MOVE,
 			],
 			this._graph,
 			this
@@ -136,7 +137,9 @@ export class EditorComponent implements AfterViewInit{
 		let baseIsValidDropTarget = this._graph.isValidDropTarget;
 		this._graph.isValidDropTarget = function (cell: mxCell, cells: mxCell[], evt: Event){
 			return this.isDiagramSet? baseIsValidDropTarget(cell, cells, evt): false;
-		}		
+		}
+		mxGraph.prototype.isLabelMovable = function(cell: mxCell){return false;}
+		
 	}
 
 	private initToolbar(): void
@@ -226,6 +229,7 @@ export class EditorComponent implements AfterViewInit{
 			component[TYPE]
 		);
 
+		this.updateStatic(graphComponent, component.isStatic);
 		this.updateStyle(graphComponent, component.dimension.fillColor);
 		
 		//comps with Attributes
@@ -281,7 +285,7 @@ export class EditorComponent implements AfterViewInit{
 			property.constructor.name
 		);
 		graphProperty.umlElement = property;
-
+		this.updateStatic(graphProperty, property.isStatic);
 		
 		this._graph.getModel().getCell(parent.id).children.sort((elemA, elemB)=>
 			(elemA.umlElement instanceof Attribute ? 1: elemA.umlElement instanceof Operation? 3: 2)
@@ -345,6 +349,7 @@ export class EditorComponent implements AfterViewInit{
 						affectedCell.style = RelationshipType[change.value];
 						this._graph.refresh();
 						break;
+					case PropertyType.IsStatic: this.updateStatic(affectedCell, change.value); break
 				}
 				break;
 
@@ -383,9 +388,18 @@ export class EditorComponent implements AfterViewInit{
 		this._graph.refresh();
 	}
 
+	updateStatic(affectedCell: mxCell, value: boolean): void
+	{
 
-	updateStyle(affectedCell: mxCell, color: any): void {
-		this._graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, color, [affectedCell])
+		this._graph.setCellStyles(mxConstants.STYLE_FONTSTYLE,
+			value? mxConstants.FONT_UNDERLINE : mxConstants.DEFAULT_FONTSTYLE,
+			[affectedCell]);
+
+	}
+
+	updateStyle(affectedCell: mxCell, color: any): void 
+	{
+		this._graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, color, [affectedCell]);
 		this._graph.refresh();
 	}
 
@@ -493,14 +507,10 @@ export class EditorComponent implements AfterViewInit{
 	}
 
 	private removeCell(cellToBeRemoved: mxCell)
-	{
-
-		// let parent = cellToBeRemoved.parent;
-		// this._graph.removeCells(
-		// 	this._graph.removeCellsFromParent([cellToBeRemoved])
-		// 	, false);
-
-			this._graph.getModel().remove(cellToBeRemoved);
+	{	
+		// let p = cellToBeRemoved.getParent();
+		this._graph.getModel().remove( cellToBeRemoved );
+		// this._graph.cellSizeUpdated(p,true);
 
 	}
 

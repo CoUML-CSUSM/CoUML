@@ -45,7 +45,7 @@ export function addCellStyles(graph: mxGraph)
 
 	style = mxUtils.clone(style);
 	style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_LINE;
-	style[mxConstants.STYLE_STROKECOLOR] = EditorColors.BLUEBERRYPURPLE;
+	style[mxConstants.STYLE_STROKECOLOR] = EditorColors.BLACK;
 	style[mxConstants.STYLE_STROKEWIDTH] = 1;
 	style[mxConstants.STYLE_FILLCOLOR] = mxConstants.NONE;
 	style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_MIDDLE;
@@ -104,19 +104,13 @@ export function addEdgeStyles(graph: mxGraph)
 
 		let includeAtt = this.state?.cell?.edge && this.state.cell.umlElement.type == RelationshipType.Association && this.state.cell.umlElement.attSet ; 
 
-		// console.log('%c%s', f_alert, `paintEdgeShape\n Attribute = ${includeAtt}`,
-		// this.state?.cell?.edge,
-		// this.state.cell.umlElement.type == RelationshipType.Association,
-		// this.state.cell.umlElement.attSet);
-		
-		// // if(includeAtt)
-		// // 	this.state.cell.value = this.state.cell.umlElement.toUmlNotation();
-
 		base_mxConnectorPaint.apply(this, arguments);
 
 		if(includeAtt)
 		{
-			let mulPT = scaleR(pts[0], pts[1], 35);
+			let start = pts[pts.length-2];
+			let end = pts[pts.length-1];
+			let mulPT = scaleR(start, end, 35);
 			// let mulPT = pts[1];
 			// c.setFontBackgroundColor("#FF0000");
 			console.log(mulPT);

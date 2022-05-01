@@ -99,10 +99,10 @@ namespace CoUML_app.Models
 							
 						case PropertyType.Type: 	
 							type = Enum.Parse<RelationshipType>(change.value.ToString()); 
-							// type = (RelationshipType)((int)change.value); 
 							break;
 
-						default: break;
+						default:
+						base.ApplyLocally(change); break;
 					}
 					break;
 				default: base.ApplyLocally(change);
@@ -162,7 +162,9 @@ namespace CoUML_app.Models
 							type = (DataType)change.value; 
 							break;
 
-						default: break;
+						default: 
+						base.ApplyLocally(change);
+						break;
 					}
 					break;
 				default: base.ApplyLocally(change);
@@ -238,8 +240,12 @@ namespace CoUML_app.Models
 		{
 			switch(change.action)
 			{
-				case ActionType.Label:  this.name = (string)change.value;
-				break;
+				case ActionType.Label:  
+					this.name = (string)change.value;
+					break;
+				default: 
+					base.ApplyLocally(change); 
+					break;
 			}
 		}
 
