@@ -1,9 +1,9 @@
-import { AbstractClass, ActionType, ChangeRecord, Class, Dimension, Enumeration, Interface, PropertyType, RelationshipType } from "src/models/DiagramModel";
+import { AbstractClass, ActionType, Attribute, ChangeRecord, Class, Dimension, Enumeration, Interface, Operation, PropertyType, RelationshipType } from "src/models/DiagramModel";
 import { EditorColors } from "./editor.resources";
 
 const DASH_PATTERN: string  = '12 4';
-const MARGIN: number = 5;
-const HEIGHT:number = 30;
+const MARGIN: number = 10;
+const HEIGHT:number = 10;
 
 
 
@@ -20,7 +20,8 @@ export function addCellStyles(graph: mxGraph)
 		if (this.state != null && this.state.cell.style != null && this.state.style['stereotype'])
 		{
 			c.setStrokeColor(EditorColors.BLACK);
-			c.text(w/2, MARGIN/2, w, h, `<<${this.state.style['stereotype']}>>`, 'center', 'top', '','', '', '', 0, '');
+			c.text(w/2, HEIGHT/2 , w, h, `<<${this.state.style['stereotype']}>>`, 'center', 'top', '','', '', '', 0, '');
+			
 		}
 		
 	}
@@ -32,6 +33,8 @@ export function addCellStyles(graph: mxGraph)
 				style[mxConstants.STYLE_FILLCOLOR] = 'none';
 				style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RECTANGLE;
 				style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_LEFT;
+				style[mxConstants.STYLE_STROKECOLOR] = mxConstants.NONE;
+				style[mxConstants.STYLE_SPACING] = 10;
 				style[mxConstants.STYLE_FONTCOLOR] = EditorColors.BLACK;
 
 				
@@ -39,23 +42,32 @@ export function addCellStyles(graph: mxGraph)
 	style[mxConstants.STYLE_FILLCOLOR] = '#FF0000';
 	graph.getStylesheet().putCellStyle("ClickHere", style);
 
+
+	style = mxUtils.clone(style);
+	style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_LINE;
+	style[mxConstants.STYLE_STROKECOLOR] = EditorColors.BLUEBERRYPURPLE;
+	style[mxConstants.STYLE_STROKEWIDTH] = 1;
+	style[mxConstants.STYLE_FILLCOLOR] = mxConstants.NONE;
+	style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_MIDDLE;
+	graph.getStylesheet().putCellStyle("separator", style);
+
+	style = mxUtils.clone(style);
 	style = [];
 	style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_SWIMLANE;
 	style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;
-	style[mxConstants.STYLE_STARTSIZE] = HEIGHT;
+	style[mxConstants.STYLE_STARTSIZE] = HEIGHT*3;
 	style[mxConstants.STYLE_FILLCOLOR] = EditorColors.WHITE;
 	style['childLayout'] = "stackLayout";
 	style['horizontalStack'] = 0;
 	style['resizeParent'] = 1;
 	style[mxConstants.STYLE_RESIZABLE] = '0';
-	style[mxConstants.STYLE_SPACING_BOTTOM] = MARGIN;
-	style[mxConstants.STYLE_VERTICAL_ALIGN] =  mxConstants.ALIGN_BOTTOM;
-	
-	style['marginLeft'] = MARGIN;
-	style['marginRight'] = MARGIN;
-	style['marginTop'] = MARGIN;
-	style['marginBottom'] = MARGIN;
-	style['selectable'] = 1;
+	style[mxConstants.STYLE_VERTICAL_ALIGN] =  mxConstants.ALIGN_MIDDLE;
+	style['marginLeft'] = 0;
+	style['marginRight'] = 0;
+	style['marginTop'] = HEIGHT;
+	style['marginBottom'] = HEIGHT;
+	style['gridSize'] = HEIGHT;
+	style['stackSpacing'] = HEIGHT;
 	style[mxConstants.STYLE_STROKECOLOR] = EditorColors.BLACK;
 
 	style = mxUtils.clone(style);
@@ -68,8 +80,8 @@ export function addCellStyles(graph: mxGraph)
 
 	//styles with stereotypes
 	style = mxUtils.clone(style);
+	style[mxConstants.STYLE_SPACING_TOP] = HEIGHT;
 	style[mxConstants.STYLE_FONTSTYLE] = mxConstants.DEFAULT_FONTSTYLE;
-	style[mxConstants.STYLE_STARTSIZE] = HEIGHT * 7/6;
 	style['stereotype'] = 'interface';
 	graph.getStylesheet().putCellStyle("CoUML_app.Models.Interface", style);
 
@@ -156,20 +168,6 @@ export function addEdgeStyles(graph: mxGraph)
 
 		return null;
 	};
-
-	// // Defines the default constraints for all shapes
-	// mxShape.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0.25, 0), true),
-	// 	new mxConnectionConstraint(new mxPoint(0.5, 0), true),
-	// 	new mxConnectionConstraint(new mxPoint(0.75, 0), true),
-	// 	new mxConnectionConstraint(new mxPoint(0, 0.25), true),
-	// 	new mxConnectionConstraint(new mxPoint(0, 0.5), true),
-	// 	new mxConnectionConstraint(new mxPoint(0, 0.75), true),
-	// 	new mxConnectionConstraint(new mxPoint(1, 0.25), true),
-	// 	new mxConnectionConstraint(new mxPoint(1, 0.5), true),
-	// 	new mxConnectionConstraint(new mxPoint(1, 0.75), true),
-	// 	new mxConnectionConstraint(new mxPoint(0.25, 1), true),
-	// 	new mxConnectionConstraint(new mxPoint(0.5, 1), true),
-	// 	new mxConnectionConstraint(new mxPoint(0.75, 1), true)];
 
 	// Edges have no connection points
 	mxPolyline.prototype.constraints = null;
@@ -293,45 +291,10 @@ export function initLayoutManager(graph: mxGraph)
 			stackLayout.marginTop = style['marginTop'] || 0;
 			stackLayout.marginBottom = style['marginBottom'] || 0;
 			stackLayout.allowGaps = style['allowGaps'] || 0;
-			// stackLayout.fill = true;
-			stackLayout.fill = false;
-
-			stackLayout.gridSize = HEIGHT;
+			stackLayout.fill = true;
+			stackLayout.gridSize = style['gridSize'] || 0;
 			
 			return stackLayout;
-		}
-		else if (style['childLayout'] == 'treeLayout')
-		{
-			var treeLayout = new mxCompactTreeLayout(graph);
-			treeLayout.horizontal = mxUtils.getValue(style, 'horizontalTree', '1') == '1';
-			treeLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', '1') == '1';
-			treeLayout.groupPadding = mxUtils.getValue(style, 'parentPadding', 20);
-			treeLayout.levelDistance = mxUtils.getValue(style, 'treeLevelDistance', 30);
-			treeLayout.maintainParentLocation = true;
-			treeLayout.edgeRouting = false;
-			treeLayout.resetEdges = false;
-			
-			return treeLayout;
-		}
-		else if (style['childLayout'] == 'flowLayout')
-		{
-			var flowLayout = new mxHierarchicalLayout(graph, mxUtils.getValue(style,
-				'flowOrientation', mxConstants.DIRECTION_EAST));
-			flowLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', '1') == '1';
-			flowLayout.parentBorder = mxUtils.getValue(style, 'parentPadding', 20);
-			flowLayout.maintainParentLocation = true;
-			
-			// Special undocumented styles for changing the hierarchical
-			flowLayout.intraCellSpacing = mxUtils.getValue(style, 'intraCellSpacing',
-				mxHierarchicalLayout.prototype.intraCellSpacing);
-			flowLayout.interRankCellSpacing = mxUtils.getValue(style, 'interRankCellSpacing',
-				mxHierarchicalLayout.prototype.interRankCellSpacing);
-			flowLayout.interHierarchySpacing = mxUtils.getValue(style, 'interHierarchySpacing',
-				mxHierarchicalLayout.prototype.interHierarchySpacing);
-			flowLayout.parallelEdgeSpacing = mxUtils.getValue(style, 'parallelEdgeSpacing',
-				mxHierarchicalLayout.prototype.parallelEdgeSpacing);
-			
-			return flowLayout;
 		}
 		else if (style['childLayout'] == 'organicLayout')
 		{

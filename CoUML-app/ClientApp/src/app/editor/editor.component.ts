@@ -4,6 +4,7 @@ import { ProjectDeveloper } from '../controller/project-developer.controller';
 import * as EditorFormatHandler  from './editor-format.handler';
 import * as EditorEventHandler  from './editor-event.handler';
 import { Event } from 'jquery';
+import { element } from 'protractor';
 
 
 const DELETE = 46;
@@ -124,14 +125,18 @@ export class EditorComponent implements AfterViewInit{
 			return !cell.edge;
 		}
 
+		this._graph.isCellConnectable = function(cell: mxCell)
+		{
+			return cell?.style.includes('connectable=1');
+		}
+
 		// this.editorOverlay = new mxCellOverlay(
 		// 	new mxImage('editors/images/overlays/user3.png', 24, 24), "locked by other user");
 		
 		let baseIsValidDropTarget = this._graph.isValidDropTarget;
 		this._graph.isValidDropTarget = function (cell: mxCell, cells: mxCell[], evt: Event){
 			return this.isDiagramSet? baseIsValidDropTarget(cell, cells, evt): false;
-		}
-		
+		}		
 	}
 
 	private initToolbar(): void
@@ -223,13 +228,20 @@ export class EditorComponent implements AfterViewInit{
 
 		this.updateStyle(graphComponent, component.dimension.fillColor);
 		
+		//comps with Attributes
 		if(component instanceof AbstractClass || component instanceof Class)
 		{
 			let attributeIterator: ICollectionIterator<Attribute> = component.attribute.iterator();
 
 			while(attributeIterator.hasNext())
 				this.insertProperty(graphComponent, attributeIterator.getNext()) ;
+
+			this._graph.insertVertex(graphComponent, null, null,
+				0, 0, component.dimension.width, 0, "separator");
+
 		}
+
+		// comps with operations
 		if(component instanceof AbstractClass 
 			|| component instanceof Class
 			|| component instanceof Interface)
@@ -241,6 +253,7 @@ export class EditorComponent implements AfterViewInit{
 				
 		}
 
+		// comps with enumerals
 		if(component instanceof Enumeration)
 		{
 			let enumIterator: ICollectionIterator<Enumeral> = component.enums.iterator();
@@ -250,6 +263,7 @@ export class EditorComponent implements AfterViewInit{
 				
 		}
 
+		this._graph.setCellStyles('connectable', 1, [graphComponent]);
 		graphComponent.umlElement = component;
 		return graphComponent;
 	}
@@ -257,16 +271,30 @@ export class EditorComponent implements AfterViewInit{
 
 	public insertProperty(parent: mxCell, property: UmlElement): mxCell
 	{
-		let propertyGraphComponent =  this._graph.insertVertex(
+
+		let graphProperty 
+		=  this._graph.insertVertex(
 			parent,
 			property.id,
 			property.toUmlNotation(),
-			0, 0, 0, 0,
+			0, 0, parent.geometry.width, 20,
 			property.constructor.name
 		);
-		propertyGraphComponent.umlElement = property;
-		return propertyGraphComponent;
+		graphProperty.umlElement = property;
+
+		
+		this._graph.getModel().getCell(parent.id).children.sort((elemA, elemB)=>
+			(elemA.umlElement instanceof Attribute ? 1: elemA.umlElement instanceof Operation? 3: 2)
+			-
+			(elemB.umlElement instanceof Attribute ? 1: elemB.umlElement instanceof Operation? 3: 2)
+		);
+		
+		this.removeCell(this._graph.insertVertex(parent, 'delete',null, 0,0,0,0));
+		return graphProperty;
+
 	}
+
+
 
 	public insertRelationship(relation: Relationship): mxCell
 	{	
@@ -278,7 +306,7 @@ export class EditorComponent implements AfterViewInit{
 		edge.id = relation.id
 		edge.geometry.relative = true;
 		edge.geometry.points = relation.dimension.edgePath;
-		edge.style = RelationshipType[relation.type];
+		// edge.style = RelationshipType[relation.type];
 		edge.umlElement = relation;
 		
 		if(relation.source)
@@ -442,11 +470,11 @@ export class EditorComponent implements AfterViewInit{
 	 * @param affectedEdge 
 	 * @param change 
 	 */
-		private updateEdgePoints(affectedEdge: mxCell, path: mxPoint[]) 
-		{
-			affectedEdge.getGeometry().points = path;
-			this.graph.refresh();		
-		}
+	private updateEdgePoints(affectedEdge: mxCell, path: mxPoint[]) 
+	{
+		affectedEdge.getGeometry().points = path;
+		this.graph.refresh();		
+	}
 	/* **************************************************************************************** */
 
 	/**
@@ -466,7 +494,14 @@ export class EditorComponent implements AfterViewInit{
 
 	private removeCell(cellToBeRemoved: mxCell)
 	{
-		this._graph.removeCells([cellToBeRemoved], false);
+
+		// let parent = cellToBeRemoved.parent;
+		// this._graph.removeCells(
+		// 	this._graph.removeCellsFromParent([cellToBeRemoved])
+		// 	, false);
+
+			this._graph.getModel().remove(cellToBeRemoved);
+
 	}
 
 // ============================================================================================
@@ -528,14 +563,26 @@ export class EditorComponent implements AfterViewInit{
 			//property-id
 			let deleteId = deleteIdPath.pop();
 
+			console.log(
+				"\n\n deleting\n\n",
+				currentSelection.umlElement,
+				currentSelection.umlElement instanceof Attribute ? PropertyType.Attribute:
+					currentSelection.umlElement instanceof Operation ? PropertyType.Operations:
+					PropertyType.Elements, 
+
+			);
+
 
 			this.removeCell(currentSelection);
 			this.stageChange( new ChangeRecord(
 				deleteIdPath,
-				PropertyType.Elements, 
+				currentSelection.umlElement instanceof Attribute ? PropertyType.Attribute:
+					currentSelection.umlElement instanceof Operation ? PropertyType.Operations:
+					PropertyType.Elements, 
 				ActionType.Remove,
 				deleteId
 			));
+
 		}
 	}
 

@@ -108,15 +108,6 @@ import { EditorColors } from "./editor.resources";
 
 		var setRelationType = function(edge: mxCell, relationType: RelationshipType):void
 		{	
-			/* only replace first element, leave other custom style */
-			// console.log(
-			// 	"change Edge style",
-			// 	"\nfrom:\n\t",
-			// 	edge.style,
-			// 	"\nto:\n\t",
-			// 	edge.style.replace( /(?:(\w+){1}(\;.*))/, RelationshipType[relationType]+"$2")
-			// );
-			// edge.style = edge.style.replace( /(?:(\w+){1}(\;.*))/, RelationshipType[relationType]+"$2");
 			edge.style = RelationshipType[relationType];
 			graph.refresh();
 
