@@ -12,6 +12,7 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { DiagramTableComponent } from './open/diagram-table.component';
 import { TeamActivityComponent } from '../activity/team-activity.component';
 import { InputComponent } from './input/input.component';
+import { UploadComponent } from './upload/upload.component';
 
 	//client id
 	//174000524733-gq2vagupknm77i794hll3kbs3iupm6fu.apps.googleusercontent.com
@@ -53,10 +54,19 @@ export class ProjectMenuComponent implements AfterViewInit{
 			{
 				label: "Open...",
 				id: "menuFileOpen",
-				command: ()=> this.showOpenDiagramDialog()
+				command: ()=> this.showOpenDiagramDialog(),
 			},
 			{
 				separator:true
+			},
+			{
+				label: "Import",
+				items: [
+				{
+					label: "Diagram as JSON",
+					command: () => this.showUpload(),
+				}
+				]
 			},
 			{
 				label: "Export",
@@ -152,7 +162,8 @@ export class ProjectMenuComponent implements AfterViewInit{
 		}
 	}
 
-	public showInviteDialog(){
+	public showInviteDialog()
+	{
 
 		if(this._projectDeveloper._teamActivity.isLoggedIn())
 		{
@@ -166,6 +177,26 @@ export class ProjectMenuComponent implements AfterViewInit{
 				console.log(userId);
 				this._projectManager.invite(userId);
 
+				}
+			});
+		}
+	}
+
+	public showUpload()
+	{
+		if(this._projectDeveloper._teamActivity.isLoggedIn())
+		{
+			const uploadDiagramDialog = this.dialogService.open(UploadComponent, {
+				header: 'Upload Diagram JSON',
+			});
+		
+			// string of the _id is returned to indicate the user's selection
+			uploadDiagramDialog.onClose.subscribe((diagramJson: string) => {
+				if (diagramJson) {//diagram is the dataset of the chosen diagram
+					console.log(diagramJson);
+					this._projectManager.upload(diagramJson).then(
+						(dId)=>{this._projectDeveloper.open(dId);}	
+					);
 				}
 			});
 		}

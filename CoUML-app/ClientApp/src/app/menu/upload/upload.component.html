@@ -1,0 +1,8 @@
+<p-fileUpload name="diagramJsons[]" url="./upload.php" (onUpload)="onUpload($event)"
+            multiple="multiple" accept="text/json/*" maxFileSize="1000000">
+            <ng-template pTemplate="content">
+                <ul *ngIf="uploadedDiagramJsons.length">
+                    <li *ngFor="let file of uploadedDiagramJsons">{{file.name}} - {{file.size}} bytes</li>
+                </ul>
+            </ng-template>
+    </p-fileUpload>

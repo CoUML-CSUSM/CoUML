@@ -31,4 +31,10 @@ export class ProjectManager{
 	public invite(uId:string){
 		this._coUmlHub.invite(uId);
 	}
+	
+	public upload(diagramJson: string): Promise<string>
+	{
+		throw new Error('Method not implemented.');
+	}
+
 }

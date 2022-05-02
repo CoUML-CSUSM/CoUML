@@ -38,12 +38,14 @@ import {ImageModule} from 'primeng/image';
 import {ToastModule} from 'primeng/toast';
 import {MessageService} from 'primeng/api';
 import { TooltipModule } from 'primeng/tooltip';
+import {FileUploadModule} from 'primeng/fileupload';
 
 // social login
 import { SocialLoginModule, SocialAuthServiceConfig } from 'angularx-social-login';
 import {
   GoogleLoginProvider
 } from 'angularx-social-login';
+import { UploadComponent } from './menu/upload/upload.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -52,7 +54,8 @@ import {
     ProjectMenuComponent,
     DiagramTableComponent,
     TeamActivityComponent, 
-    InputComponent
+    InputComponent,
+    UploadComponent
 
   ],
 
@@ -82,7 +85,7 @@ import {
     ChipModule,
     TooltipModule,
     ImageModule,
-    
+    FileUploadModule, 
     //login
     SocialLoginModule,
 
