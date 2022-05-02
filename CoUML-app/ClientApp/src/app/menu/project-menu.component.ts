@@ -93,11 +93,11 @@ export class ProjectMenuComponent implements AfterViewInit{
 
 		]
 		},
-		{
-			label: "Edit",
-			id: "menuEdit",
-			items: []
-		},
+		// {
+		// 	label: "Edit",
+		// 	id: "menuEdit",
+		// 	items: []
+		// },
 		{
 			label: "User",
 			id: "menuUser",
