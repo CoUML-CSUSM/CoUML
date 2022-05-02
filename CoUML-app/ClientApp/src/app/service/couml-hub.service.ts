@@ -12,7 +12,7 @@ import { TeamActivityComponent } from '../activity/team-activity.component';
 
 @Injectable({ providedIn: 'root' })
 export class CoUmlHubService{
-
+	
 	private _coUmlHubConnection: SignalR.HubConnection;
 	
 	private _url = environment.apiUrl + "/couml";
@@ -161,11 +161,26 @@ export class CoUmlHubService{
 		this._coUmlHubConnection.invoke("TriggerBreakPoint");
 	}
 
-
+	/**
+	 * 
+	 * @param dId the diagram "name"
+	 * @returns the _id of the diagram in the DB
+	 */
 	public generate(dId:string): Promise<string>
 	{
 		return this._coUmlHubConnection.invoke("Generate",dId);
 	}
+
+	/**
+	 * 
+	 * @param diagramJson the JSON of a diagram
+	 * @returns the _id of the diagram in the DB
+	 */
+	public generateProjectFromDiagram(diagramJson: string): Promise<string> {
+		console.log()
+		return this._coUmlHubConnection.invoke("GenerateProjectFromDiagram", diagramJson);
+	}
+
 
 	public logIn(uId: string): Promise<string>{
 		return this._coUmlHubConnection.invoke("LogIn",uId);
@@ -176,8 +191,9 @@ export class CoUmlHubService{
 		this._coUmlHubConnection.invoke("LogOut");
 	}
 
-	public invite(uId: string){
-		this._coUmlHubConnection.invoke("Invite", uId);
+	public invite(uId: string): Promise<boolean>
+	{
+		return  this._coUmlHubConnection.invoke<boolean>("Invite", uId);
 	}
 
 }

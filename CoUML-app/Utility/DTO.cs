@@ -27,6 +27,13 @@ namespace CoUML_app.Utility
 					});
 		}
 
+		public static Diagram ToDiagram(string json)
+		{
+			return ToDiagram(
+				 MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonDocument>(json)
+			);
+		}
+
 		public static string From<T>(T typedObject)
 		{
 			return JsonConvert.SerializeObject(typedObject, Formatting.Indented, new JsonSerializerSettings

@@ -14,7 +14,7 @@ namespace CoUML_app.DataAccess
 	public interface IUserDAO
 	{
 		public void RegisterUser(User newUser);
-		public void AddToTeam(string dId, User user);
+		public bool AddToTeam(string dId, User user);
 		public void CreateTeam(User newUser);
 	}
 

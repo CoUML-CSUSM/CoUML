@@ -13,6 +13,7 @@ import { DiagramTableComponent } from './open/diagram-table.component';
 import { TeamActivityComponent } from '../activity/team-activity.component';
 import { InputComponent } from './input/input.component';
 import { UploadComponent } from './upload/upload.component';
+import { FileReaderUtility } from '../service/file-reader.utility';
 
 	//client id
 	//174000524733-gq2vagupknm77i794hll3kbs3iupm6fu.apps.googleusercontent.com
@@ -23,11 +24,22 @@ import { UploadComponent } from './upload/upload.component';
 @AngularComponent({
 	selector: 'app-menu',
 	templateUrl: './project-menu.component.html',
+	styles:[
+		`:host ::ng-deep .p-menubar-end{
+			display: contents !important ;
+		}
+		`
+	],
 	providers: [DialogService]
 })
 export class ProjectMenuComponent implements AfterViewInit{
 
 	_menuItems: MenuItem[];
+
+	get projectName()
+	{
+		return this._projectDeveloper?._projectDiagram?.id ?? "< no diagram>";
+	}
 
 	constructor(
 		private _projectDeveloper: ProjectDeveloper,
@@ -35,7 +47,8 @@ export class ProjectMenuComponent implements AfterViewInit{
 		private authService: SocialAuthService,//login stuff,
 		private dialogService: DialogService,//open dialog box
 		private _projectManager: ProjectManager,
-		private _renderer: Renderer2
+		private _renderer: Renderer2,
+		private _toastMessageService: MessageService
 		){
 			console.log("ProjectMenuComponent\n", this, "\nwith\n", arguments);
 		}
@@ -175,7 +188,18 @@ export class ProjectMenuComponent implements AfterViewInit{
 			openDiagramDialog.onClose.subscribe((userId: string) => {
 				if (userId) {//diagram is the dataset of the chosen diagram
 				console.log(userId);
-				this._projectManager.invite(userId);
+					this._projectManager.invite(userId).then(invited=>{
+							if(invited)
+								this._toastMessageService.add({
+									severity: 'info',
+									summary: `${userId} has been invited to collaberate on ${this._projectDeveloper._projectDiagram.id}`,
+								});
+							else
+								this._toastMessageService.add({
+									severity: 'error',
+									summary: `${userId}`
+								});
+						});
 
 				}
 			});
@@ -191,12 +215,18 @@ export class ProjectMenuComponent implements AfterViewInit{
 			});
 		
 			// string of the _id is returned to indicate the user's selection
-			uploadDiagramDialog.onClose.subscribe((diagramJson: string) => {
-				if (diagramJson) {//diagram is the dataset of the chosen diagram
-					console.log(diagramJson);
-					this._projectManager.upload(diagramJson).then(
-						(dId)=>{this._projectDeveloper.open(dId);}	
-					);
+			uploadDiagramDialog.onClose.subscribe((jsonFile: File) => {
+				if (jsonFile) {
+					FileReaderUtility.read(jsonFile).then((diagramJson: string)=>{
+						this._projectManager.upload(diagramJson).then((dId)=>{
+							this._projectDeveloper.open(dId)
+						}).catch(rejection=>{
+							this._toastMessageService.add({
+								severity: 'error',
+								summary: rejection
+							});
+						});
+					});
 				}
 			});
 		}
@@ -214,7 +244,13 @@ export class ProjectMenuComponent implements AfterViewInit{
 			openDiagramDialog.onClose.subscribe((diagramId: string) => {
 				if (diagramId) {//diagram is the dataset of the chosen diagram
 				console.log(diagramId);
-				this._projectManager.generate(diagramId);
+					this._projectManager.generate(diagramId).then((dId) => 
+					{
+						if(dId)
+							this._projectDeveloper.open(dId);
+						else
+							console.log(`Project "${dId}" not created.`)
+					});
 				}
 			});
 		}

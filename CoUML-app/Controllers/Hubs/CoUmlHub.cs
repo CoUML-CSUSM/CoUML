@@ -187,6 +187,12 @@ namespace CoUML_app.Controllers.Hubs
 		public string Generate(string dId){
 			return ProjectController.CreateDiagram(dId,  (User)Context.Items[CoUmlContext.USER]);
 		}
+
+		public string GenerateProjectFromDiagram(string diagramDTO){
+			return ProjectController.CreateProjectFromDiagram(
+				DTO.ToDiagram(diagramDTO),
+				(User)Context.Items[CoUmlContext.USER]);
+		}
 		
 		public string ListMyDiagrams(){
 			return ProjectController.ListDiagrams( (User)Context.Items[CoUmlContext.USER] );
@@ -227,9 +233,10 @@ namespace CoUML_app.Controllers.Hubs
 				testDiagram.GenerateCode(codeGenerator);
 		}
 
-		public void Invite(string uId){
+		public bool Invite(string uId)
+		{
 			User add = new User(uId);
-			UserController.AddToTeam((string)(Context.Items[CoUmlContext.DIAGRAM]),add);	
+			return UserController.AddToTeam((string)(Context.Items[CoUmlContext.DIAGRAM]),add);	
 		}
 	}
 }

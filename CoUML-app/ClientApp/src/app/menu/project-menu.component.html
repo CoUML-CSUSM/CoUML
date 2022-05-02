@@ -13,12 +13,9 @@
 	<ng-template pTemplate="start">
 		<img src="/assets/logo/CoUml_black.svg" alt="CoUML logo" height="48pt" class="pl-4 pr-4">
 	</ng-template>
-
-	<ng-template pTemplate="end">
-		<app-team-activity></app-team-activity>
-	</ng-template>
+	
+	<input type="text" readonly pInputText [placeholder]="projectName" >
+	<app-team-activity class="ml-auto"></app-team-activity>
 
 </p-menubar>
 
-	
-	<p-toast position="top-right"></p-toast>

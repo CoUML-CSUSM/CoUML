@@ -14,27 +14,28 @@ export class ProjectManager{
 		this._coUmlHub.subscribe(this);
 	}
 
-	public generate(dId:string){
+	public generate(dId:string): Promise<string>
+	{
 
-			console.log("manager");
-			console.log(dId);
-			console.log("Creating new diagram");
-		this._coUmlHub.generate(dId).then((project) => 
-			{
-				if(project)
-					this._coUmlHub._projectDeveloper.open(project);
-				else
-					console.log(`Project "${dId}" not created.`)
-			});
+		return this._coUmlHub.generate(dId);
 	}
 
-	public invite(uId:string){
-		this._coUmlHub.invite(uId);
+	public invite(uId:string): Promise<boolean>
+	{
+		return this._coUmlHub.invite(uId);
 	}
 	
 	public upload(diagramJson: string): Promise<string>
 	{
-		throw new Error('Method not implemented.');
+		
+		console.log("ProjectManager. upload(diagramJson: string)\n\n", diagramJson);
+		try {//TODO: check if text is valid diagram befor uploading
+			if(JSON.parse(diagramJson)?.id)
+				return this._coUmlHub.generateProjectFromDiagram(diagramJson);
+		} catch (error) {
+			console.error(error)
+		}
+		return Promise.reject("Invalid Diagram");
 	}
 
 }

@@ -33,7 +33,7 @@ namespace CoUML_app.DataAccess
 
 	public class UserDAO: MongoDAO, IUserDAO
 	{
-		public void AddToTeam(string dId, User user){
+		public bool AddToTeam(string dId, User user){
 			var collection = GetCollection("Teams");
 			var filter = Builders<BsonDocument>.Filter.Eq("user", user.id);	
 
@@ -43,7 +43,7 @@ namespace CoUML_app.DataAccess
 
 			var update = Builders<BsonDocument>.Update.Push<String>("diagrams", dId);
 
-            	collection.UpdateOne(filter, update);
+            	return collection.UpdateOne(filter, update).IsAcknowledged;
 		}
 
 		public void RegisterUser(User newUser)

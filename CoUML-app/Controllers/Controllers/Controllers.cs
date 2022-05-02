@@ -33,6 +33,14 @@ namespace CoUML_app.Controllers
 			return dao.CreateDiagram(dId,user);
 		}
 
+		public string CreateProjectFromDiagram(Diagram diagram, User user)
+		{
+			string _id = dao.CreateDiagram(diagram.id,user);
+			Console.WriteLine("New Diagram inserted: ", _id);
+			dao.Overwrite(diagram);
+			return _id;
+		}
+
 
 		public string ListDiagrams(User user)
 		{
@@ -60,9 +68,9 @@ namespace CoUML_app.Controllers
 			dao.CreateTeam(newUser);
 		}
 
-		public void AddToTeam(string dId, User user)
+		public bool AddToTeam(string dId, User user)
 		{
-			dao.AddToTeam(dId,user);
+			return dao.AddToTeam(dId,user);
 		}
 
 		public void RegisterUser(User newUser)
