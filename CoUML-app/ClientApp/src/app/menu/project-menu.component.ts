@@ -1,6 +1,6 @@
-import { AfterViewInit, Component as AngularComponent, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import {  AfterViewInit, Component as AngularComponent, EventEmitter,  Output, Renderer2 } from '@angular/core';
 import { MenuItem, MessageService } from 'primeng/api';
-import { Class, Diagram, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType as VisibilityType, User, DiagramDataSet } from 'src/models/DiagramModel';
+import { Class, Diagram, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, User, DiagramDataSet } from 'src/models/DiagramModel';
 import { ProjectManager } from '../controller/project-manager.controller';
 import { CoUmlHubService } from '../service/couml-hub.service';
 import { PrimeNGConfig } from "primeng/api";
@@ -10,173 +10,249 @@ import { SocialAuthService, SocialUser } from "angularx-social-login";
 import {GoogleLoginProvider } from "angularx-social-login";
 import { DialogService } from 'primeng/dynamicdialog';
 import { DiagramTableComponent } from './open/diagram-table.component';
+import { TeamActivityComponent } from '../activity/team-activity.component';
+import { InputComponent } from './input/input.component';
+import { UploadComponent } from './upload/upload.component';
+import { FileReaderUtility } from '../service/file-reader.utility';
 
-//client id
-//174000524733-gq2vagupknm77i794hll3kbs3iupm6fu.apps.googleusercontent.com
+	//client id
+	//174000524733-gq2vagupknm77i794hll3kbs3iupm6fu.apps.googleusercontent.com
 
-//client secret
-//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
+	//client secret
+	//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
 
 @AngularComponent({
-    selector: 'app-menu',
-    templateUrl: './project-menu.component.html',
-    // providers: [ProjectManager, ProjectDeveloper]
-    providers: [ProjectManager, ProjectDeveloper, DialogService]
-  })
-  export class ProjectMenuComponent{
+	selector: 'app-menu',
+	templateUrl: './project-menu.component.html',
+	styles:[
+		`:host ::ng-deep .p-menubar-end{
+			display: contents !important ;
+		}
+		`
+	],
+	providers: [DialogService]
+})
+export class ProjectMenuComponent implements AfterViewInit{
 
-    _menuItems: MenuItem[];
-    @Output() open: EventEmitter<boolean> = new EventEmitter();
+	_menuItems: MenuItem[];
 
-    @Output() invite: EventEmitter<boolean> = new EventEmitter();
+	get projectName()
+	{
+		return this._projectDeveloper?._projectDiagram?.id ?? "< no diagram>";
+	}
 
+	constructor(
+		private _projectDeveloper: ProjectDeveloper,
+		private primengConfig: PrimeNGConfig,
+		private authService: SocialAuthService,//login stuff,
+		private dialogService: DialogService,//open dialog box
+		private _projectManager: ProjectManager,
+		private _renderer: Renderer2,
+		private _toastMessageService: MessageService
+		){
+			console.log("ProjectMenuComponent\n", this, "\nwith\n", arguments);
+		}
 
-    constructor(
-      private _projectManager: ProjectManager,
-      private _coUmlHub: CoUmlHubService,
-      private primengConfig: PrimeNGConfig,
-      private authService: SocialAuthService,//login stuff,
-      private dialogService: DialogService,//open dialog box
-      ){
-      this._menuItems = [
-        {
-          label: "File",
-          id: "menuFile",
-          items: [
-            {
-              label: "New...",
-              id: "menuFileNew",
-              command: () => this.showNewDiagramDialog(),
-            },
-            {
-              label: "Open...",
-              id: "menuFileOpen",
-              command: ()=> this.showOpenDiagram()
-            },
-            // {
-            //   label: "Trigger Breakpoint",
-            //   id: "menuFileTriggerBreakpoint",
-            //   command: ()=> this._coUmlHub.triggerBreakPoint(),
-            // },
-            // {
-            //   label: "Fetch Test",
-            //   command: () => this._coUmlHub._projectDeveloper.open("test"),
-            // },
+	ngAfterViewInit(){
+		this._menuItems = [
+		{
+			label: "File",
+			id: "menuFile",
+			items: [
+			{
+				label: "New...",
+				id: "menuFileNew",
+				command: () => this.showNewDiagramDialog(),
+			},
+			{
+				label: "Open...",
+				id: "menuFileOpen",
+				command: ()=> this.showOpenDiagramDialog(),
+			},
+			{
+				separator:true
+			},
+			{
+				label: "Import",
+				items: [
+				{
+					label: "Diagram as JSON",
+					command: () => this.showUpload(),
+				}
+				]
+			},
+			{
+				label: "Export",
+				items: [
+				{
+					label: "Generate Source Code...(\"test\")",
+					// command: () => this._coUmlHub.generateSourceCode("test")
+				}
+				]
+			},
 
-            {
-              separator:true
-            },
-            {
-              label: "Export",
-              items: [
-                {
-                  label: "Generate Source Code...(\"test\")",
-                  command: () => this._coUmlHub.generateSourceCode("test")
-                }
-              ]
-            },
+		]
+		},
+		{
+			label: "Edit",
+			id: "menuEdit",
+			items: []
+		},
+		{
+			label: "User",
+			id: "menuUser",
+			items: [
+				{
+					label: "Login...",
+					id: "menuUserLogin",
+					command: () => this.signInWithGoogle(),
+				},
+				{
+					label: "Sign Out",
+					id: "menuUserSignOut",
+					command: () => this.signOut(),
+				},
+				{
+					label: "Invite User...",
+					id: "menuUserSignInvite",
+					command: () => this.showInviteDialog(),
+				}
+			]
+		}
+		];
 
-          ]
-        },
-        {
-          label: "Edit",
-          id: "menuEdit",
-          items: []
-        },
-        {
-          label: "User",
-          id: "menuUser",
-          items: [
-            {
-              label: "Login...",
-              id: "menuUserLogin",
-              command: () => this.signInWithGoogle(),
-            },
-            {
-              label: "Sign Out",
-              id: "menuUserSignOut",
-              command: () => this.signOut(),
-            },
-            {
-              label: "Invite User...",
-              id: "menuUserSignInvite",
-              command: () => this.showInviteDialog(),
-            }
-          ]
-        }
-      ];
+	}
 
-    }
+	
+	//pop up
+	ngOnInit() {
+		this.primengConfig.ripple = true;
+	}
+	
 
-    
-    //pop up
-    ngOnInit() {
-      this.primengConfig.ripple = true;
-    }
-    
-    showNewDiagramDialog() {
-      if(this._coUmlHub._projectDeveloper._editor?.id)
-      {
-        this.open.emit(true);
-      }
-    }
+	//login stuff
+	signInWithGoogle(): void
+	{
+		console.log("sign in");
+	
+		this.authService.signIn(GoogleLoginProvider.PROVIDER_ID)
+			.then((socialUser)=>{//store email here nd send it to databse
+				this._projectDeveloper.logIn(socialUser.email);
+			});
+	}
+	
+	signOut(): void 
+	{
+		console.log("sign out");
+		this.authService.signOut();
+		this._projectDeveloper.logOut();
+	}
+	
+	//
+	refreshToken(): void {
+		this.authService.refreshAuthToken(GoogleLoginProvider.PROVIDER_ID);
+	}
 
-    //login stuff
-    signInWithGoogle(): void {
-      console.log("sign in");
-  
-      this.authService.signIn(GoogleLoginProvider.PROVIDER_ID)
-      .then((socialUser)=>{//store email here nd send it to databse
-        console.log(socialUser.email);
-        this._coUmlHub._projectDeveloper.setEditor(new User(socialUser.email));
-        this._coUmlHub.register(socialUser.email);
-        //this._coUmlHub.generate("111");
-      });
-  
-      //console.log(`${GoogleLoginProvider.PROVIDER_ID}`);
-    }
-  
-  
-    signOut(): void {
-      console.log("sign out");
-      this.authService.signOut();
-    }
-  
-    //
-    refreshToken(): void {
-      this.authService.refreshAuthToken(GoogleLoginProvider.PROVIDER_ID);
-    }
+	/**
+	 * opens a dialog to let the user select from diagrams they hae access to.
+	 */
+	showOpenDiagramDialog(): void
+	{
+		if(this._projectDeveloper._teamActivity.isLoggedIn())
+		{
+			const openDiagramDialog = this.dialogService.open(DiagramTableComponent, {
+				header: 'Choose a Diagram',
+				width: '70%'
+			});
+		
+			// string of the _id is returned to indicate the user's selection
+			openDiagramDialog.onClose.subscribe((diagram: DiagramDataSet) => {
+				if (diagram) {//diagram is the dataset of the chosen diagram
+				console.log(diagram);
+				this._projectDeveloper.open(diagram._id);
+				}
+			});
+		}
+	}
 
-    /**
-     * opens a dialog to let the user select from diagrams they hae access to.
-     */
-    showOpenDiagram()
-    {
-      //if user is logged in
-      if(this._coUmlHub._projectDeveloper._editor?.id)
-      {
-        const openDiagramDialog = this.dialogService.open(DiagramTableComponent, {
-          data: {
-            id: this._coUmlHub._projectDeveloper._editor.id // id of user ToDO: Central user service? maybe move to different central provider class?
-          },
-            header: 'Choose a Diagram',
-            width: '70%'
-        });
-    
-        // string of the _id is returned to indicate the user's selection
-        openDiagramDialog.onClose.subscribe((diagram: DiagramDataSet) => {
-            if (diagram) {//diagram is the dataset of the chosen diagram
-                console.log(diagram);
-                this._coUmlHub._projectDeveloper.open(diagram._id);
-            }
-        });
-      }
-    }
+	public showInviteDialog()
+	{
 
-    showInviteDialog(){
-      if(this._coUmlHub._projectDeveloper._projectDiagram?.id)
-      {
-        this.invite.emit(true);
-      }
-    }
-  }
+		if(this._projectDeveloper._teamActivity.isLoggedIn())
+		{
+			const openDiagramDialog = this.dialogService.open(InputComponent, {
+				header: 'Invite Team Memeber',
+			});
+		
+			// string of the _id is returned to indicate the user's selection
+			openDiagramDialog.onClose.subscribe((userId: string) => {
+				if (userId) {//diagram is the dataset of the chosen diagram
+				console.log(userId);
+					this._projectManager.invite(userId).then(invited=>{
+							if(invited)
+								this._toastMessageService.add({
+									severity: 'info',
+									summary: `${userId} has been invited to collaberate on ${this._projectDeveloper._projectDiagram.id}`,
+								});
+							else
+								this._toastMessageService.add({
+									severity: 'error',
+									summary: `${userId}`
+								});
+						});
+
+				}
+			});
+		}
+	}
+
+	public showUpload()
+	{
+		if(this._projectDeveloper._teamActivity.isLoggedIn())
+		{
+			const uploadDiagramDialog = this.dialogService.open(UploadComponent, {
+				header: 'Upload Diagram JSON',
+			});
+		
+			// string of the _id is returned to indicate the user's selection
+			uploadDiagramDialog.onClose.subscribe((jsonFile: File) => {
+				if (jsonFile) {
+					FileReaderUtility.read(jsonFile).then((diagramJson: string)=>{
+						this._projectManager.upload(diagramJson).then((dId)=>{
+							this._projectDeveloper.open(dId)
+						}).catch(rejection=>{
+							this._toastMessageService.add({
+								severity: 'error',
+								summary: rejection
+							});
+						});
+					});
+				}
+			});
+		}
+	}
+
+	public showNewDiagramDialog()
+	{
+		if(this._projectDeveloper._teamActivity.isLoggedIn())
+		{
+			const openDiagramDialog = this.dialogService.open(InputComponent, {
+				header: 'New Diagram',
+			});
+		
+			// string of the _id is returned to indicate the user's selection
+			openDiagramDialog.onClose.subscribe((diagramId: string) => {
+				if (diagramId) {//diagram is the dataset of the chosen diagram
+				console.log(diagramId);
+					this._projectManager.generate(diagramId).then((dId) => 
+					{
+						if(dId)
+							this._projectDeveloper.open(dId);
+						else
+							console.log(`Project "${dId}" not created.`)
+					});
+				}
+			});
+		}
+	}
+}

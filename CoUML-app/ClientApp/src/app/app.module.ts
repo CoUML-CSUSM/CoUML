@@ -11,9 +11,14 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { EditorComponent } from './editor/editor.component';
 import { ProjectMenuComponent } from './menu/project-menu.component';
-
+import { DiagramTableComponent } from './menu/open/diagram-table.component';
+import { TeamActivityComponent } from './activity/team-activity.component';
+import { InputComponent } from './menu/input/input.component';
 
 import { CoUmlHubService } from './service/couml-hub.service';
+import { ProjectDeveloper } from './controller/project-developer.controller';
+import { ProjectManager } from './controller/project-manager.controller';
+
 
 /*PrimeNG Imported modules */
 import { ButtonModule } from 'primeng/button';
@@ -27,23 +32,30 @@ import {MessagesModule} from 'primeng/messages';
 import {MessageModule} from 'primeng/message';
 import {DynamicDialogModule} from 'primeng/dynamicdialog';
 import {TableModule} from 'primeng/table';
-import {ToastModule} from 'primeng/toast'
+import { ChipModule } from 'primeng/chip';
+import {ImageModule} from 'primeng/image';
+
+import {ToastModule} from 'primeng/toast';
+import {MessageService} from 'primeng/api';
+import { TooltipModule } from 'primeng/tooltip';
+import {FileUploadModule} from 'primeng/fileupload';
 
 // social login
 import { SocialLoginModule, SocialAuthServiceConfig } from 'angularx-social-login';
 import {
   GoogleLoginProvider
 } from 'angularx-social-login';
-import { DiagramTableComponent } from './menu/open/diagram-table.component';
-
+import { UploadComponent } from './menu/upload/upload.component';
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     EditorComponent,
     ProjectMenuComponent,
-    DiagramTableComponent
-
+    DiagramTableComponent,
+    TeamActivityComponent, 
+    InputComponent,
+    UploadComponent
 
   ],
 
@@ -70,7 +82,10 @@ import { DiagramTableComponent } from './menu/open/diagram-table.component';
     MessageModule,
     TableModule,
     ToastModule,
-
+    ChipModule,
+    TooltipModule,
+    ImageModule,
+    FileUploadModule, 
     //login
     SocialLoginModule,
 
@@ -78,7 +93,6 @@ import { DiagramTableComponent } from './menu/open/diagram-table.component';
   ],
   providers: [
 
-    CoUmlHubService,
     {
       provide: 'SocialAuthServiceConfig',
       useValue: {
@@ -92,7 +106,10 @@ import { DiagramTableComponent } from './menu/open/diagram-table.component';
         ],
       } as SocialAuthServiceConfig,
     },
-
+//     CoUmlHubService,
+//     ProjectDeveloper,
+//     ProjectManager,
+    MessageService,
 
   ],
   bootstrap: [AppComponent],

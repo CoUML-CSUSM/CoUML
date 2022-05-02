@@ -1,26 +1,27 @@
 
 
-  <div class="absolute" 
-    [style.marginLeft.px]="toolbarWidth"
-    [style.width.px]="canvasWidth"
-    [style.height.px]="canvasHeight"
-    [style.pointer-events]="isDiagramSet? 'auto': 'none'"
-    >
+<div class="absolute" 
+	[style.marginLeft.px]="toolbarWidth"
+	[style.width.px]="canvasWidth"
+	[style.height.px]="canvasHeight"
+	[style.pointer-events]="isDiagramSet? 'auto': 'none'"
+	>
 
-      <p-dialog header="Welcome to CoUML" [visible]="!isDiagramSet" [closable]="false" >
-        Please fetch existing diagram or create new diagram to start. 
-    </p-dialog>
+	<p-dialog header="Welcome to CoUML" [visible]="!isDiagramSet" [closable]="false" >
+		Please fetch existing diagram or create new diagram to start. 
+	</p-dialog>
 
-      <div #graphContainer id="graphContainer" 
-      style=" background:url('editors/images/grid.gif'); height: -webkit-fill-available;" 
-      class="overflow-scroll"
-      ></div>
+	<div #graphContainer id="graphContainer" 
+		class="overflow-scroll"
+	></div>
 
-  </div>
+</div>
 
 
-  <div class="absolute" [style.width.px]="toolbarWidth" >
-    <div #toolbarContainer class="h-screen" [style.background]="accentColor" > </div>
-  </div>
+<div class="absolute" [style.width.px]="toolbarWidth" >
+	<div #toolbarContainer id="toolbarContainer" class="h-screen" >
 
-  <!--  style={{ pointerEvents: this.props.disabled ? 'none' : 'auto' }}  -->
+	</div>
+</div>
+
+	<!--  style={{ pointerEvents: this.props.disabled ? 'none' : 'auto' }}  -->

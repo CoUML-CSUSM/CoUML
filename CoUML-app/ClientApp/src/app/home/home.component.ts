@@ -1,4 +1,5 @@
 import { AfterViewChecked, AfterViewInit, Component as AngularComponent, ElementRef, Renderer2, ViewChild} from '@angular/core';
+import { ProjectManager } from '../controller/project-manager.controller';
 import { CoUmlHubService } from '../service/couml-hub.service';
 
 
@@ -8,53 +9,10 @@ import { CoUmlHubService } from '../service/couml-hub.service';
 })
 export class HomeComponent {
 
-	ip: string;
-	showNewDiagramDialog: boolean = false;
 
-	showInviteDialog: boolean = false;
-
-	value1: string;
-	value2: string;
-
-	constructor(
-		private _coUmlHub: CoUmlHubService,
-		private _renderer: Renderer2
-	) { }
-
-	onOpen(event)
-	{
-		this.showNewDiagramDialog = event;
-	}
-
-	onInvite(event)
-	{
-		this.showInviteDialog = event;
-	}
-
-	public create(dId:string){
-
-				// console.log("test editor");
-				// console.log(this._coUmlHub._projectDeveloper._editor.id);
-				// console.log("test done");
-
-				// console.log("home");
-				// console.log(dId);
-		this._coUmlHub._projectManager.generate(dId,this._coUmlHub._projectDeveloper._editor.id);
-				// console.log("generated");
-				// console.log("opeining");
-		// this._coUmlHub._projectDeveloper.open(dId,this._coUmlHub._projectDeveloper._editor);
-		//  		console.log("opened");
-		 this.showNewDiagramDialog = false;
-	}
-	
-	public test(){
-		console.log("test");
-	}
-
-	public invite(uId:string){
-		this._coUmlHub._projectManager.invite(uId);
-		this.showInviteDialog = false;
-	}
+	constructor( ) {
+		console.log("HomeComponent\n", this, "\nwith\n", arguments);
+	 }
 }
 
 

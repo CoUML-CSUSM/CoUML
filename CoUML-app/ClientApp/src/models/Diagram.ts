@@ -9,6 +9,7 @@ export  abstract class UmlElement
 	public id: string;
 	public editor: IUser;
 	public dimension: Dimension;
+	public isStatic: boolean = false;
 
 	abstract get(id: string);
 	abstract insert(element);
@@ -37,6 +38,16 @@ export  abstract class UmlElement
 	public shift(point)
 	{
 		this.dimension.shift(point);
+	}
+
+	public style(color)
+	{
+		this.dimension.style(color);
+	}
+
+	public path(path: mxPoint[])
+	{
+		this.dimension.path(path);
 	}
 }
 

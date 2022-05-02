@@ -4,7 +4,7 @@ using CoUML_app.Controllers.Generators;
 using CoUML_app.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using CoUML_app.Controllers.Project;
+using CoUML_app.Controllers;
 using System.Drawing;
 
 namespace CoUML_app.Models
@@ -15,6 +15,7 @@ namespace CoUML_app.Models
 		public string id { get; set; } = Guid.NewGuid().ToString();
 		public IUser editor { get; set; } = new NullUser();
 		public IDimension dimension { get; set; } = new Dimension(0,0,200,40);
+		public Boolean isStatic{ get; set; } = false;
 
 		[JsonIgnore]
 		private UmlElement Parent{get; set;}
@@ -37,7 +38,15 @@ namespace CoUML_app.Models
 			{
 				case ActionType.Lock: 		Lock((User)change.value);	break;
 				case ActionType.Release:	Release();	break;
-				case ActionType.Shift: 		Shift((Point) change.value);	break;
+				case ActionType.Shift: 		dimension.Shift((Point) change.value);	break;
+				case ActionType.Style:		dimension.Style((string) change.value);	break;
+				case ActionType.Path:		dimension.Path((Point[]) change.value);	break;
+				case ActionType.Change:
+					switch(change.affectedProperty)
+					{
+						case PropertyType.IsStatic: isStatic = (Boolean)change.value; break;
+					}
+					break;
 				default: break;							
 			}
 		}
@@ -50,11 +59,6 @@ namespace CoUML_app.Models
 		protected void Release()
 		{
 			this.editor = new NullUser();
-		}
-
-		protected void Shift(Point point)
-		{
-			dimension.Shift(point);
 		}
 
 		public virtual void Validate(ref UmlElement parent)

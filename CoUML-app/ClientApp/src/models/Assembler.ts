@@ -32,6 +32,18 @@ import { VisibilityType } from "./Types";
 		return __diagram;
 	}
 
+	export function assembleUmlElements(elementString: string)
+	{
+		let objArray = JSON.parse(elementString);
+		
+		let elements = [];
+		for(let element of objArray['$values'])
+		{
+			elements.push( assembleUmlElement(element));
+		}
+		return elements;
+	}
+
 	export function assembleUmlElement(elem): UmlElement | null
 	{
 		if (elem == null)
@@ -100,6 +112,7 @@ import { VisibilityType } from "./Types";
 		__relationship.source = x.source;
 		__relationship.target = x.target;
 		__relationship.type = x.type;
+		__relationship.isStatic = x.isStatic;
 		__relationship.attribute = x.attribute? assembleAttribute(x.attribute) : null;
 		return __relationship;
 	}
@@ -111,6 +124,7 @@ import { VisibilityType } from "./Types";
 		__class.dimension = assembleDimension(x.dimension);
 		assembleAttributeCollection(__class.attribute, x.attribute);
 		assembleOperationsCollection(__class.operations, x.operations);
+		__class.isStatic = x.isStatic;
 		// assembleStringCollection( __class.relations, x.relations);
 		return __class;
 	}
@@ -121,6 +135,7 @@ import { VisibilityType } from "./Types";
 		__abstract.dimension = assembleDimension(x.dimension);
 		assembleAttributeCollection(__abstract.attribute, x.attribute);
 		assembleOperationsCollection(__abstract.operations, x.operations);
+		__abstract.isStatic = x.isStatic;
 		// assembleStringCollection(__abstract.relations, x.relations);
 		return __abstract;
 	}
@@ -130,6 +145,7 @@ import { VisibilityType } from "./Types";
 		__enum.editor = assembleUser(x.editor);
 		__enum.dimension = assembleDimension(x.dimension);
 		assembleEnumerationCollection(__enum.enums, x.enums);
+		__enum.isStatic = x.isStatic;
 		return __enum;
 	}
 
@@ -141,6 +157,7 @@ import { VisibilityType } from "./Types";
 		__interface.dimension = assembleDimension(x["dimension"]);
 		assembleOperationsCollection(__interface.operations, x["operations"]);
 		// assembleStringCollection(__interface.relations, x["relations"]);
+		__interface.isStatic = x.isStatic;
 		return __interface;
 	}
 
@@ -214,7 +231,9 @@ import { VisibilityType } from "./Types";
 			x.x,
 			x.y,
 			x.width,
-			x.height
+			x.height,
+			x.fillColor,
+			x.edgePath
 		);
 	}
 

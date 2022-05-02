@@ -4,30 +4,38 @@ import { Class, Diagram, Attribute, Interface, Operation, Relationship, Relation
 import {  User, UmlElement } from 'src/models/DiagramModel';
 
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ProjectManager{
 
-	newDiagram: Diagram;
-
-	constructor(private _coUmlHub: CoUmlHubService){
+	constructor(
+		private _coUmlHub: CoUmlHubService
+	){
+		console.log("ProjectManager\n", this, "\nwith\n", arguments);
 		this._coUmlHub.subscribe(this);
 	}
 
-	public generate(dId:string, uId:string){
+	public generate(dId:string): Promise<string>
+	{
 
-			console.log("manager");
-			console.log(dId);
-			console.log("Creating new diagram");
-		this._coUmlHub.generate(dId).then((project) => 
-			{
-				if(project)
-					this._coUmlHub._projectDeveloper.open(project);
-				else
-					console.log(`Project "${dId}" not created.`)
-			});
+		return this._coUmlHub.generate(dId);
 	}
 
-	public invite(uId:string){
-		this._coUmlHub.invite(uId);
+	public invite(uId:string): Promise<boolean>
+	{
+		return this._coUmlHub.invite(uId);
 	}
+	
+	public upload(diagramJson: string): Promise<string>
+	{
+		
+		console.log("ProjectManager. upload(diagramJson: string)\n\n", diagramJson);
+		try {//TODO: check if text is valid diagram befor uploading
+			if(JSON.parse(diagramJson)?.id)
+				return this._coUmlHub.generateProjectFromDiagram(diagramJson);
+		} catch (error) {
+			console.error(error)
+		}
+		return Promise.reject("Invalid Diagram");
+	}
+
 }

@@ -5,35 +5,29 @@ import { CoUmlHubService } from 'src/app/service/couml-hub.service';
 import { DiagramDataSet } from 'src/models/DiagramModel';
 
 @Component({
-    templateUrl: './diagram-table.component.html',
+templateUrl: './diagram-table.component.html',
 })
 export class DiagramTableComponent {
 
-    _diagramDataSets: DiagramDataSet[] = [
-        {
-            id: "something...",
-            _id: "Went wrong in promise?"
-        }
-    ];
+	_diagramDataSets: DiagramDataSet[] = null;
 
+	constructor(
+		private _coUmlHub: CoUmlHubService,
+		public ref: DynamicDialogRef, 
+		public config: DynamicDialogConfig,
+		) { 
+			console.log("DiagramTableComponent\n", this, "\nwith\n", arguments);
+		}
 
-    constructor(
-        private _coUmlHub: CoUmlHubService,
-        public ref: DynamicDialogRef, 
-        public config: DynamicDialogConfig,
-        ) { }
+	ngOnInit() {
+		//id: this.config.id
+		this._coUmlHub.listMyDiagrams()
+			.then((diagramList) => {
+				this._diagramDataSets = diagramList? JSON.parse (diagramList) : null;
+			} );
+	}
 
-    ngOnInit() {
-        //id: this.config.id
-        this._coUmlHub.listMyDiagrams()
-            .then((diagramList) => {
-                this._diagramDataSets = JSON.parse (diagramList);
-                console.log(diagramList);
-                console.log(this._diagramDataSets);
-            } );
-    }
-
-    select(diagramData: DiagramDataSet) {
-        this.ref.close(diagramData);
-    }
+	select(diagramData: DiagramDataSet) {
+		this.ref.close(diagramData);
+	}
 }

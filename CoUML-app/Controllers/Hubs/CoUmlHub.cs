@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 
 using CoUML_app.Models;
-using CoUML_app.Controllers.Project;
+using CoUML_app.Controllers;
 using CoUML_app.Utility;
 
 //mongodb stuff
@@ -34,6 +34,9 @@ namespace CoUML_app.Controllers.Hubs
 	public interface ICoUmlClient{
 		Task issueUser(string message);
 		Task Dispatch(string changes);
+		Task JoinedTeam(string teamMemeber);
+		Task LeftTeam(string teamMemeber);
+		Task InitTeam(string teamMemebers);
 	}
 
 	public static class CoUmlContext
@@ -56,7 +59,8 @@ namespace CoUML_app.Controllers.Hubs
 
 
 		private static ProjectController ProjectController = new ProjectController();
-		private static SessionManager SessionManager = new SessionManager();
+		private static UserController UserController = new UserController();
+		private static SessionHost SessionHost = new SessionHost();
 
 		
 		/// <summary>
@@ -96,29 +100,60 @@ namespace CoUML_app.Controllers.Hubs
 			Clients.Client(connectionId).issueUser(connectionId);
 		}
 
-		public void LogIn(string userId)
+		public string LogIn(string userId)
 		{
 			Context.Items[CoUmlContext.USER] = new User(userId);
-			ProjectController.Register((User)Context.Items[CoUmlContext.USER]);
+			UserController.RegisterUser((User)Context.Items[CoUmlContext.USER]);
+			return DTO.From<User>((User)Context.Items[CoUmlContext.USER]);
 		}
 
 		public void LogOut()
 		{
-
 			try
 			{
-				if(Context.Items[CoUmlContext.DIAGRAM] is not null)
-				{ // remove self from other groups before continuing
-					Groups.RemoveFromGroupAsync(Context.ConnectionId, (string)Context.Items[CoUmlContext.DIAGRAM]);
-					SessionManager.LeaveSession((string)Context.Items[CoUmlContext.DIAGRAM], (User)Context.Items[CoUmlContext.USER]);
-				}
+				LeaveSession();
+				Context.Items[CoUmlContext.USER] = null;
 			}
 			catch (KeyNotFoundException knf)
 			{
 				Console.WriteLine(knf);
 			}
-			
 		}
+
+		private void JoinSession(string dId)
+		{
+			User self = (User)Context.Items[CoUmlContext.USER];
+			Context.Items[CoUmlContext.DIAGRAM] = dId;
+			
+			Groups.AddToGroupAsync(Context.ConnectionId, dId);
+			SessionHost.JoinSession(dId, self);
+
+			Clients.GroupExcept(dId, new List<string>(){Context.ConnectionId}.AsReadOnly())
+				.JoinedTeam(
+					DTO.From<User>(self)
+				);
+			Clients.Caller
+				.InitTeam(
+					DTO.From<User[]>(SessionHost.ListTeamMembers(dId))
+				);
+		}
+
+		private void LeaveSession()
+		{
+			string dId = (string) Context.Items[CoUmlContext.DIAGRAM];
+			User self = (User)Context.Items[CoUmlContext.USER];
+
+			if(dId is not null)
+			{
+				Clients.GroupExcept(dId, new List<string>(){Context.ConnectionId}.AsReadOnly())
+					.LeftTeam(DTO.From<User>(self));
+
+				SessionHost.LeaveSession(dId, self);
+				Groups.RemoveFromGroupAsync(Context.ConnectionId, dId);
+			}
+			Context.Items[CoUmlContext.DIAGRAM] = null;
+		}
+
 
 		/// <summary>
 		/// find an existing diagram in memory and return it to the requesting client
@@ -128,39 +163,46 @@ namespace CoUML_app.Controllers.Hubs
 		public string Fetch(string dId)
 		{
 
-			LogOut();
-
-			Context.Items[CoUmlContext.DIAGRAM] = dId;
+			LeaveSession();
 
 			Diagram fetchedDiagram = null;
-			if(!SessionManager.IsSessionActive(dId))
+			if(SessionHost.IsSessionActive(dId))
 			{
-				fetchedDiagram = ProjectController.FindDiagram(dId);
-				SessionManager.InitSession(dId, fetchedDiagram);
+				fetchedDiagram = SessionHost.GetLiveDiagram(dId);
 			}else
 			{
-				fetchedDiagram = SessionManager.GetLiveDiagram(dId);
+				fetchedDiagram = ProjectController.FindDiagram(dId);
+				SessionHost.InitSession(dId, fetchedDiagram);
 			}
 
-			Groups.AddToGroupAsync(Context.ConnectionId, dId);
-			SessionManager.JoinSession(dId, (User)Context.Items[CoUmlContext.USER]);
+			JoinSession(dId);			
 
 			return DTO.FromDiagram(fetchedDiagram);
 		}
 
+		
+
+		
+
 		public string Generate(string dId){
-			return ProjectController.Generate(dId,  (User)Context.Items[CoUmlContext.USER]);
+			return ProjectController.CreateDiagram(dId,  (User)Context.Items[CoUmlContext.USER]);
+		}
+
+		public string GenerateProjectFromDiagram(string diagramDTO){
+			return ProjectController.CreateProjectFromDiagram(
+				DTO.ToDiagram(diagramDTO),
+				(User)Context.Items[CoUmlContext.USER]);
 		}
 		
 		public string ListMyDiagrams(){
-			return ProjectController.ListMyDiagrams( (User)Context.Items[CoUmlContext.USER] );
+			return ProjectController.ListDiagrams( (User)Context.Items[CoUmlContext.USER] );
 		}
 
 		public void Push(string changes)
 		{
 			var dId = (string)Context.Items[CoUmlContext.DIAGRAM];
-			SessionManager.CommitUpdatesToSession(dId, DTO.ToChangeRecords(changes));
-			ProjectController.Overwrite(SessionManager.GetLiveDiagram(dId));
+			SessionHost.CommitUpdatesToSession(dId, DTO.ToChangeRecords(changes));
+			ProjectController.Overwrite(SessionHost.GetLiveDiagram(dId));
 			Dispatch(dId, Context.ConnectionId, changes);
 		}
 
@@ -191,9 +233,10 @@ namespace CoUML_app.Controllers.Hubs
 				testDiagram.GenerateCode(codeGenerator);
 		}
 
-		public void Invite(string uId){
+		public bool Invite(string uId)
+		{
 			User add = new User(uId);
-			ProjectController.AddToTeam((string)(Context.Items[CoUmlContext.DIAGRAM]),add);	
+			return UserController.AddToTeam((string)(Context.Items[CoUmlContext.DIAGRAM]),add);	
 		}
 	}
 }

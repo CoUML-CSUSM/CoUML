@@ -1,0 +1,22 @@
+<div class="p-d-flex p-ai-center">
+	<ng-template ngFor let-c [ngForOf]="_team">
+		<p-image 
+		[pTooltip]="c.user.id"  
+		[src]="c.iconFilePath"
+		tooltipPosition="bottom" 
+		styleClass="mr-1"
+		></p-image>
+	</ng-template>
+
+	<span class="separator"></span>
+
+	<p-image
+	[pTooltip]="_user.user.id"  
+	[src]="_user.iconFilePath"
+	tooltipPosition="bottom" 
+	styleClass="ml-1"
+	></p-image>
+
+
+
+</div>

@@ -137,7 +137,6 @@ export abstract class ComponentProperty extends UmlElement
 {
 	public abstract name: string;
 	public visibility: VisibilityType.VisibilityType = VisibilityType.VisibilityType.LocalScope;
-	public isStatic: boolean = false;
 	public propertyString: string = ""; 
 	public abstract type: DataType;
 	constructor(type)
@@ -262,11 +261,11 @@ export class Attribute extends ComponentProperty
 		 **/
 		if(tokenDescription)
 		{
-			this.visibility = VisibilityType.get(tokenDescription[1]) || VisibilityType.VisibilityType.LocalScope;
-			this.name = tokenDescription[2] || "operation";
+			this.visibility = VisibilityType.get(tokenDescription[1]);
+			this.name = tokenDescription[2] ?? "operation";
 			this.parameterize(tokenDescription[3]);
-			this.type = new DataType(tokenDescription[4] || DEFUALT_DATATYPE_OPPERATION);
-			this.propertyString = tokenDescription[5] || "";
+			this.type = new DataType(tokenDescription[4] ?? DEFUALT_DATATYPE_OPPERATION);
+			this.propertyString = tokenDescription[5] ?? "";
 		}
 
 

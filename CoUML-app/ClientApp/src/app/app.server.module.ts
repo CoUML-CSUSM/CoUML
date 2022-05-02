@@ -15,27 +15,10 @@ import {CheckboxModule} from 'primeng/checkbox';
         AppModule,
         ServerModule, 
         ModuleMapLoaderModule,
-
-
-        /**
-         * PrimeNG imported components
-         */
-        ButtonModule,
-        InputTextModule,
-        CheckboxModule
-
     ],
     declarations: [
-
-
-
     ],
     providers: [
-        /**
-         * CoUML Components
-         */
-         CoUmlHubService,
-         
     ],
     bootstrap: [AppComponent]
 })

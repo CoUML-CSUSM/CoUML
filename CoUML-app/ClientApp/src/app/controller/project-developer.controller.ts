@@ -1,32 +1,44 @@
 import { Injectable } from '@angular/core';
 import { CoUmlHubService } from "../service/couml-hub.service";
+import { MessageService } from 'primeng/api';
 import { Diagram, Assembler, ChangeRecord, ActionType, PropertyType, Component, Class, AbstractClass, Interface, Enumeration, UmlElement, IUser, ICollection } from 'src/models/DiagramModel';
 import { EditorComponent } from '../editor/editor.component';
+import { TeamActivityComponent } from '../activity/team-activity.component';
 
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ProjectDeveloper{
 
 	_projectDiagram: Diagram = null;
 
 	_diagramEditor: EditorComponent = null;
-	_editor: IUser
+	_teamActivity: TeamActivityComponent
 
-	_changes: ChangeRecord[] = [];
+	private _outgoingChanges: ChangeRecord[] = [];
+	private _incomingChanges: ChangeRecord[] = [];
 
-	constructor(private _coUmlHub: CoUmlHubService)	{
+	constructor(
+		private _coUmlHub: CoUmlHubService,
+		private _toastMessageService: MessageService
+	){
+		console.log("ProjectDeveloper\n", this, "\nwith\n", arguments);
 		this._coUmlHub.subscribe(this);
 	}
 
-	subscribe(diagramEditor: EditorComponent) {
-		this._diagramEditor = diagramEditor;
+	subscribe(subscriber: any) 
+	{
+		switch(true)
+		{
+			case subscriber instanceof EditorComponent: 
+				this._diagramEditor = subscriber; break;
+
+			case subscriber instanceof TeamActivityComponent:
+				this._teamActivity  = subscriber;
+				this._coUmlHub.subscribe(subscriber);
+				break;
+		}
 	}
 
-	setEditor(user: IUser) {
-		this._editor = user;
-		console.log("editor set to");
-		console.log(this._editor);
-	}
 	isDiagramSet()
 	{
 		return this._projectDiagram != null;
@@ -39,7 +51,6 @@ export class ProjectDeveloper{
 			.then( (d) => {
 				console.log(d);
 				this._projectDiagram = Assembler.assembleDiagram(d);
-				//this._projectDiagram.editor = uId;
 				console.log(this._projectDiagram);
 				this._diagramEditor.draw(this._projectDiagram);
 			} ); 
@@ -50,19 +61,39 @@ export class ProjectDeveloper{
 		this._projectDiagram = null;
 		this._diagramEditor.clearGraph();
 	}
-	private _awaitingChanges: ChangeRecord[] = [];
+
+
 	public applyChanges(changes: ChangeRecord[])
 	{
+		console.log(
+			"Applying changes\n\n",
+			changes
+		);
 		for(let change of changes)
-			this._awaitingChanges.unshift(change);
+			this._incomingChanges.unshift(change);
 		this.merge();
 	}
+
+	logIn(email: string) {
+		this._coUmlHub.logIn(email).then((user)=>{
+			this._teamActivity?.logIn(Assembler.assembleUmlElement(JSON.parse(user)));
+		});
+	}
+
+	logOut() {
+		this._coUmlHub.logOut();
+		this._teamActivity.logOut();
+		this._diagramEditor.clearGraph();
+		this._projectDiagram = null;
+	}
+
+
 	private merge()
 	{	console.log("-------------- apply changes ---------------");
 		// console.log(changes);
 		// for(let change of changes)
-		while(this._awaitingChanges.length>0){
-			let change = this._awaitingChanges.pop();
+		while(this._incomingChanges.length>0){
+			let change = this._incomingChanges.pop();
 			setTimeout(()=>{
 				this.applyChange(change);
 				this._diagramEditor.processChange(change);
@@ -70,7 +101,6 @@ export class ProjectDeveloper{
 		}
 		console.log("-------------- Done! ---------------");
 		console.log(this._projectDiagram);
-
 	}
 
 	private applyChange(change: ChangeRecord)
@@ -80,6 +110,8 @@ export class ProjectDeveloper{
 
 		switch(change.action){
 			case ActionType.Shift:	affectedComponent.shift(change.value); break;
+			case ActionType.Path:	affectedComponent.path(change.value); break;
+			case ActionType.Style:	affectedComponent.style(change.value); break;
 			case ActionType.Insert:	affectedComponent.insert(change.value); break;
 			case ActionType.Remove:	affectedComponent.remove(change.value); break;
 			case ActionType.Lock:	affectedComponent.lock(change.value); break;
@@ -88,19 +120,25 @@ export class ProjectDeveloper{
 
 			case ActionType.Change:
 
-				affectedComponent.change(change); break;
+				switch(change.affectedProperty)
+				{
+					case PropertyType.IsStatic:
+						affectedComponent.isStatic = change.value;
+						break;
+					default: affectedComponent.change(change); break;
+				}
+				break;
 		}			
 
 		console.log("result");
 		console.log(this._projectDiagram);//i need to send this down to the c#
-		// this._coUmlHub.send(this._projectDiagram.id,this._projectDiagram);
 
 	}
 
 	stageChange(change: ChangeRecord, updateSelf: boolean = false) {
 		// apply change locally
 		this.applyChange(change);
-		this._changes.push(change);
+		this._outgoingChanges.push(change);
 
 		//apply globally
 		this.commitStagedChanges();
@@ -115,13 +153,13 @@ export class ProjectDeveloper{
 		{
 			this.shouldDelay = true;
 
-			this._coUmlHub.commit( this._changes);
+			this._coUmlHub.commit( this._outgoingChanges);
 
-			this._changes = [];
+			this._outgoingChanges = [];
 			//artificial delay that prevents the program from updating too offten, but submits any last added elements
 			setTimeout(()=>{
 				this.shouldDelay = false;
-				if(0 < this._changes.length)
+				if(0 < this._outgoingChanges.length)
 					this.commitStagedChanges();
 			}, this.delayPeriod);
 		}
