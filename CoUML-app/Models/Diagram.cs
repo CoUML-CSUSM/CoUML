@@ -61,7 +61,7 @@ namespace CoUML_app.Models
 			this.editor = new NullUser();
 		}
 
-		public virtual void Validate(ref UmlElement parent)
+		public virtual void Validate(UmlElement parent)
 		{
 			Parent = parent;
 		}
@@ -115,13 +115,13 @@ namespace CoUML_app.Models
 		}
 		
 		override
-		public void Validate( ref UmlElement defualtParrent)
+		public void Validate( UmlElement defualtParrent)
 		{
-			base.Validate(ref defualtParrent);
+			base.Validate(defualtParrent);
 			var elementIterator = elements.Iterator();
 
-			while(elementIterator.HasNext()){}
-				// elementIterator.GetNext().Validate(refthis);
+			while(elementIterator.HasNext())
+				elementIterator.GetNext().Validate(this);
 		}
 
 	}

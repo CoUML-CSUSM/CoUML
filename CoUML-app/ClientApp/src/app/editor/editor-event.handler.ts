@@ -19,6 +19,7 @@ import { EditorColors } from "./editor.resources";
  //	add  listeners from the catalog
  //================================================================================================
 
+ 	const EDITOR_IMAGES_UML_PAPTH = (folder: string, name: string )=> {return `resources/${folder}/${name}.svg`};
 	const _eventCatalog: Map<mxEvent, (...args: any[]) => any > = new Map();
 		_eventCatalog.set(mxEvent.LABEL_CHANGED, labelChanged);
 		_eventCatalog.set(mxEvent.START_EDITING, startEditing);
@@ -83,26 +84,37 @@ import { EditorColors } from "./editor.resources";
 			console.log(cell)
 			if(cell?.edge)// menu if user clicks on edge
 			{
+				let relationshipSubmenu = menu.addItem("Relationship Types");
+				menu.createSubmenu(relationshipSubmenu);
 				_relationtypeCatolog.forEach((title: string, relationshipType: RelationshipType)=>{
-					menu.addItem(title, EDITOR_IMAGES_UML_PAPTH('uml',title), ()=>setRelationType(cell, relationshipType))
-						.id = title;
+					menu.addItem(
+						title, 
+						EDITOR_IMAGES_UML_PAPTH('uml',title), 
+						()=>setRelationType(cell, relationshipType),
+						relationshipSubmenu
+					).id = title;
 				})
 			}
 			if(cell?.umlElement instanceof Component)// menu if user clicks on cell
 			{
+				let styleSubmenu = menu.addItem("Styles",EDITOR_IMAGES_UML_PAPTH('icons', 'palette'));
+				menu.createSubmenu(styleSubmenu);
 				_colorCatolog.forEach((hex: string, color: string)=>{
 					menu.addItem(
 						color,
-					EDITOR_IMAGES_UML_PAPTH('colors', color),
-					()=>setStyle(cell, hex))
-					.id = color;
+						EDITOR_IMAGES_UML_PAPTH('colors', color),
+						()=>setStyle(cell, hex),
+						styleSubmenu
+					).id = color;
 				})
 			}
 			if(cell?.umlElement instanceof Component || cell?.umlElement instanceof ComponentProperty)
 			{
-				let isStatic = menu.addItem("Static", null, ()=> setIsStatic(cell))
-				if(cell.umlElement?.isStatic)
-					menu.addCheckmark(isStatic,null);
+				let isStatic = menu.addItem(
+					"Static",
+					EDITOR_IMAGES_UML_PAPTH('icons', (cell.umlElement.isStatic? 'check': 'uncheck')),
+					()=> setIsStatic(cell)
+				);
 			}
 		};
 
@@ -132,7 +144,7 @@ import { EditorColors } from "./editor.resources";
 		}
 		var setIsStatic = function(component: mxCell)
 		{
-			editorComponent.updateStatic(component, !component.umlElement?.isStatic);
+			editorComponent.updateStatic(component);
 
 			editorComponent.stageChange(new ChangeRecord(
 				editorComponent.getIdPath(component),
@@ -155,7 +167,6 @@ import { EditorColors } from "./editor.resources";
 	_prototypeCatalog.set( Attribute, 'Attribute');
 	_prototypeCatalog.set( Operation, 'Operation');
 	_prototypeCatalog.set( Enumeral, 'Enumeral');
-	const EDITOR_IMAGES_UML_PAPTH = (folder: string, name: string )=> {return `resources/${folder}/${name}.svg`};
 
 	/**
 	 * 
