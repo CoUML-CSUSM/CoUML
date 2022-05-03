@@ -19,7 +19,8 @@ import { EditorColors } from "./editor.resources";
  //	add  listeners from the catalog
  //================================================================================================
 
- 	const EDITOR_IMAGES_UML_PAPTH = (folder: string, name: string )=> {return `resources/${folder}/${name}.svg`};
+ 	const EDITOR_IMAGES_UML_PAPTH_SVG = (folder: string, name: string )=> {return `resources/${folder}/${name}.svg`};
+ 	const EDITOR_IMAGES_UML_PAPTH_PNG = (folder: string, name: string )=> {return `resources/${folder}/${name}.png`};
 	const _eventCatalog: Map<mxEvent, (...args: any[]) => any > = new Map();
 		_eventCatalog.set(mxEvent.LABEL_CHANGED, labelChanged);
 		_eventCatalog.set(mxEvent.START_EDITING, startEditing);
@@ -89,7 +90,7 @@ import { EditorColors } from "./editor.resources";
 				_relationtypeCatolog.forEach((title: string, relationshipType: RelationshipType)=>{
 					menu.addItem(
 						title, 
-						EDITOR_IMAGES_UML_PAPTH('uml',title), 
+						EDITOR_IMAGES_UML_PAPTH_SVG('uml',title), 
 						()=>setRelationType(cell, relationshipType),
 						relationshipSubmenu
 					).id = title;
@@ -97,12 +98,12 @@ import { EditorColors } from "./editor.resources";
 			}
 			if(cell?.umlElement instanceof Component)// menu if user clicks on cell
 			{
-				let styleSubmenu = menu.addItem("Styles",EDITOR_IMAGES_UML_PAPTH('icons', 'palette'));
+				let styleSubmenu = menu.addItem("Styles",EDITOR_IMAGES_UML_PAPTH_PNG('icons', 'palette'));
 				menu.createSubmenu(styleSubmenu);
 				_colorCatolog.forEach((hex: string, color: string)=>{
 					menu.addItem(
 						color,
-						EDITOR_IMAGES_UML_PAPTH('colors', color),
+						EDITOR_IMAGES_UML_PAPTH_SVG('colors', color),
 						()=>setStyle(cell, hex),
 						styleSubmenu
 					).id = color;
@@ -112,7 +113,7 @@ import { EditorColors } from "./editor.resources";
 			{
 				let isStatic = menu.addItem(
 					"Static",
-					EDITOR_IMAGES_UML_PAPTH('icons', (cell.umlElement.isStatic? 'check': 'uncheck')),
+					EDITOR_IMAGES_UML_PAPTH_PNG('icons', (cell.umlElement.isStatic? 'check': 'uncheck')),
 					()=> setIsStatic(cell)
 				);
 			}
@@ -264,7 +265,7 @@ import { EditorColors } from "./editor.resources";
 		}
 		
 		// Creates the image which is used as the drag icon (preview)
-		var img = editorComponent.toolbar.addMode("Drag", EDITOR_IMAGES_UML_PAPTH('uml', image), function(evt, cell)
+		var img = editorComponent.toolbar.addMode("Drag", EDITOR_IMAGES_UML_PAPTH_SVG('uml', image), function(evt, cell)
 		{
 			var pt = editorComponent.graph.getPointForEvent(evt, true);
 				drop(editorComponent.graph, evt, cell, pt.x, pt.y);
