@@ -115,6 +115,13 @@ namespace CoUML_app.Models
 		{
 			attribute = description == "" ? null : new Attribute(description);
 		}
+
+		override
+		public void Validate(UmlElement parent)
+		{
+			base.Validate(parent);
+
+		}
 	}
 
 

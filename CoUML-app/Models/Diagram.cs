@@ -18,7 +18,7 @@ namespace CoUML_app.Models
 		public Boolean isStatic{ get; set; } = false;
 
 		[JsonIgnore]
-		private UmlElement Parent{get; set;}
+		protected UmlElement Parent{get; set;}
 
 		public virtual void GenerateCode(ISourceCodeGenerator codeGenerator)
 		{
