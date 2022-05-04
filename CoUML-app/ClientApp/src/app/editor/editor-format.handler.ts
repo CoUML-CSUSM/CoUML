@@ -2,8 +2,8 @@ import { AbstractClass, ActionType, Attribute, ChangeRecord, Class, Dimension, E
 import { EditorColors } from "./editor.resources";
 
 const DASH_PATTERN: string  = '12 4';
-const MARGIN: number = 10;
-const HEIGHT:number = 10;
+export const MARGIN: number = 10;
+export const HEIGHT:number = MARGIN*3;
 
 
 
@@ -20,7 +20,7 @@ export function addCellStyles(graph: mxGraph)
 		if (this.state != null && this.state.cell.style != null && this.state.style['stereotype'])
 		{
 			c.setStrokeColor(EditorColors.BLACK);
-			c.text(w/2, HEIGHT/2 , w, h, `<<${this.state.style['stereotype']}>>`, 'center', 'top', '','', '', '', 0, '');
+			c.text(w/2, MARGIN*.4 , w, h, `<<${this.state.style['stereotype']}>>`, 'center', 'top', '','', '', '', 0, '');
 			
 		}
 		
@@ -55,7 +55,7 @@ export function addCellStyles(graph: mxGraph)
 	style = [];
 	style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_SWIMLANE;
 	style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;
-	style[mxConstants.STYLE_STARTSIZE] = HEIGHT*3;
+	style[mxConstants.STYLE_STARTSIZE] = HEIGHT;
 	style[mxConstants.STYLE_FILLCOLOR] = EditorColors.WHITE;
 	style['childLayout'] = "stackLayout";
 	style['horizontalStack'] = 0;
@@ -64,10 +64,10 @@ export function addCellStyles(graph: mxGraph)
 	style[mxConstants.STYLE_VERTICAL_ALIGN] =  mxConstants.ALIGN_MIDDLE;
 	style['marginLeft'] = 0;
 	style['marginRight'] = 0;
-	style['marginTop'] = HEIGHT;
-	style['marginBottom'] = HEIGHT;
-	style['gridSize'] = HEIGHT;
-	style['stackSpacing'] = HEIGHT;
+	style['marginTop'] = MARGIN;
+	style['marginBottom'] = MARGIN;
+	style['gridSize'] = MARGIN;
+	style['stackSpacing'] = MARGIN;
 	style[mxConstants.STYLE_STROKECOLOR] = EditorColors.BLACK;
 
 	style = mxUtils.clone(style);
@@ -80,7 +80,7 @@ export function addCellStyles(graph: mxGraph)
 
 	//styles with stereotypes
 	style = mxUtils.clone(style);
-	style[mxConstants.STYLE_SPACING_TOP] = HEIGHT;
+	style[mxConstants.STYLE_SPACING_TOP] = MARGIN;
 	style[mxConstants.STYLE_FONTSTYLE] = mxConstants.DEFAULT_FONTSTYLE;
 	style['stereotype'] = 'interface';
 	graph.getStylesheet().putCellStyle("CoUML_app.Models.Interface", style);
@@ -125,43 +125,43 @@ export function addEdgeStyles(graph: mxGraph)
 	}
 
 
-	// Overridden to define per-shape connection points
-	mxGraph.prototype.getAllConnectionConstraints = function(terminal, source)
-	{
+	// // Overridden to define per-shape connection points
+	// mxGraph.prototype.getAllConnectionConstraints = function(terminal, source)
+	// {
 
-		if (terminal != null && terminal.shape != null)
-		{
-			if (terminal.shape.stencil != null)
-			{
-				if (terminal.shape.stencil.constraints != null)
-				{
-					console.log(
-						"getAllConnectionConstraints\n",
-						"terminal.shape.stencil.constraints != null",
-						"\nterminal\n\t",
-						terminal,
-						"\nsource\n\t",
-						source,
-					);
-					return terminal.shape.stencil.constraints;
-				}
-			}
-			else if (terminal.shape.constraints != null)
-			{
-				console.log(
-					"getAllConnectionConstraints\n",
-					"terminal.shape.constraints != null",
-					"\nterminal\n\t",
-					terminal,
-					"\nsource\n\t",
-					source,
-				);
-				return terminal.shape.constraints;
-			}
-		}
+	// 	if (terminal != null && terminal.shape != null)
+	// 	{
+	// 		if (terminal.shape.stencil != null)
+	// 		{
+	// 			if (terminal.shape.stencil.constraints != null)
+	// 			{
+	// 				console.log(
+	// 					"getAllConnectionConstraints\n",
+	// 					"terminal.shape.stencil.constraints != null",
+	// 					"\nterminal\n\t",
+	// 					terminal,
+	// 					"\nsource\n\t",
+	// 					source,
+	// 				);
+	// 				return terminal.shape.stencil.constraints;
+	// 			}
+	// 		}
+	// 		else if (terminal.shape.constraints != null)
+	// 		{
+	// 			console.log(
+	// 				"getAllConnectionConstraints\n",
+	// 				"terminal.shape.constraints != null",
+	// 				"\nterminal\n\t",
+	// 				terminal,
+	// 				"\nsource\n\t",
+	// 				source,
+	// 			);
+	// 			return terminal.shape.constraints;
+	// 		}
+	// 	}
 
-		return null;
-	};
+	// 	return null;
+	// };
 
 	// Edges have no connection points
 	mxPolyline.prototype.constraints = null;

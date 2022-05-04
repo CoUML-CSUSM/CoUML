@@ -283,7 +283,7 @@ export class EditorComponent implements AfterViewInit{
 				parent,
 				property.id,
 				property.toUmlNotation(),
-				0, 0, parent.geometry.width, 20,
+				0, 0, parent.geometry.width, EditorFormatHandler.MARGIN,
 				property.constructor.name+
 				`;${mxConstants.STYLE_FONTSTYLE}=${mxConstants.DEFAULT_FONTSTYLE};`
 			);
@@ -482,7 +482,6 @@ export class EditorComponent implements AfterViewInit{
 	private updateEdgePoints(affectedEdge: mxCell, path: mxPoint[]) 
 	{
 		affectedEdge.getGeometry().points = path;
-		this.graph.refresh();		
 	}
 	/* **************************************************************************************** */
 
@@ -503,10 +502,15 @@ export class EditorComponent implements AfterViewInit{
 
 	private removeCell(cellToBeRemoved: mxCell)
 	{	
-		// let p = cellToBeRemoved.getParent();
-		this._graph.getModel().remove( cellToBeRemoved );
-		// this._graph.cellSizeUpdated(p,true);
-
+		this._graph.getModel().beginUpdate();
+		if(cellToBeRemoved.umlElement instanceof ComponentProperty)
+		{// resize parent
+			let parentCell: mxCell = cellToBeRemoved.getParent();
+			let heightOfCellToBeRemoved = cellToBeRemoved.geometry.height + EditorFormatHandler.MARGIN;
+			parentCell.geometry.height = parentCell.geometry.height-heightOfCellToBeRemoved;	
+		}
+		this._graph.removeCells([cellToBeRemoved], false)
+		this._graph.getModel().endUpdate();
 	}
 
 // ============================================================================================
