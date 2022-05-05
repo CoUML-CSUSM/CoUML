@@ -44,7 +44,7 @@ namespace CoUML_app.Utility
 				var word  = w.Value;
 				newFileName += char.ToUpper(word[0])+word.Substring(1).ToLower();
 			}
-			return newFileName+new Guid();
+			return newFileName+Guid.NewGuid().ToString();
 		}
 
 		public static FileStream Download(string zipPath)
