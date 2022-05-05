@@ -6,7 +6,6 @@ import {  User, UmlElement } from 'src/models/DiagramModel';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectManager{
-
 	constructor(
 		private _coUmlHub: CoUmlHubService
 	){
@@ -37,5 +36,10 @@ export class ProjectManager{
 		}
 		return Promise.reject("Invalid Diagram");
 	}
+
+	public generateSourceCode(): Promise<boolean> {
+		return this._coUmlHub.generateSourceCode();
+	}
+
 
 }

@@ -86,7 +86,7 @@ export class ProjectMenuComponent implements AfterViewInit{
 				items: [
 				{
 					label: "Generate Source Code...(\"test\")",
-					// command: () => this._coUmlHub.generateSourceCode("test")
+					command: () => this.showSourceCodeGenerationDialog(), 
 				}
 				]
 			},
@@ -121,6 +121,20 @@ export class ProjectMenuComponent implements AfterViewInit{
 		}
 		];
 
+	}
+	showSourceCodeGenerationDialog(): void {
+		this._projectManager.generateSourceCode().then(isGenerating=>{
+			if(isGenerating)
+				this._toastMessageService.add({
+					severity: 'info',
+					summary: `Generating source code for ${this._projectDeveloper._projectDiagram?.id}. Please be pacient, this may take several minutes.`,
+				});
+			else
+				this._toastMessageService.add({
+					severity: 'error',
+					summary: `Cannot generate source code package`
+				});
+		});
 	}
 
 	

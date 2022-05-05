@@ -137,7 +137,7 @@ namespace CoUML_app.Models
 	public abstract class ComponentProperty: UmlElement{
 		public VisibilityType visibility {get; set;} = VisibilityType.LocalScope;
 		public string name{get; set;}
-		public string propertyString {get; set;} = "";
+		public string propertyString {get; set;} = null;
 		public DataType type{get; set;} 
 
 		override public void GenerateCode(ISourceCodeGenerator codeGenerator)
@@ -195,7 +195,7 @@ namespace CoUML_app.Models
 
 	public class Attribute: ComponentProperty{
 		public Multiplicity multiplicity{get; set;} = new Multiplicity();
-		public string defaultValue {get; set;}
+		public string defaultValue {get; set;} = null;
 
 		public Attribute():base(){ }
 		public Attribute(string description):base()

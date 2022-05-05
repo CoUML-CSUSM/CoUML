@@ -141,6 +141,7 @@ namespace CoUML_app.Models
 			}
 		}
 
+		override
 		public void AddPropertiesFromRelation(Relationship relationship)
 		{
 			switch(relationship.type)

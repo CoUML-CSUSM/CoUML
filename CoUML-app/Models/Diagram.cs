@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using CoUML_app.Controllers;
 using System.Drawing;
+using System.IO;
 
 namespace CoUML_app.Models
 {
@@ -19,8 +20,9 @@ namespace CoUML_app.Models
 
 		[JsonIgnore]
 		protected Diagram Parent{get; set;}
-
-		public virtual void GenerateCode(ISourceCodeGenerator codeGenerator)
+		
+		virtual
+		public void GenerateCode(ISourceCodeGenerator codeGenerator)
 		{
 			codeGenerator.Parse(this);
 		}
@@ -77,8 +79,9 @@ namespace CoUML_app.Models
 			id = dId;
 		}
 		public Diagram(){}
-
-		override public void GenerateCode(ISourceCodeGenerator codeGenerator)
+ 
+		override
+		public void GenerateCode(ISourceCodeGenerator codeGenerator)
 		{
 			codeGenerator.CreatePackage(this);
 			var elementIterator = elements.Iterator();

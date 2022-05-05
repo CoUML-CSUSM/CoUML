@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Collections.Specialized;
 using System.Linq;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
@@ -12,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using CoUML_app.Utility;
 using CoUML_app.Models;
+using Attribute = CoUML_app.Models.Attribute;
 
 namespace CoUML_app.Controllers.Generators
 {
@@ -20,9 +20,6 @@ namespace CoUML_app.Controllers.Generators
 	{
 		public void CreatePackage(Diagram diagram);
 		public void Parse(UmlElement element);
-		public void Parse(Class umlClass);
-		public void Parse(Models.Attribute umlAttribute);
-		// public void Parse(Models.Operation umlOpperation);
 		public void ClosePackage();
 	}
 
@@ -30,6 +27,7 @@ namespace CoUML_app.Controllers.Generators
 	{
 		private const string LANGUAGE = "Java";
 		private Package _package = null;
+		private bool isDeclaration = false;
 		
 		public void CreatePackage(Diagram diagram)
 		{
@@ -48,97 +46,155 @@ namespace CoUML_app.Controllers.Generators
 		{
 			switch(element)
 			{
-				case Class: Parse(element as Class); break;
+				case Class:			Parse(element as Class); break;
+				case AbstractClass:	Parse(element as AbstractClass); break;
+				case Interface:		Parse(element as Interface); break;
+				case Enumeration:		Parse(element as Enumeration); break;
+				case Operation:		Parse(element as Operation); break;
+				case Attribute:		Parse(element as Attribute); break;
+				case Enumeral:		Parse(element as Enumeral); break;
 				default: break;
 			}
 		}
 		
 
-		public void Parse(Class umlClass)
+		public void Parse(Component component)
 		{
-			_package.File = FileUtility.CreateFile(_package.Directory, umlClass.name+".java");
+			_package.File = FileUtility.CreateFile(_package.Directory, component.name+".java");
 			if(_package.File.CanWrite())
 			{
-
-				ImportDependencies(umlClass.Dependencies.Iterator());
-				_package.File.Write($"public class {umlClass.name}");
-				Extends(umlClass.ParentClasses.Iterator());
-				Impliments(umlClass.ParentInterfaces.Iterator());
-				_package.File.Write($"{{");
+				isDeclaration = component is Interface;
+				ParseHeader(component);
+				_package.File.Write("{");
 				_package.File.Indent();
-				Iterate((Models.ICollectionIterator<UmlElement>)umlClass.attribute.Iterator(), Parse);
-				Iterate((Models.ICollectionIterator<UmlElement>)umlClass.operations.Iterator());
+				ParseBody(component);
 				_package.File.Unindent();
-				_package.File.Write($"}}");
+				_package.File.Write("}");
 				_package.File.Close();
 			}
 		}
 
-		public void Parse(Models.Attribute attribute)
+		private void ParseHeader(Component? component)
 		{
-			if(_package.File.CanWrite())
+			_package.File.WriteLine(new string[] {
+				NormalizeVisibility(VisibilityType.Public),
+				NormalizeStatic(component.isStatic),
+				NormalizeComponentType(component),
+				NormalizeComponentName(component.name),
+				NormailzeExtend(component.ParentClasses.Iterator()),
+				NormalizeImpliment(component.ParentInterfaces.Iterator())
+			});
+		}
+
+		private void ParseBody(Component component)
+		{
+			switch(component)
 			{
-				_package.File.WriteLine(
-					( attribute.visibility==null? "" : $"{GetVisibility(attribute.visibility)} " )+
-					$"{attribute.type.dataType}" +
-					$"{attribute.name}" +
-					$"// {attribute.propertyString}");
+				case Class:
+					IterateParse(((Class)component).attribute.Iterator());
+					IterateParse(((Class)component).operations.Iterator());
+					break;
+				case AbstractClass:
+					IterateParse(((AbstractClass)component).attribute.Iterator());
+					IterateParse(((AbstractClass)component).operations.Iterator());
+					break;
+				case Interface:
+					IterateParse(((Interface)component).operations.Iterator());
+					break;
+				case Enumeration:
+					IterateParse(((Enumeration)component).enums.Iterator());
+					break;
+			}
+			ParseInheritance(component);
+		}
+
+		private void ParseInheritance(Component component)
+		{
+			ICollectionIterator<Component> parentItereator = component.ParentInterfaces.Iterator();
+			while(parentItereator.HasNext())
+			{
+				ParseBody(parentItereator.GetNext());
 			}
 		}
 
-		public void Parse(Models.Operation operation)
+
+		public void Parse(Attribute attribute)
 		{
-			if(_package.File.CanWrite())
-			{
-				_package.File.WriteLine(
-					( operation.visibility==null? "" : $"{GetVisibility(operation.visibility)} " )+
-					$"{operation.type.dataType}" +
-					$"{operation.name}" +
-					$"// {operation.propertyString}");
-			}
+
+			_package.File.WriteLine(new string[] {
+				NormalizeVisibility(attribute.visibility),
+				NormalizeStatic(attribute.isStatic),
+				NormalizeDataType(attribute.type, attribute.multiplicity),
+				NormalizePropertyName(attribute.name),
+				NormalizeDefualtValue(attribute.defaultValue),
+				";",
+				NormalizePropertyString(attribute.propertyString)
+			});
 		}
 
-		public void Iterate(Models.ICollectionIterator<UmlElement> iterator, )
-		{}
-		public void Iterate(Models.ICollectionIterator<UmlElement> iterator)
+		public void Parse(Operation operation)
+		{
+
+			_package.File.WriteLine(new string[]{
+				NormalizeVisibility(operation.visibility),
+				NormalizeStatic(operation.isStatic),
+				NormalizeDataType(operation.type),
+				NormalizePropertyName(operation.name),
+				NormalizeParameters(operation.parameters.Iterator()),
+				NormalizePropertyString(operation.propertyString),
+				isDeclaration? ";":"{}"
+			});
+
+		}
+
+		public void Parse(Enumeral enumeral)
+		{
+
+			_package.File.WriteLine(new string[]{
+				NormalizeEnumeral(enumeral.name)
+			});
+		}
+
+		private void IterateParse<T>(ICollectionIterator<T> iterator) where T : UmlElement
 		{
 			while(iterator.HasNext())
-				iterator.GetNext().GenerateCode(this);
+				Parse(iterator.GetNext());
 		}
 
-		private void ImportDependencies(Models.ICollectionIterator<Models.Component> dependencies)
+
+		private void Import(Component dependency)
 		{
-			if(_package.File.CanWrite())
-				while(dependencies.HasNext())
-				{	
-					Component comp = dependencies.GetNext();
-					_package.File.WriteLine(
-						$"import {comp.name};"
-					);
-				}
+			_package.File.WriteLine(
+				$"import {dependency.name};"
+			);
+
 		}
 
-		private void Extends(Models.ICollectionIterator<Models.Component> components)
+		private string? NormailzeExtend(ICollectionIterator<Component> components)
 		{
-			if(components.HasNext() && _package.File.CanWrite())
+			string extendString = null;
+			if(components.HasNext())
 			{
-				_package.File.Write($" extends");
+				extendString = "extends";
 				while(components.HasNext())
-					_package.File.Write($" {components.GetNext().name}");
+					extendString += $" {NormalizeComponentName(components.GetNext().name)}";
 			}
+			return extendString;
 		}
 
-		private void Impliments(Models.ICollectionIterator<Models.Component> components)
+		private string? NormalizeImpliment(ICollectionIterator<Component> components)
 		{
-			if(components.HasNext() && _package.File.CanWrite())
+			string implimentString = null;
+			if(components.HasNext())
 			{
-				_package.File.Write($" implement");
+				implimentString = "impliments";
 				while(components.HasNext())
-					_package.File.Write($" {components.GetNext().name}");
+					implimentString += $" {NormalizeComponentName(components.GetNext().name)}";
 			}
+			return implimentString;
 		}
 
-		private String GetVisibility(VisibilityType type)
+		private static string? NormalizeVisibility(VisibilityType type)
 		{
 			switch(type)
 			{
@@ -147,9 +203,80 @@ namespace CoUML_app.Controllers.Generators
 				case VisibilityType.Protected:	return "protected";
 				case VisibilityType.Public:	 return "public";
 				case VisibilityType.LocalScope:
-				default:	return "";
+				default:	return null;
 			}
 		}
+
+		private static string? NormalizeDataType( DataType dataType, Multiplicity multiplicity )
+		{
+			string? type = dataType.dataType;
+			if(!multiplicity.IsSingle())
+				type += "[]"; 
+			return type;
+		}
+		private static string? NormalizeDataType(DataType dataType )
+		{
+			return dataType.dataType;
+		}
+
+		private static string? NormalizeStatic(bool isStatic)
+		{
+			return isStatic? "static": null;
+		}
+
+		private static string? NormalizePropertyName(string name)
+		{
+			return char.ToLower(name[0])+name.Substring(1);
+		}
+		private static string? NormalizeComponentName(string name)
+		{
+			return  char.ToUpper(name[0])+name.Substring(1);
+		}
+
+		private static string? NormalizeDefualtValue(string defaultValue)
+		{
+			return defaultValue is null  || defaultValue == "" ? null: "= "+defaultValue;
+		}
+
+
+		private static string? NormalizePropertyString(string propertyString)
+		{
+			return propertyString is null || propertyString == "" ? null: $"/* {propertyString} */";
+		}
+
+		private static string NormalizeParameters(ICollectionIterator<Attribute> parameters)
+		{
+			string parameterString = "";
+			while(parameters.HasNext())
+			{
+				Attribute p = parameters.GetNext();
+				parameterString += $"{NormalizeDataType(p.type)} {NormalizePropertyName(p.name)},";
+			}
+			return $"({parameterString.Trim(',')})";
+		}
+
+
+		private static string? NormalizeComponentType(Component c)
+		{
+			switch (c)
+			{
+				case Class: return "class";
+				case AbstractClass: return "abstract class";
+				case Interface: return "interface";
+				case Enumeration: return "enum";
+				default: break;
+			}
+			return null;
+		}
+
+		private static string? NormalizeEnumeral(string enumeral)
+		{
+			return enumeral.ToUpper()+",";
+		}
+		// private static string? Normalize(string? )
+		// {
+		// 	return 
+		// }
 
 	}
 }

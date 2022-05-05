@@ -110,7 +110,7 @@ namespace CoUML_app.DataAccess
 		public string CreateDiagram(string dId, User projectManager){
 
 			var collection = GetCollection("Diagrams");
-			var projectDiagram = dId =="test" ? Template.DiagramDefualt(dId): new Diagram(dId);
+			var projectDiagram = dId =="!!test" ? Template.DiagramDefualt(dId): new Diagram(dId);
 			projectDiagram.editor = projectManager;
 
 			//sends diagram as bson doc using the string of the diagram

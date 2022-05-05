@@ -42,16 +42,19 @@ namespace CoUML_app.Utility
 		{
 			Directory = d;
 		}
+		// public File
 
 	}
 
 	public abstract class FileWriter
 	{
 		private const byte TABSIZE = 4;
-		public abstract void Write(string line);
-		public abstract void WriteLine(string line);
-		public abstract void Close();
-		public abstract bool CanWrite();
+		public virtual void Write(string line){}
+		public virtual void WriteLine(string line){}
+		public virtual void WriteLine(string[] line){}
+		public virtual void WriteLine(){}
+		public virtual void Close(){}
+		public virtual bool CanWrite(){ return false;}
 
 		private byte indentLevel = 0;
 		public void Indent() { if(indentLevel<255) ++indentLevel;}
@@ -79,11 +82,30 @@ namespace CoUML_app.Utility
 		{
 			Stream.Write(ToByteArray(line));
 		}
+
 		override
 		public void WriteLine(string line)
 		{
-			byte[] charBuffer = ToByteArray(Indentation+line);
-			Stream.Write(charBuffer, 0, charBuffer.Length);
+			line = Environment.NewLine+Indentation+line+Environment.NewLine;
+			Write(line);
+		}
+
+		override
+		public void WriteLine(string[] words)
+		{
+			string line = "";
+			foreach (var word in words)
+			{
+				if(word is not null)
+					line += " "+word;
+			}
+			line = Environment.NewLine+Indentation+line+Environment.NewLine;
+			Write(line);
+		}
+		override
+		public void WriteLine()
+		{
+			Write(Environment.NewLine);
 		}
 
 		override
@@ -103,18 +125,6 @@ namespace CoUML_app.Utility
 
 	public class NullFileWriter: FileWriter
 	{
-		override
-		public void Write(string line) { }
-		override
-		public void WriteLine(string line) { }
-		override
-		public void Close() { }
-
-		override
-		public bool CanWrite()
-		{
-			return false;
-		}
 		public NullFileWriter(string filePath)
 		{
 			Console.WriteLine("Could not cereate file at ", filePath);

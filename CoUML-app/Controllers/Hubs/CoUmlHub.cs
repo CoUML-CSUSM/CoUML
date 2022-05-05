@@ -216,10 +216,19 @@ namespace CoUML_app.Controllers.Hubs
 			;
 		}
 
-		public void GenerateSourceCode( string dId, int language)
+		public bool GenerateSourceCode( int language)
 		{ 
-			ISourceCodeGenerator codeGenerator;
+			bool generate = false;
+			Diagram projectDiagram = ProjectController.FindDiagram((string)Context.Items[CoUmlContext.DIAGRAM]);
+			if(generate = projectDiagram != null)
+				AsyncGenerateSourceCode(projectDiagram, language);
+			return generate;
+		}
 
+		private static async void AsyncGenerateSourceCode(Diagram projectDiagram, int language)
+		{
+			projectDiagram.Validate(projectDiagram);
+			ISourceCodeGenerator codeGenerator;
 			switch(language)
 			{
 				//TODO: enum for language, defualt is java
@@ -228,9 +237,7 @@ namespace CoUML_app.Controllers.Hubs
 					codeGenerator = new JavaCodeGenerator(); break;
 			}
 
-			Diagram testDiagram = ProjectController.FindDiagram(dId);
-			if(testDiagram != null)
-				testDiagram.GenerateCode(codeGenerator);
+			projectDiagram.GenerateCode(codeGenerator);
 		}
 
 		public bool Invite(string uId)

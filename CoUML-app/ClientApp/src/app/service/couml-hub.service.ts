@@ -139,9 +139,9 @@ export class CoUmlHubService{
 		this._coUmlHubConnection.invoke("Push", changesDTO);
 	}
 
-	generateSourceCode(dId: string, language: number = 0): void {
+	generateSourceCode(language: number = 0): Promise<boolean> {
 		// TODO: language number should be enum | lang.Java = 0
-		this._coUmlHubConnection.invoke("GenerateSourceCode", dId, language);
+		return this._coUmlHubConnection.invoke<boolean>("GenerateSourceCode", language);
 	}
 
 

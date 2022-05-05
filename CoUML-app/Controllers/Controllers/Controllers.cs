@@ -36,7 +36,6 @@ namespace CoUML_app.Controllers
 		public string CreateProjectFromDiagram(Diagram diagram, User user)
 		{
 			string _id = dao.CreateDiagram(diagram.id,user);
-			Console.WriteLine("New Diagram inserted: ", _id);
 			dao.Overwrite(diagram);
 			return _id;
 		}
