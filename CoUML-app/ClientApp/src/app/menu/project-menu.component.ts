@@ -85,7 +85,7 @@ export class ProjectMenuComponent implements AfterViewInit{
 				label: "Export",
 				items: [
 				{
-					label: "Generate Source Code...(\"test\")",
+					label: "Generate Source Code (Java)",
 					command: () => this.showSourceCodeGenerationDialog(), 
 				}
 				]
