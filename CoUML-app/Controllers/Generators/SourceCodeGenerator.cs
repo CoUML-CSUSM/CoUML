@@ -20,7 +20,7 @@ namespace CoUML_app.Controllers.Generators
 	{
 		public void CreatePackage(Diagram diagram);
 		public void Parse(UmlElement element);
-		public void ClosePackage();
+		public string ClosePackage();
 	}
 
 	public class JavaCodeGenerator: ISourceCodeGenerator
@@ -37,9 +37,9 @@ namespace CoUML_app.Controllers.Generators
 			
 		}
 
-		public void ClosePackage()
+		public string ClosePackage()
 		{
-			//TODO Close package and move backout of directory
+			return _package.ZipAndClose();
 		}
 		
 		public void Parse(UmlElement element)

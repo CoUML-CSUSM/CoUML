@@ -8,6 +8,7 @@ import { Assembler, ChangeRecord, User, Diagram, DiagramDataSet } from 'src/mode
 import { ConsoleLogger } from '@microsoft/signalr/dist/esm/Utils';
 import { waitForAsync } from '@angular/core/testing';
 import { TeamActivityComponent } from '../activity/team-activity.component'; 
+import { saveAs } from 'file-saver';
 
 
 @Injectable({ providedIn: 'root' })
@@ -22,7 +23,7 @@ export class CoUmlHubService{
 	public _teamActivity: TeamActivityComponent = null; 
 
 	constructor(
-		private _toastMessageService: MessageService
+		private _toastMessageService: MessageService,
 	){
 		console.log("CoUmlHubService\n", this, "\nwith\n", arguments);
 		this._coUmlHubConnection = new SignalR.HubConnectionBuilder()
@@ -66,7 +67,14 @@ export class CoUmlHubService{
 	{
 		this._projectManager = pm;
 		// listen for changes
-		// this._coUmlHubConnection.on("function", (value)=>{ });
+		this._coUmlHubConnection.on("DownloadReady", (fileName)=>{ 
+			this._toastMessageService.add({
+				severity: "info",
+				summary: "File ready for download.",
+				detail: fileName
+			})
+			console.log(fileName);
+		});
 	}
 
 

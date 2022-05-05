@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
@@ -37,6 +36,7 @@ namespace CoUML_app.Controllers.Hubs
 		Task JoinedTeam(string teamMemeber);
 		Task LeftTeam(string teamMemeber);
 		Task InitTeam(string teamMemebers);
+		Task DownloadReady(string file);
 	}
 
 	public static class CoUmlContext
@@ -225,7 +225,7 @@ namespace CoUML_app.Controllers.Hubs
 			return generate;
 		}
 
-		private static async void AsyncGenerateSourceCode(Diagram projectDiagram, int language)
+		private async void AsyncGenerateSourceCode(Diagram projectDiagram, int language)
 		{
 			projectDiagram.Validate(projectDiagram);
 			ISourceCodeGenerator codeGenerator;
@@ -237,8 +237,17 @@ namespace CoUML_app.Controllers.Hubs
 					codeGenerator = new JavaCodeGenerator(); break;
 			}
 
-			projectDiagram.GenerateCode(codeGenerator);
+			string fileName = projectDiagram.GenerateCode(codeGenerator);
+			Clients.Caller.DownloadReady(fileName);
 		}
+
+
+
+		public async Task<FileStream> DownloadFile(string fileName)
+		{ 
+			return FileUtility.Download(fileName);
+		}
+
 
 		public bool Invite(string uId)
 		{

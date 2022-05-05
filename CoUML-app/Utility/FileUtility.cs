@@ -10,6 +10,8 @@ using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
+using System.IO.Compression;
+using System.Text.RegularExpressions; 
 
 namespace CoUML_app.Utility
 {
@@ -17,6 +19,7 @@ namespace CoUML_app.Utility
 
 	public static class FileUtility
 	{
+		public const string WORD_PATTERN = @"(\w+)";
 		public static FileWriter CreateFile( System.IO.DirectoryInfo directory, string file)
 		{
 			string filePath = Path.Combine(directory.FullName, file);
@@ -28,9 +31,27 @@ namespace CoUML_app.Utility
 		public static Package CreatePackage(string parentFolder, string newFolder)
 		{
 			string rootDirectory =  Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/{parentFolder}/");
-			string packageDirectory = Path.Combine(rootDirectory, newFolder);
+			string packageDirectory = Path.Combine(rootDirectory, ToFileName(newFolder));
 			return new Package( System.IO.Directory.CreateDirectory(packageDirectory));
 		}
+		private static string ToFileName(string file)
+		{
+
+			MatchCollection words =  Regex.Matches(file, WORD_PATTERN);
+			string newFileName = "";
+			foreach (Match w in words)
+			{
+				var word  = w.Value;
+				newFileName += char.ToUpper(word[0])+word.Substring(1).ToLower();
+			}
+			return newFileName+new Guid();
+		}
+
+		public static FileStream Download(string zipPath)
+		{
+ 			return new FileStream(zipPath, FileMode.Open, FileAccess.Read);
+		}
+
 	}
 
 	public class Package
@@ -42,7 +63,14 @@ namespace CoUML_app.Utility
 		{
 			Directory = d;
 		}
-		// public File
+		public string ZipAndClose()
+		{
+			File.Close();
+			string zipPath = Directory.FullName+".zip";
+			ZipFile.CreateFromDirectory(Directory.FullName, zipPath);
+			return zipPath;
+		}
+
 
 	}
 
@@ -111,7 +139,7 @@ namespace CoUML_app.Utility
 		override
 		public void Close()
 		{
-			Stream.Flush();
+			// Stream.Flush();
 			Stream.Close();
 			Stream.Dispose();
 		}

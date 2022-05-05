@@ -80,14 +80,13 @@ namespace CoUML_app.Models
 		}
 		public Diagram(){}
  
-		override
-		public void GenerateCode(ISourceCodeGenerator codeGenerator)
+		public string GenerateCode(ISourceCodeGenerator codeGenerator)
 		{
 			codeGenerator.CreatePackage(this);
 			var elementIterator = elements.Iterator();
 			while(elementIterator.HasNext())
 				elementIterator.GetNext().GenerateCode(codeGenerator);
-			codeGenerator.ClosePackage();
+			return codeGenerator.ClosePackage();
 		}
 
 		public void Apply(ChangeRecord[] changes)
