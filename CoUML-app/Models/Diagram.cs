@@ -18,7 +18,7 @@ namespace CoUML_app.Models
 		public Boolean isStatic{ get; set; } = false;
 
 		[JsonIgnore]
-		protected UmlElement Parent{get; set;}
+		protected Diagram Parent{get; set;}
 
 		public virtual void GenerateCode(ISourceCodeGenerator codeGenerator)
 		{
@@ -61,7 +61,7 @@ namespace CoUML_app.Models
 			this.editor = new NullUser();
 		}
 
-		public virtual void Validate(UmlElement parent)
+		public virtual void Validate(Diagram parent)
 		{
 			Parent = parent;
 		}
@@ -115,7 +115,7 @@ namespace CoUML_app.Models
 		}
 		
 		override
-		public void Validate( UmlElement defualtParrent)
+		public void Validate( Diagram defualtParrent)
 		{
 			base.Validate(defualtParrent);
 			var elementIterator = elements.Iterator();

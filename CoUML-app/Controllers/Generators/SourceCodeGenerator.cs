@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Collections.Specialized;
 using System.Linq;
@@ -9,105 +10,146 @@ using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
+using CoUML_app.Utility;
 using CoUML_app.Models;
 
 namespace CoUML_app.Controllers.Generators
 {
 
-    public interface ISourceCodeGenerator
-    {
-        public void CreatePackage(Diagram diagram);
-        public void Parse(UmlElement element);
-        public void ClosePackage();
-    }
+	public interface ISourceCodeGenerator
+	{
+		public void CreatePackage(Diagram diagram);
+		public void Parse(UmlElement element);
+		public void Parse(Class umlClass);
+		public void Parse(Models.Attribute umlAttribute);
+		// public void Parse(Models.Operation umlOpperation);
+		public void ClosePackage();
+	}
 
-    public class JavaCodeGenerator: ISourceCodeGenerator
-    {
-        string _packageDirectory = null;
-        FileStreamWriter _sourceCodeFileStream  = null;
-        
-        public void CreatePackage(Diagram diagram)
-        {
-            string rootDirectory =  Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Java/");
-            _packageDirectory = Path.Combine(rootDirectory, diagram.id);
-            System.IO.Directory.CreateDirectory(_packageDirectory);
-        }
-        public void ClosePackage()
-        {
+	public class JavaCodeGenerator: ISourceCodeGenerator
+	{
+		private const string LANGUAGE = "Java";
+		private Package _package = null;
+		
+		public void CreatePackage(Diagram diagram)
+		{
+			if(_package is null)
+				_package = FileUtility.CreatePackage(LANGUAGE, diagram.id);
+			else{/*TODO: Create and enter a sub directory*/}
+			
+		}
 
-        }
-        
-        public void Parse(UmlElement element)
-        {
-            switch(element)
-            {
-                case Class: ParseClass(element as Class); break;
-                default: break;
-            }
-        }
-        
+		public void ClosePackage()
+		{
+			//TODO Close package and move backout of directory
+		}
+		
+		public void Parse(UmlElement element)
+		{
+			switch(element)
+			{
+				case Class: Parse(element as Class); break;
+				default: break;
+			}
+		}
+		
 
-        public void ParseClass(Class classModel)
-        {
-            string sourceCodeFile = Path.Combine(_packageDirectory, classModel.name+".java");
-            if(!System.IO.File.Exists(sourceCodeFile))
-            {
-                _sourceCodeFileStream = new FileStreamWriter(sourceCodeFile);
+		public void Parse(Class umlClass)
+		{
+			_package.File = FileUtility.CreateFile(_package.Directory, umlClass.name+".java");
+			if(_package.File.CanWrite())
+			{
 
-                _sourceCodeFileStream.Write($"public class {classModel.name} {{");
-                var ats = classModel.attribute.Iterator();
-                while(ats.HasNext())
-                    ats.GetNext().GenerateCode(this);
-                var ops = classModel.operations.Iterator();
-                while(ops.HasNext())
-                    ops.GetNext().GenerateCode(this);
+				ImportDependencies(umlClass.Dependencies.Iterator());
+				_package.File.Write($"public class {umlClass.name}");
+				Extends(umlClass.ParentClasses.Iterator());
+				Impliments(umlClass.ParentInterfaces.Iterator());
+				_package.File.Write($"{{");
+				_package.File.Indent();
+				Iterate((Models.ICollectionIterator<UmlElement>)umlClass.attribute.Iterator(), Parse);
+				Iterate((Models.ICollectionIterator<UmlElement>)umlClass.operations.Iterator());
+				_package.File.Unindent();
+				_package.File.Write($"}}");
+				_package.File.Close();
+			}
+		}
 
-                _sourceCodeFileStream.Write($"}}");
-                _sourceCodeFileStream.Close();
-                _sourceCodeFileStream = null;
-            }
-            else
-            {
-                Console.WriteLine("File \"{0}\" already exists.", sourceCodeFile);
-                return;
-            }
-        }
+		public void Parse(Models.Attribute attribute)
+		{
+			if(_package.File.CanWrite())
+			{
+				_package.File.WriteLine(
+					( attribute.visibility==null? "" : $"{GetVisibility(attribute.visibility)} " )+
+					$"{attribute.type.dataType}" +
+					$"{attribute.name}" +
+					$"// {attribute.propertyString}");
+			}
+		}
 
-        public void ParseAttribute(Models.Attribute attribute)
-        {
-            if(IsWritng())
-            {
-                _sourceCodeFileStream.Write(
-                    ( attribute.visibility==null? "" : $"{GetVisibility(attribute.visibility)} " )+
-                    $"{attribute.type.dataType}" +
-                    $"{attribute.name}" +
-                    $"// {attribute.propertyString}");
-            }
-        }
+		public void Parse(Models.Operation operation)
+		{
+			if(_package.File.CanWrite())
+			{
+				_package.File.WriteLine(
+					( operation.visibility==null? "" : $"{GetVisibility(operation.visibility)} " )+
+					$"{operation.type.dataType}" +
+					$"{operation.name}" +
+					$"// {operation.propertyString}");
+			}
+		}
 
-        public void Iterate(Models.ICollectionIterator<ComponentProperty> iterator)
-        {
-            while(iterator.HasNext())
-                iterator.GetNext().GenerateCode(this);
-        }
+		public void Iterate(Models.ICollectionIterator<UmlElement> iterator, )
+		{}
+		public void Iterate(Models.ICollectionIterator<UmlElement> iterator)
+		{
+			while(iterator.HasNext())
+				iterator.GetNext().GenerateCode(this);
+		}
 
-        private Boolean IsWritng()
-        {
-            return !(_sourceCodeFileStream == null);
-        }
+		private void ImportDependencies(Models.ICollectionIterator<Models.Component> dependencies)
+		{
+			if(_package.File.CanWrite())
+				while(dependencies.HasNext())
+				{	
+					Component comp = dependencies.GetNext();
+					_package.File.WriteLine(
+						$"import {comp.name};"
+					);
+				}
+		}
 
-        private String GetVisibility(VisibilityType type)
-        {
-            switch(type)
-            {
-                case VisibilityType.Package:    return "package";
-                case VisibilityType.Private:    return "private";
-                case VisibilityType.Protected:  return "protected";
-                case VisibilityType.Public:     return "public";
-                case VisibilityType.LocalScope:
-                default:                        return "";
-            }
-        }
+		private void Extends(Models.ICollectionIterator<Models.Component> components)
+		{
+			if(components.HasNext() && _package.File.CanWrite())
+			{
+				_package.File.Write($" extends");
+				while(components.HasNext())
+					_package.File.Write($" {components.GetNext().name}");
+			}
+		}
 
-    }
+		private void Impliments(Models.ICollectionIterator<Models.Component> components)
+		{
+			if(components.HasNext() && _package.File.CanWrite())
+			{
+				_package.File.Write($" implement");
+				while(components.HasNext())
+					_package.File.Write($" {components.GetNext().name}");
+			}
+		}
+
+		private String GetVisibility(VisibilityType type)
+		{
+			switch(type)
+			{
+				case VisibilityType.Package:	return "package";
+				case VisibilityType.Private:	return "private";
+				case VisibilityType.Protected:	return "protected";
+				case VisibilityType.Public:	 return "public";
+				case VisibilityType.LocalScope:
+				default:	return "";
+			}
+		}
+
+	}
 }
