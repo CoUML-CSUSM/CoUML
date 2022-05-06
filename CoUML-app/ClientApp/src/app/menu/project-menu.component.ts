@@ -122,6 +122,7 @@ export class ProjectMenuComponent implements AfterViewInit{
 		];
 
 	}
+	
 	showSourceCodeGenerationDialog(): void {
 		this._projectManager.generateSourceCode().then(isGenerating=>{
 			if(isGenerating)

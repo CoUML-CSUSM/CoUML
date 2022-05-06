@@ -1,14 +1,3 @@
-<!-- 
-<p-dialog header="New Project Diagram" 
-[(visible)]="_newDiagramDialog_isVisible"
->
-	<span class="p-float-label">
-		<input id="float-input" type="text" pInputText [(ngModel)]="input_diagramName"> 
-		<label for="float-input">Diagram name</label>
-	</span>
-</p-dialog> -->
-
-
 <p-menubar [model]="_menuItems">
 	<ng-template pTemplate="start">
 		<img src="/assets/logo/CoUml_black.svg" alt="CoUML logo" height="48pt" class="pl-4 pr-4">
@@ -16,6 +5,5 @@
 	
 	<input type="text" readonly pInputText [placeholder]="projectName" >
 	<app-team-activity class="ml-auto"></app-team-activity>
-
 </p-menubar>
 
