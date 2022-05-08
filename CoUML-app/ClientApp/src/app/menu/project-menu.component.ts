@@ -13,7 +13,7 @@ import { DiagramTableComponent } from './open/diagram-table.component';
 import { TeamActivityComponent } from '../activity/team-activity.component';
 import { InputComponent } from './input/input.component';
 import { UploadComponent } from './upload/upload.component';
-import { FileReaderUtility } from '../service/file-reader.utility';
+import { FileUtility } from '../service/file.utility';
 
 	//client id
 	//174000524733-gq2vagupknm77i794hll3kbs3iupm6fu.apps.googleusercontent.com
@@ -122,20 +122,33 @@ export class ProjectMenuComponent implements AfterViewInit{
 		];
 
 	}
-	
+
 	showSourceCodeGenerationDialog(): void {
-		this._projectManager.generateSourceCode().then(isGenerating=>{
-			if(isGenerating)
+		if(this._projectDeveloper.isDiagramSet())
+		{
+			this._toastMessageService.add({
+				severity: 'info',
+				summary: `Generating source code for ${this._projectDeveloper._projectDiagram?.id}. Please be pacient, this may take several minutes.`,
+			});
+			this._projectManager.generateSourceCode().then(done=>{
 				this._toastMessageService.add({
-					severity: 'info',
-					summary: `Generating source code for ${this._projectDeveloper._projectDiagram?.id}. Please be pacient, this may take several minutes.`,
-				});
-			else
+					severity: "info",
+					summary: "File ready for download.",
+				})
+
+			}).catch(reject=>
 				this._toastMessageService.add({
 					severity: 'error',
 					summary: `Cannot generate source code package`
-				});
-		});
+				})
+
+			);
+		}else{
+			this._toastMessageService.add({
+				severity: 'error',
+				summary: `Cannot generate source code package`
+			});
+		}
 	}
 
 	
@@ -232,7 +245,7 @@ export class ProjectMenuComponent implements AfterViewInit{
 			// string of the _id is returned to indicate the user's selection
 			uploadDiagramDialog.onClose.subscribe((jsonFile: File) => {
 				if (jsonFile) {
-					FileReaderUtility.read(jsonFile).then((diagramJson: string)=>{
+					FileUtility.read(jsonFile).then((diagramJson: string)=>{
 						this._projectManager.upload(diagramJson).then((dId)=>{
 							this._projectDeveloper.open(dId)
 						}).catch(rejection=>{

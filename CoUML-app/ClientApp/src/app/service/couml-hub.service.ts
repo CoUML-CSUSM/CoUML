@@ -5,10 +5,10 @@ import { ProjectDeveloper } from '../controller/project-developer.controller';
 import { ProjectManager } from '../controller/project-manager.controller';
 import { environment } from '../../environments/environment';
 import { Assembler, ChangeRecord, User, Diagram, DiagramDataSet } from 'src/models/DiagramModel';
-import { ConsoleLogger } from '@microsoft/signalr/dist/esm/Utils';
-import { waitForAsync } from '@angular/core/testing';
 import { TeamActivityComponent } from '../activity/team-activity.component'; 
 import { saveAs } from 'file-saver';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs/internal/Observable';
 
 
 @Injectable({ providedIn: 'root' })
@@ -24,6 +24,7 @@ export class CoUmlHubService{
 
 	constructor(
 		private _toastMessageService: MessageService,
+		private http: HttpClient
 	){
 		console.log("CoUmlHubService\n", this, "\nwith\n", arguments);
 		this._coUmlHubConnection = new SignalR.HubConnectionBuilder()
@@ -67,14 +68,10 @@ export class CoUmlHubService{
 	{
 		this._projectManager = pm;
 		// listen for changes
-		this._coUmlHubConnection.on("DownloadReady", (fileName)=>{ 
-			this._toastMessageService.add({
-				severity: "info",
-				summary: "File ready for download.",
-				detail: fileName
-			})
-			console.log(fileName);
-		});
+		// this._coUmlHubConnection.on("FUnction", (responce)=>{ 
+			
+		// 	console.log(fileName);
+		// });
 	}
 
 
@@ -147,9 +144,20 @@ export class CoUmlHubService{
 		this._coUmlHubConnection.invoke("Push", changesDTO);
 	}
 
-	generateSourceCode(language: number = 0): Promise<boolean> {
+	generateSourceCode(language: number = 0): Promise<string> 
+	{
 		// TODO: language number should be enum | lang.Java = 0
-		return this._coUmlHubConnection.invoke<boolean>("GenerateSourceCode", language);
+		return this._coUmlHubConnection.invoke<string>("GenerateSourceCode", language);
+	}
+
+	downloadFile(filePath: string)
+	{
+		let downloadUrl = `${environment.apiUrl}/download?fileName=${filePath}`;
+		
+		this.http.get(downloadUrl, { responseType: 'blob' }).subscribe((response)=>{
+			var blob = new Blob([response['_body']], {type: "application/zip"});
+				saveAs(blob,filePath);
+			})
 	}
 
 

@@ -4,12 +4,15 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using Microsoft.AspNetCore.SignalR;
+
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
+
 
 using CoUML_app.Models;
 using CoUML_app.Controllers;
@@ -216,16 +219,15 @@ namespace CoUML_app.Controllers.Hubs
 			;
 		}
 
-		public bool GenerateSourceCode( int language)
+		public string GenerateSourceCode( int language)
 		{ 
 			bool generate = false;
 			Diagram projectDiagram = ProjectController.FindDiagram((string)Context.Items[CoUmlContext.DIAGRAM]);
-			if(generate = projectDiagram != null)
-				AsyncGenerateSourceCode(projectDiagram, language);
-			return generate;
+				
+			return AsyncGenerateSourceCode(projectDiagram, language);
 		}
 
-		private async void AsyncGenerateSourceCode(Diagram projectDiagram, int language)
+		private string AsyncGenerateSourceCode(Diagram projectDiagram, int language)
 		{
 			projectDiagram.Validate(projectDiagram);
 			ISourceCodeGenerator codeGenerator;
@@ -236,11 +238,8 @@ namespace CoUML_app.Controllers.Hubs
 				default:
 					codeGenerator = new JavaCodeGenerator(); break;
 			}
-
-			string fileName = projectDiagram.GenerateCode(codeGenerator);
-			Clients.Caller.DownloadReady(fileName);
+			return projectDiagram.GenerateCode(codeGenerator);
 		}
-
 
 
 		public async Task<FileStream> DownloadFile(string fileName)

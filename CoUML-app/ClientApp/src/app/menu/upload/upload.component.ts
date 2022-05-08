@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import {DynamicDialogRef} from 'primeng/dynamicdialog';
 import {DynamicDialogConfig} from 'primeng/dynamicdialog';
 import { CoUmlHubService } from 'src/app/service/couml-hub.service';
-import { FileReaderUtility } from 'src/app/service/file-reader.utility';
+import { FileUtility } from 'src/app/service/file.utility';
 import { DiagramDataSet } from 'src/models/DiagramModel';
 
 @Component({

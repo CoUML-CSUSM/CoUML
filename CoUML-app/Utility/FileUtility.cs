@@ -31,8 +31,9 @@ namespace CoUML_app.Utility
 		public static Package CreatePackage(string parentFolder, string newFolder)
 		{
 			string rootDirectory =  Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/{parentFolder}/");
-			string packageDirectory = Path.Combine(rootDirectory, ToFileName(newFolder));
-			return new Package( System.IO.Directory.CreateDirectory(packageDirectory));
+			string packageRoot =  ToFileName(newFolder);
+			string packageDirectory = Path.Combine(rootDirectory,packageRoot);
+			return new Package( packageRoot, System.IO.Directory.CreateDirectory(packageDirectory));
 		}
 		private static string ToFileName(string file)
 		{
@@ -58,9 +59,11 @@ namespace CoUML_app.Utility
 	{
 		public System.IO.DirectoryInfo Directory{ get; set;} = null;
 		public FileWriter File{get;set;} = new NullFileWriter();
+		private string _root;
 		
-		public Package(System.IO.DirectoryInfo d)
+		public Package(string root, System.IO.DirectoryInfo d)
 		{
+			_root = root;
 			Directory = d;
 		}
 		public string ZipAndClose()
@@ -68,7 +71,8 @@ namespace CoUML_app.Utility
 			File.Close();
 			string zipPath = Directory.FullName+".zip";
 			ZipFile.CreateFromDirectory(Directory.FullName, zipPath);
-			return zipPath;
+			// return zipPath;
+			return _root;
 		}
 
 

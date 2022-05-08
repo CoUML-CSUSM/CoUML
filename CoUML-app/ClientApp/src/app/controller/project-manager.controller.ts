@@ -38,8 +38,13 @@ export class ProjectManager{
 	}
 
 	public generateSourceCode(): Promise<boolean> {
-		return this._coUmlHub.generateSourceCode();
+		
+		return new Promise<boolean>((resolve, reject)=>{
+			
+			this._coUmlHub.generateSourceCode().then((filePath)=>{
+				resolve(true);
+				this._coUmlHub.downloadFile(filePath);
+			}).catch(noFile=> reject(false));
+		});
 	}
-
-
 }
