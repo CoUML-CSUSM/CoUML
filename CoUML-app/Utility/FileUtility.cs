@@ -20,6 +20,7 @@ namespace CoUML_app.Utility
 	public static class FileUtility
 	{
 		public const string WORD_PATTERN = @"(\w+)";
+		public static string ROOT_DIRECTORY =  Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/");
 		public static FileWriter CreateFile( System.IO.DirectoryInfo directory, string file)
 		{
 			string filePath = Path.Combine(directory.FullName, file);
@@ -30,10 +31,8 @@ namespace CoUML_app.Utility
 
 		public static Package CreatePackage(string parentFolder, string newFolder)
 		{
-			string rootDirectory =  Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/{parentFolder}/");
-			string packageRoot =  ToFileName(newFolder);
-			string packageDirectory = Path.Combine(rootDirectory,packageRoot);
-			return new Package( packageRoot, System.IO.Directory.CreateDirectory(packageDirectory));
+			string packageDirectory = Path.Combine(ROOT_DIRECTORY,$"{parentFolder}/{ToFileName(newFolder)}");
+			return new Package(packageDirectory);
 		}
 		private static string ToFileName(string file)
 		{
@@ -59,12 +58,11 @@ namespace CoUML_app.Utility
 	{
 		public System.IO.DirectoryInfo Directory{ get; set;} = null;
 		public FileWriter File{get;set;} = new NullFileWriter();
-		private string _root;
+		// private string _root;
 		
-		public Package(string root, System.IO.DirectoryInfo d)
+		public Package(string directory)
 		{
-			_root = root;
-			Directory = d;
+			Directory = System.IO.Directory.CreateDirectory(directory);
 		}
 		public string ZipAndClose()
 		{
@@ -72,7 +70,7 @@ namespace CoUML_app.Utility
 			string zipPath = Directory.FullName+".zip";
 			ZipFile.CreateFromDirectory(Directory.FullName, zipPath);
 			// return zipPath;
-			return _root;
+			return Directory.Name;
 		}
 
 

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { CoUmlHubService } from "../service/couml-hub.service";
 import { Class, Diagram, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, Assembler } from 'src/models/DiagramModel';
 import {  User, UmlElement } from 'src/models/DiagramModel';
+import { saveAs } from 'file-saver';
 
 
 @Injectable({ providedIn: 'root' })
@@ -43,7 +44,8 @@ export class ProjectManager{
 			
 			this._coUmlHub.generateSourceCode().then((filePath)=>{
 				resolve(true);
-				this._coUmlHub.downloadFile(filePath);
+				this._coUmlHub.downloadFile(filePath)
+
 			}).catch(noFile=> reject(false));
 		});
 	}

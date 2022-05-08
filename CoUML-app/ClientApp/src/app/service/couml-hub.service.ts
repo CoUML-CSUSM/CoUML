@@ -8,7 +8,8 @@ import { Assembler, ChangeRecord, User, Diagram, DiagramDataSet } from 'src/mode
 import { TeamActivityComponent } from '../activity/team-activity.component'; 
 import { saveAs } from 'file-saver';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs/internal/Observable';
+import { Observable, of, pipe, zip } from 'rxjs';
+import { map, filter, tap } from 'rxjs/operators'
 
 
 @Injectable({ providedIn: 'root' })
@@ -153,11 +154,8 @@ export class CoUmlHubService{
 	downloadFile(filePath: string)
 	{
 		let downloadUrl = `${environment.apiUrl}/download?fileName=${filePath}`;
-		
-		this.http.get(downloadUrl, { responseType: 'blob' }).subscribe((response)=>{
-			var blob = new Blob([response['_body']], {type: "application/zip"});
-				saveAs(blob,filePath);
-			})
+
+		return this.http.get(downloadUrl, { responseType: 'blob' }).subscribe(zipBlob=> saveAs(zipBlob,filePath));
 	}
 
 

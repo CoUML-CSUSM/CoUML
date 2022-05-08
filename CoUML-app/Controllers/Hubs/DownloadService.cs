@@ -4,6 +4,7 @@ using System.Text;
 using System.IO;
 using Microsoft.AspNetCore.Mvc;
 using System.IO.Compression;
+using CoUML_app.Utility;
 
 
 namespace CoUML_app.Controllers.Hubs
@@ -13,22 +14,15 @@ namespace CoUML_app.Controllers.Hubs
 	{
 		[HttpGet]
 		[Route("download")]
-		public FileStream GetZipFile(string fileName)
+		public IActionResult GetZipFile(string fileName)
 		{
-			string rootDirectory =  Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/Java");
-			// It can be zip file or pdf but we need to change contentType respectively
 			const string contentType ="application/zip";
-			// var result = new FileContentResult(System.IO.File.ReadAllBytes( $"wwwroot/Java/{fileName}.zip"), contentType)
-			// {
-			// 	// It can be zip file or pdf but we need to change the extension respectively
-			// 	FileDownloadName = $"{fileName}.zip"
-			// };
+			var result = new FileContentResult(System.IO.File.ReadAllBytes( $"{FileUtility.ROOT_DIRECTORY}/Java/{fileName}.zip"), contentType)
+			{
+				FileDownloadName = $"{fileName}.zip"
+			};
+			return result;
 
-			// return result;
-
-			string packageDirectory = Path.Combine(rootDirectory,fileName+".zip");
-
-			return new FileStream(packageDirectory, FileMode.Open, FileAccess.Read);
 		}
 	
 	}
