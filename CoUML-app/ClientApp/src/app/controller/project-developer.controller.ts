@@ -168,7 +168,7 @@ export class ProjectDeveloper{
 	}
 	exportDiagramAsImage() {
 		if(this.isDiagramSet())
-			EditorExportUtility.createAnImage(this._diagramEditor.graph);
+			EditorExportUtility.createAnSVG(this._diagramEditor.graph);
 	}
 
 	private shouldDelay = false;

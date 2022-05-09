@@ -32,10 +32,11 @@ namespace CoUML_app.Utility
 
 		public static Package CreatePackage(string parentFolder, string newFolder)
 		{
-			string packageDirectory = Path.Combine(ROOT_DIRECTORY,$"{parentFolder}/{ToFileName(newFolder)}");
+			string packageDirectory = Path.Combine(ROOT_DIRECTORY,$"{parentFolder}/{ToUniqueFileName(newFolder)}");
 			return new Package(packageDirectory);
 		}
-		private static string ToFileName(string file)
+		
+		private static string ToUniqueFileName(string file)
 		{
 
 			MatchCollection words =  Regex.Matches(file, WORD_PATTERN);
@@ -45,7 +46,9 @@ namespace CoUML_app.Utility
 				var word  = w.Value;
 				newFileName += char.ToUpper(word[0])+word.Substring(1).ToLower();
 			}
-			return newFileName+Guid.NewGuid().ToString();
+			newFileName += "__";
+			newFileName += Guid.NewGuid().ToString().Substring(0, 4);
+			return newFileName;
 		}
 
 		public static FileStream Download(string zipPath)
@@ -76,7 +79,7 @@ namespace CoUML_app.Utility
 		{	
 			DirectoryInfo jsonPackage = new DirectoryInfo(Path.Combine(ROOT_DIRECTORY,"Json"));
 			
-			string jsonFile = ToFileName(diagramName)+".json";
+			string jsonFile = ToUniqueFileName(diagramName)+".json";
 			FileInfo jsonFileInfo = new FileInfo(Path.Combine(jsonPackage.FullName, jsonFile));
 
 			FileWriter jsonFileWriter = FileUtility.CreateFile(jsonPackage, jsonFile);
