@@ -4,10 +4,12 @@ import { MessageService } from 'primeng/api';
 import { Diagram, Assembler, ChangeRecord, ActionType, PropertyType, Component, Class, AbstractClass, Interface, Enumeration, UmlElement, IUser, ICollection } from 'src/models/DiagramModel';
 import { EditorComponent } from '../editor/editor.component';
 import { TeamActivityComponent } from '../activity/team-activity.component';
+import { EditorExportUtility } from '../editor/editor.utility';
 
 
 @Injectable({ providedIn: 'root' })
 export class ProjectDeveloper{
+
 
 	_projectDiagram: Diagram = null;
 
@@ -163,6 +165,10 @@ export class ProjectDeveloper{
 					this.commitStagedChanges();
 			}, this.delayPeriod);
 		}
+	}
+	exportDiagramAsImage() {
+		if(this.isDiagramSet())
+			EditorExportUtility.createAnImage(this._diagramEditor.graph);
 	}
 
 	private shouldDelay = false;

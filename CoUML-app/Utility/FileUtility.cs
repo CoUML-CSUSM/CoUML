@@ -11,7 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using System.IO.Compression;
-using System.Text.RegularExpressions; 
+using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace CoUML_app.Utility
 {
@@ -52,28 +53,49 @@ namespace CoUML_app.Utility
  			return new FileStream(zipPath, FileMode.Open, FileAccess.Read);
 		}
 
+		public static void AsyncDelete(FileSystemInfo directory, byte seconds)
+		{
+			new Thread(()=>{
+				Thread.Sleep(seconds*1000);
+				try
+				{
+					if(directory is DirectoryInfo)
+						((DirectoryInfo)directory).Delete(true);
+					else
+						directory.Delete();
+					// System.IO.Directory.Delete(directory,true);
+				}
+				catch (System.Exception e)
+				{
+					Console.WriteLine(e);
+				}
+			}).Start();
+		}
+
+
 	}
+
 
 	public class Package
 	{
 		public System.IO.DirectoryInfo Directory{ get; set;} = null;
 		public FileWriter File{get;set;} = new NullFileWriter();
-		// private string _root;
 		
 		public Package(string directory)
 		{
 			Directory = System.IO.Directory.CreateDirectory(directory);
 		}
+
+		
 		public string ZipAndClose()
 		{
 			File.Close();
 			string zipPath = Directory.FullName+".zip";
 			ZipFile.CreateFromDirectory(Directory.FullName, zipPath);
-			// return zipPath;
+			FileUtility.AsyncDelete(Directory, 2);
+			FileUtility.AsyncDelete(new FileInfo(zipPath), 5);
 			return Directory.Name;
 		}
-
-
 	}
 
 	public abstract class FileWriter

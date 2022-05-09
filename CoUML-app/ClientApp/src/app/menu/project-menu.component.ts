@@ -77,7 +77,7 @@ export class ProjectMenuComponent implements AfterViewInit{
 				items: [
 				{
 					label: "Diagram as JSON",
-					command: () => this.showUpload(),
+					command: () => this.showUploadDialog(),
 				}
 				]
 			},
@@ -87,6 +87,10 @@ export class ProjectMenuComponent implements AfterViewInit{
 				{
 					label: "Generate Source Code (Java)",
 					command: () => this.showSourceCodeGenerationDialog(), 
+				},
+				{
+					label: "Diagram Image",
+					command: ()=> this.showImageGenerationDialog(),
 				}
 				]
 			},
@@ -121,6 +125,10 @@ export class ProjectMenuComponent implements AfterViewInit{
 		}
 		];
 
+	}
+
+	showImageGenerationDialog(): void {
+		this._projectDeveloper.exportDiagramAsImage()
 	}
 
 	showSourceCodeGenerationDialog(): void {
@@ -234,7 +242,7 @@ export class ProjectMenuComponent implements AfterViewInit{
 		}
 	}
 
-	public showUpload()
+	public showUploadDialog()
 	{
 		if(this._projectDeveloper._teamActivity.isLoggedIn())
 		{
