@@ -85,12 +85,16 @@ export class ProjectMenuComponent implements AfterViewInit{
 				label: "Export",
 				items: [
 				{
-					label: "Generate Source Code (Java)",
+					label: "As Java",
 					command: () => this.showSourceCodeGenerationDialog(), 
 				},
 				{
-					label: "Diagram Image",
+					label: "As Image",
 					command: ()=> this.showImageGenerationDialog(),
+				},
+				{
+					label: "As JSON",
+					command: ()=> this.showJsonGenerationDialog(),
 				}
 				]
 			},
@@ -126,9 +130,13 @@ export class ProjectMenuComponent implements AfterViewInit{
 		];
 
 	}
+	showJsonGenerationDialog(): void {
+		if(this._projectDeveloper.isDiagramSet())
+			this._projectManager.generateJson();
+	}
 
 	showImageGenerationDialog(): void {
-		this._projectDeveloper.exportDiagramAsImage()
+		this._projectDeveloper.exportDiagramAsImage();
 	}
 
 	showSourceCodeGenerationDialog(): void {

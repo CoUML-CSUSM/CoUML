@@ -242,6 +242,21 @@ namespace CoUML_app.Controllers.Hubs
 		}
 
 
+		public string GenerateJson()
+		{ 
+			bool generate = false;
+			Diagram projectDiagram = ProjectController.FindDiagram((string)Context.Items[CoUmlContext.DIAGRAM]);
+				
+			return AsyncGenerateJson(projectDiagram);
+		}
+
+		private string AsyncGenerateJson(Diagram projectDiagram)
+		{
+			
+			return FileUtility.SaveAsJson(projectDiagram.id, DTO.FromDiagram(projectDiagram));
+		}
+
+
 		public async Task<FileStream> DownloadFile(string fileName)
 		{ 
 			return FileUtility.Download(fileName);

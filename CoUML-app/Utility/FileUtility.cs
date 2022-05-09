@@ -72,6 +72,20 @@ namespace CoUML_app.Utility
 			}).Start();
 		}
 
+		public static string SaveAsJson( string diagramName, string json )
+		{	
+			DirectoryInfo jsonPackage = new DirectoryInfo(Path.Combine(ROOT_DIRECTORY,"Json"));
+			
+			string jsonFile = ToFileName(diagramName)+".json";
+			FileInfo jsonFileInfo = new FileInfo(Path.Combine(jsonPackage.FullName, jsonFile));
+
+			FileWriter jsonFileWriter = FileUtility.CreateFile(jsonPackage, jsonFile);
+			jsonFileWriter.Write(json);
+			jsonFileWriter.Close();
+
+			FileUtility.AsyncDelete(jsonFileInfo, 10);
+			return jsonFile;
+		}
 
 	}
 

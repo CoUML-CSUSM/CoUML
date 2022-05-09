@@ -44,7 +44,18 @@ export class ProjectManager{
 			
 			this._coUmlHub.generateSourceCode().then((filePath)=>{
 				resolve(true);
-				this._coUmlHub.downloadFile(filePath)
+				this._coUmlHub.downloadZip(filePath)
+
+			}).catch(noFile=> reject(false));
+		});
+	}
+
+	public generateJson() : Promise<boolean> {
+		
+		return new Promise<boolean>((resolve, reject)=>{
+			this._coUmlHub.generateJson().then((filePath)=>{
+				resolve(true);
+				this._coUmlHub.downloadJson(filePath)
 
 			}).catch(noFile=> reject(false));
 		});

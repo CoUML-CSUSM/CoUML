@@ -14,6 +14,7 @@ import { map, filter, tap } from 'rxjs/operators'
 
 @Injectable({ providedIn: 'root' })
 export class CoUmlHubService{
+
 	
 	private _coUmlHubConnection: SignalR.HubConnection;
 	
@@ -151,9 +152,20 @@ export class CoUmlHubService{
 		return this._coUmlHubConnection.invoke<string>("GenerateSourceCode", language);
 	}
 
-	downloadFile(filePath: string)
+	downloadZip(filePath: string)
 	{
-		let downloadUrl = `${environment.apiUrl}/download?fileName=${filePath}`;
+		let downloadUrl = `${environment.apiUrl}/downloadZip?fileName=${filePath}`;
+
+		return this.http.get(downloadUrl, { responseType: 'blob' }).subscribe(zipBlob=> saveAs(zipBlob,filePath));
+	}
+
+	generateJson() {
+		return this._coUmlHubConnection.invoke<string>("GenerateJson");
+	}
+	
+	downloadJson(filePath: string)
+	{
+		let downloadUrl = `${environment.apiUrl}/downloadJson?fileName=${filePath}`;
 
 		return this.http.get(downloadUrl, { responseType: 'blob' }).subscribe(zipBlob=> saveAs(zipBlob,filePath));
 	}

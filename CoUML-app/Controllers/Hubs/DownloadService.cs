@@ -22,13 +22,25 @@ namespace CoUML_app.Controllers.Hubs
 	public class DownloadService
 	{
 		[HttpGet]
-		[Route("download")]
+		[Route("downloadZip")]
 		public IActionResult GetZipFile(string fileName)
 		{
 			const string contentType ="application/zip";
 			var result = new FileContentResult(System.IO.File.ReadAllBytes( $"{FileUtility.ROOT_DIRECTORY}/Java/{fileName}.zip"), contentType)
 			{
 				FileDownloadName = $"{fileName}.zip"
+			};
+			return result;
+
+		}
+		[HttpGet]
+		[Route("downloadJson")]
+		public IActionResult GetJsonFile(string fileName)
+		{
+			const string contentType ="application/json";
+			var result = new FileContentResult(System.IO.File.ReadAllBytes( $"{FileUtility.ROOT_DIRECTORY}/Json/{fileName}"), contentType)
+			{
+				FileDownloadName = fileName
 			};
 			return result;
 
