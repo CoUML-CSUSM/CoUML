@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using CoUML_app.Controllers;
 using System.Drawing;
+using System.IO;
 
 namespace CoUML_app.Models
 {
@@ -18,9 +19,10 @@ namespace CoUML_app.Models
 		public Boolean isStatic{ get; set; } = false;
 
 		[JsonIgnore]
-		private UmlElement Parent{get; set;}
-
-		public virtual void GenerateCode(ISourceCodeGenerator codeGenerator)
+		protected Diagram Parent{get; set;}
+		
+		virtual
+		public void GenerateCode(ISourceCodeGenerator codeGenerator)
 		{
 			codeGenerator.Parse(this);
 		}
@@ -61,7 +63,7 @@ namespace CoUML_app.Models
 			this.editor = new NullUser();
 		}
 
-		public virtual void Validate(ref UmlElement parent)
+		public virtual void Validate(Diagram parent)
 		{
 			Parent = parent;
 		}
@@ -77,14 +79,14 @@ namespace CoUML_app.Models
 			id = dId;
 		}
 		public Diagram(){}
-
-		override public void GenerateCode(ISourceCodeGenerator codeGenerator)
+ 
+		public string GenerateCode(ISourceCodeGenerator codeGenerator)
 		{
 			codeGenerator.CreatePackage(this);
 			var elementIterator = elements.Iterator();
 			while(elementIterator.HasNext())
 				elementIterator.GetNext().GenerateCode(codeGenerator);
-			codeGenerator.ClosePackage();
+			return codeGenerator.ClosePackage();
 		}
 
 		public void Apply(ChangeRecord[] changes)
@@ -115,13 +117,13 @@ namespace CoUML_app.Models
 		}
 		
 		override
-		public void Validate( ref UmlElement defualtParrent)
+		public void Validate( Diagram defualtParrent)
 		{
-			base.Validate(ref defualtParrent);
+			base.Validate(defualtParrent);
 			var elementIterator = elements.Iterator();
 
-			while(elementIterator.HasNext()){}
-				// elementIterator.GetNext().Validate(refthis);
+			while(elementIterator.HasNext())
+				elementIterator.GetNext().Validate(this);
 		}
 
 	}

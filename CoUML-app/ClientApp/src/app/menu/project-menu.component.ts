@@ -13,7 +13,7 @@ import { DiagramTableComponent } from './open/diagram-table.component';
 import { TeamActivityComponent } from '../activity/team-activity.component';
 import { InputComponent } from './input/input.component';
 import { UploadComponent } from './upload/upload.component';
-import { FileReaderUtility } from '../service/file-reader.utility';
+import { FileUtility } from '../service/file.utility';
 
 	//client id
 	//174000524733-gq2vagupknm77i794hll3kbs3iupm6fu.apps.googleusercontent.com
@@ -77,7 +77,7 @@ export class ProjectMenuComponent implements AfterViewInit{
 				items: [
 				{
 					label: "Diagram as JSON",
-					command: () => this.showUpload(),
+					command: () => this.showUploadDialog(),
 				}
 				]
 			},
@@ -85,8 +85,16 @@ export class ProjectMenuComponent implements AfterViewInit{
 				label: "Export",
 				items: [
 				{
-					label: "Generate Source Code...(\"test\")",
-					// command: () => this._coUmlHub.generateSourceCode("test")
+					label: "As Java",
+					command: () => this.showSourceCodeGenerationDialog(), 
+				},
+				{
+					label: "As Image",
+					command: ()=> this.showImageGenerationDialog(),
+				},
+				{
+					label: "As JSON",
+					command: ()=> this.showJsonGenerationDialog(),
 				}
 				]
 			},
@@ -121,6 +129,42 @@ export class ProjectMenuComponent implements AfterViewInit{
 		}
 		];
 
+	}
+	showJsonGenerationDialog(): void {
+		if(this._projectDeveloper.isDiagramSet())
+			this._projectManager.generateJson();
+	}
+
+	showImageGenerationDialog(): void {
+		this._projectDeveloper.exportDiagramAsImage();
+	}
+
+	showSourceCodeGenerationDialog(): void {
+		if(this._projectDeveloper.isDiagramSet())
+		{
+			this._toastMessageService.add({
+				severity: 'info',
+				summary: `Generating source code for ${this._projectDeveloper._projectDiagram?.id}. Please be pacient, this may take several minutes.`,
+			});
+			this._projectManager.generateSourceCode().then(done=>{
+				this._toastMessageService.add({
+					severity: "info",
+					summary: "File ready for download.",
+				})
+
+			}).catch(reject=>
+				this._toastMessageService.add({
+					severity: 'error',
+					summary: `Cannot generate source code package`
+				})
+
+			);
+		}else{
+			this._toastMessageService.add({
+				severity: 'error',
+				summary: `Cannot generate source code package`
+			});
+		}
 	}
 
 	
@@ -206,7 +250,7 @@ export class ProjectMenuComponent implements AfterViewInit{
 		}
 	}
 
-	public showUpload()
+	public showUploadDialog()
 	{
 		if(this._projectDeveloper._teamActivity.isLoggedIn())
 		{
@@ -217,7 +261,7 @@ export class ProjectMenuComponent implements AfterViewInit{
 			// string of the _id is returned to indicate the user's selection
 			uploadDiagramDialog.onClose.subscribe((jsonFile: File) => {
 				if (jsonFile) {
-					FileReaderUtility.read(jsonFile).then((diagramJson: string)=>{
+					FileUtility.read(jsonFile).then((diagramJson: string)=>{
 						this._projectManager.upload(diagramJson).then((dId)=>{
 							this._projectDeveloper.open(dId)
 						}).catch(rejection=>{

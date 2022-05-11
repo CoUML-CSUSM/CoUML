@@ -29,6 +29,9 @@
 			"**/ts**.json": true,
 			"bin/**": true,
 			"obj/**": true
-		}
+		},
+		"java.project.sourcePaths": [
+			""
+		]
 	}
 }

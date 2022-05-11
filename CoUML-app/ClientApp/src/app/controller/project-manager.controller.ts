@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { CoUmlHubService } from "../service/couml-hub.service";
 import { Class, Diagram, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, Assembler } from 'src/models/DiagramModel';
 import {  User, UmlElement } from 'src/models/DiagramModel';
+import { saveAs } from 'file-saver';
 
 
 @Injectable({ providedIn: 'root' })
 export class ProjectManager{
-
 	constructor(
 		private _coUmlHub: CoUmlHubService
 	){
@@ -38,4 +38,26 @@ export class ProjectManager{
 		return Promise.reject("Invalid Diagram");
 	}
 
+	public generateSourceCode(): Promise<boolean> {
+		
+		return new Promise<boolean>((resolve, reject)=>{
+			
+			this._coUmlHub.generateSourceCode().then((filePath)=>{
+				resolve(true);
+				this._coUmlHub.downloadZip(filePath)
+
+			}).catch(noFile=> reject(false));
+		});
+	}
+
+	public generateJson() : Promise<boolean> {
+		
+		return new Promise<boolean>((resolve, reject)=>{
+			this._coUmlHub.generateJson().then((filePath)=>{
+				resolve(true);
+				this._coUmlHub.downloadJson(filePath)
+
+			}).catch(noFile=> reject(false));
+		});
+	}
 }

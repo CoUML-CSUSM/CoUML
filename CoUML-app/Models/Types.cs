@@ -70,8 +70,5 @@ namespace CoUML_app.Models
 		{
 			return $"id: {id}, _id: {_id}";
 		}
-
 	}
-
-
 }

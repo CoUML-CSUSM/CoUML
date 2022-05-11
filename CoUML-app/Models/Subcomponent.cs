@@ -61,9 +61,11 @@ namespace CoUML_app.Models
 	public class Relationship : UmlElement{
 		public RelationshipType type {get; set;}
 		public string source {get; set;}
-		public Component sourceComponent{set{source = value.id;}}
+		[JsonIgnore]
+		public Component sourceComponent{set{source = value.id;}get{return (Component)Parent.elements[source];}}
 		public string target {get; set;}
-		public Component targetComponent{set{target = value.id;}}
+		[JsonIgnore]
+		public Component targetComponent{set{target = value.id;} get{return (Component)Parent.elements[target];}}
 		public Attribute? attribute{get; set;}
 
 		public Relationship() { }
@@ -115,14 +117,28 @@ namespace CoUML_app.Models
 		{
 			attribute = description == "" ? null : new Attribute(description);
 		}
+
+		override
+		public void Validate(Diagram parent)
+		{
+			base.Validate(parent);
+			if(IsValidRelation())
+				((Component)this.Parent.elements[source]).AddPropertiesFromRelation(this);
+
+		}
+
+		private bool IsValidRelation()
+		{
+			return source is not null && target is not null;
+		}
 	}
 
 
 	public abstract class ComponentProperty: UmlElement{
-		public VisibilityType visibility {get; set;}
+		public VisibilityType visibility {get; set;} = VisibilityType.LocalScope;
 		public string name{get; set;}
-		public string propertyString {get; set;} = "";
-		public DataType type{get; set;}
+		public string propertyString {get; set;} = null;
+		public DataType type{get; set;} 
 
 		override public void GenerateCode(ISourceCodeGenerator codeGenerator)
 		{
@@ -179,7 +195,7 @@ namespace CoUML_app.Models
 
 	public class Attribute: ComponentProperty{
 		public Multiplicity multiplicity{get; set;} = new Multiplicity();
-		public string defaultValue {get; set;}
+		public string defaultValue {get; set;} = null;
 
 		public Attribute():base(){ }
 		public Attribute(string description):base()
@@ -266,6 +282,25 @@ namespace CoUML_app.Models
 		public bool IsSingle()
 		{
 			return min == 1 && max == 1;
+		}
+	}
+
+	public static class AttributeBuilder
+	{
+		public static Attribute CollectionAttribute(Component component)
+		{
+			Attribute a = DefualtAttribute(component);
+			a.name+='s';
+			a.multiplicity = new Multiplicity("*");
+			return a;
+		}
+		public static Attribute DefualtAttribute(Component component)
+		{
+			Attribute a = new Attribute();
+			a.visibility = VisibilityType.LocalScope;
+			a.name = "_"+component.name.ToLower();
+			a.type = new DataType(component.name);
+			return a;
 		}
 	}
 }

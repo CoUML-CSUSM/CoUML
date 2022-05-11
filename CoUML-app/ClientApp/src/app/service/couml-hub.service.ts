@@ -5,13 +5,16 @@ import { ProjectDeveloper } from '../controller/project-developer.controller';
 import { ProjectManager } from '../controller/project-manager.controller';
 import { environment } from '../../environments/environment';
 import { Assembler, ChangeRecord, User, Diagram, DiagramDataSet } from 'src/models/DiagramModel';
-import { ConsoleLogger } from '@microsoft/signalr/dist/esm/Utils';
-import { waitForAsync } from '@angular/core/testing';
 import { TeamActivityComponent } from '../activity/team-activity.component'; 
+import { saveAs } from 'file-saver';
+import { HttpClient } from '@angular/common/http';
+import { Observable, of, pipe, zip } from 'rxjs';
+import { map, filter, tap } from 'rxjs/operators'
 
 
 @Injectable({ providedIn: 'root' })
 export class CoUmlHubService{
+
 	
 	private _coUmlHubConnection: SignalR.HubConnection;
 	
@@ -22,7 +25,8 @@ export class CoUmlHubService{
 	public _teamActivity: TeamActivityComponent = null; 
 
 	constructor(
-		private _toastMessageService: MessageService
+		private _toastMessageService: MessageService,
+		private http: HttpClient
 	){
 		console.log("CoUmlHubService\n", this, "\nwith\n", arguments);
 		this._coUmlHubConnection = new SignalR.HubConnectionBuilder()
@@ -66,7 +70,10 @@ export class CoUmlHubService{
 	{
 		this._projectManager = pm;
 		// listen for changes
-		// this._coUmlHubConnection.on("function", (value)=>{ });
+		// this._coUmlHubConnection.on("FUnction", (responce)=>{ 
+			
+		// 	console.log(fileName);
+		// });
 	}
 
 
@@ -139,9 +146,28 @@ export class CoUmlHubService{
 		this._coUmlHubConnection.invoke("Push", changesDTO);
 	}
 
-	generateSourceCode(dId: string, language: number = 0): void {
+	generateSourceCode(language: number = 0): Promise<string> 
+	{
 		// TODO: language number should be enum | lang.Java = 0
-		this._coUmlHubConnection.invoke("GenerateSourceCode", dId, language);
+		return this._coUmlHubConnection.invoke<string>("GenerateSourceCode", language);
+	}
+
+	downloadZip(filePath: string)
+	{
+		let downloadUrl = `${environment.apiUrl}/downloadZip?fileName=${filePath}`;
+
+		return this.http.get(downloadUrl, { responseType: 'blob' }).subscribe(zipBlob=> saveAs(zipBlob,filePath));
+	}
+
+	generateJson() {
+		return this._coUmlHubConnection.invoke<string>("GenerateJson");
+	}
+	
+	downloadJson(filePath: string)
+	{
+		let downloadUrl = `${environment.apiUrl}/downloadJson?fileName=${filePath}`;
+
+		return this.http.get(downloadUrl, { responseType: 'blob' }).subscribe(zipBlob=> saveAs(zipBlob,filePath));
 	}
 
 

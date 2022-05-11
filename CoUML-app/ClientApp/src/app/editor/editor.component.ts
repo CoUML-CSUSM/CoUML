@@ -226,10 +226,11 @@ export class EditorComponent implements AfterViewInit{
 			component.dimension.y, 
 			component.dimension.width, 
 			component.dimension.height,
-			component[TYPE]
+			component[TYPE]+
+			`;${mxConstants.STYLE_FONTSTYLE}=${component instanceof AbstractClass? mxConstants.FONT_ITALIC: mxConstants.DEFAULT_FONTSTYLE};`
 		);
 
-		this.updateStatic(graphComponent, component.isStatic);
+		this._graph.setCellStyleFlags( mxConstants.STYLE_FONTSTYLE, mxConstants.FONT_UNDERLINE, component.isStatic, [graphComponent]);
 		this.updateStyle(graphComponent, component.dimension.fillColor);
 		
 		//comps with Attributes
@@ -276,24 +277,26 @@ export class EditorComponent implements AfterViewInit{
 	public insertProperty(parent: mxCell, property: UmlElement): mxCell
 	{
 
+		this._graph.getModel().beginUpdate();
 		let graphProperty 
-		=  this._graph.insertVertex(
-			parent,
-			property.id,
-			property.toUmlNotation(),
-			0, 0, parent.geometry.width, 20,
-			property.constructor.name
-		);
+			=  this._graph.insertVertex(
+				parent,
+				property.id,
+				property.toUmlNotation(),
+				0, 0, parent.geometry.width, EditorFormatHandler.MARGIN,
+				property.constructor.name+
+				`;${mxConstants.STYLE_FONTSTYLE}=${mxConstants.DEFAULT_FONTSTYLE};`
+			);
+			
 		graphProperty.umlElement = property;
-		this.updateStatic(graphProperty, property.isStatic);
+		this._graph.setCellStyleFlags(mxConstants.STYLE_FONTSTYLE, mxConstants.FONT_UNDERLINE, property.isStatic, [graphProperty]);
 		
 		this._graph.getModel().getCell(parent.id).children.sort((elemA, elemB)=>
 			(elemA.umlElement instanceof Attribute ? 1: elemA.umlElement instanceof Operation? 3: 2)
 			-
 			(elemB.umlElement instanceof Attribute ? 1: elemB.umlElement instanceof Operation? 3: 2)
 		);
-		
-		this.removeCell(this._graph.insertVertex(parent, 'delete',null, 0,0,0,0));
+		this._graph.getModel().endUpdate();
 		return graphProperty;
 
 	}
@@ -331,11 +334,7 @@ export class EditorComponent implements AfterViewInit{
 	public processChange(change: ChangeRecord)
 	{
 		let affectedCell = this._graph.getModel().getCell(change.id[change.id.length-1]);
-		// console.log(`---------PROCESSINGCHANGE-------
-		// ${ActionType[change.action]} . ${PropertyType[change.affectedProperty]}
-		// ${change.id}
-		// value-> ${change.value}`);
-		// console.log(affectedCell);
+
 
 		switch(change.action){
 			case ActionType.Change:
@@ -349,7 +348,7 @@ export class EditorComponent implements AfterViewInit{
 						affectedCell.style = RelationshipType[change.value];
 						this._graph.refresh();
 						break;
-					case PropertyType.IsStatic: this.updateStatic(affectedCell, change.value); break
+					case PropertyType.IsStatic: this.updateStatic(affectedCell); break
 				}
 				break;
 
@@ -388,13 +387,9 @@ export class EditorComponent implements AfterViewInit{
 		this._graph.refresh();
 	}
 
-	updateStatic(affectedCell: mxCell, value: boolean): void
+	updateStatic(affectedCell: mxCell): void
 	{
-
-		this._graph.setCellStyles(mxConstants.STYLE_FONTSTYLE,
-			value? mxConstants.FONT_UNDERLINE : mxConstants.DEFAULT_FONTSTYLE,
-			[affectedCell]);
-
+		this._graph.toggleCellStyleFlags(mxConstants.STYLE_FONTSTYLE,mxConstants.FONT_UNDERLINE,[affectedCell]);
 	}
 
 	updateStyle(affectedCell: mxCell, color: any): void 
@@ -487,7 +482,6 @@ export class EditorComponent implements AfterViewInit{
 	private updateEdgePoints(affectedEdge: mxCell, path: mxPoint[]) 
 	{
 		affectedEdge.getGeometry().points = path;
-		this.graph.refresh();		
 	}
 	/* **************************************************************************************** */
 
@@ -508,10 +502,15 @@ export class EditorComponent implements AfterViewInit{
 
 	private removeCell(cellToBeRemoved: mxCell)
 	{	
-		// let p = cellToBeRemoved.getParent();
-		this._graph.getModel().remove( cellToBeRemoved );
-		// this._graph.cellSizeUpdated(p,true);
-
+		this._graph.getModel().beginUpdate();
+		if(cellToBeRemoved.umlElement instanceof ComponentProperty)
+		{// resize parent
+			let parentCell: mxCell = cellToBeRemoved.getParent();
+			let heightOfCellToBeRemoved = cellToBeRemoved.geometry.height + EditorFormatHandler.MARGIN;
+			parentCell.geometry.height = parentCell.geometry.height-heightOfCellToBeRemoved;	
+		}
+		this._graph.removeCells([cellToBeRemoved], false)
+		this._graph.getModel().endUpdate();
 	}
 
 // ============================================================================================

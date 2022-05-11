@@ -4,13 +4,15 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using Microsoft.AspNetCore.SignalR;
+
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
+
 
 using CoUML_app.Models;
 using CoUML_app.Controllers;
@@ -37,6 +39,7 @@ namespace CoUML_app.Controllers.Hubs
 		Task JoinedTeam(string teamMemeber);
 		Task LeftTeam(string teamMemeber);
 		Task InitTeam(string teamMemebers);
+		Task DownloadReady(string file);
 	}
 
 	public static class CoUmlContext
@@ -216,10 +219,18 @@ namespace CoUML_app.Controllers.Hubs
 			;
 		}
 
-		public void GenerateSourceCode( string dId, int language)
+		public string GenerateSourceCode( int language)
 		{ 
-			ISourceCodeGenerator codeGenerator;
+			bool generate = false;
+			Diagram projectDiagram = ProjectController.FindDiagram((string)Context.Items[CoUmlContext.DIAGRAM]);
+				
+			return AsyncGenerateSourceCode(projectDiagram, language);
+		}
 
+		private string AsyncGenerateSourceCode(Diagram projectDiagram, int language)
+		{
+			projectDiagram.Validate(projectDiagram);
+			ISourceCodeGenerator codeGenerator;
 			switch(language)
 			{
 				//TODO: enum for language, defualt is java
@@ -227,11 +238,30 @@ namespace CoUML_app.Controllers.Hubs
 				default:
 					codeGenerator = new JavaCodeGenerator(); break;
 			}
-
-			Diagram testDiagram = ProjectController.FindDiagram(dId);
-			if(testDiagram != null)
-				testDiagram.GenerateCode(codeGenerator);
+			return projectDiagram.GenerateCode(codeGenerator);
 		}
+
+
+		public string GenerateJson()
+		{ 
+			bool generate = false;
+			Diagram projectDiagram = ProjectController.FindDiagram((string)Context.Items[CoUmlContext.DIAGRAM]);
+				
+			return AsyncGenerateJson(projectDiagram);
+		}
+
+		private string AsyncGenerateJson(Diagram projectDiagram)
+		{
+			
+			return FileUtility.SaveAsJson(projectDiagram.id, DTO.FromDiagram(projectDiagram));
+		}
+
+
+		public async Task<FileStream> DownloadFile(string fileName)
+		{ 
+			return FileUtility.Download(fileName);
+		}
+
 
 		public bool Invite(string uId)
 		{

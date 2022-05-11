@@ -67,7 +67,7 @@ namespace CoUML_app.Models
 		/// isnsert an item into a collection
 		/// </summary>
 		/// <param name="item"></param>
-		public void Insert (T item)
+		public virtual void Insert (T item)
 		{
 			this._items.Add(item);
 		}
@@ -232,7 +232,16 @@ namespace CoUML_app.Models
 				return this._items.Count;
 			}
 		}
+	}
 
+	public class UniquCollection<T>: GeneralCollection<T> where T: UmlElement
+	{
+		override
+		public void Insert(T item)
+		{
+			if(!items.Contains(item))
+				base.Insert(item);
+		}
 	}
 
 	public class CollectionIterator<T>: ICollectionIterator<T>
