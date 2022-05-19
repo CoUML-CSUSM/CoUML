@@ -36,7 +36,7 @@ namespace CoUML_app.Controllers
 		public string CreateProjectFromDiagram(Diagram diagram, User user)
 		{
 			string _id = dao.CreateDiagram(diagram.id,user);
-			dao.Overwrite(diagram);
+			dao.Overwrite(_id, diagram);
 			return _id;
 		}
 
@@ -45,9 +45,9 @@ namespace CoUML_app.Controllers
 		{
 			return dao.ListDiagrams(user);
 		}
-		public void Overwrite(Diagram diagram)
+		public void Overwrite(string dId, Diagram diagram)
 		{
-			dao.Overwrite(diagram);
+			dao.Overwrite(dId, diagram);
 		}
 
 	}

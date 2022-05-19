@@ -178,10 +178,10 @@ namespace CoUML_app.DataAccess
 			}
 		}
 
-		public void Overwrite(Diagram diagram){
+		public void Overwrite(string dId, Diagram diagram){
 			var collection = GetCollection("Diagrams");
 
-			var filter = Builders<BsonDocument>.Filter.Eq("id", diagram.id);
+			var filter = Builders<BsonDocument>.Filter.Eq("_id", ObjectId.Parse(dId));
 			MongoDB.Bson.BsonDocument doc = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonDocument>(DTO.FromDiagram(diagram));
 			collection.ReplaceOne(filter, doc);
 		}

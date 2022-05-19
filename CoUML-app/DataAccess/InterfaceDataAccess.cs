@@ -21,7 +21,7 @@ namespace CoUML_app.DataAccess
 	public interface IProjectDAO
 	{
 		public string ListDiagrams(User user);
-		public void Overwrite(Diagram diagram);
+		public void Overwrite(string dId, Diagram diagram);
 		public string CreateDiagram(string dId, User projectManager);
 		public Diagram FindDiagram(string dId);
 	}

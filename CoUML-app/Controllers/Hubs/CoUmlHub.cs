@@ -205,7 +205,7 @@ namespace CoUML_app.Controllers.Hubs
 		{
 			var dId = (string)Context.Items[CoUmlContext.DIAGRAM];
 			SessionHost.CommitUpdatesToSession(dId, DTO.ToChangeRecords(changes));
-			ProjectController.Overwrite(SessionHost.GetLiveDiagram(dId));
+			ProjectController.Overwrite(dId, SessionHost.GetLiveDiagram(dId));
 			Dispatch(dId, Context.ConnectionId, changes);
 		}
 
