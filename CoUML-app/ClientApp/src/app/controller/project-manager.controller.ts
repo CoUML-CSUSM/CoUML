@@ -25,7 +25,7 @@ export class ProjectManager{
 		return this._coUmlHub.invite(uId);
 	}
 	
-	public upload(diagramJson: string): Promise<string>
+	public uploadString(diagramJson: string): Promise<string>
 	{
 		
 		console.log("ProjectManager. upload(diagramJson: string)\n\n", diagramJson);
@@ -36,6 +36,12 @@ export class ProjectManager{
 			console.error(error)
 		}
 		return Promise.reject("Invalid Diagram");
+	}
+
+	public uploadFile(jsonFile: File)
+	{
+		return this._coUmlHub.uploadFile(jsonFile);
+	
 	}
 
 	public generateSourceCode(): Promise<boolean> {

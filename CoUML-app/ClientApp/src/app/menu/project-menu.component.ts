@@ -261,8 +261,9 @@ export class ProjectMenuComponent implements AfterViewInit{
 			// string of the _id is returned to indicate the user's selection
 			uploadDiagramDialog.onClose.subscribe((jsonFile: File) => {
 				if (jsonFile) {
+					// try to send as text
 					FileUtility.read(jsonFile).then((diagramJson: string)=>{
-						this._projectManager.upload(diagramJson).then((dId)=>{
+						this._projectManager.uploadString(diagramJson).then((dId)=>{
 							this._projectDeveloper.open(dId)
 						}).catch(rejection=>{
 							this._toastMessageService.add({
@@ -271,6 +272,10 @@ export class ProjectMenuComponent implements AfterViewInit{
 							});
 						});
 					});
+
+					// try to upload
+
+					this._projectManager.uploadFile(jsonFile)
 				}
 			});
 		}

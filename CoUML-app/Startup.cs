@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,6 +39,12 @@ namespace CoUML_app
 
 			services.AddControllers();
 			services.AddSignalR();
+
+			services.Configure<FormOptions>(options =>
+			{
+				// Set the limit to 256 MB
+				options.MultipartBodyLengthLimit = 268435456;
+			});
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

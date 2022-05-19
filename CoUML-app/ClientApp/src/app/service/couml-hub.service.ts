@@ -7,7 +7,7 @@ import { environment } from '../../environments/environment';
 import { Assembler, ChangeRecord, User, Diagram, DiagramDataSet } from 'src/models/DiagramModel';
 import { TeamActivityComponent } from '../activity/team-activity.component'; 
 import { saveAs } from 'file-saver';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpEvent } from '@angular/common/http';
 import { Observable, of, pipe, zip } from 'rxjs';
 import { map, filter, tap } from 'rxjs/operators'
 
@@ -168,6 +168,14 @@ export class CoUmlHubService{
 		let downloadUrl = `${environment.apiUrl}/downloadJson?fileName=${filePath}`;
 
 		return this.http.get(downloadUrl, { responseType: 'blob' }).subscribe(zipBlob=> saveAs(zipBlob,filePath));
+	}
+
+	uploadFile(jsonFile: File) : Observable<HttpEvent<object>>
+	{
+		let uploadUrl = `${environment.apiUrl}/uploadJson`;
+		const formData = new FormData();
+		formData.append('file', jsonFile, jsonFile.name);
+		return this.http.post(uploadUrl, formData, {reportProgress: true, observe: 'events'})
 	}
 
 
