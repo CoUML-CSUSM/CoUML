@@ -36,7 +36,7 @@ namespace CoUML_app.Utility
 			return new Package(packageDirectory);
 		}
 		
-		private static string ToUniqueFileName(string file)
+		public static string ToUniqueFileName(string file)
 		{
 
 			MatchCollection words =  Regex.Matches(file, WORD_PATTERN);

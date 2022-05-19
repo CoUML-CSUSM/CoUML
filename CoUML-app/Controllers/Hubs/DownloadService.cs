@@ -51,7 +51,7 @@ namespace CoUML_app.Controllers.Hubs
 				var pathToSave = Path.Combine(FileUtility.ROOT_DIRECTORY, folderName);
 				if (file.Length > 0)
 				{
-					var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+					var fileName = FileUtility.ToUniqueFileName(ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"'))+".json";
 					var fullPath = Path.Combine(pathToSave, fileName);
 					var dbPath = Path.Combine(folderName, fileName);
 					using (var stream = new FileStream(fullPath, FileMode.Create))
