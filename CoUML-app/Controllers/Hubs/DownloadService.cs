@@ -59,7 +59,7 @@ namespace CoUML_app.Controllers.Hubs
 						file.CopyTo(stream);
 					}
 
-					FileUtility.AsyncDelete(new FileInfo(fullPath), 3);
+					FileUtility.AsyncDelete(new FileInfo(fullPath), 8);
 					return Ok(new { diagramPath });
 				}
 				else

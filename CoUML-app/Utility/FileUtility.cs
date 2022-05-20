@@ -73,6 +73,11 @@ namespace CoUML_app.Utility
  			return new FileStream(zipPath, FileMode.Open, FileAccess.Read);
 		}
 
+		/// <summary>
+		/// Delets the file after seconds
+		/// </summary>
+		/// <param name="directory">file to be deleted</param>
+		/// <param name="seconds">how long the system should wait before deleting the file</param>
 		public static void AsyncDelete(FileSystemInfo directory, byte seconds)
 		{
 			new Thread(()=>{
@@ -83,7 +88,6 @@ namespace CoUML_app.Utility
 						((DirectoryInfo)directory).Delete(true);
 					else
 						directory.Delete();
-					// System.IO.Directory.Delete(directory,true);
 				}
 				catch (System.Exception e)
 				{
