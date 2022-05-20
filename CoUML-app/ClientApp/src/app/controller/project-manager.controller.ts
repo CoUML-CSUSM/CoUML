@@ -3,6 +3,7 @@ import { CoUmlHubService } from "../service/couml-hub.service";
 import { Class, Diagram, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, Assembler } from 'src/models/DiagramModel';
 import {  User, UmlElement } from 'src/models/DiagramModel';
 import { saveAs } from 'file-saver';
+import { HttpClient, HttpEvent, HttpEventType } from '@angular/common/http';
 
 
 @Injectable({ providedIn: 'root' })
@@ -38,9 +39,18 @@ export class ProjectManager{
 		return Promise.reject("Invalid Diagram");
 	}
 
-	public uploadFile(jsonFile: File)
+	public generateProjectDiagramFromFile(jsonFile: File): Promise<string>
 	{
-		return this._coUmlHub.uploadFile(jsonFile);
+		return new Promise<string>((resolve, reject)=>{
+			 this._coUmlHub.uploadDiagramFile(jsonFile).subscribe({
+				next: (event)=>{
+					if(event.type == HttpEventType.Response)
+						this._coUmlHub.generateProjectFromFile(event.body["diagramPath"])
+							.then(dId=>resolve(dId));
+					console.log("Upload File Event\n\n", event)
+				}
+			})
+		});
 	
 	}
 

@@ -53,12 +53,14 @@ namespace CoUML_app.Controllers.Hubs
 				{
 					var fileName = FileUtility.ToUniqueFileName(ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"'))+".json";
 					var fullPath = Path.Combine(pathToSave, fileName);
-					var dbPath = Path.Combine(folderName, fileName);
+					var diagramPath = Path.Combine(folderName, fileName);
 					using (var stream = new FileStream(fullPath, FileMode.Create))
 					{
 						file.CopyTo(stream);
 					}
-					return Ok(new { dbPath });
+
+					FileUtility.AsyncDelete(new FileInfo(fullPath), 3);
+					return Ok(new { diagramPath });
 				}
 				else
 				{

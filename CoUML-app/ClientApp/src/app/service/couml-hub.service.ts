@@ -69,7 +69,7 @@ export class CoUmlHubService{
 	set projectManager(pm: ProjectManager)
 	{
 		this._projectManager = pm;
-		// listen for changes
+		// TODO: listen for changes
 		// this._coUmlHubConnection.on("FUnction", (responce)=>{ 
 			
 		// 	console.log(fileName);
@@ -170,25 +170,13 @@ export class CoUmlHubService{
 		return this.http.get(downloadUrl, { responseType: 'blob' }).subscribe(zipBlob=> saveAs(zipBlob,filePath));
 	}
 
-	uploadFile(jsonFile: File): Promise<string>
+	uploadDiagramFile(jsonFile: File): Observable<HttpEvent<Object>>
 	{
 		let uploadUrl = `${environment.apiUrl}/uploadJson`;
 		const formData = new FormData();
 		formData.append('file', jsonFile, jsonFile.name);
 
-		return new Promise<string>((resolve, reject)=>{
-
-			this.http.post(uploadUrl, formData, {reportProgress: true, observe: 'events'}).subscribe({
-				next: (event)=>{
-					if(event.type == HttpEventType.Response)
-						this._coUmlHubConnection.invoke<string>("GenerateProjectFromJsonFile", event.body["dbPath"]).then(dId=>
-								resolve(dId)
-							);
-					console.log("Upload File Event\n\n", event)
-
-				}
-			})
-		})
+		return this.http.post(uploadUrl, formData, {reportProgress: true, observe: 'events'})
 	}
 
 
@@ -225,6 +213,11 @@ export class CoUmlHubService{
 	 */
 	public generateProjectFromDiagram(diagramJson: string): Promise<string> {
 		return this._coUmlHubConnection.invoke<string>("GenerateProjectFromDiagram", diagramJson);
+	}
+
+	generateProjectFromFile(filePath: string): Promise<string>
+	{
+		return this._coUmlHubConnection.invoke<string>("GenerateProjectFromJsonFile", filePath);
 	}
 
 

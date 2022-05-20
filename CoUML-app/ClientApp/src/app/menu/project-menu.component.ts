@@ -1,8 +1,7 @@
-import {  AfterViewInit, Component as AngularComponent, EventEmitter,  Output, Renderer2 } from '@angular/core';
+import {  AfterViewInit, Component as AngularComponent,  Renderer2 } from '@angular/core';
 import { MenuItem, MessageService } from 'primeng/api';
-import { Class, Diagram, Component, Attribute, Interface, Operation, Relationship, RelationshipType, VisibilityType, User, DiagramDataSet } from 'src/models/DiagramModel';
+import { DiagramDataSet } from 'src/models/DiagramModel';
 import { ProjectManager } from '../controller/project-manager.controller';
-import { CoUmlHubService } from '../service/couml-hub.service';
 import { PrimeNGConfig } from "primeng/api";
 import { ProjectDeveloper } from '../controller/project-developer.controller';
 
@@ -10,10 +9,8 @@ import { SocialAuthService, SocialUser } from "angularx-social-login";
 import {GoogleLoginProvider } from "angularx-social-login";
 import { DialogService } from 'primeng/dynamicdialog';
 import { DiagramTableComponent } from './open/diagram-table.component';
-import { TeamActivityComponent } from '../activity/team-activity.component';
 import { InputComponent } from './input/input.component';
 import { UploadComponent } from './upload/upload.component';
-import { FileUtility } from '../service/file.utility';
 
 	//client id
 	//174000524733-gq2vagupknm77i794hll3kbs3iupm6fu.apps.googleusercontent.com
@@ -101,11 +98,6 @@ export class ProjectMenuComponent implements AfterViewInit{
 
 		]
 		},
-		// {
-		// 	label: "Edit",
-		// 	id: "menuEdit",
-		// 	items: []
-		// },
 		{
 			label: "User",
 			id: "menuUser",
@@ -261,21 +253,14 @@ export class ProjectMenuComponent implements AfterViewInit{
 			// string of the _id is returned to indicate the user's selection
 			uploadDiagramDialog.onClose.subscribe((jsonFile: File) => {
 				if (jsonFile) {
-					// try to send as text
-					FileUtility.read(jsonFile).then((diagramJson: string)=>{
-						this._projectManager.uploadFile(jsonFile).then((dId)=>{
-							this._projectDeveloper.open(dId)
-						}).catch(rejection=>{
-							this._toastMessageService.add({
-								severity: 'error',
-								summary: rejection
-							});
+					this._projectManager.generateProjectDiagramFromFile(jsonFile).then((dId)=>{
+						this._projectDeveloper.open(dId)
+					}).catch(rejection=>{
+						this._toastMessageService.add({
+							severity: 'error',
+							summary: rejection
 						});
 					});
-
-					// try to upload
-
-					// this._projectManager.uploadFile(jsonFile)
 				}
 			});
 		}

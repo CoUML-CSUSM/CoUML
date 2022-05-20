@@ -198,9 +198,9 @@ namespace CoUML_app.Controllers.Hubs
 		}
 
 		public string GenerateProjectFromJsonFile(string filePath){
-			string diagramDTO = FileUtility.ReadFile(filePath);
+			Diagram diagram = DTO.ToDiagram(FileUtility.ReadFile(filePath));
 			return ProjectController.CreateProjectFromDiagram(
-				DTO.ToDiagram(diagramDTO),
+				diagram,
 				(User)Context.Items[CoUmlContext.USER]);
 		}
 		
