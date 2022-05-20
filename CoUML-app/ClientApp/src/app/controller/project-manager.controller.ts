@@ -26,6 +26,7 @@ export class ProjectManager{
 		return this._coUmlHub.invite(uId);
 	}
 	
+	// depricated: replaced with generateProjectDiagramFromFile
 	public uploadString(diagramJson: string): Promise<string>
 	{
 		
