@@ -263,7 +263,7 @@ export class ProjectMenuComponent implements AfterViewInit{
 				if (jsonFile) {
 					// try to send as text
 					FileUtility.read(jsonFile).then((diagramJson: string)=>{
-						this._projectManager.uploadString(diagramJson).then((dId)=>{
+						this._projectManager.uploadFile(jsonFile).then((dId)=>{
 							this._projectDeveloper.open(dId)
 						}).catch(rejection=>{
 							this._toastMessageService.add({
@@ -275,7 +275,7 @@ export class ProjectMenuComponent implements AfterViewInit{
 
 					// try to upload
 
-					this._projectManager.uploadFile(jsonFile)
+					// this._projectManager.uploadFile(jsonFile)
 				}
 			});
 		}

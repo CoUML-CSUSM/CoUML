@@ -196,6 +196,13 @@ namespace CoUML_app.Controllers.Hubs
 				DTO.ToDiagram(diagramDTO),
 				(User)Context.Items[CoUmlContext.USER]);
 		}
+
+		public string GenerateProjectFromJsonFile(string filePath){
+			string diagramDTO = FileUtility.ReadFile(filePath);
+			return ProjectController.CreateProjectFromDiagram(
+				DTO.ToDiagram(diagramDTO),
+				(User)Context.Items[CoUmlContext.USER]);
+		}
 		
 		public string ListMyDiagrams(){
 			return ProjectController.ListDiagrams( (User)Context.Items[CoUmlContext.USER] );

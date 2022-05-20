@@ -21,7 +21,7 @@ namespace CoUML_app.Utility
 	public static class FileUtility
 	{
 		public const string WORD_PATTERN = @"(\w+)";
-		public static string ROOT_DIRECTORY =  Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/");
+		public static string ROOT_DIRECTORY =  Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/");
 		public static FileWriter CreateFile( System.IO.DirectoryInfo directory, string file)
 		{
 			string filePath = Path.Combine(directory.FullName, file);
@@ -50,6 +50,23 @@ namespace CoUML_app.Utility
 			newFileName += Guid.NewGuid().ToString().Substring(0, 4);
 			return newFileName;
 		}
+
+		 public static string ReadFile(string filePath)
+		{
+			try
+			{
+				string path = Path.Combine(ROOT_DIRECTORY, filePath);
+				return File.ReadAllText(path);
+			}
+			catch (System.Exception e)
+			{
+				
+				Console.Write(e);
+			}
+			return "";
+
+		}
+		
 
 		public static FileStream Download(string zipPath)
 		{
